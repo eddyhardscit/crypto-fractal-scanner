@@ -292,11 +292,15 @@ def percentile_report(matches, current_price):
 
 
 def build_markdown_report(all_results, generated_at):
+    def fmt_number_it(value):
+        s = f"{value:,.2f}"
+        return s.replace(",", "X").replace(".", ",").replace("X", ".")
+
     def fmt_price(value):
-        return f"{value:,.2f} $"
+        return f"{fmt_number_it(value)} $"
 
     def fmt_pct(value):
-        return f"{value:.2f}%"
+        return f"{fmt_number_it(value)}%"
 
     def semaforo(verdict_value):
         if verdict_value == "RIALZISTA":
@@ -390,6 +394,48 @@ def build_markdown_report(all_results, generated_at):
     )
     lines.append("")
 
+    lines.append("## Riassunto veloce")
+    lines.append("")
+
+    for target, result in all_results.items():
+        name = asset_name(target)
+        verdict_value = result["verdict"]
+        prices = result["prices"]
+
+        lines.append(f"### {name}: {semaforo(verdict_value)}")
+        lines.append(f"- Prezzo attuale: **{fmt_price(prices['current_price'])}**")
+        lines.append(f"- Scenario centrale: **{fmt_price(prices['scenario_median_30d'])}**")
+        lines.append(f"- Zona rischio media: **{fmt_price(prices['drawdown_avg_30d'])}**")
+        lines.append(f"- Zona rialzo media: **{fmt_price(prices['max_gain_avg_30d'])}**")
+        lines.append("")
+
+    btc_verdict = all_results.get("BTC-USD", {}).get("verdict", "")
+    sol_verdict = all_results.get("SOL-USD", {}).get("verdict", "")
+
+    lines.append("### Messaggio del giorno")
+    lines.append("")
+
+    if btc_verdict == "RIBASSISTA" or sol_verdict == "RIBASSISTA":
+        lines.append(
+            "Lo scanner oggi invita alla prudenza. "
+            "BTC e/o SOL possono anche salire, ma nei casi storici simili "
+            "il prezzo spesso ha fatto prima una discesa importante."
+        )
+    elif btc_verdict == "RIALZISTA" and sol_verdict == "RIALZISTA":
+        lines.append(
+            "Lo scanner oggi è più favorevole. "
+            "Nei casi storici simili, BTC e SOL sono saliti più spesso che scesi."
+        )
+    else:
+        lines.append(
+            "Lo scanner oggi è misto o incerto. "
+            "Non c'è un segnale abbastanza pulito per forzare la previsione."
+        )
+
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
     lines.append("## Come leggere il report")
     lines.append("")
     lines.append("- **🟢 Verde** = situazione più favorevole.")
@@ -404,6 +450,16 @@ def build_markdown_report(all_results, generated_at):
     lines.append("- **50%** = scenario centrale, cioè la via di mezzo.")
     lines.append("- **75%** = scenario buono.")
     lines.append("- **90%** = scenario molto buono.")
+    lines.append("")
+    lines.append(
+        "Quando leggi per esempio **+12% → 70.000 $**, significa che in quello scenario "
+        "il prezzo sarebbe circa il 12% sopra il prezzo attuale."
+    )
+    lines.append("")
+    lines.append(
+        "Quando leggi per esempio **-15% → 52.000 $**, significa che in quello scenario "
+        "il prezzo sarebbe circa il 15% sotto il prezzo attuale."
+    )
     lines.append("")
     lines.append(
         "La parte più importante per chi usa leva è il **drawdown**: "
@@ -467,15 +523,13 @@ def build_markdown_report(all_results, generated_at):
         prices = result["prices"]
         percentiles = result["percentiles"]
 
-        current_price = prices["current_price"]
-
         lines.append("---")
         lines.append("")
         lines.append(f"# {name} ({target})")
         lines.append("")
         lines.append(f"## Semaforo: {semaforo(verdict_value)}")
         lines.append("")
-        lines.append(f"**Prezzo attuale:** {fmt_price(current_price)}")
+        lines.append(f"**Prezzo attuale:** {fmt_price(prices['current_price'])}")
         lines.append("")
 
         lines.append("## Spiegazione semplice")
@@ -486,7 +540,7 @@ def build_markdown_report(all_results, generated_at):
         lines.append("## Cosa dicono i 40 casi storici più simili")
         lines.append("")
         lines.append(f"- Somiglianza media dei pattern: **{fmt_pct(summary['similarity_avg'])}**")
-        lines.append(f"- Casi positivi dopo 30 giorni: **{summary['positive_cases_30d']:.1f}%**")
+        lines.append(f"- Casi positivi dopo 30 giorni: **{fmt_number_it(summary['positive_cases_30d'])}%**")
         lines.append(f"- Rendimento medio dopo 30 giorni: **{fmt_pct(summary['return_30d_avg'])}**")
         lines.append(f"- Rendimento centrale dopo 30 giorni: **{fmt_pct(summary['return_30d_median'])}**")
         lines.append(f"- Discesa media durante i 30 giorni: **{fmt_pct(summary['drawdown_30d_avg'])}**")
@@ -545,8 +599,14 @@ def build_markdown_report(all_results, generated_at):
             )
             lines.append("")
 
-        lines.append("## Top 10 pattern simili")
+        lines.append("## Dati tecnici per controllo")
         lines.append("")
+        lines.append(
+            "Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. "
+            "Non è obbligatorio leggerla ogni giorno."
+        )
+        lines.append("")
+
         top = result["matches"].head(10)[[
             "similar_asset", "start_date", "end_date", "similarity",
             "return_30d", "drawdown_30d", "max_gain_30d"
