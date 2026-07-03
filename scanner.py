@@ -237,13 +237,64 @@ def verdict(matches):
     ret30 = matches["return_30d"].mean()
     win30 = (matches["return_30d"] > 0).mean() * 100
 
-    if win30 >= 65 and ret30 > 5:
+    if win30 >= 60 and ret30 > 0:
         return "RIALZISTA"
 
     if win30 <= 40 and ret30 < 0:
         return "RIBASSISTA"
 
     return "NEUTRALE / INCERTO"
+
+
+def direction_label(positive_cases):
+    up = float(positive_cases)
+    down = 100 - up
+
+    if up >= 60:
+        return "SALITA", up, down
+
+    if down >= 60:
+        return "DISCESA", up, down
+
+    return "INCERTO", up, down
+
+
+def signal_strength(positive_cases):
+    up = float(positive_cases)
+    down = 100 - up
+    edge = abs(up - down)
+
+    if edge >= 40:
+        return "forte"
+
+    if edge >= 25:
+        return "medio"
+
+    if edge >= 12:
+        return "debole"
+
+    return "molto debole / quasi pari"
+
+
+def simple_direction_sentence(direction, strength):
+    if direction == "SALITA":
+        return (
+            f"La lettura principale è rialzista, con segnale {strength}. "
+            "Nei casi storici simili, il prezzo ha chiuso sopra dopo 30 giorni "
+            "più spesso di quanto abbia chiuso sotto."
+        )
+
+    if direction == "DISCESA":
+        return (
+            f"La lettura principale è ribassista, con segnale {strength}. "
+            "Nei casi storici simili, il prezzo ha chiuso sotto dopo 30 giorni "
+            "più spesso di quanto abbia chiuso sopra."
+        )
+
+    return (
+        f"La lettura principale è incerta, con segnale {strength}. "
+        "Nei casi storici simili non c'è stato un vantaggio chiaro né per salita né per discesa."
+    )
 
 
 def summary_table(matches):
@@ -333,22 +384,21 @@ def simple_verdict_text(target, verdict_value):
 
     if verdict_value == "RIALZISTA":
         return (
-            f"{name} ha un segnale abbastanza favorevole. "
-            "Nei casi storici più simili, il prezzo è salito più spesso che sceso. "
-            "Questo non vuol dire certezza, ma il contesto è più positivo."
+            f"{name} ha un segnale favorevole. "
+            "La statistica dei casi simili indica più possibilità di salita che di discesa, "
+            "ma resta comunque una probabilità, non una certezza."
         )
 
     if verdict_value == "RIBASSISTA":
         return (
             f"{name} richiede prudenza. "
-            "Nei casi storici più simili, il prezzo non ha avuto una partenza pulita. "
-            "Spesso ha fatto prima una discesa importante. "
-            "Con leva, questa è la parte più pericolosa."
+            "La statistica dei casi simili indica più possibilità di discesa che di salita. "
+            "Con leva, il rischio principale è il drawdown durante il percorso."
         )
 
     return (
         f"{name} è in una situazione incerta. "
-        "Lo scanner non vede un vantaggio chiaro né per il rialzo né per il ribasso. "
+        "Lo scanner non vede un vantaggio chiaro né per la salita né per la discesa. "
         "In questi casi è meglio non forzare la previsione."
     )
 
@@ -368,13 +418,47 @@ def get_percentile_price(percentiles, metric, q):
     return percent_value, price_level
 
 
+def percentile_explanation(metric, q):
+    if metric == "return_30d":
+        explanations = {
+            10: "Scenario brutto: dopo 30 giorni, solo il 10% dei casi era uguale o peggiore. È una chiusura molto debole.",
+            25: "Scenario negativo: dopo 30 giorni, un quarto dei casi era uguale o peggiore. È una chiusura sotto la media.",
+            50: "Scenario centrale: metà dei casi ha fatto peggio e metà meglio. È la via di mezzo più importante.",
+            75: "Scenario buono: il 75% dei casi è rimasto sotto questo risultato e il 25% ha fatto meglio.",
+            90: "Scenario molto buono: solo il 10% dei casi ha fatto meglio. È uno scenario forte, non quello normale.",
+        }
+        return explanations[q]
+
+    if metric == "drawdown_30d":
+        explanations = {
+            10: "Scenario brutto: durante i 30 giorni, nei casi peggiori il prezzo è sceso fino a questa zona o anche peggio.",
+            25: "Scenario negativo: durante i 30 giorni, un quarto dei casi ha avuto una discesa uguale o peggiore.",
+            50: "Scenario centrale: questa è la discesa tipica di metà dei casi. Per la leva è molto importante.",
+            75: "Scenario buono: in molti casi la discesa è stata più contenuta, quindi meno pericolosa.",
+            90: "Scenario molto buono: il prezzo è quasi sempre rimasto vicino al livello iniziale, con poca discesa.",
+        }
+        return explanations[q]
+
+    if metric == "max_gain_30d":
+        explanations = {
+            10: "Scenario debole: durante i 30 giorni, il prezzo ha avuto poco rialzo o quasi nessuno.",
+            25: "Scenario modesto: durante i 30 giorni, il rialzo massimo è stato limitato.",
+            50: "Scenario centrale: questo è lo spike medio/mediano più normale visto nei casi simili.",
+            75: "Scenario buono: durante i 30 giorni il prezzo è riuscito a fare un rialzo importante.",
+            90: "Scenario molto forte: solo il 10% dei casi ha fatto uno spike migliore di questo.",
+        }
+        return explanations[q]
+
+    return ""
+
+
 def percentile_lines(percentiles, metric):
     labels = {
-        10: "scenario brutto",
-        25: "scenario negativo",
-        50: "scenario centrale",
-        75: "scenario buono",
-        90: "scenario molto buono",
+        10: "10%",
+        25: "25%",
+        50: "50%",
+        75: "75%",
+        90: "90%",
     }
 
     lines = []
@@ -386,8 +470,9 @@ def percentile_lines(percentiles, metric):
             continue
 
         lines.append(
-            f"- **{labels[q]}**: {fmt_pct(percent_value)} → **{fmt_price(price_level)}**"
+            f"- **Percentile {labels[q]}**: {fmt_pct(percent_value)} → **{fmt_price(price_level)}**"
         )
+        lines.append(f"  - {percentile_explanation(metric, q)}")
 
     return lines
 
@@ -752,6 +837,104 @@ def append_accuracy_section(lines, prediction_log):
     lines.append("")
 
 
+def add_asset_dashboard(lines, target, result):
+    name = asset_name(target)
+    summary = result["summary"]
+    prices = result["prices"]
+    percentiles = result["percentiles"]
+    verdict_value = result["verdict"]
+
+    direction, up_prob, down_prob = direction_label(summary["positive_cases_30d"])
+    strength = signal_strength(summary["positive_cases_30d"])
+
+    return_p50, return_p50_price = get_percentile_price(percentiles, "return_30d", 50)
+    drawdown_p50, drawdown_p50_price = get_percentile_price(percentiles, "drawdown_30d", 50)
+    max_gain_p50, max_gain_p50_price = get_percentile_price(percentiles, "max_gain_30d", 50)
+
+    lines.append(f"## {name} — lettura semplice")
+    lines.append("")
+    lines.append(f"**Semaforo:** {semaforo(verdict_value)}")
+    lines.append(f"**Prezzo attuale:** {fmt_price(prices['current_price'])}")
+    lines.append("")
+    lines.append(f"**Direzione più probabile a 30 giorni:** **{direction}**")
+    lines.append(f"- Probabilità storica di salita: **{fmt_pct(up_prob)}**")
+    lines.append(f"- Probabilità storica di discesa: **{fmt_pct(down_prob)}**")
+    lines.append(f"- Forza del segnale: **{strength}**")
+    lines.append("")
+    lines.append(simple_direction_sentence(direction, strength))
+    lines.append("")
+
+    lines.append("### Nei prossimi 30 giorni, cosa significa?")
+    lines.append("")
+    lines.append(
+        "Questa previsione non dice cosa succede oggi o domani. "
+        "Dice cosa è successo nei 30 giorni successivi nei vecchi casi storici simili."
+    )
+    lines.append("")
+
+    lines.append("**1. Prezzo fra 30 giorni**")
+    lines.append("")
+    lines.append(
+        f"- Scenario centrale: **{fmt_pct(return_p50)}** → **{fmt_price(return_p50_price)}**"
+    )
+    lines.append(
+        "  - Questo è il livello più importante per capire dove il prezzo tendeva a trovarsi dopo 30 giorni."
+    )
+    lines.append("")
+
+    lines.append("**2. Discesa possibile durante i 30 giorni**")
+    lines.append("")
+    lines.append(
+        f"- Drawdown centrale: **{fmt_pct(drawdown_p50)}** → **{fmt_price(drawdown_p50_price)}**"
+    )
+    lines.append(
+        "  - Questo non è il prezzo finale. È quanto poteva scendere durante il percorso. "
+        "Per una posizione a leva è il dato più importante."
+    )
+    lines.append("")
+
+    lines.append("**3. Rialzo possibile durante i 30 giorni**")
+    lines.append("")
+    lines.append(
+        f"- Max gain centrale: **{fmt_pct(max_gain_p50)}** → **{fmt_price(max_gain_p50_price)}**"
+    )
+    lines.append(
+        "  - Questo non è il prezzo finale. È lo spike massimo che il prezzo poteva toccare durante il mese."
+    )
+    lines.append("")
+
+    lines.append("### Traduzione pratica")
+    lines.append("")
+
+    if direction == "DISCESA":
+        lines.append(
+            "La lettura principale è debole/ribassista. "
+            "Può comunque esserci uno spike rialzista durante il mese, ma la chiusura a 30 giorni "
+            "nei casi simili è stata più spesso negativa."
+        )
+    elif direction == "SALITA":
+        lines.append(
+            "La lettura principale è positiva/rialzista. "
+            "Resta comunque possibile una discesa durante il percorso, quindi il drawdown va controllato."
+        )
+    else:
+        lines.append(
+            "La lettura principale è incerta. "
+            "In questi casi il dato non dà un vantaggio chiaro: meglio guardare soprattutto zona rischio e zona spike."
+        )
+
+    if target == "BTC-USD":
+        lines.append("")
+        lines.append(
+            "Nota leva BTC: se la liquidazione è vicina a 51.000 $, il dato più importante "
+            "è il drawdown, non solo il prezzo previsto fra 30 giorni."
+        )
+
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
+
 def build_markdown_report(all_results, generated_at, prediction_log):
     lines = []
 
@@ -770,131 +953,111 @@ def build_markdown_report(all_results, generated_at, prediction_log):
     )
     lines.append("")
 
-    lines.append("## Riassunto veloce")
+    lines.append("## Lettura velocissima")
     lines.append("")
 
     for target, result in all_results.items():
         name = asset_name(target)
-        verdict_value = result["verdict"]
+        summary = result["summary"]
         prices = result["prices"]
+        percentiles = result["percentiles"]
 
-        lines.append(f"### {name}: {semaforo(verdict_value)}")
+        direction, up_prob, down_prob = direction_label(summary["positive_cases_30d"])
+        strength = signal_strength(summary["positive_cases_30d"])
+
+        return_p50, return_p50_price = get_percentile_price(percentiles, "return_30d", 50)
+        drawdown_p50, drawdown_p50_price = get_percentile_price(percentiles, "drawdown_30d", 50)
+        max_gain_p50, max_gain_p50_price = get_percentile_price(percentiles, "max_gain_30d", 50)
+
+        lines.append(f"### {name}")
+        lines.append(f"- Direzione più probabile a 30 giorni: **{direction}**")
+        lines.append(f"- Salita storica: **{fmt_pct(up_prob)}**")
+        lines.append(f"- Discesa storica: **{fmt_pct(down_prob)}**")
+        lines.append(f"- Forza segnale: **{strength}**")
         lines.append(f"- Prezzo attuale: **{fmt_price(prices['current_price'])}**")
-        lines.append(f"- Scenario centrale: **{fmt_price(prices['scenario_median_30d'])}**")
-        lines.append(f"- Zona rischio media: **{fmt_price(prices['drawdown_avg_30d'])}**")
-        lines.append(f"- Zona rialzo media: **{fmt_price(prices['max_gain_avg_30d'])}**")
+        lines.append(f"- Scenario centrale fra 30 giorni: **{fmt_pct(return_p50)}** → **{fmt_price(return_p50_price)}**")
+        lines.append(f"- Discesa centrale durante i 30 giorni: **{fmt_pct(drawdown_p50)}** → **{fmt_price(drawdown_p50_price)}**")
+        lines.append(f"- Spike centrale durante i 30 giorni: **{fmt_pct(max_gain_p50)}** → **{fmt_price(max_gain_p50_price)}**")
         lines.append("")
-
-    verdicts = [result["verdict"] for result in all_results.values()]
 
     lines.append("### Messaggio del giorno")
     lines.append("")
 
-    if "RIBASSISTA" in verdicts:
+    directions = [
+        direction_label(result["summary"]["positive_cases_30d"])[0]
+        for result in all_results.values()
+    ]
+
+    if directions.count("DISCESA") >= 2:
         lines.append(
-            "Lo scanner oggi invita alla prudenza. "
-            "Uno o più asset possono anche salire, ma nei casi storici simili "
-            "il prezzo spesso ha fatto prima una discesa importante."
+            "Il quadro generale oggi è prudente/debole. "
+            "Lo scanner vede più rischio di discesa che salita pulita su più asset."
         )
-    elif all(v == "RIALZISTA" for v in verdicts):
+    elif directions.count("SALITA") >= 2:
         lines.append(
-            "Lo scanner oggi è più favorevole. "
-            "Nei casi storici simili, gli asset analizzati sono saliti più spesso che scesi."
+            "Il quadro generale oggi è più favorevole. "
+            "Lo scanner vede più possibilità di salita su più asset."
         )
     else:
         lines.append(
-            "Lo scanner oggi è misto o incerto. "
-            "Non c'è un segnale abbastanza pulito per forzare la previsione."
+            "Il quadro generale oggi è misto. "
+            "Alcuni asset possono avere lettura diversa, quindi è meglio valutare asset per asset."
         )
 
     lines.append("")
     lines.append("---")
     lines.append("")
 
-    append_accuracy_section(lines, prediction_log)
-
-    lines.append("---")
+    lines.append("# Lettura pratica asset per asset")
     lines.append("")
 
-    lines.append("## Come leggere il report")
-    lines.append("")
-    lines.append("- **🟢 Verde** = situazione più favorevole.")
-    lines.append("- **🟡 Giallo** = situazione incerta, meglio non forzare.")
-    lines.append("- **🔴 Rosso** = prudenza, rischio più alto.")
-    lines.append("")
+    for target, result in all_results.items():
+        add_asset_dashboard(lines, target, result)
 
-    lines.append("## Percentili spiegati semplice")
-    lines.append("")
-    lines.append("- **10%** = scenario brutto.")
-    lines.append("- **25%** = scenario negativo.")
-    lines.append("- **50%** = scenario centrale, cioè la via di mezzo.")
-    lines.append("- **75%** = scenario buono.")
-    lines.append("- **90%** = scenario molto buono.")
+    lines.append("# Come leggere correttamente i 30 giorni")
     lines.append("")
     lines.append(
-        "Quando leggi per esempio **+12% → 70.000 $**, significa che in quello scenario "
+        "Ogni report giornaliero è una previsione statistica sui **prossimi 30 giorni**."
+    )
+    lines.append("")
+    lines.append("Ci sono tre dati diversi:")
+    lines.append("")
+    lines.append("1. **Return 30d** = dove potrebbe stare il prezzo fra 30 giorni.")
+    lines.append("2. **Drawdown 30d** = quanto potrebbe scendere durante quei 30 giorni.")
+    lines.append("3. **Max gain 30d** = quanto potrebbe salire al massimo durante quei 30 giorni.")
+    lines.append("")
+    lines.append(
+        "Quindi il prezzo può anche salire durante il mese e poi chiudere sotto, "
+        "oppure scendere prima e poi recuperare. Per chi usa leva, il drawdown è spesso "
+        "più importante del prezzo finale."
+    )
+    lines.append("")
+
+    lines.append("# Percentili spiegati in modo semplice")
+    lines.append("")
+    lines.append(
+        "I percentili sono scenari ordinati dal peggiore al migliore. "
+        "Lo scanner prende 40 casi storici simili e guarda cosa è successo dopo."
+    )
+    lines.append("")
+    lines.append("- **Percentile 10%** = scenario brutto.")
+    lines.append("- **Percentile 25%** = scenario negativo.")
+    lines.append("- **Percentile 50%** = scenario centrale, cioè metà dei casi sopra e metà sotto.")
+    lines.append("- **Percentile 75%** = scenario buono.")
+    lines.append("- **Percentile 90%** = scenario molto buono.")
+    lines.append("")
+    lines.append(
+        "Esempio: se leggi **+12% → 70.000 $**, vuol dire che in quello scenario "
         "il prezzo sarebbe circa il 12% sopra il prezzo attuale."
     )
     lines.append("")
     lines.append(
-        "Quando leggi per esempio **-15% → 52.000 $**, significa che in quello scenario "
+        "Esempio: se leggi **-15% → 52.000 $**, vuol dire che in quello scenario "
         "il prezzo sarebbe circa il 15% sotto il prezzo attuale."
     )
     lines.append("")
-    lines.append(
-        "La parte più importante per chi usa leva è il **drawdown**: "
-        "significa la discesa che il prezzo può fare durante il percorso, "
-        "anche se poi recupera."
-    )
-    lines.append("")
 
-    lines.append("## Spiegazione tecnica dei percentili")
-    lines.append("")
-    lines.append(
-        "I percentili servono a dividere i risultati storici in scenari. "
-        "Lo scanner trova 40 casi storici simili, guarda cosa è successo dopo "
-        "quei 40 casi e poi li ordina dal peggiore al migliore."
-    )
-    lines.append("")
-    lines.append(
-        "- Il **percentile 10** indica un risultato molto debole: "
-        "solo il 10% dei casi è andato peggio o uguale a quel livello."
-    )
-    lines.append(
-        "- Il **percentile 25** indica uno scenario negativo: "
-        "il 25% dei casi è andato peggio o uguale a quel livello."
-    )
-    lines.append(
-        "- Il **percentile 50** è la mediana: "
-        "metà dei casi è andata peggio e metà meglio."
-    )
-    lines.append(
-        "- Il **percentile 75** indica uno scenario buono: "
-        "il 75% dei casi è stato sotto quel livello e il 25% sopra."
-    )
-    lines.append(
-        "- Il **percentile 90** indica uno scenario molto forte: "
-        "solo il 10% dei casi è andato meglio di quel livello."
-    )
-    lines.append("")
-    lines.append(
-        "Quindi il percentile non è una previsione sicura. "
-        "È un modo per dire: nei casi storici simili, questo livello era "
-        "uno scenario brutto, normale, buono o molto buono."
-    )
-    lines.append("")
-    lines.append(
-        "- Per **return_30d**, il percentile indica dove era il prezzo dopo 30 giorni."
-    )
-    lines.append(
-        "- Per **drawdown_30d**, indica quanto il prezzo è sceso durante quei 30 giorni, "
-        "anche se poi ha recuperato."
-    )
-    lines.append(
-        "- Per **max_gain_30d**, indica il massimo rialzo toccato durante quei 30 giorni, "
-        "anche solo temporaneamente."
-    )
-    lines.append("")
+    append_accuracy_section(lines, prediction_log)
 
     for target, result in all_results.items():
         name = asset_name(target)
@@ -905,14 +1068,11 @@ def build_markdown_report(all_results, generated_at, prediction_log):
 
         lines.append("---")
         lines.append("")
-        lines.append(f"# {name} ({target})")
+        lines.append(f"# Approfondimento tecnico — {name} ({target})")
         lines.append("")
         lines.append(f"## Semaforo: {semaforo(verdict_value)}")
         lines.append("")
         lines.append(f"**Prezzo attuale:** {fmt_price(prices['current_price'])}")
-        lines.append("")
-
-        lines.append("## Spiegazione semplice")
         lines.append("")
         lines.append(simple_verdict_text(target, verdict_value))
         lines.append("")
@@ -921,6 +1081,7 @@ def build_markdown_report(all_results, generated_at, prediction_log):
         lines.append("")
         lines.append(f"- Somiglianza media dei pattern: **{fmt_pct(summary['similarity_avg'])}**")
         lines.append(f"- Casi positivi dopo 30 giorni: **{fmt_number_it(summary['positive_cases_30d'])}%**")
+        lines.append(f"- Casi negativi dopo 30 giorni: **{fmt_number_it(100 - summary['positive_cases_30d'])}%**")
         lines.append(f"- Rendimento medio dopo 30 giorni: **{fmt_pct(summary['return_30d_avg'])}**")
         lines.append(f"- Rendimento centrale dopo 30 giorni: **{fmt_pct(summary['return_30d_median'])}**")
         lines.append(f"- Discesa media durante i 30 giorni: **{fmt_pct(summary['drawdown_30d_avg'])}**")
@@ -935,49 +1096,20 @@ def build_markdown_report(all_results, generated_at, prediction_log):
         lines.append(f"- Zona di rialzo media: **{fmt_price(prices['max_gain_avg_30d'])}**")
         lines.append("")
 
-        lines.append("## Percentili — dove potrebbe essere il prezzo tra 30 giorni")
+        lines.append("## Percentili return — dove potrebbe stare il prezzo fra 30 giorni")
         lines.append("")
         lines.extend(percentile_lines(percentiles, "return_30d"))
         lines.append("")
-        lines.append(
-            "Spiegazione: questi livelli indicano dove il prezzo si trovava "
-            "dopo 30 giorni nei casi storici simili."
-        )
-        lines.append("")
 
-        lines.append("## Percentili drawdown — quanto potrebbe scendere durante il percorso")
+        lines.append("## Percentili drawdown — quanto potrebbe scendere durante i 30 giorni")
         lines.append("")
         lines.extend(percentile_lines(percentiles, "drawdown_30d"))
         lines.append("")
-        lines.append(
-            "Spiegazione: questa è la parte più importante se usi leva. "
-            "Il prezzo può scendere a questi livelli anche se poi recupera."
-        )
-        lines.append("")
 
-        lines.append("## Percentili max gain — quanto potrebbe salire durante il percorso")
+        lines.append("## Percentili max gain — quanto potrebbe salire durante i 30 giorni")
         lines.append("")
         lines.extend(percentile_lines(percentiles, "max_gain_30d"))
         lines.append("")
-        lines.append(
-            "Spiegazione: questi livelli indicano il massimo rialzo toccato "
-            "nei casi simili, anche solo temporaneamente."
-        )
-        lines.append("")
-
-        if target == "BTC-USD":
-            lines.append("## Nota personale sulla leva")
-            lines.append("")
-            lines.append(
-                "Se hai una posizione long con liquidazione vicino a 51.000 $, "
-                "controlla soprattutto la zona di rischio e i percentili drawdown."
-            )
-            lines.append(
-                "Se lo scanner mostra una zona di rischio vicina alla liquidazione, "
-                "non significa che Bitcoin ci arriverà sicuramente, ma significa che "
-                "il rischio non è remoto."
-            )
-            lines.append("")
 
         lines.append("## Dati tecnici per controllo")
         lines.append("")
