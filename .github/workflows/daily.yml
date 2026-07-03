@@ -28,11 +28,6 @@ jobs:
           pip install tabulate
 
       - name: Run scanner
-        env:
-          EMAIL_USER: ${{ secrets.EMAIL_USER }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          EMAIL_TO: ${{ secrets.EMAIL_TO }}
-          REPORT_URL: https://github.com/eddyhardscit/crypto-fractal-scanner/blob/main/reports/latest_report.md
         run: python scanner.py
 
       - name: Commit report
@@ -42,3 +37,11 @@ jobs:
           git add reports/
           git commit -m "Update daily crypto scanner report" || echo "No changes to commit"
           git push
+
+      - name: Send email
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          REPORT_URL: https://github.com/eddyhardscit/crypto-fractal-scanner/blob/main/reports/latest_report.md
+        run: python send_email.py
