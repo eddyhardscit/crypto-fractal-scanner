@@ -33,6 +33,11 @@ CRYPTO_TICKERS = [
 
 PREDICTION_LOG_PATH = "reports/prediction_log.csv"
 ACCURACY_REPORT_PATH = "reports/accuracy_report.csv"
+CALIBRATION_REPORT_PATH = "reports/calibration_report.csv"
+
+MIN_CALIBRATION_EVALS = 30
+STRONG_CALIBRATION_EVALS = 60
+CALIBRATION_WINDOW = 60
 
 
 def add_indicators(df):
@@ -359,6 +364,13 @@ def fmt_price(value):
 
 def fmt_pct(value):
     return f"{fmt_number_it(value)}%"
+
+
+def pct_to_price(current_price, pct_value):
+    if pd.isna(pct_value):
+        return np.nan
+
+    return current_price * (1 + pct_value / 100)
 
 
 def semaforo(verdict_value):
@@ -764,11 +776,162 @@ def accuracy_summary(log):
     return pd.DataFrame(rows)
 
 
+def reliability_label(accuracy_pct, n):
+    if n < MIN_CALIBRATION_EVALS or pd.isna(accuracy_pct):
+        return "non ancora valutabile"
+
+    if accuracy_pct >= 65:
+        return "alta"
+
+    if accuracy_pct >= 55:
+        return "media"
+
+    if accuracy_pct >= 45:
+        return "debole"
+
+    return "bassa"
+
+
+def bias_sentence(metric, bias):
+    if pd.isna(bias):
+        return "Dati insufficienti."
+
+    if metric == "return":
+        if bias > 2:
+            return "Lo scanner è stato troppo pessimista sul prezzo finale."
+        if bias < -2:
+            return "Lo scanner è stato troppo ottimista sul prezzo finale."
+        return "Lo scanner è stato abbastanza centrato sul prezzo finale."
+
+    if metric == "drawdown":
+        if bias < -2:
+            return "Lo scanner ha sottostimato il rischio: nella realtà il prezzo è sceso più del previsto."
+        if bias > 2:
+            return "Lo scanner è stato troppo prudente: nella realtà il prezzo è sceso meno del previsto."
+        return "Lo scanner è stato abbastanza centrato sul drawdown."
+
+    if metric == "max_gain":
+        if bias > 2:
+            return "Lo scanner ha sottostimato gli spike: nella realtà il prezzo è salito più del previsto."
+        if bias < -2:
+            return "Lo scanner ha sovrastimato gli spike: nella realtà il prezzo è salito meno del previsto."
+        return "Lo scanner è stato abbastanza centrato sul max gain."
+
+    return ""
+
+
+def calibrated_direction(calibrated_return_pct):
+    if pd.isna(calibrated_return_pct):
+        return "NON DISPONIBILE"
+
+    if calibrated_return_pct > 2:
+        return "SALITA"
+
+    if calibrated_return_pct < -2:
+        return "DISCESA"
+
+    return "INCERTO"
+
+
+def evaluated_prediction_rows(log):
+    if log.empty or "evaluated" not in log.columns:
+        return pd.DataFrame()
+
+    mask = log["evaluated"].astype(str).str.lower().isin(["true", "1"])
+    evaluated = log[mask].copy()
+
+    if "prediction_date" in evaluated.columns:
+        evaluated["prediction_date_dt"] = pd.to_datetime(
+            evaluated["prediction_date"],
+            errors="coerce"
+        )
+        evaluated = evaluated.sort_values("prediction_date_dt")
+
+    return evaluated
+
+
+def calibration_summary(log):
+    rows = []
+    evaluated = evaluated_prediction_rows(log)
+
+    for asset in TARGETS:
+        asset_rows = evaluated[evaluated.get("asset", pd.Series(dtype=str)) == asset].copy()
+
+        n_total = len(asset_rows)
+
+        base = {
+            "asset": asset,
+            "evaluated_predictions": n_total,
+            "calibration_status": "insufficient_data",
+            "used_predictions": 0,
+            "directional_accuracy_pct": np.nan,
+            "reliability": "non ancora valutabile",
+            "return_bias_pct": np.nan,
+            "drawdown_bias_pct": np.nan,
+            "max_gain_bias_pct": np.nan,
+            "avg_actual_return_pct": np.nan,
+            "avg_actual_drawdown_pct": np.nan,
+            "avg_actual_max_gain_pct": np.nan,
+        }
+
+        required_columns = [
+            "actual_30d_return_pct",
+            "actual_drawdown_pct",
+            "actual_max_gain_pct",
+            "return_p50_pct",
+            "drawdown_p50_pct",
+            "max_gain_p50_pct",
+        ]
+
+        if n_total < MIN_CALIBRATION_EVALS:
+            rows.append(base)
+            continue
+
+        missing = [c for c in required_columns if c not in asset_rows.columns]
+        if missing:
+            base["calibration_status"] = "missing_columns"
+            rows.append(base)
+            continue
+
+        recent = asset_rows.tail(CALIBRATION_WINDOW).copy()
+
+        actual_return = pd.to_numeric(recent["actual_30d_return_pct"], errors="coerce")
+        actual_drawdown = pd.to_numeric(recent["actual_drawdown_pct"], errors="coerce")
+        actual_max_gain = pd.to_numeric(recent["actual_max_gain_pct"], errors="coerce")
+
+        predicted_return = pd.to_numeric(recent["return_p50_pct"], errors="coerce")
+        predicted_drawdown = pd.to_numeric(recent["drawdown_p50_pct"], errors="coerce")
+        predicted_max_gain = pd.to_numeric(recent["max_gain_p50_pct"], errors="coerce")
+
+        return_error = actual_return - predicted_return
+        drawdown_error = actual_drawdown - predicted_drawdown
+        max_gain_error = actual_max_gain - predicted_max_gain
+
+        acc = boolean_rate(recent.get("directional_correct"))
+
+        base.update({
+            "calibration_status": "active" if n_total >= MIN_CALIBRATION_EVALS else "insufficient_data",
+            "used_predictions": len(recent),
+            "directional_accuracy_pct": acc,
+            "reliability": reliability_label(acc, n_total),
+            "return_bias_pct": return_error.mean(),
+            "drawdown_bias_pct": drawdown_error.mean(),
+            "max_gain_bias_pct": max_gain_error.mean(),
+            "avg_actual_return_pct": actual_return.mean(),
+            "avg_actual_drawdown_pct": actual_drawdown.mean(),
+            "avg_actual_max_gain_pct": actual_max_gain.mean(),
+        })
+
+        rows.append(base)
+
+    return pd.DataFrame(rows)
+
+
 def append_accuracy_section(lines, prediction_log):
     lines.append("# Controllo accuratezza dello scanner")
     lines.append("")
     lines.append(
-        "Questa sezione serve a controllare se lo scanner sta funzionando davvero. "
+        "Questa sezione controlla se lo scanner sta funzionando davvero. "
         "Ogni giorno viene salvata una previsione. Dopo 30 giorni, lo scanner confronta "
         "quella previsione con quello che è successo realmente."
     )
@@ -855,6 +1018,152 @@ def append_accuracy_section(lines, prediction_log):
     lines.append("")
 
 
+def append_calibration_section(lines, prediction_log, all_results):
+    lines.append("# Scanner autocalibrato")
+    lines.append("")
+    lines.append(
+        "Questa è una sezione separata dalla previsione storica grezza. "
+        "La previsione grezza resta quella basata sui pattern storici. "
+        "Qui invece lo scanner guarda i propri errori passati e prova a correggere leggermente la lettura."
+    )
+    lines.append("")
+    lines.append("## Come funziona")
+    lines.append("")
+    lines.append(
+        "Lo scanner confronta le sue vecchie previsioni con la realtà dopo 30 giorni."
+    )
+    lines.append("")
+    lines.append("- Se in passato è stato troppo ottimista, abbassa la stima.")
+    lines.append("- Se in passato è stato troppo pessimista, alza la stima.")
+    lines.append("- Se ha sottostimato il drawdown, rende la zona rischio più prudente.")
+    lines.append("- Se ha sovrastimato gli spike, riduce la zona rialzo calibrata.")
+    lines.append("")
+    lines.append(
+        "La calibrazione non modifica il codice. Crea solo una seconda lettura: "
+        "**scanner grezzo** contro **scanner corretto dai suoi errori reali**."
+    )
+    lines.append("")
+    lines.append(
+        f"Regola: servono almeno **{MIN_CALIBRATION_EVALS} previsioni controllate per asset** "
+        "prima di applicare la calibrazione. Prima di allora mostra solo dati insufficienti."
+    )
+    lines.append("")
+
+    calibration = calibration_summary(prediction_log)
+
+    if calibration.empty:
+        lines.append("Dati insufficienti per qualsiasi calibrazione.")
+        lines.append("")
+        return
+
+    for target, result in all_results.items():
+        name = asset_name(target)
+        current_price = result["prices"]["current_price"]
+        percentiles = result["percentiles"]
+        summary = result["summary"]
+
+        cal_row = calibration[calibration["asset"] == target]
+
+        if cal_row.empty:
+            continue
+
+        cal = cal_row.iloc[0]
+        n = int(cal["evaluated_predictions"])
+
+        lines.append(f"## {name}")
+        lines.append("")
+
+        if cal["calibration_status"] != "active":
+            lines.append(
+                f"Dati ancora insufficienti: previsioni controllate **{n}** su "
+                f"**{MIN_CALIBRATION_EVALS}** necessarie."
+            )
+            lines.append("")
+            lines.append(
+                "Per ora si usa solo lo scanner storico grezzo. "
+                "Quando ci saranno abbastanza previsioni controllate, qui apparirà la lettura autocalibrata."
+            )
+            lines.append("")
+            continue
+
+        raw_return_p50, raw_return_p50_price = get_percentile_price(
+            percentiles,
+            "return_30d",
+            50
+        )
+        raw_drawdown_p50, raw_drawdown_p50_price = get_percentile_price(
+            percentiles,
+            "drawdown_30d",
+            50
+        )
+        raw_max_gain_p50, raw_max_gain_p50_price = get_percentile_price(
+            percentiles,
+            "max_gain_30d",
+            50
+        )
+
+        return_bias = float(cal["return_bias_pct"])
+        drawdown_bias = float(cal["drawdown_bias_pct"])
+        max_gain_bias = float(cal["max_gain_bias_pct"])
+
+        calibrated_return = raw_return_p50 + return_bias
+        calibrated_drawdown = raw_drawdown_p50 + drawdown_bias
+        calibrated_max_gain = raw_max_gain_p50 + max_gain_bias
+
+        calibrated_return_price = pct_to_price(current_price, calibrated_return)
+        calibrated_drawdown_price = pct_to_price(current_price, calibrated_drawdown)
+        calibrated_max_gain_price = pct_to_price(current_price, calibrated_max_gain)
+
+        raw_direction, up_prob, down_prob = direction_label(summary["positive_cases_30d"])
+        final_direction = calibrated_direction(calibrated_return)
+
+        lines.append(f"- Previsioni controllate: **{n}**")
+        lines.append(f"- Previsioni usate per la calibrazione recente: **{int(cal['used_predictions'])}**")
+        lines.append(f"- Affidabilità direzionale storica: **{cal['reliability']}**")
+        if not pd.isna(cal["directional_accuracy_pct"]):
+            lines.append(f"- Direzione indovinata in passato: **{fmt_pct(cal['directional_accuracy_pct'])}**")
+        lines.append("")
+
+        lines.append("### Confronto: grezzo vs autocalibrato")
+        lines.append("")
+        lines.append(f"- Direzione grezza oggi: **{raw_direction}**")
+        lines.append(f"- Direzione calibrata oggi: **{final_direction}**")
+        lines.append("")
+
+        lines.append("### Return 30d — prezzo finale fra 30 giorni")
+        lines.append("")
+        lines.append(f"- Grezzo: **{fmt_pct(raw_return_p50)}** → **{fmt_price(raw_return_p50_price)}**")
+        lines.append(f"- Correzione imparata dagli errori: **{fmt_pct(return_bias)}**")
+        lines.append(f"- Calibrato: **{fmt_pct(calibrated_return)}** → **{fmt_price(calibrated_return_price)}**")
+        lines.append(f"- Lettura: {bias_sentence('return', return_bias)}")
+        lines.append("")
+
+        lines.append("### Drawdown 30d — rischio di discesa durante il mese")
+        lines.append("")
+        lines.append(f"- Grezzo: **{fmt_pct(raw_drawdown_p50)}** → **{fmt_price(raw_drawdown_p50_price)}**")
+        lines.append(f"- Correzione imparata dagli errori: **{fmt_pct(drawdown_bias)}**")
+        lines.append(f"- Calibrato: **{fmt_pct(calibrated_drawdown)}** → **{fmt_price(calibrated_drawdown_price)}**")
+        lines.append(f"- Lettura: {bias_sentence('drawdown', drawdown_bias)}")
+        lines.append("")
+
+        lines.append("### Max gain 30d — rialzo/spike durante il mese")
+        lines.append("")
+        lines.append(f"- Grezzo: **{fmt_pct(raw_max_gain_p50)}** → **{fmt_price(raw_max_gain_p50_price)}**")
+        lines.append(f"- Correzione imparata dagli errori: **{fmt_pct(max_gain_bias)}**")
+        lines.append(f"- Calibrato: **{fmt_pct(calibrated_max_gain)}** → **{fmt_price(calibrated_max_gain_price)}**")
+        lines.append(f"- Lettura: {bias_sentence('max_gain', max_gain_bias)}")
+        lines.append("")
+
+        lines.append("### Come leggerlo")
+        lines.append("")
+        lines.append(
+            "La parte grezza ti dice cosa mostrano i vecchi pattern storici. "
+            "La parte calibrata ti dice come cambia quella lettura dopo aver visto se lo scanner, "
+            "nel mercato reale, è stato troppo ottimista o troppo pessimista."
+        )
+        lines.append("")
+
+
 def add_how_to_read_report(lines):
     lines.append("# Come leggere questo report")
     lines.append("")
@@ -865,7 +1174,7 @@ def add_how_to_read_report(lines):
     lines.append("3. **Return 30d**: ti dice dove potrebbe stare il prezzo fra 30 giorni.")
     lines.append("4. **Drawdown 30d**: ti dice quanto potrebbe scendere durante quei 30 giorni.")
     lines.append("5. **Max gain 30d**: ti dice quanto potrebbe salire durante quei 30 giorni.")
-    lines.append("6. **Percentili**: trasformano questi dati in scenari: molto male, male, normale, bene, molto bene.")
+    lines.append("6. **Scanner autocalibrato**: dopo abbastanza dati, confronta previsione e realtà e corregge la lettura.")
     lines.append("")
     lines.append("La frase più importante è questa:")
     lines.append("")
@@ -1172,6 +1481,11 @@ def build_markdown_report(all_results, generated_at, prediction_log):
 
     append_accuracy_section(lines, prediction_log)
 
+    lines.append("---")
+    lines.append("")
+
+    append_calibration_section(lines, prediction_log, all_results)
+
     for target, result in all_results.items():
         name = asset_name(target)
         verdict_value = result["verdict"]
@@ -1317,6 +1631,9 @@ def main():
     accuracy = accuracy_summary(prediction_log)
     accuracy.to_csv(ACCURACY_REPORT_PATH, index=False)
 
+    calibration = calibration_summary(prediction_log)
+    calibration.to_csv(CALIBRATION_REPORT_PATH, index=False)
+
     report_md = build_markdown_report(all_results, generated_at, prediction_log)
 
     with open("reports/latest_report.md", "w", encoding="utf-8") as f:
@@ -1326,6 +1643,7 @@ def main():
     print("Report saved in reports/latest_report.md")
     print("Prediction log saved in reports/prediction_log.csv")
     print("Accuracy report saved in reports/accuracy_report.csv")
+    print("Calibration report saved in reports/calibration_report.csv")
 
 
 if __name__ == "__main__":
