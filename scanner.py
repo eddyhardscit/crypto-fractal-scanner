@@ -48,13 +48,16 @@ def add_indicators(df):
     delta = df["Close"].diff()
     gain = delta.clip(lower=0)
     loss = -delta.clip(upper=0)
+
     avg_gain = gain.rolling(14).mean()
     avg_loss = loss.rolling(14).mean()
+
     rs = avg_gain / avg_loss
     df["rsi"] = 100 - (100 / (1 + rs))
 
     ema12 = df["Close"].ewm(span=12, adjust=False).mean()
     ema26 = df["Close"].ewm(span=26, adjust=False).mean()
+
     df["macd"] = ema12 - ema26
     df["macd_signal"] = df["macd"].ewm(span=9, adjust=False).mean()
     df["macd_hist"] = df["macd"] - df["macd_signal"]
@@ -72,8 +75,10 @@ def zscore_array(x):
     x = np.array(x, dtype=float)
     mean = np.nanmean(x)
     std = np.nanstd(x)
+
     if std == 0 or np.isnan(std):
         std = 1
+
     return (x - mean) / std
 
 
@@ -124,6 +129,7 @@ def future_stats(df, end_idx):
 
 def download_data():
     print("Downloading data...")
+
     raw = yf.download(
         CRYPTO_TICKERS,
         period="10y",
@@ -139,11 +145,17 @@ def download_data():
     for ticker in CRYPTO_TICKERS:
         try:
             df = raw[ticker].dropna().copy()
+
             if len(df) > 300:
                 processed = add_indicators(df)
+
                 if len(processed) > 250:
                     asset_data[ticker] = processed
-                    print(f"{ticker}: OK {processed.index[0].date()} -> {processed.index[-1].date()}")
+                    print(
+                        f"{ticker}: OK "
+                        f"{processed.index[0].date()} -> {processed.index[-1].date()}"
+                    )
+
         except Exception as e:
             print(f"{ticker}: skipped ({e})")
 
@@ -199,9 +211,13 @@ def deoverlap_matches(matches):
     for _, row in m.iterrows():
         asset = row["similar_asset"]
         end_date = row["end_date_dt"]
+
         previous_dates = kept_dates_by_asset.get(asset, [])
 
-        too_close = any(abs((end_date - prev_date).days) < MIN_GAP_DAYS for prev_date in previous_dates)
+        too_close = any(
+            abs((end_date - prev_date).days) < MIN_GAP_DAYS
+            for prev_date in previous_dates
+        )
 
         if not too_close:
             kept_rows.append(row)
@@ -220,8 +236,10 @@ def verdict(matches):
 
     if win30 >= 65 and ret30 > 5:
         return "RIALZISTA"
+
     if win30 <= 40 and ret30 < 0:
         return "RIBASSISTA"
+
     return "NEUTRALE / INCERTO"
 
 
@@ -262,6 +280,7 @@ def percentile_report(matches, current_price):
         for q in [10, 25, 50, 75, 90]:
             pct = np.percentile(values, q)
             price = current_price * (1 + pct / 100)
+
             rows.append({
                 "metric": metric,
                 "percentile": q,
@@ -273,47 +292,266 @@ def percentile_report(matches, current_price):
 
 
 def build_markdown_report(all_results, generated_at):
+    def fmt_price(value):
+        return f"{value:,.2f} $"
+
+    def fmt_pct(value):
+        return f"{value:.2f}%"
+
+    def semaforo(verdict_value):
+        if verdict_value == "RIALZISTA":
+            return "🟢 VERDE / Favorevole"
+        if verdict_value == "RIBASSISTA":
+            return "🔴 ROSSO / Prudenza"
+        return "🟡 GIALLO / Incerto"
+
+    def asset_name(target):
+        if target == "BTC-USD":
+            return "Bitcoin"
+        if target == "SOL-USD":
+            return "Solana"
+        return target
+
+    def simple_verdict_text(target, verdict_value):
+        name = asset_name(target)
+
+        if verdict_value == "RIALZISTA":
+            return (
+                f"{name} ha un segnale abbastanza favorevole. "
+                "Nei casi storici più simili, il prezzo è salito più spesso che sceso. "
+                "Questo non vuol dire certezza, ma il contesto è più positivo."
+            )
+
+        if verdict_value == "RIBASSISTA":
+            return (
+                f"{name} richiede prudenza. "
+                "Nei casi storici più simili, il prezzo non ha avuto una partenza pulita. "
+                "Spesso ha fatto prima una discesa importante. "
+                "Con leva, questa è la parte più pericolosa."
+            )
+
+        return (
+            f"{name} è in una situazione incerta. "
+            "Lo scanner non vede un vantaggio chiaro né per il rialzo né per il ribasso. "
+            "In questi casi è meglio non forzare la previsione."
+        )
+
+    def get_percentile_price(percentiles, metric, q):
+        row = percentiles[
+            (percentiles["metric"] == metric) &
+            (percentiles["percentile"] == q)
+        ]
+
+        if len(row) == 0:
+            return None, None
+
+        percent_value = float(row["percent_value"].iloc[0])
+        price_level = float(row["price_level"].iloc[0])
+
+        return percent_value, price_level
+
+    def percentile_lines(percentiles, metric):
+        labels = {
+            10: "scenario brutto",
+            25: "scenario negativo",
+            50: "scenario centrale",
+            75: "scenario buono",
+            90: "scenario molto buono",
+        }
+
+        lines = []
+
+        for q in [10, 25, 50, 75, 90]:
+            percent_value, price_level = get_percentile_price(percentiles, metric, q)
+
+            if percent_value is None:
+                continue
+
+            lines.append(
+                f"- **{labels[q]}**: {fmt_pct(percent_value)} → **{fmt_price(price_level)}**"
+            )
+
+        return lines
+
     lines = []
-    lines.append(f"# Crypto Fractal Scanner Report")
+
+    lines.append("# Report giornaliero BTC / SOL")
     lines.append("")
-    lines.append(f"Generated at: **{generated_at} UTC**")
+    lines.append(f"Aggiornato il: **{generated_at} UTC**")
     lines.append("")
-    lines.append("This report compares the latest 100 daily candles of BTC and SOL against historical crypto patterns.")
-    lines.append("It is not financial advice. It is a statistical pattern scanner.")
+    lines.append(
+        "Questo report confronta il grafico attuale di Bitcoin e Solana "
+        "con tanti grafici storici di altre crypto."
+    )
+    lines.append("")
+    lines.append(
+        "Non è una previsione certa. È uno scanner statistico: "
+        "guarda situazioni simili già successe e mostra cosa accadde dopo."
+    )
+    lines.append("")
+
+    lines.append("## Come leggere il report")
+    lines.append("")
+    lines.append("- **🟢 Verde** = situazione più favorevole.")
+    lines.append("- **🟡 Giallo** = situazione incerta, meglio non forzare.")
+    lines.append("- **🔴 Rosso** = prudenza, rischio più alto.")
+    lines.append("")
+
+    lines.append("## Percentili spiegati semplice")
+    lines.append("")
+    lines.append("- **10%** = scenario brutto.")
+    lines.append("- **25%** = scenario negativo.")
+    lines.append("- **50%** = scenario centrale, cioè la via di mezzo.")
+    lines.append("- **75%** = scenario buono.")
+    lines.append("- **90%** = scenario molto buono.")
+    lines.append("")
+    lines.append(
+        "La parte più importante per chi usa leva è il **drawdown**: "
+        "significa la discesa che il prezzo può fare durante il percorso, "
+        "anche se poi recupera."
+    )
+    lines.append("")
+
+    lines.append("## Spiegazione tecnica dei percentili")
+    lines.append("")
+    lines.append(
+        "I percentili servono a dividere i risultati storici in scenari. "
+        "Lo scanner trova 40 casi storici simili, guarda cosa è successo dopo "
+        "quei 40 casi e poi li ordina dal peggiore al migliore."
+    )
+    lines.append("")
+    lines.append(
+        "- Il **percentile 10** indica un risultato molto debole: "
+        "solo il 10% dei casi è andato peggio o uguale a quel livello."
+    )
+    lines.append(
+        "- Il **percentile 25** indica uno scenario negativo: "
+        "il 25% dei casi è andato peggio o uguale a quel livello."
+    )
+    lines.append(
+        "- Il **percentile 50** è la mediana: "
+        "metà dei casi è andata peggio e metà meglio."
+    )
+    lines.append(
+        "- Il **percentile 75** indica uno scenario buono: "
+        "il 75% dei casi è stato sotto quel livello e il 25% sopra."
+    )
+    lines.append(
+        "- Il **percentile 90** indica uno scenario molto forte: "
+        "solo il 10% dei casi è andato meglio di quel livello."
+    )
+    lines.append("")
+    lines.append(
+        "Quindi il percentile non è una previsione sicura. "
+        "È un modo per dire: nei casi storici simili, questo livello era "
+        "uno scenario brutto, normale, buono o molto buono."
+    )
+    lines.append("")
+    lines.append(
+        "- Per **return_30d**, il percentile indica dove era il prezzo dopo 30 giorni."
+    )
+    lines.append(
+        "- Per **drawdown_30d**, indica quanto il prezzo è sceso durante quei 30 giorni, "
+        "anche se poi ha recuperato."
+    )
+    lines.append(
+        "- Per **max_gain_30d**, indica il massimo rialzo toccato durante quei 30 giorni, "
+        "anche solo temporaneamente."
+    )
     lines.append("")
 
     for target, result in all_results.items():
-        lines.append(f"## {target}")
+        name = asset_name(target)
+        verdict_value = result["verdict"]
+        summary = result["summary"]
+        prices = result["prices"]
+        percentiles = result["percentiles"]
+
+        current_price = prices["current_price"]
+
+        lines.append("---")
         lines.append("")
-        lines.append(f"**Verdict:** {result['verdict']}")
+        lines.append(f"# {name} ({target})")
         lines.append("")
-        lines.append("### Summary")
+        lines.append(f"## Semaforo: {semaforo(verdict_value)}")
         lines.append("")
-        s = result["summary"]
-        lines.append(f"- Matches: **{s['match_count']}**")
-        lines.append(f"- Average similarity: **{s['similarity_avg']:.2f}%**")
-        lines.append(f"- Median similarity: **{s['similarity_median']:.2f}%**")
-        lines.append(f"- Average 30d return: **{s['return_30d_avg']:.2f}%**")
-        lines.append(f"- Median 30d return: **{s['return_30d_median']:.2f}%**")
-        lines.append(f"- Positive cases 30d: **{s['positive_cases_30d']:.1f}%**")
-        lines.append(f"- Average 30d drawdown: **{s['drawdown_30d_avg']:.2f}%**")
-        lines.append(f"- Average 30d max gain: **{s['max_gain_30d_avg']:.2f}%**")
+        lines.append(f"**Prezzo attuale:** {fmt_price(current_price)}")
         lines.append("")
-        lines.append("### Price scenarios")
+
+        lines.append("## Spiegazione semplice")
         lines.append("")
-        p = result["prices"]
-        lines.append(f"- Current price: **{p['current_price']:.2f}**")
-        lines.append(f"- Average 30d scenario: **{p['scenario_avg_30d']:.2f}**")
-        lines.append(f"- Median 30d scenario: **{p['scenario_median_30d']:.2f}**")
-        lines.append(f"- Average drawdown level: **{p['drawdown_avg_30d']:.2f}**")
-        lines.append(f"- Average max-gain level: **{p['max_gain_avg_30d']:.2f}**")
+        lines.append(simple_verdict_text(target, verdict_value))
         lines.append("")
-        lines.append("### Top similar patterns")
+
+        lines.append("## Cosa dicono i 40 casi storici più simili")
+        lines.append("")
+        lines.append(f"- Somiglianza media dei pattern: **{fmt_pct(summary['similarity_avg'])}**")
+        lines.append(f"- Casi positivi dopo 30 giorni: **{summary['positive_cases_30d']:.1f}%**")
+        lines.append(f"- Rendimento medio dopo 30 giorni: **{fmt_pct(summary['return_30d_avg'])}**")
+        lines.append(f"- Rendimento centrale dopo 30 giorni: **{fmt_pct(summary['return_30d_median'])}**")
+        lines.append(f"- Discesa media durante i 30 giorni: **{fmt_pct(summary['drawdown_30d_avg'])}**")
+        lines.append(f"- Massimo rialzo medio durante i 30 giorni: **{fmt_pct(summary['max_gain_30d_avg'])}**")
+        lines.append("")
+
+        lines.append("## Livelli principali")
+        lines.append("")
+        lines.append(f"- Scenario medio a 30 giorni: **{fmt_price(prices['scenario_avg_30d'])}**")
+        lines.append(f"- Scenario centrale a 30 giorni: **{fmt_price(prices['scenario_median_30d'])}**")
+        lines.append(f"- Zona di rischio media: **{fmt_price(prices['drawdown_avg_30d'])}**")
+        lines.append(f"- Zona di rialzo media: **{fmt_price(prices['max_gain_avg_30d'])}**")
+        lines.append("")
+
+        lines.append("## Percentili — dove potrebbe essere il prezzo tra 30 giorni")
+        lines.append("")
+        lines.extend(percentile_lines(percentiles, "return_30d"))
+        lines.append("")
+        lines.append(
+            "Spiegazione: questi livelli indicano dove il prezzo si trovava "
+            "dopo 30 giorni nei casi storici simili."
+        )
+        lines.append("")
+
+        lines.append("## Percentili drawdown — quanto potrebbe scendere durante il percorso")
+        lines.append("")
+        lines.extend(percentile_lines(percentiles, "drawdown_30d"))
+        lines.append("")
+        lines.append(
+            "Spiegazione: questa è la parte più importante se usi leva. "
+            "Il prezzo può scendere a questi livelli anche se poi recupera."
+        )
+        lines.append("")
+
+        lines.append("## Percentili max gain — quanto potrebbe salire durante il percorso")
+        lines.append("")
+        lines.extend(percentile_lines(percentiles, "max_gain_30d"))
+        lines.append("")
+        lines.append(
+            "Spiegazione: questi livelli indicano il massimo rialzo toccato "
+            "nei casi simili, anche solo temporaneamente."
+        )
+        lines.append("")
+
+        if target == "BTC-USD":
+            lines.append("## Nota personale sulla leva")
+            lines.append("")
+            lines.append(
+                "Se hai una posizione long con liquidazione vicino a 51.000 $, "
+                "controlla soprattutto la zona di rischio e i percentili drawdown."
+            )
+            lines.append(
+                "Se lo scanner mostra una zona di rischio vicina alla liquidazione, "
+                "non significa che Bitcoin ci arriverà sicuramente, ma significa che "
+                "il rischio non è remoto."
+            )
+            lines.append("")
+
+        lines.append("## Top 10 pattern simili")
         lines.append("")
         top = result["matches"].head(10)[[
             "similar_asset", "start_date", "end_date", "similarity",
             "return_30d", "drawdown_30d", "max_gain_30d"
         ]].round(2)
+
         lines.append(top.to_markdown(index=False))
         lines.append("")
 
@@ -329,6 +567,10 @@ def main():
 
     for target in TARGETS:
         print(f"Scanning {target}...")
+
+        if target not in data:
+            raise RuntimeError(f"Target {target} not found in downloaded data.")
+
         matches_raw = find_similar_patterns(target, data)
         matches_clean = deoverlap_matches(matches_raw)
 
@@ -344,7 +586,10 @@ def main():
 
         safe_target = target.replace("-USD", "")
         matches_clean.to_csv(f"reports/{safe_target}_matches.csv", index=False)
-        all_results[target]["percentiles"].to_csv(f"reports/{safe_target}_percentiles.csv", index=False)
+        all_results[target]["percentiles"].to_csv(
+            f"reports/{safe_target}_percentiles.csv",
+            index=False
+        )
 
     report_md = build_markdown_report(all_results, generated_at)
 
