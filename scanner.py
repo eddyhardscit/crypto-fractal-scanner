@@ -14,7 +14,7 @@ TOP_N = 200
 CLEAN_TOP_N = 40
 MIN_GAP_DAYS = 90
 
-TARGETS = ["BTC-USD", "SOL-USD"]
+TARGETS = ["BTC-USD", "SOL-USD", "DOGE-USD"]
 
 CRYPTO_TICKERS = [
     "BTC-USD", "ETH-USD", "SOL-USD", "BNB-USD", "XRP-USD",
@@ -30,6 +30,9 @@ CRYPTO_TICKERS = [
     "WAVES-USD", "KAVA-USD", "ONE-USD", "IOTA-USD", "NEO-USD",
     "QTUM-USD", "OMG-USD", "YFI-USD", "1INCH-USD", "LRC-USD"
 ]
+
+PREDICTION_LOG_PATH = "reports/prediction_log.csv"
+ACCURACY_REPORT_PATH = "reports/accuracy_report.csv"
 
 
 def add_indicators(df):
@@ -291,100 +294,473 @@ def percentile_report(matches, current_price):
     return pd.DataFrame(rows)
 
 
-def build_markdown_report(all_results, generated_at):
-    def fmt_number_it(value):
-        s = f"{value:,.2f}"
+def fmt_number_it(value):
+    try:
+        s = f"{float(value):,.2f}"
         return s.replace(",", "X").replace(".", ",").replace("X", ".")
+    except Exception:
+        return str(value)
 
-    def fmt_price(value):
-        return f"{fmt_number_it(value)} $"
 
-    def fmt_pct(value):
-        return f"{fmt_number_it(value)}%"
+def fmt_price(value):
+    return f"{fmt_number_it(value)} $"
 
-    def semaforo(verdict_value):
-        if verdict_value == "RIALZISTA":
-            return "🟢 VERDE / Favorevole"
-        if verdict_value == "RIBASSISTA":
-            return "🔴 ROSSO / Prudenza"
-        return "🟡 GIALLO / Incerto"
 
-    def asset_name(target):
-        if target == "BTC-USD":
-            return "Bitcoin"
-        if target == "SOL-USD":
-            return "Solana"
-        return target
+def fmt_pct(value):
+    return f"{fmt_number_it(value)}%"
 
-    def simple_verdict_text(target, verdict_value):
-        name = asset_name(target)
 
-        if verdict_value == "RIALZISTA":
-            return (
-                f"{name} ha un segnale abbastanza favorevole. "
-                "Nei casi storici più simili, il prezzo è salito più spesso che sceso. "
-                "Questo non vuol dire certezza, ma il contesto è più positivo."
-            )
+def semaforo(verdict_value):
+    if verdict_value == "RIALZISTA":
+        return "🟢 VERDE / Favorevole"
+    if verdict_value == "RIBASSISTA":
+        return "🔴 ROSSO / Prudenza"
+    return "🟡 GIALLO / Incerto"
 
-        if verdict_value == "RIBASSISTA":
-            return (
-                f"{name} richiede prudenza. "
-                "Nei casi storici più simili, il prezzo non ha avuto una partenza pulita. "
-                "Spesso ha fatto prima una discesa importante. "
-                "Con leva, questa è la parte più pericolosa."
-            )
 
+def asset_name(target):
+    if target == "BTC-USD":
+        return "Bitcoin"
+    if target == "SOL-USD":
+        return "Solana"
+    if target == "DOGE-USD":
+        return "Dogecoin"
+    return target
+
+
+def simple_verdict_text(target, verdict_value):
+    name = asset_name(target)
+
+    if verdict_value == "RIALZISTA":
         return (
-            f"{name} è in una situazione incerta. "
-            "Lo scanner non vede un vantaggio chiaro né per il rialzo né per il ribasso. "
-            "In questi casi è meglio non forzare la previsione."
+            f"{name} ha un segnale abbastanza favorevole. "
+            "Nei casi storici più simili, il prezzo è salito più spesso che sceso. "
+            "Questo non vuol dire certezza, ma il contesto è più positivo."
         )
 
-    def get_percentile_price(percentiles, metric, q):
-        row = percentiles[
-            (percentiles["metric"] == metric) &
-            (percentiles["percentile"] == q)
-        ]
+    if verdict_value == "RIBASSISTA":
+        return (
+            f"{name} richiede prudenza. "
+            "Nei casi storici più simili, il prezzo non ha avuto una partenza pulita. "
+            "Spesso ha fatto prima una discesa importante. "
+            "Con leva, questa è la parte più pericolosa."
+        )
 
-        if len(row) == 0:
-            return None, None
+    return (
+        f"{name} è in una situazione incerta. "
+        "Lo scanner non vede un vantaggio chiaro né per il rialzo né per il ribasso. "
+        "In questi casi è meglio non forzare la previsione."
+    )
 
-        percent_value = float(row["percent_value"].iloc[0])
-        price_level = float(row["price_level"].iloc[0])
 
-        return percent_value, price_level
+def get_percentile_price(percentiles, metric, q):
+    row = percentiles[
+        (percentiles["metric"] == metric) &
+        (percentiles["percentile"] == q)
+    ]
 
-    def percentile_lines(percentiles, metric):
-        labels = {
-            10: "scenario brutto",
-            25: "scenario negativo",
-            50: "scenario centrale",
-            75: "scenario buono",
-            90: "scenario molto buono",
-        }
+    if len(row) == 0:
+        return None, None
 
-        lines = []
+    percent_value = float(row["percent_value"].iloc[0])
+    price_level = float(row["price_level"].iloc[0])
 
-        for q in [10, 25, 50, 75, 90]:
-            percent_value, price_level = get_percentile_price(percentiles, metric, q)
+    return percent_value, price_level
 
-            if percent_value is None:
-                continue
 
-            lines.append(
-                f"- **{labels[q]}**: {fmt_pct(percent_value)} → **{fmt_price(price_level)}**"
-            )
-
-        return lines
+def percentile_lines(percentiles, metric):
+    labels = {
+        10: "scenario brutto",
+        25: "scenario negativo",
+        50: "scenario centrale",
+        75: "scenario buono",
+        90: "scenario molto buono",
+    }
 
     lines = []
 
-    lines.append("# Report giornaliero BTC / SOL")
+    for q in [10, 25, 50, 75, 90]:
+        percent_value, price_level = get_percentile_price(percentiles, metric, q)
+
+        if percent_value is None:
+            continue
+
+        lines.append(
+            f"- **{labels[q]}**: {fmt_pct(percent_value)} → **{fmt_price(price_level)}**"
+        )
+
+    return lines
+
+
+def load_prediction_log():
+    if os.path.exists(PREDICTION_LOG_PATH):
+        return pd.read_csv(PREDICTION_LOG_PATH)
+
+    return pd.DataFrame()
+
+
+def percentile_value(percentiles, metric, q, column):
+    row = percentiles[
+        (percentiles["metric"] == metric) &
+        (percentiles["percentile"] == q)
+    ]
+
+    if len(row) == 0:
+        return np.nan
+
+    return float(row[column].iloc[0])
+
+
+def update_prediction_log(log, all_results, generated_at):
+    prediction_date = generated_at[:10]
+
+    for target, result in all_results.items():
+        summary = result["summary"]
+        prices = result["prices"]
+        percentiles = result["percentiles"]
+
+        row = {
+            "prediction_date": prediction_date,
+            "generated_at_utc": generated_at,
+            "asset": target,
+            "verdict": result["verdict"],
+            "current_price": prices["current_price"],
+            "scenario_avg_30d": prices["scenario_avg_30d"],
+            "scenario_median_30d": prices["scenario_median_30d"],
+            "drawdown_avg_30d": prices["drawdown_avg_30d"],
+            "max_gain_avg_30d": prices["max_gain_avg_30d"],
+            "similarity_avg": summary["similarity_avg"],
+            "positive_cases_30d": summary["positive_cases_30d"],
+            "return_30d_avg": summary["return_30d_avg"],
+            "return_30d_median": summary["return_30d_median"],
+            "drawdown_30d_avg": summary["drawdown_30d_avg"],
+            "max_gain_30d_avg": summary["max_gain_30d_avg"],
+            "evaluated": False,
+            "evaluation_date": "",
+            "actual_30d_price": np.nan,
+            "actual_30d_return_pct": np.nan,
+            "actual_min_price_30d": np.nan,
+            "actual_drawdown_pct": np.nan,
+            "actual_max_price_30d": np.nan,
+            "actual_max_gain_pct": np.nan,
+            "directional_correct": np.nan,
+            "central_error_pct": np.nan,
+            "risk_zone_touched": np.nan,
+            "upside_zone_touched": np.nan,
+            "return_within_p10_p90": np.nan,
+            "drawdown_within_p10_p90": np.nan,
+            "max_gain_within_p10_p90": np.nan,
+        }
+
+        for metric, prefix in [
+            ("return_30d", "return"),
+            ("drawdown_30d", "drawdown"),
+            ("max_gain_30d", "max_gain"),
+        ]:
+            for q in [10, 25, 50, 75, 90]:
+                row[f"{prefix}_p{q}_pct"] = percentile_value(
+                    percentiles, metric, q, "percent_value"
+                )
+                row[f"{prefix}_p{q}_price"] = percentile_value(
+                    percentiles, metric, q, "price_level"
+                )
+
+        if not log.empty and {"prediction_date", "asset"}.issubset(log.columns):
+            duplicate_mask = (
+                (log["prediction_date"].astype(str) == prediction_date) &
+                (log["asset"].astype(str) == target)
+            )
+            log = log[~duplicate_mask].copy()
+
+        log = pd.concat([log, pd.DataFrame([row])], ignore_index=True)
+
+    return log
+
+
+def to_float(value):
+    try:
+        return float(value)
+    except Exception:
+        return np.nan
+
+
+def bool_is_true(value):
+    return str(value).lower() in ["true", "1", "yes"]
+
+
+def evaluate_prediction_log(log, data):
+    if log.empty:
+        return log
+
+    if "evaluated" not in log.columns:
+        log["evaluated"] = False
+
+    for idx, row in log.iterrows():
+        if bool_is_true(row.get("evaluated", False)):
+            continue
+
+        asset = row.get("asset")
+
+        if asset not in data:
+            continue
+
+        prediction_date = pd.to_datetime(row.get("prediction_date"), errors="coerce")
+
+        if pd.isna(prediction_date):
+            continue
+
+        due_date = prediction_date + pd.Timedelta(days=30)
+
+        df = data[asset].copy()
+        df_index = pd.DatetimeIndex(df.index)
+
+        if df_index.tz is not None:
+            df_index = df_index.tz_convert(None)
+
+        df_index = df_index.normalize()
+
+        future_positions = np.where(df_index >= due_date.normalize())[0]
+
+        if len(future_positions) == 0:
+            continue
+
+        actual_pos = future_positions[0]
+        actual_date = df_index[actual_pos]
+
+        path_mask = (
+            (df_index >= prediction_date.normalize()) &
+            (df_index <= actual_date)
+        )
+
+        path = df.loc[path_mask]
+
+        if len(path) == 0:
+            continue
+
+        prediction_price = to_float(row.get("current_price"))
+
+        if np.isnan(prediction_price) or prediction_price <= 0:
+            continue
+
+        actual_price = float(df["Close"].iloc[actual_pos])
+        actual_return = (actual_price / prediction_price - 1) * 100
+
+        actual_min = float(path["Close"].min())
+        actual_drawdown = (actual_min / prediction_price - 1) * 100
+
+        actual_max = float(path["Close"].max())
+        actual_max_gain = (actual_max / prediction_price - 1) * 100
+
+        scenario_median_price = to_float(row.get("scenario_median_30d"))
+        drawdown_avg_price = to_float(row.get("drawdown_avg_30d"))
+        max_gain_avg_price = to_float(row.get("max_gain_avg_30d"))
+
+        verdict_value = str(row.get("verdict", ""))
+
+        if verdict_value == "RIALZISTA":
+            directional_correct = actual_return > 0
+        elif verdict_value == "RIBASSISTA":
+            directional_correct = actual_return < 0
+        else:
+            directional_correct = np.nan
+
+        if not np.isnan(scenario_median_price):
+            central_error_pct = abs(actual_price - scenario_median_price) / prediction_price * 100
+        else:
+            central_error_pct = np.nan
+
+        risk_zone_touched = (
+            actual_min <= drawdown_avg_price
+            if not np.isnan(drawdown_avg_price)
+            else np.nan
+        )
+
+        upside_zone_touched = (
+            actual_max >= max_gain_avg_price
+            if not np.isnan(max_gain_avg_price)
+            else np.nan
+        )
+
+        return_p10 = to_float(row.get("return_p10_pct"))
+        return_p90 = to_float(row.get("return_p90_pct"))
+        drawdown_p10 = to_float(row.get("drawdown_p10_pct"))
+        drawdown_p90 = to_float(row.get("drawdown_p90_pct"))
+        max_gain_p10 = to_float(row.get("max_gain_p10_pct"))
+        max_gain_p90 = to_float(row.get("max_gain_p90_pct"))
+
+        return_within = (
+            return_p10 <= actual_return <= return_p90
+            if not np.isnan(return_p10) and not np.isnan(return_p90)
+            else np.nan
+        )
+
+        drawdown_within = (
+            drawdown_p10 <= actual_drawdown <= drawdown_p90
+            if not np.isnan(drawdown_p10) and not np.isnan(drawdown_p90)
+            else np.nan
+        )
+
+        max_gain_within = (
+            max_gain_p10 <= actual_max_gain <= max_gain_p90
+            if not np.isnan(max_gain_p10) and not np.isnan(max_gain_p90)
+            else np.nan
+        )
+
+        log.at[idx, "evaluated"] = True
+        log.at[idx, "evaluation_date"] = actual_date.date().isoformat()
+        log.at[idx, "actual_30d_price"] = actual_price
+        log.at[idx, "actual_30d_return_pct"] = actual_return
+        log.at[idx, "actual_min_price_30d"] = actual_min
+        log.at[idx, "actual_drawdown_pct"] = actual_drawdown
+        log.at[idx, "actual_max_price_30d"] = actual_max
+        log.at[idx, "actual_max_gain_pct"] = actual_max_gain
+        log.at[idx, "directional_correct"] = directional_correct
+        log.at[idx, "central_error_pct"] = central_error_pct
+        log.at[idx, "risk_zone_touched"] = risk_zone_touched
+        log.at[idx, "upside_zone_touched"] = upside_zone_touched
+        log.at[idx, "return_within_p10_p90"] = return_within
+        log.at[idx, "drawdown_within_p10_p90"] = drawdown_within
+        log.at[idx, "max_gain_within_p10_p90"] = max_gain_within
+
+    return log
+
+
+def boolean_rate(series):
+    if series is None or len(series) == 0:
+        return np.nan
+
+    valid = series.dropna()
+
+    if len(valid) == 0:
+        return np.nan
+
+    valid = valid[
+        valid.astype(str).str.lower().isin(["true", "false", "1", "0"])
+    ]
+
+    if len(valid) == 0:
+        return np.nan
+
+    return valid.astype(str).str.lower().isin(["true", "1"]).mean() * 100
+
+
+def accuracy_summary(log):
+    if log.empty or "evaluated" not in log.columns:
+        return pd.DataFrame()
+
+    evaluated_mask = log["evaluated"].astype(str).str.lower().isin(["true", "1"])
+    evaluated = log[evaluated_mask].copy()
+
+    if evaluated.empty:
+        return pd.DataFrame()
+
+    rows = []
+
+    for asset in sorted(evaluated["asset"].unique()):
+        asset_rows = evaluated[evaluated["asset"] == asset].copy()
+
+        central_error = pd.to_numeric(
+            asset_rows.get("central_error_pct"),
+            errors="coerce"
+        ).mean()
+
+        rows.append({
+            "asset": asset,
+            "evaluated_predictions": len(asset_rows),
+            "directional_accuracy_pct": boolean_rate(asset_rows.get("directional_correct")),
+            "avg_central_error_pct": central_error,
+            "risk_zone_touched_pct": boolean_rate(asset_rows.get("risk_zone_touched")),
+            "upside_zone_touched_pct": boolean_rate(asset_rows.get("upside_zone_touched")),
+            "return_inside_p10_p90_pct": boolean_rate(asset_rows.get("return_within_p10_p90")),
+            "drawdown_inside_p10_p90_pct": boolean_rate(asset_rows.get("drawdown_within_p10_p90")),
+            "max_gain_inside_p10_p90_pct": boolean_rate(asset_rows.get("max_gain_within_p10_p90")),
+        })
+
+    return pd.DataFrame(rows)
+
+
+def append_accuracy_section(lines, prediction_log):
+    lines.append("## Controllo accuratezza dello scanner")
+    lines.append("")
+    lines.append(
+        "Questa sezione serve a controllare se lo scanner sta funzionando davvero. "
+        "Ogni giorno viene salvata una previsione. Dopo 30 giorni, lo scanner confronta "
+        "quella previsione con quello che è successo realmente."
+    )
+    lines.append("")
+
+    summary = accuracy_summary(prediction_log)
+
+    if summary.empty:
+        lines.append(
+            "Per ora non ci sono ancora previsioni vecchie di 30 giorni da controllare."
+        )
+        lines.append(
+            "Il controllo vero inizierà automaticamente dopo il primo mese di utilizzo."
+        )
+        lines.append("")
+        return
+
+    lines.append("### Riassunto accuratezza")
+    lines.append("")
+
+    for _, row in summary.iterrows():
+        name = asset_name(row["asset"])
+
+        lines.append(f"#### {name}")
+        lines.append("")
+        lines.append(
+            f"- Previsioni già controllate: **{int(row['evaluated_predictions'])}**"
+        )
+
+        if not np.isnan(row["directional_accuracy_pct"]):
+            lines.append(
+                f"- Direzione corretta: **{fmt_pct(row['directional_accuracy_pct'])}**"
+            )
+        else:
+            lines.append(
+                "- Direzione corretta: non ancora calcolabile, perché molti segnali erano neutrali."
+            )
+
+        if not np.isnan(row["avg_central_error_pct"]):
+            lines.append(
+                f"- Errore medio dello scenario centrale: **{fmt_pct(row['avg_central_error_pct'])}**"
+            )
+
+        if not np.isnan(row["risk_zone_touched_pct"]):
+            lines.append(
+                f"- Zona rischio toccata: **{fmt_pct(row['risk_zone_touched_pct'])}**"
+            )
+
+        if not np.isnan(row["upside_zone_touched_pct"]):
+            lines.append(
+                f"- Zona rialzo media toccata: **{fmt_pct(row['upside_zone_touched_pct'])}**"
+            )
+
+        if not np.isnan(row["return_inside_p10_p90_pct"]):
+            lines.append(
+                f"- Prezzo finale dentro lo scenario 10%-90%: **{fmt_pct(row['return_inside_p10_p90_pct'])}**"
+            )
+
+        lines.append("")
+
+    lines.append(
+        "Spiegazione semplice: se col tempo la direzione corretta è bassa o l'errore medio è alto, "
+        "lo scanner va preso con più cautela. Se invece molte previsioni finiscono dentro i livelli "
+        "previsti, allora lo scanner sta diventando più affidabile."
+    )
+    lines.append("")
+
+
+def build_markdown_report(all_results, generated_at, prediction_log):
+    lines = []
+
+    lines.append("# Report giornaliero BTC / SOL / DOGE")
     lines.append("")
     lines.append(f"Aggiornato il: **{generated_at} UTC**")
     lines.append("")
     lines.append(
-        "Questo report confronta il grafico attuale di Bitcoin e Solana "
+        "Questo report confronta il grafico attuale di Bitcoin, Solana e Dogecoin "
         "con tanti grafici storici di altre crypto."
     )
     lines.append("")
@@ -409,22 +785,21 @@ def build_markdown_report(all_results, generated_at):
         lines.append(f"- Zona rialzo media: **{fmt_price(prices['max_gain_avg_30d'])}**")
         lines.append("")
 
-    btc_verdict = all_results.get("BTC-USD", {}).get("verdict", "")
-    sol_verdict = all_results.get("SOL-USD", {}).get("verdict", "")
+    verdicts = [result["verdict"] for result in all_results.values()]
 
     lines.append("### Messaggio del giorno")
     lines.append("")
 
-    if btc_verdict == "RIBASSISTA" or sol_verdict == "RIBASSISTA":
+    if "RIBASSISTA" in verdicts:
         lines.append(
             "Lo scanner oggi invita alla prudenza. "
-            "BTC e/o SOL possono anche salire, ma nei casi storici simili "
+            "Uno o più asset possono anche salire, ma nei casi storici simili "
             "il prezzo spesso ha fatto prima una discesa importante."
         )
-    elif btc_verdict == "RIALZISTA" and sol_verdict == "RIALZISTA":
+    elif all(v == "RIALZISTA" for v in verdicts):
         lines.append(
             "Lo scanner oggi è più favorevole. "
-            "Nei casi storici simili, BTC e SOL sono saliti più spesso che scesi."
+            "Nei casi storici simili, gli asset analizzati sono saliti più spesso che scesi."
         )
     else:
         lines.append(
@@ -433,6 +808,11 @@ def build_markdown_report(all_results, generated_at):
         )
 
     lines.append("")
+    lines.append("---")
+    lines.append("")
+
+    append_accuracy_section(lines, prediction_log)
+
     lines.append("---")
     lines.append("")
 
@@ -651,13 +1031,23 @@ def main():
             index=False
         )
 
-    report_md = build_markdown_report(all_results, generated_at)
+    prediction_log = load_prediction_log()
+    prediction_log = update_prediction_log(prediction_log, all_results, generated_at)
+    prediction_log = evaluate_prediction_log(prediction_log, data)
+    prediction_log.to_csv(PREDICTION_LOG_PATH, index=False)
+
+    accuracy = accuracy_summary(prediction_log)
+    accuracy.to_csv(ACCURACY_REPORT_PATH, index=False)
+
+    report_md = build_markdown_report(all_results, generated_at, prediction_log)
 
     with open("reports/latest_report.md", "w", encoding="utf-8") as f:
         f.write(report_md)
 
     print(report_md)
     print("Report saved in reports/latest_report.md")
+    print("Prediction log saved in reports/prediction_log.csv")
+    print("Accuracy report saved in reports/accuracy_report.csv")
 
 
 if __name__ == "__main__":
