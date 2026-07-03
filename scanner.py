@@ -773,6 +773,24 @@ def append_accuracy_section(lines, prediction_log):
         "quella previsione con quello che è successo realmente."
     )
     lines.append("")
+    lines.append("## Come leggerla")
+    lines.append("")
+    lines.append(
+        "- **Previsioni già controllate** = quante vecchie previsioni hanno già compiuto 30 giorni."
+    )
+    lines.append(
+        "- **Direzione corretta** = quante volte lo scanner ha indovinato salita o discesa finale a 30 giorni."
+    )
+    lines.append(
+        "- **Errore medio scenario centrale** = quanto era distante il prezzo reale dal prezzo centrale previsto."
+    )
+    lines.append(
+        "- **Zona rischio toccata** = quante volte il prezzo è sceso fino alla zona di rischio prevista."
+    )
+    lines.append(
+        "- **Zona rialzo toccata** = quante volte il prezzo è salito fino alla zona rialzo prevista."
+    )
+    lines.append("")
 
     summary = accuracy_summary(prediction_log)
 
@@ -837,12 +855,32 @@ def append_accuracy_section(lines, prediction_log):
     lines.append("")
 
 
+def add_how_to_read_report(lines):
+    lines.append("# Come leggere questo report")
+    lines.append("")
+    lines.append("Leggilo sempre in questo ordine:")
+    lines.append("")
+    lines.append("1. **Direzione più probabile**: ti dice se storicamente era più facile salita, discesa o incertezza.")
+    lines.append("2. **Casi positivi / negativi**: ti dice la percentuale storica di salita o discesa dopo 30 giorni.")
+    lines.append("3. **Return 30d**: ti dice dove potrebbe stare il prezzo fra 30 giorni.")
+    lines.append("4. **Drawdown 30d**: ti dice quanto potrebbe scendere durante quei 30 giorni.")
+    lines.append("5. **Max gain 30d**: ti dice quanto potrebbe salire durante quei 30 giorni.")
+    lines.append("6. **Percentili**: trasformano questi dati in scenari: molto male, male, normale, bene, molto bene.")
+    lines.append("")
+    lines.append("La frase più importante è questa:")
+    lines.append("")
+    lines.append("> **Return = prezzo finale dopo 30 giorni. Drawdown = discesa durante il mese. Max gain = rialzo durante il mese.**")
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
+
 def add_percentile_cheatsheet(lines):
     lines.append("# Scheda veloce: cosa sono i percentili")
     lines.append("")
     lines.append(
-        "I **percentili** sono solo un modo per dividere i 40 casi storici simili "
-        "in scenari: molto brutto, brutto, normale, buono, molto buono."
+        "I **percentili** sono solo un modo per trasformare i 40 casi storici simili "
+        "in scenari semplici."
     )
     lines.append("")
     lines.append("## Traduzione semplice")
@@ -861,9 +899,19 @@ def add_percentile_cheatsheet(lines):
     lines.append("")
     lines.append("## I tre tipi di percentili")
     lines.append("")
-    lines.append("- **Return 30d** = dove potrebbe stare il prezzo fra 30 giorni.")
-    lines.append("- **Drawdown 30d** = quanto potrebbe scendere durante i 30 giorni.")
-    lines.append("- **Max gain 30d** = quanto potrebbe salire durante i 30 giorni.")
+    lines.append("- **Percentili Return 30d** = dove potrebbe stare il prezzo fra 30 giorni.")
+    lines.append("- **Percentili Drawdown 30d** = quanto potrebbe scendere durante i 30 giorni.")
+    lines.append("- **Percentili Max gain 30d** = quanto potrebbe salire durante i 30 giorni.")
+    lines.append("")
+    lines.append("## Esempio semplice")
+    lines.append("")
+    lines.append("Se SOL oggi vale 82 $ e il report dice:")
+    lines.append("")
+    lines.append("- **Return 50% → 81 $**: fra 30 giorni lo scenario normale è circa 81 $.")
+    lines.append("- **Drawdown 50% → 77 $**: durante il mese può scendere normalmente verso 77 $.")
+    lines.append("- **Max gain 50% → 92 $**: durante il mese può fare uno spike normale verso 92 $.")
+    lines.append("")
+    lines.append("Quindi può salire e scendere durante il mese, ma il **return** guarda solo dove finisce dopo 30 giorni.")
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -901,14 +949,30 @@ def add_asset_simple_map(lines, target, result):
     lines.append(f"**Direzione più probabile a 30 giorni:** **{direction}**")
     lines.append(f"- Probabilità storica di salita: **{fmt_pct(up_prob)}**")
     lines.append(f"- Probabilità storica di discesa: **{fmt_pct(down_prob)}**")
-    lines.append(f"- Forza del segnale: **{strength}**")
+    lines.append(f"- Quanto è netto il segnale: **{strength}**")
+    lines.append("")
+    lines.append("## Come leggere questa parte")
+    lines.append("")
+    lines.append(
+        "- **Probabilità storica di salita** = su 40 casi simili, quanti hanno chiuso sopra dopo 30 giorni."
+    )
+    lines.append(
+        "- **Probabilità storica di discesa** = su 40 casi simili, quanti hanno chiuso sotto dopo 30 giorni."
+    )
+    lines.append(
+        "- **Quanto è netto il segnale** = quanto è grande la differenza tra salita e discesa. "
+        "Non vuol dire certezza, vuol dire solo che il risultato storico non è vicino al 50/50."
+    )
     lines.append("")
     lines.append(simple_direction_sentence(direction, strength))
     lines.append("")
 
-    lines.append("## 1. Prezzo fra 30 giorni")
+    lines.append("## 1. Return 30d — prezzo fra 30 giorni")
     lines.append("")
-    lines.append("Questa parte dice dove potrebbe stare il prezzo **alla fine dei 30 giorni**.")
+    lines.append(
+        "**Return** significa rendimento finale. Qui guardiamo dove potrebbe stare il prezzo "
+        "**alla fine dei 30 giorni**, non durante il percorso."
+    )
     lines.append("")
     lines.append(f"- Se va molto male: **{fmt_price(return_p10_price)}** ({fmt_pct(return_p10)})")
     lines.append(f"- Se va male: **{fmt_price(return_p25_price)}** ({fmt_pct(return_p25)})")
@@ -916,32 +980,44 @@ def add_asset_simple_map(lines, target, result):
     lines.append(f"- Se va bene: **{fmt_price(return_p75_price)}** ({fmt_pct(return_p75)})")
     lines.append(f"- Se va molto bene: **{fmt_price(return_p90_price)}** ({fmt_pct(return_p90)})")
     lines.append("")
+    lines.append("**Come leggerlo:** se vuoi sapere dove potrebbe trovarsi il prezzo fra 30 giorni, guarda soprattutto lo **scenario normale**.")
+    lines.append("")
 
-    lines.append("## 2. Quanto può scendere durante i 30 giorni")
+    lines.append("## 2. Drawdown 30d — discesa durante i 30 giorni")
     lines.append("")
     lines.append(
-        "Questa parte non indica il prezzo finale. Indica la discesa possibile **durante il percorso**. "
-        "È la parte più importante se usi leva."
+        "**Drawdown** significa la discesa massima durante il periodo. "
+        "Non è il prezzo finale: è il punto più basso che il prezzo può toccare durante il mese."
     )
     lines.append("")
     lines.append(f"- Discesa normale: **{fmt_price(drawdown_p50_price)}** ({fmt_pct(drawdown_p50)})")
     lines.append(f"- Discesa brutta: **{fmt_price(drawdown_p25_price)}** ({fmt_pct(drawdown_p25)})")
     lines.append(f"- Discesa molto brutta: **{fmt_price(drawdown_p10_price)}** ({fmt_pct(drawdown_p10)})")
     lines.append("")
+    lines.append(
+        "**Come leggerlo:** se usi leva, questa è la parte più importante. "
+        "Anche se dopo 30 giorni il prezzo recupera, durante il mese può prima scendere qui."
+    )
+    lines.append("")
 
-    lines.append("## 3. Quanto può salire durante i 30 giorni")
+    lines.append("## 3. Max gain 30d — rialzo durante i 30 giorni")
     lines.append("")
     lines.append(
-        "Questa parte non indica il prezzo finale. Indica il massimo rialzo possibile **durante il mese**, "
-        "anche solo come spike temporaneo."
+        "**Max gain** significa il massimo rialzo toccato durante il mese. "
+        "Non è il prezzo finale: può essere anche solo uno spike temporaneo."
     )
     lines.append("")
     lines.append(f"- Rialzo normale: **{fmt_price(max_gain_p50_price)}** ({fmt_pct(max_gain_p50)})")
     lines.append(f"- Rialzo buono: **{fmt_price(max_gain_p75_price)}** ({fmt_pct(max_gain_p75)})")
     lines.append(f"- Rialzo molto forte: **{fmt_price(max_gain_p90_price)}** ({fmt_pct(max_gain_p90)})")
     lines.append("")
+    lines.append(
+        "**Come leggerlo:** questa parte serve per capire possibili zone di take profit. "
+        "Il rialzo normale è più realistico; il rialzo molto forte è possibile ma meno comune."
+    )
+    lines.append("")
 
-    lines.append("## Lettura pratica")
+    lines.append("## Lettura pratica finale")
     lines.append("")
 
     lines.append(
@@ -998,9 +1074,14 @@ def build_markdown_report(all_results, generated_at, prediction_log):
     )
     lines.append("")
 
+    add_how_to_read_report(lines)
     add_percentile_cheatsheet(lines)
 
     lines.append("# Lettura velocissima")
+    lines.append("")
+    lines.append(
+        "Questa è la parte da leggere per prima. Ti dice subito se lo scenario è più da salita, discesa o incertezza."
+    )
     lines.append("")
 
     for target, result in all_results.items():
@@ -1020,15 +1101,21 @@ def build_markdown_report(all_results, generated_at, prediction_log):
 
         lines.append(f"## {name}")
         lines.append(f"- Direzione più probabile a 30 giorni: **{direction}**")
-        lines.append(f"- Salita storica: **{fmt_pct(up_prob)}**")
-        lines.append(f"- Discesa storica: **{fmt_pct(down_prob)}**")
-        lines.append(f"- Forza segnale: **{strength}**")
+        lines.append(f"- Casi positivi / salita storica: **{fmt_pct(up_prob)}**")
+        lines.append(f"- Casi negativi / discesa storica: **{fmt_pct(down_prob)}**")
+        lines.append(f"- Quanto è netto il segnale: **{strength}**")
         lines.append(f"- Prezzo attuale: **{fmt_price(prices['current_price'])}**")
-        lines.append(f"- Prezzo normale fra 30 giorni: **{fmt_price(return_p50_price)}** ({fmt_pct(return_p50)})")
-        lines.append(f"- Discesa normale durante il mese: **{fmt_price(drawdown_p50_price)}** ({fmt_pct(drawdown_p50)})")
-        lines.append(f"- Discesa brutta da rispettare: **{fmt_price(drawdown_p25_price)}** ({fmt_pct(drawdown_p25)})")
-        lines.append(f"- Rialzo normale durante il mese: **{fmt_price(max_gain_p50_price)}** ({fmt_pct(max_gain_p50)})")
-        lines.append(f"- Rialzo buono / take profit ottimistico: **{fmt_price(max_gain_p75_price)}** ({fmt_pct(max_gain_p75)})")
+        lines.append(f"- Return normale fra 30 giorni: **{fmt_price(return_p50_price)}** ({fmt_pct(return_p50)})")
+        lines.append(f"- Drawdown normale durante il mese: **{fmt_price(drawdown_p50_price)}** ({fmt_pct(drawdown_p50)})")
+        lines.append(f"- Drawdown brutto da rispettare: **{fmt_price(drawdown_p25_price)}** ({fmt_pct(drawdown_p25)})")
+        lines.append(f"- Max gain normale durante il mese: **{fmt_price(max_gain_p50_price)}** ({fmt_pct(max_gain_p50)})")
+        lines.append(f"- Max gain buono / take profit ottimistico: **{fmt_price(max_gain_p75_price)}** ({fmt_pct(max_gain_p75)})")
+        lines.append("")
+        lines.append(
+            "**Come leggerlo:** casi positivi/negativi ti dicono la direzione più probabile. "
+            "Return ti dice il prezzo finale fra 30 giorni. Drawdown ti dice il rischio di discesa durante il mese. "
+            "Max gain ti dice il possibile rialzo durante il mese."
+        )
         lines.append("")
 
     lines.append("## Messaggio del giorno")
@@ -1103,15 +1190,31 @@ def build_markdown_report(all_results, generated_at, prediction_log):
         lines.append(simple_verdict_text(target, verdict_value))
         lines.append("")
 
+        lines.append("## Casi positivi e negativi")
+        lines.append("")
+        lines.append(f"- Casi positivi dopo 30 giorni: **{fmt_number_it(summary['positive_cases_30d'])}%**")
+        lines.append(f"- Casi negativi dopo 30 giorni: **{fmt_number_it(100 - summary['positive_cases_30d'])}%**")
+        lines.append("")
+        lines.append(
+            "**Come leggerli:** questi numeri dicono quante volte, nei 40 casi storici simili, "
+            "il prezzo ha chiuso sopra o sotto dopo 30 giorni. Sono la parte più semplice per capire "
+            "se storicamente era più probabile salita o discesa."
+        )
+        lines.append("")
+
         lines.append("## Cosa dicono i 40 casi storici più simili")
         lines.append("")
         lines.append(f"- Somiglianza media dei pattern: **{fmt_pct(summary['similarity_avg'])}**")
-        lines.append(f"- Casi positivi dopo 30 giorni: **{fmt_number_it(summary['positive_cases_30d'])}%**")
-        lines.append(f"- Casi negativi dopo 30 giorni: **{fmt_number_it(100 - summary['positive_cases_30d'])}%**")
         lines.append(f"- Rendimento medio dopo 30 giorni: **{fmt_pct(summary['return_30d_avg'])}**")
         lines.append(f"- Rendimento centrale dopo 30 giorni: **{fmt_pct(summary['return_30d_median'])}**")
         lines.append(f"- Discesa media durante i 30 giorni: **{fmt_pct(summary['drawdown_30d_avg'])}**")
         lines.append(f"- Massimo rialzo medio durante i 30 giorni: **{fmt_pct(summary['max_gain_30d_avg'])}**")
+        lines.append("")
+        lines.append(
+            "**Come leggerli:** il rendimento dopo 30 giorni guarda il prezzo finale. "
+            "La discesa media guarda il rischio durante il mese. Il massimo rialzo medio guarda "
+            "il possibile spike durante il mese."
+        )
         lines.append("")
 
         lines.append("## Livelli principali")
@@ -1121,18 +1224,35 @@ def build_markdown_report(all_results, generated_at, prediction_log):
         lines.append(f"- Zona di rischio media: **{fmt_price(prices['drawdown_avg_30d'])}**")
         lines.append(f"- Zona di rialzo media: **{fmt_price(prices['max_gain_avg_30d'])}**")
         lines.append("")
+        lines.append(
+            "**Come leggerli:** scenario centrale = prezzo finale più normale a 30 giorni. "
+            "Zona rischio = dove può scendere durante il mese. Zona rialzo = dove può arrivare durante uno spike."
+        )
+        lines.append("")
 
         lines.append("## Percentili return — prezzo fra 30 giorni")
+        lines.append("")
+        lines.append(
+            "**Return** significa prezzo finale dopo 30 giorni rispetto al prezzo di oggi."
+        )
         lines.append("")
         lines.extend(percentile_lines(percentiles, "return_30d"))
         lines.append("")
 
         lines.append("## Percentili drawdown — discesa durante i 30 giorni")
         lines.append("")
+        lines.append(
+            "**Drawdown** significa quanto può scendere il prezzo durante il mese, anche se poi recupera."
+        )
+        lines.append("")
         lines.extend(percentile_lines(percentiles, "drawdown_30d"))
         lines.append("")
 
         lines.append("## Percentili max gain — rialzo durante i 30 giorni")
+        lines.append("")
+        lines.append(
+            "**Max gain** significa il massimo rialzo che il prezzo può toccare durante il mese, anche solo temporaneamente."
+        )
         lines.append("")
         lines.extend(percentile_lines(percentiles, "max_gain_30d"))
         lines.append("")
