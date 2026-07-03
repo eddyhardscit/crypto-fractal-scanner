@@ -2,7 +2,8 @@ name: Daily Crypto Fractal Scanner
 
 on:
   schedule:
-    - cron: "0 6 * * *"
+    - cron: "0 10 * * *"
+      timezone: "Europe/Rome"
   workflow_dispatch:
 
 permissions:
@@ -27,6 +28,11 @@ jobs:
           pip install tabulate
 
       - name: Run scanner
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          REPORT_URL: https://github.com/eddyhardscit/crypto-fractal-scanner/blob/main/reports/latest_report.md
         run: python scanner.py
 
       - name: Commit report
