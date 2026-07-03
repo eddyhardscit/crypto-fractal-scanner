@@ -1,41 +1,114 @@
-# Crypto Fractal Scanner Report
+# Report giornaliero BTC / SOL
 
-Generated at: **2026-07-03 19:17:52 UTC**
+Aggiornato il: **2026-07-03 19:38:42 UTC**
 
-This report compares the latest 100 daily candles of BTC and SOL against historical crypto patterns.
-It is not financial advice. It is a statistical pattern scanner.
+Questo report confronta il grafico attuale di Bitcoin e Solana con tanti grafici storici di altre crypto.
 
-## BTC-USD
+Non è una previsione certa. È uno scanner statistico: guarda situazioni simili già successe e mostra cosa accadde dopo.
 
-**Verdict:** RIBASSISTA
+## Come leggere il report
 
-### Summary
+- **🟢 Verde** = situazione più favorevole.
+- **🟡 Giallo** = situazione incerta, meglio non forzare.
+- **🔴 Rosso** = prudenza, rischio più alto.
 
-- Matches: **40**
-- Average similarity: **84.58%**
-- Median similarity: **84.29%**
-- Average 30d return: **-0.31%**
-- Median 30d return: **-2.68%**
-- Positive cases 30d: **35.0%**
-- Average 30d drawdown: **-14.26%**
-- Average 30d max gain: **17.10%**
+## Percentili spiegati semplice
 
-### Price scenarios
+- **10%** = scenario brutto.
+- **25%** = scenario negativo.
+- **50%** = scenario centrale, cioè la via di mezzo.
+- **75%** = scenario buono.
+- **90%** = scenario molto buono.
 
-- Current price: **62219.25**
-- Average 30d scenario: **62023.93**
-- Median 30d scenario: **60549.03**
-- Average drawdown level: **53348.55**
-- Average max-gain level: **72860.22**
+La parte più importante per chi usa leva è il **drawdown**: significa la discesa che il prezzo può fare durante il percorso, anche se poi recupera.
 
-### Top similar patterns
+## Spiegazione tecnica dei percentili
+
+I percentili servono a dividere i risultati storici in scenari. Lo scanner trova 40 casi storici simili, guarda cosa è successo dopo quei 40 casi e poi li ordina dal peggiore al migliore.
+
+- Il **percentile 10** indica un risultato molto debole: solo il 10% dei casi è andato peggio o uguale a quel livello.
+- Il **percentile 25** indica uno scenario negativo: il 25% dei casi è andato peggio o uguale a quel livello.
+- Il **percentile 50** è la mediana: metà dei casi è andata peggio e metà meglio.
+- Il **percentile 75** indica uno scenario buono: il 75% dei casi è stato sotto quel livello e il 25% sopra.
+- Il **percentile 90** indica uno scenario molto forte: solo il 10% dei casi è andato meglio di quel livello.
+
+Quindi il percentile non è una previsione sicura. È un modo per dire: nei casi storici simili, questo livello era uno scenario brutto, normale, buono o molto buono.
+
+- Per **return_30d**, il percentile indica dove era il prezzo dopo 30 giorni.
+- Per **drawdown_30d**, indica quanto il prezzo è sceso durante quei 30 giorni, anche se poi ha recuperato.
+- Per **max_gain_30d**, indica il massimo rialzo toccato durante quei 30 giorni, anche solo temporaneamente.
+
+---
+
+# Bitcoin (BTC-USD)
+
+## Semaforo: 🔴 ROSSO / Prudenza
+
+**Prezzo attuale:** 62,256.04 $
+
+## Spiegazione semplice
+
+Bitcoin richiede prudenza. Nei casi storici più simili, il prezzo non ha avuto una partenza pulita. Spesso ha fatto prima una discesa importante. Con leva, questa è la parte più pericolosa.
+
+## Cosa dicono i 40 casi storici più simili
+
+- Somiglianza media dei pattern: **84.58%**
+- Casi positivi dopo 30 giorni: **35.0%**
+- Rendimento medio dopo 30 giorni: **-0.31%**
+- Rendimento centrale dopo 30 giorni: **-2.68%**
+- Discesa media durante i 30 giorni: **-14.26%**
+- Massimo rialzo medio durante i 30 giorni: **17.10%**
+
+## Livelli principali
+
+- Scenario medio a 30 giorni: **62,060.60 $**
+- Scenario centrale a 30 giorni: **60,584.83 $**
+- Zona di rischio media: **53,380.10 $**
+- Zona di rialzo media: **72,903.30 $**
+
+## Percentili — dove potrebbe essere il prezzo tra 30 giorni
+
+- **scenario brutto**: -24.90% → **46,752.91 $**
+- **scenario negativo**: -15.43% → **52,651.55 $**
+- **scenario centrale**: -2.68% → **60,584.83 $**
+- **scenario buono**: 8.92% → **67,810.92 $**
+- **scenario molto buono**: 29.98% → **80,920.62 $**
+
+Spiegazione: questi livelli indicano dove il prezzo si trovava dopo 30 giorni nei casi storici simili.
+
+## Percentili drawdown — quanto potrebbe scendere durante il percorso
+
+- **scenario brutto**: -39.13% → **37,897.79 $**
+- **scenario negativo**: -26.45% → **45,789.32 $**
+- **scenario centrale**: -6.52% → **58,194.78 $**
+- **scenario buono**: -3.57% → **60,035.34 $**
+- **scenario molto buono**: -1.85% → **61,104.18 $**
+
+Spiegazione: questa è la parte più importante se usi leva. Il prezzo può scendere a questi livelli anche se poi recupera.
+
+## Percentili max gain — quanto potrebbe salire durante il percorso
+
+- **scenario brutto**: 0.00% → **62,256.04 $**
+- **scenario negativo**: 0.41% → **62,510.39 $**
+- **scenario centrale**: 9.52% → **68,183.31 $**
+- **scenario buono**: 20.75% → **75,175.07 $**
+- **scenario molto buono**: 56.52% → **97,441.61 $**
+
+Spiegazione: questi livelli indicano il massimo rialzo toccato nei casi simili, anche solo temporaneamente.
+
+## Nota personale sulla leva
+
+Se hai una posizione long con liquidazione vicino a 51.000 $, controlla soprattutto la zona di rischio e i percentili drawdown.
+Se lo scanner mostra una zona di rischio vicina alla liquidazione, non significa che Bitcoin ci arriverà sicuramente, ma significa che il rischio non è remoto.
+
+## Top 10 pattern simili
 
 | similar_asset   | start_date   | end_date   |   similarity |   return_30d |   drawdown_30d |   max_gain_30d |
 |:----------------|:-------------|:-----------|-------------:|-------------:|---------------:|---------------:|
-| FIL-USD         | 2023-06-09   | 2023-09-16 |        88.42 |        -2.12 |          -4.67 |           4.08 |
-| DOT-USD         | 2023-06-10   | 2023-09-17 |        87.4  |        -9.81 |          -9.84 |           4.57 |
+| FIL-USD         | 2023-06-09   | 2023-09-16 |        88.43 |        -2.12 |          -4.67 |           4.08 |
+| DOT-USD         | 2023-06-10   | 2023-09-17 |        87.39 |        -9.81 |          -9.84 |           4.57 |
 | KSM-USD         | 2022-02-28   | 2022-06-07 |        87.02 |       -21.97 |         -31.43 |           0    |
-| LRC-USD         | 2018-09-09   | 2018-12-17 |        86.69 |        29.47 |          -1.92 |          29.47 |
+| LRC-USD         | 2018-09-09   | 2018-12-17 |        86.68 |        29.47 |          -1.92 |          29.47 |
 | AVAX-USD        | 2023-06-11   | 2023-09-18 |        86.32 |        -2.17 |          -3.57 |          16.94 |
 | NEAR-USD        | 2022-03-02   | 2022-06-09 |        86.12 |       -25.05 |         -39.1  |           0    |
 | YFI-USD         | 2023-06-09   | 2023-09-16 |        86    |        -6.47 |          -8.36 |           0.54 |
@@ -43,40 +116,75 @@ It is not financial advice. It is a statistical pattern scanner.
 | VET-USD         | 2021-09-25   | 2022-01-02 |        85.84 |       -37.35 |         -41.05 |           0    |
 | TRX-USD         | 2018-09-09   | 2018-12-17 |        85.75 |        77.06 |           0    |          99.83 |
 
-## SOL-USD
+---
 
-**Verdict:** NEUTRALE / INCERTO
+# Solana (SOL-USD)
 
-### Summary
+## Semaforo: 🔴 ROSSO / Prudenza
 
-- Matches: **40**
-- Average similarity: **76.35%**
-- Median similarity: **75.84%**
-- Average 30d return: **1.16%**
-- Median 30d return: **-2.08%**
-- Positive cases 30d: **37.5%**
-- Average 30d drawdown: **-11.09%**
-- Average 30d max gain: **22.36%**
+**Prezzo attuale:** 82.99 $
 
-### Price scenarios
+## Spiegazione semplice
 
-- Current price: **82.28**
-- Average 30d scenario: **83.23**
-- Median 30d scenario: **80.57**
-- Average drawdown level: **73.15**
-- Average max-gain level: **100.68**
+Solana richiede prudenza. Nei casi storici più simili, il prezzo non ha avuto una partenza pulita. Spesso ha fatto prima una discesa importante. Con leva, questa è la parte più pericolosa.
 
-### Top similar patterns
+## Cosa dicono i 40 casi storici più simili
+
+- Somiglianza media dei pattern: **76.25%**
+- Casi positivi dopo 30 giorni: **37.5%**
+- Rendimento medio dopo 30 giorni: **-0.22%**
+- Rendimento centrale dopo 30 giorni: **-2.08%**
+- Discesa media durante i 30 giorni: **-11.39%**
+- Massimo rialzo medio durante i 30 giorni: **20.75%**
+
+## Livelli principali
+
+- Scenario medio a 30 giorni: **82.81 $**
+- Scenario centrale a 30 giorni: **81.26 $**
+- Zona di rischio media: **73.54 $**
+- Zona di rialzo media: **100.21 $**
+
+## Percentili — dove potrebbe essere il prezzo tra 30 giorni
+
+- **scenario brutto**: -17.96% → **68.09 $**
+- **scenario negativo**: -9.73% → **74.92 $**
+- **scenario centrale**: -2.08% → **81.26 $**
+- **scenario buono**: 3.71% → **86.07 $**
+- **scenario molto buono**: 23.70% → **102.66 $**
+
+Spiegazione: questi livelli indicano dove il prezzo si trovava dopo 30 giorni nei casi storici simili.
+
+## Percentili drawdown — quanto potrebbe scendere durante il percorso
+
+- **scenario brutto**: -27.46% → **60.20 $**
+- **scenario negativo**: -15.67% → **69.98 $**
+- **scenario centrale**: -6.71% → **77.42 $**
+- **scenario buono**: -3.84% → **79.81 $**
+- **scenario molto buono**: -3.17% → **80.36 $**
+
+Spiegazione: questa è la parte più importante se usi leva. Il prezzo può scendere a questi livelli anche se poi recupera.
+
+## Percentili max gain — quanto potrebbe salire durante il percorso
+
+- **scenario brutto**: 1.35% → **84.11 $**
+- **scenario negativo**: 4.80% → **86.97 $**
+- **scenario centrale**: 12.67% → **93.50 $**
+- **scenario buono**: 24.17% → **103.05 $**
+- **scenario molto buono**: 55.84% → **129.33 $**
+
+Spiegazione: questi livelli indicano il massimo rialzo toccato nei casi simili, anche solo temporaneamente.
+
+## Top 10 pattern simili
 
 | similar_asset   | start_date   | end_date   |   similarity |   return_30d |   drawdown_30d |   max_gain_30d |
 |:----------------|:-------------|:-----------|-------------:|-------------:|---------------:|---------------:|
 | WAVES-USD       | 2019-02-16   | 2019-05-26 |        80.44 |       -14.85 |         -15.54 |           1.21 |
-| LRC-USD         | 2018-09-14   | 2018-12-22 |        79.94 |        55.58 |         -16.08 |          55.79 |
-| OMG-USD         | 2025-11-26   | 2026-03-05 |        78.92 |        -6.89 |          -7.33 |           3.05 |
-| CRV-USD         | 2025-11-25   | 2026-03-04 |        78.78 |       -17.9  |         -18.9  |           0    |
-| EOS-USD         | 2023-06-10   | 2023-09-17 |        78.36 |        -2.79 |          -3.83 |           8.16 |
-| QTUM-USD        | 2018-09-14   | 2018-12-22 |        78.25 |       -14.34 |         -14.34 |          16.52 |
-| ONE-USD         | 2020-01-02   | 2020-04-10 |        78.18 |         2.26 |          -1.13 |          13.63 |
-| APT-USD         | 2024-08-27   | 2024-12-04 |        78.07 |        -4.91 |         -13.84 |           3.57 |
-| MKR-USD         | 2020-01-03   | 2020-04-11 |        78.03 |         2.69 |          -5.91 |          20.88 |
-| CHZ-USD         | 2024-04-14   | 2024-07-22 |        77.94 |       -20.46 |         -29.51 |           0    |
+| LRC-USD         | 2018-09-14   | 2018-12-22 |        79.85 |        55.58 |         -16.08 |          55.79 |
+| OMG-USD         | 2025-11-26   | 2026-03-05 |        78.8  |        -6.89 |          -7.33 |           3.05 |
+| CRV-USD         | 2025-11-25   | 2026-03-04 |        78.68 |       -17.9  |         -18.9  |           0    |
+| EOS-USD         | 2023-06-10   | 2023-09-17 |        78.23 |        -2.79 |          -3.83 |           8.16 |
+| QTUM-USD        | 2018-09-14   | 2018-12-22 |        78.2  |       -14.34 |         -14.34 |          16.52 |
+| ONE-USD         | 2020-01-02   | 2020-04-10 |        78.06 |         2.26 |          -1.13 |          13.63 |
+| APT-USD         | 2024-08-27   | 2024-12-04 |        77.99 |        -4.91 |         -13.84 |           3.57 |
+| MKR-USD         | 2020-01-03   | 2020-04-11 |        77.91 |         2.69 |          -5.91 |          20.88 |
+| CHZ-USD         | 2024-04-14   | 2024-07-22 |        77.83 |       -20.46 |         -29.51 |           0    |
