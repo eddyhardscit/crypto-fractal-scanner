@@ -1,218 +1,180 @@
-# Report liquidazioni / futures BTC / SOL / DOGE
+# Report semplice futures / liquidazioni BTC / SOL / DOGE
 
-Generato: **2026-07-04 10:30:10 CEST**  
-UTC: **2026-07-04 08:30:10 UTC**
+Generato: **2026-07-04 10:42:39 CEST**  
+UTC: **2026-07-04 08:42:39 UTC**
 
-Questo report legge la pressione dei futures: funding, open interest, long/short ratio, taker buy/sell e, se configurata in futuro, heatmap CoinGlass.
+Fonte dati: **OKX Futures pubblici**.  
+Questo report non è la vera heatmap CoinGlass. Serve a capire se il mercato futures è carico di long, short o leva.
 
-## Lettura velocissima
+## Traduzione in parole semplici
 
-| Asset | Prezzo | Prezzo 24h | Funding | OI 24h | Account long | Taker B/S | Lettura | Forza |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | n/d | n/d | n/d | n/d | n/d | n/d | NEUTRALE / MISTO | 1/5 |
-| SOL | n/d | n/d | n/d | n/d | n/d | n/d | NEUTRALE / MISTO | 1/5 |
-| DOGE | n/d | n/d | n/d | n/d | n/d | n/d | NEUTRALE / MISTO | 1/5 |
+| Asset | Lettura | Forza | Cosa significa in pratica |
+| --- | --- | --- | --- |
+| BTC | Rischio sotto | 5/5 | Per un long a leva: prudenza alta. Guarda bene liquidazione e drawdown del report frattale. |
+| SOL | Rischio sotto | 2/5 | Per un long a leva: prudenza alta. Guarda bene liquidazione e drawdown del report frattale. |
+| DOGE | Rischio sotto | 5/5 | Per un long a leva: prudenza alta. Guarda bene liquidazione e drawdown del report frattale. |
 
-## Come leggere questo report
+## Numeri principali
 
-- **Funding positivo**: i long pagano gli short. Se diventa troppo positivo, il mercato può essere troppo long.
-- **Funding negativo**: gli short pagano i long. Se diventa troppo negativo, il mercato può essere troppo short.
-- **Open Interest in aumento**: entra più leva nel sistema.
-- **Open Interest in calo**: parte della leva è già uscita.
-- **Account long troppo alti**: rischio pulizia sotto.
-- **Account short troppo alti**: rischio short squeeze sopra.
-- **Taker buy/sell ratio sopra 1**: compratori aggressivi più forti dei venditori.
-- **Taker buy/sell ratio sotto 1**: venditori aggressivi più forti dei compratori.
+| Asset | Prezzo | Prezzo 24h | Funding | Open Interest | OI 24h | Long/Short |
+| --- | --- | --- | --- | --- | --- | --- |
+| BTC | $62,552 | +1.27% | +0.0058% | $1.97B | +22.01% | 1.69 |
+| SOL | $82.45 | +1.60% | +0.0100% | $288.59M | -20.43% | 3.22 |
+| DOGE | $0.07688 | +2.29% | +0.0100% | $74.28M | +16.22% | 3.83 |
 
-Nota importante: i livelli teorici di liquidazione sotto sono una semplificazione matematica. Non sono la vera heatmap del mercato. La vera heatmap richiede CoinGlass o fonte equivalente.
+## Spiegazione rapida dei termini
+
+- **Funding positivo**: i long pagano gli short. Se è troppo positivo, tanti stanno scommettendo al rialzo.
+- **Funding negativo**: gli short pagano i long. Se è troppo negativo, tanti stanno scommettendo al ribasso.
+- **Open Interest / OI**: quanta leva è aperta sul mercato. Se sale, entra più leva. Se scende, la leva sta uscendo.
+- **Long/Short sopra 1**: più mercato orientato long.
+- **Long/Short sotto 1**: più mercato orientato short.
+- **Flush sotto**: discesa rapida per pulire i long.
+- **Short squeeze sopra**: salita rapida per liquidare gli short.
 
 ---
-
 
 ## Bitcoin — BTC
 
-### Sintesi
+### Lettura semplice
 
-**Lettura:** NEUTRALE / MISTO  
-**Forza:** 1/5  
-**Significato:** I dati futures non danno una direzione netta.
+**RISCHIO DISCESA / FLUSH SOTTO**  
+**Forza segnale: 5/5**
 
-### Metriche principali
+BTC: i futures sembrano più vulnerabili verso una discesa improvvisa. Non significa che deve scendere, ma se rompe sotto può accelerare.
 
-| Metrica | Valore |
-| --- | --- |
-| Prezzo mark | n/d |
-| Variazione prezzo 24h | n/d |
-| Funding rate ultimo | n/d |
-| Prossimo funding | n/d |
-| Open Interest stimato | n/d |
-| Open Interest 24h | n/d |
-| Open Interest 7 giorni | n/d |
-| Account long | n/d |
-| Account short | n/d |
-| Long/Short ratio globale | n/d |
-| Top trader long | n/d |
-| Top trader short | n/d |
-| Top trader long/short ratio | n/d |
-| Taker buy/sell ratio | n/d |
+**Tradotto operativamente:** Per un long a leva: prudenza alta. Guarda bene liquidazione e drawdown del report frattale.
 
-### Perché lo scanner futures legge così
+### Perché
 
-- Nessun segnale futures netto.
+- funding positivo: i long pagano gli short
+- open interest in aumento: più leva nel sistema
+- long/short ratio alto: mercato più long
 
+### Numeri controllati
 
-### Livelli teorici semplificati di liquidazione
-
-Questi livelli sono calcolati come se una posizione fosse stata aperta vicino al prezzo attuale. Sono **indicativi**, non precisi, perché ogni exchange usa margine di mantenimento, fee, modalità isolated/cross e regole diverse.
-
-| Leva | Long circa liquidato sotto | Short circa liquidato sopra |
+| Dato | Valore | Traduzione |
 | --- | --- | --- |
-| n/d | n/d | n/d |
+| Prezzo | $62,552 | prezzo futures/mark usato come riferimento |
+| Prezzo 24h | +1.27% | movimento dell'ultimo giorno |
+| Funding | +0.0058% | positivo = long pagano; negativo = short pagano |
+| Prossimo funding | 2026-07-04 18:00 | prossimo aggiornamento funding |
+| Open Interest stimato | $1.97B | leva aperta stimata in dollari |
+| Open Interest 24h | +22.01% | leva entrata o uscita nelle ultime 24h |
+| Long/Short ratio | 1.69 | sopra 1 = più long; sotto 1 = più short |
 
-### Heatmap CoinGlass
+### Livelli teorici di liquidazione
 
-Heatmap vera CoinGlass: **non attiva**.
+Questi NON sono la vera heatmap. Sono solo una stima semplice: se una posizione fosse aperta vicino al prezzo attuale, più o meno dove rischierebbe la liquidazione.
 
-Motivo: manca il secret `COINGLASS_API_KEY`.
+| Leva | Long liquidato circa sotto | Short liquidato circa sopra |
+| --- | --- | --- |
+| 5x | $50,041 | $75,062 |
+| 10x | $56,296 | $68,807 |
+| 20x | $59,424 | $65,679 |
+| 50x | $61,301 | $63,803 |
 
-Per ora il report usa dati Binance pubblici e livelli teorici semplificati.
+### Note tecniche usate dallo score
 
-
-### Errori/parziali
-
-- premiumIndex: HTTP Error 451: 
-- ticker_24hr: HTTP Error 451: 
-- openInterest: HTTP Error 451: 
-- openInterestHist_1h: HTTP Error 451: 
-- openInterestHist_1d: HTTP Error 451: 
-- globalLongShortAccountRatio_1h: HTTP Error 451: 
-- topLongShortPositionRatio_1h: HTTP Error 451: 
-- takerlongshortRatio_1h: HTTP Error 451: 
+- open interest in forte aumento: entra molta leva
+- prezzo su + leva su + funding positivo: rischio pulizia dei long sotto
+- long/short ratio alto: più mercato sbilanciato long
 
 ---
-
 
 ## Solana — SOL
 
-### Sintesi
+### Lettura semplice
 
-**Lettura:** NEUTRALE / MISTO  
-**Forza:** 1/5  
-**Significato:** I dati futures non danno una direzione netta.
+**RISCHIO DISCESA / FLUSH SOTTO**  
+**Forza segnale: 2/5**
 
-### Metriche principali
+SOL: i futures sembrano più vulnerabili verso una discesa improvvisa. Non significa che deve scendere, ma se rompe sotto può accelerare.
 
-| Metrica | Valore |
-| --- | --- |
-| Prezzo mark | n/d |
-| Variazione prezzo 24h | n/d |
-| Funding rate ultimo | n/d |
-| Prossimo funding | n/d |
-| Open Interest stimato | n/d |
-| Open Interest 24h | n/d |
-| Open Interest 7 giorni | n/d |
-| Account long | n/d |
-| Account short | n/d |
-| Long/Short ratio globale | n/d |
-| Top trader long | n/d |
-| Top trader short | n/d |
-| Top trader long/short ratio | n/d |
-| Taker buy/sell ratio | n/d |
+**Tradotto operativamente:** Per un long a leva: prudenza alta. Guarda bene liquidazione e drawdown del report frattale.
 
-### Perché lo scanner futures legge così
+### Perché
 
-- Nessun segnale futures netto.
+- funding positivo: i long pagano gli short
+- open interest in calo: leva in uscita
+- long/short ratio alto: mercato più long
 
+### Numeri controllati
 
-### Livelli teorici semplificati di liquidazione
-
-Questi livelli sono calcolati come se una posizione fosse stata aperta vicino al prezzo attuale. Sono **indicativi**, non precisi, perché ogni exchange usa margine di mantenimento, fee, modalità isolated/cross e regole diverse.
-
-| Leva | Long circa liquidato sotto | Short circa liquidato sopra |
+| Dato | Valore | Traduzione |
 | --- | --- | --- |
-| n/d | n/d | n/d |
+| Prezzo | $82.45 | prezzo futures/mark usato come riferimento |
+| Prezzo 24h | +1.60% | movimento dell'ultimo giorno |
+| Funding | +0.0100% | positivo = long pagano; negativo = short pagano |
+| Prossimo funding | 2026-07-04 18:00 | prossimo aggiornamento funding |
+| Open Interest stimato | $288.59M | leva aperta stimata in dollari |
+| Open Interest 24h | -20.43% | leva entrata o uscita nelle ultime 24h |
+| Long/Short ratio | 3.22 | sopra 1 = più long; sotto 1 = più short |
 
-### Heatmap CoinGlass
+### Livelli teorici di liquidazione
 
-Heatmap vera CoinGlass: **non attiva**.
+Questi NON sono la vera heatmap. Sono solo una stima semplice: se una posizione fosse aperta vicino al prezzo attuale, più o meno dove rischierebbe la liquidazione.
 
-Motivo: manca il secret `COINGLASS_API_KEY`.
+| Leva | Long liquidato circa sotto | Short liquidato circa sopra |
+| --- | --- | --- |
+| 5x | $65.96 | $98.94 |
+| 10x | $74.20 | $90.70 |
+| 20x | $78.33 | $86.57 |
+| 50x | $80.80 | $84.10 |
 
-Per ora il report usa dati Binance pubblici e livelli teorici semplificati.
+### Note tecniche usate dallo score
 
-
-### Errori/parziali
-
-- premiumIndex: HTTP Error 451: 
-- ticker_24hr: HTTP Error 451: 
-- openInterest: HTTP Error 451: 
-- openInterestHist_1h: HTTP Error 451: 
-- openInterestHist_1d: HTTP Error 451: 
-- globalLongShortAccountRatio_1h: HTTP Error 451: 
-- topLongShortPositionRatio_1h: HTTP Error 451: 
-- takerlongshortRatio_1h: HTTP Error 451: 
+- funding positivo: mercato leggermente carico di long
+- open interest in forte calo: parte della leva è già uscita
+- long/short ratio alto: più mercato sbilanciato long
 
 ---
 
-
 ## Dogecoin — DOGE
 
-### Sintesi
+### Lettura semplice
 
-**Lettura:** NEUTRALE / MISTO  
-**Forza:** 1/5  
-**Significato:** I dati futures non danno una direzione netta.
+**RISCHIO DISCESA / FLUSH SOTTO**  
+**Forza segnale: 5/5**
 
-### Metriche principali
+DOGE: i futures sembrano più vulnerabili verso una discesa improvvisa. Non significa che deve scendere, ma se rompe sotto può accelerare.
 
-| Metrica | Valore |
-| --- | --- |
-| Prezzo mark | n/d |
-| Variazione prezzo 24h | n/d |
-| Funding rate ultimo | n/d |
-| Prossimo funding | n/d |
-| Open Interest stimato | n/d |
-| Open Interest 24h | n/d |
-| Open Interest 7 giorni | n/d |
-| Account long | n/d |
-| Account short | n/d |
-| Long/Short ratio globale | n/d |
-| Top trader long | n/d |
-| Top trader short | n/d |
-| Top trader long/short ratio | n/d |
-| Taker buy/sell ratio | n/d |
+**Tradotto operativamente:** Per un long a leva: prudenza alta. Guarda bene liquidazione e drawdown del report frattale.
 
-### Perché lo scanner futures legge così
+### Perché
 
-- Nessun segnale futures netto.
+- funding positivo: i long pagano gli short
+- open interest in aumento: più leva nel sistema
+- long/short ratio alto: mercato più long
 
+### Numeri controllati
 
-### Livelli teorici semplificati di liquidazione
-
-Questi livelli sono calcolati come se una posizione fosse stata aperta vicino al prezzo attuale. Sono **indicativi**, non precisi, perché ogni exchange usa margine di mantenimento, fee, modalità isolated/cross e regole diverse.
-
-| Leva | Long circa liquidato sotto | Short circa liquidato sopra |
+| Dato | Valore | Traduzione |
 | --- | --- | --- |
-| n/d | n/d | n/d |
+| Prezzo | $0.07688 | prezzo futures/mark usato come riferimento |
+| Prezzo 24h | +2.29% | movimento dell'ultimo giorno |
+| Funding | +0.0100% | positivo = long pagano; negativo = short pagano |
+| Prossimo funding | 2026-07-04 18:00 | prossimo aggiornamento funding |
+| Open Interest stimato | $74.28M | leva aperta stimata in dollari |
+| Open Interest 24h | +16.22% | leva entrata o uscita nelle ultime 24h |
+| Long/Short ratio | 3.83 | sopra 1 = più long; sotto 1 = più short |
 
-### Heatmap CoinGlass
+### Livelli teorici di liquidazione
 
-Heatmap vera CoinGlass: **non attiva**.
+Questi NON sono la vera heatmap. Sono solo una stima semplice: se una posizione fosse aperta vicino al prezzo attuale, più o meno dove rischierebbe la liquidazione.
 
-Motivo: manca il secret `COINGLASS_API_KEY`.
+| Leva | Long liquidato circa sotto | Short liquidato circa sopra |
+| --- | --- | --- |
+| 5x | $0.06150 | $0.09226 |
+| 10x | $0.06919 | $0.08457 |
+| 20x | $0.07304 | $0.08072 |
+| 50x | $0.07534 | $0.07842 |
 
-Per ora il report usa dati Binance pubblici e livelli teorici semplificati.
+### Note tecniche usate dallo score
 
-
-### Errori/parziali
-
-- premiumIndex: HTTP Error 451: 
-- ticker_24hr: HTTP Error 451: 
-- openInterest: HTTP Error 451: 
-- openInterestHist_1h: HTTP Error 451: 
-- openInterestHist_1d: HTTP Error 451: 
-- globalLongShortAccountRatio_1h: HTTP Error 451: 
-- topLongShortPositionRatio_1h: HTTP Error 451: 
-- takerlongshortRatio_1h: HTTP Error 451: 
+- funding positivo: mercato leggermente carico di long
+- open interest in forte aumento: entra molta leva
+- prezzo su + leva su + funding positivo: rischio pulizia dei long sotto
+- long/short ratio alto: più mercato sbilanciato long
 
 ---
