@@ -41,6 +41,9 @@ jobs:
       - name: Run bounce after drawdown report
         run: python bounce_after_drawdown_report.py
 
+      - name: Run decision report
+        run: python decision_report.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions"
