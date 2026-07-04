@@ -166,10 +166,7 @@ def latest_current_price(asset):
 def latest_prediction_time(asset):
     log = read_csv_safe(PREDICTION_LOG_PATH)
 
-    if log.empty:
-        return None
-
-    if "asset" not in log.columns:
+    if log.empty or "asset" not in log.columns:
         return None
 
     rows = log[log["asset"].astype(str) == asset].copy()
@@ -183,8 +180,7 @@ def latest_prediction_time(asset):
             errors="coerce",
         )
         rows = rows.sort_values("generated_at_dt")
-        value = rows.iloc[-1].get("generated_at_utc")
-        return str(value)
+        return str(rows.iloc[-1].get("generated_at_utc"))
 
     return None
 
@@ -233,13 +229,10 @@ def compute_fractal_stats(asset):
         "asset": asset,
         "current_price": current_price,
         "match_count": 0,
-        "similarity_avg": None,
         "return_30d_avg": None,
         "return_30d_median": None,
         "positive_rate_30d": None,
-        "drawdown_30d_avg": None,
         "drawdown_30d_p25": None,
-        "max_gain_30d_avg": None,
         "max_gain_30d_p75": None,
     }
 
@@ -248,13 +241,9 @@ def compute_fractal_stats(asset):
 
     stats["match_count"] = len(matches)
 
-    sim = numeric_series(matches, ["similarity", "similarity_score", "score"])
     ret = numeric_series(matches, ["return_30d", "return_30d_pct"])
     dd = numeric_series(matches, ["drawdown_30d", "drawdown_30d_pct"])
     mg = numeric_series(matches, ["max_gain_30d", "max_gain_30d_pct"])
-
-    if len(sim) > 0:
-        stats["similarity_avg"] = float(sim.mean())
 
     if len(ret) > 0:
         stats["return_30d_avg"] = float(ret.mean())
@@ -262,21 +251,13 @@ def compute_fractal_stats(asset):
         stats["positive_rate_30d"] = float((ret > 0).mean() * 100)
 
     if len(dd) > 0:
-        stats["drawdown_30d_avg"] = float(dd.mean())
         stats["drawdown_30d_p25"] = float(np.percentile(dd, 25))
     else:
         stats["drawdown_30d_p25"] = percentile_metric_pct(asset, matches, "drawdown_30d", 25)
 
     if len(mg) > 0:
-        stats["max_gain_30d_avg"] = float(mg.mean())
         stats["max_gain_30d_p75"] = float(np.percentile(mg, 75))
     else:
-        stats["max_gain_30d_p75"] = percentile_metric_pct(asset, matches, "max_gain_30d", 75)
-
-    if stats["drawdown_30d_p25"] is None:
-        stats["drawdown_30d_p25"] = percentile_metric_pct(asset, matches, "drawdown_30d", 25)
-
-    if stats["max_gain_30d_p75"] is None:
         stats["max_gain_30d_p75"] = percentile_metric_pct(asset, matches, "max_gain_30d", 75)
 
     return stats
@@ -397,11 +378,11 @@ def load_futures_stats(asset):
 
     if funding is not None:
         if funding > 0.08:
-            notes.append("funding alto: long affollati")
+            notes.append("funding alto: molti long affollati")
         elif funding > 0.03:
-            notes.append("funding positivo: leggero affollamento long")
+            notes.append("funding positivo: leggera pressione long")
         elif funding < -0.05:
-            notes.append("funding negativo: possibile squeeze contro gli short")
+            notes.append("funding negativo: tanti short pagano funding")
         else:
             notes.append("funding neutro")
 
@@ -476,205 +457,93 @@ def build_decision(asset):
     long_short = safe_float(futures.get("long_short_ratio"))
     oi_change = safe_float(futures.get("open_interest_change_pct"))
 
-    directional_score = 0.0
+    score = 0.0
     risk_score = 0.0
     reasons = []
     risk_reasons = []
 
+    # Direzione frattale.
     if positive_rate is not None:
         if positive_rate >= 70:
-            directional_score = add_score(
-                directional_score,
-                2.5,
-                reasons,
-                f"molti casi storici positivi a 30 giorni ({fmt_pct(positive_rate)})",
-            )
+            score = add_score(score, 2.5, reasons, f"molti casi storici chiudevano positivi ({fmt_pct(positive_rate)})")
         elif positive_rate >= 60:
-            directional_score = add_score(
-                directional_score,
-                1.5,
-                reasons,
-                f"casi positivi sopra la media ({fmt_pct(positive_rate)})",
-            )
+            score = add_score(score, 1.5, reasons, f"casi positivi sopra la media ({fmt_pct(positive_rate)})")
         elif positive_rate >= 52:
-            directional_score = add_score(
-                directional_score,
-                0.7,
-                reasons,
-                f"leggera maggioranza di casi positivi ({fmt_pct(positive_rate)})",
-            )
+            score = add_score(score, 0.6, reasons, f"leggera maggioranza positiva ({fmt_pct(positive_rate)})")
         elif positive_rate <= 35:
-            directional_score = add_score(
-                directional_score,
-                -2.0,
-                reasons,
-                f"pochi casi storici positivi ({fmt_pct(positive_rate)})",
-            )
+            score = add_score(score, -2.0, reasons, f"pochi casi storici positivi ({fmt_pct(positive_rate)})")
         elif positive_rate <= 45:
-            directional_score = add_score(
-                directional_score,
-                -1.0,
-                reasons,
-                f"casi positivi sotto la media ({fmt_pct(positive_rate)})",
-            )
+            score = add_score(score, -1.0, reasons, f"casi positivi sotto la media ({fmt_pct(positive_rate)})")
 
     if median_return is not None:
         if median_return >= 8:
-            directional_score = add_score(
-                directional_score,
-                2.0,
-                reasons,
-                f"mediana 30 giorni forte ({fmt_pct(median_return)})",
-            )
+            score = add_score(score, 2.0, reasons, f"rendimento mediano forte ({fmt_pct(median_return)})")
         elif median_return >= 3:
-            directional_score = add_score(
-                directional_score,
-                1.0,
-                reasons,
-                f"mediana 30 giorni positiva ({fmt_pct(median_return)})",
-            )
+            score = add_score(score, 1.0, reasons, f"rendimento mediano positivo ({fmt_pct(median_return)})")
         elif median_return <= -8:
-            directional_score = add_score(
-                directional_score,
-                -2.0,
-                reasons,
-                f"mediana 30 giorni negativa ({fmt_pct(median_return)})",
-            )
+            score = add_score(score, -2.0, reasons, f"rendimento mediano negativo ({fmt_pct(median_return)})")
         elif median_return <= -3:
-            directional_score = add_score(
-                directional_score,
-                -1.0,
-                reasons,
-                f"mediana 30 giorni debole ({fmt_pct(median_return)})",
-            )
+            score = add_score(score, -1.0, reasons, f"rendimento mediano debole ({fmt_pct(median_return)})")
 
     if avg_return is not None:
         if avg_return >= 10:
-            directional_score = add_score(
-                directional_score,
-                0.8,
-                reasons,
-                f"media 30 giorni positiva ({fmt_pct(avg_return)})",
-            )
+            score = add_score(score, 0.8, reasons, f"media 30 giorni positiva ({fmt_pct(avg_return)})")
         elif avg_return <= -10:
-            directional_score = add_score(
-                directional_score,
-                -0.8,
-                reasons,
-                f"media 30 giorni negativa ({fmt_pct(avg_return)})",
-            )
+            score = add_score(score, -0.8, reasons, f"media 30 giorni negativa ({fmt_pct(avg_return)})")
 
     if max_gain_p75 is not None:
         if max_gain_p75 >= 20:
-            directional_score = add_score(
-                directional_score,
-                0.8,
-                reasons,
-                f"potenziale rialzo storico P75 alto ({fmt_pct(max_gain_p75)})",
-            )
+            score = add_score(score, 0.7, reasons, f"zona alta storica abbastanza lontana ({fmt_pct(max_gain_p75)})")
         elif max_gain_p75 <= 8:
-            directional_score = add_score(
-                directional_score,
-                -0.4,
-                reasons,
-                f"potenziale rialzo storico P75 basso ({fmt_pct(max_gain_p75)})",
-            )
+            score = add_score(score, -0.4, reasons, f"zona alta storica poco interessante ({fmt_pct(max_gain_p75)})")
 
     if bounce_rate is not None:
         if bounce_rate >= 60:
-            directional_score = add_score(
-                directional_score,
-                0.8,
-                reasons,
-                f"rimbalzo dopo -5% abbastanza frequente ({fmt_pct(bounce_rate)})",
-            )
+            score = add_score(score, 0.8, reasons, f"rimbalzo dopo discesa abbastanza frequente ({fmt_pct(bounce_rate)})")
         elif bounce_rate >= 45:
-            directional_score = add_score(
-                directional_score,
-                0.3,
-                reasons,
-                f"rimbalzo dopo -5% possibile ({fmt_pct(bounce_rate)})",
-            )
+            score = add_score(score, 0.3, reasons, f"rimbalzo dopo discesa possibile ({fmt_pct(bounce_rate)})")
         elif bounce_rate <= 30:
-            directional_score = add_score(
-                directional_score,
-                -0.6,
-                reasons,
-                f"rimbalzo dopo -5% debole ({fmt_pct(bounce_rate)})",
-            )
+            score = add_score(score, -0.6, reasons, f"rimbalzo dopo discesa debole ({fmt_pct(bounce_rate)})")
 
     if dump_rate is not None:
         if dump_rate >= 65:
-            directional_score = add_score(
-                directional_score,
-                -1.0,
-                reasons,
-                f"dump dopo spike +10% frequente ({fmt_pct(dump_rate)})",
-            )
+            score = add_score(score, -1.0, reasons, f"dump dopo spike frequente ({fmt_pct(dump_rate)})")
         elif dump_rate >= 50:
-            directional_score = add_score(
-                directional_score,
-                -0.5,
-                reasons,
-                f"dump dopo spike +10% da monitorare ({fmt_pct(dump_rate)})",
-            )
+            score = add_score(score, -0.5, reasons, f"dump dopo spike da monitorare ({fmt_pct(dump_rate)})")
         elif dump_rate <= 25:
-            directional_score = add_score(
-                directional_score,
-                0.3,
-                reasons,
-                f"dump dopo spike poco frequente ({fmt_pct(dump_rate)})",
-            )
+            score = add_score(score, 0.3, reasons, f"dump dopo spike poco frequente ({fmt_pct(dump_rate)})")
 
+    # Futures.
     if funding is not None:
         if funding > 0.08:
-            directional_score = add_score(
-                directional_score,
-                -0.5,
-                reasons,
-                f"funding alto: mercato long affollato ({fmt_pct(funding)})",
-            )
+            score = add_score(score, -0.5, reasons, f"funding alto: long affollati ({fmt_pct(funding)})")
         elif funding < -0.05:
-            directional_score = add_score(
-                directional_score,
-                0.4,
-                reasons,
-                f"funding negativo: possibile squeeze contro short ({fmt_pct(funding)})",
-            )
+            score = add_score(score, 0.3, reasons, f"funding negativo: possibile squeeze contro short ({fmt_pct(funding)})")
 
     if long_short is not None:
         if long_short >= 1.4:
-            directional_score = add_score(
-                directional_score,
-                -0.4,
-                reasons,
-                f"long/short molto sbilanciato sui long ({fmt_number(long_short, 2)})",
-            )
+            score = add_score(score, -0.4, reasons, f"troppi long aperti ({fmt_number(long_short, 2)})")
         elif long_short <= 0.7:
-            directional_score = add_score(
-                directional_score,
-                0.3,
-                reasons,
-                f"molti short aperti: possibile squeeze ({fmt_number(long_short, 2)})",
-            )
+            score = add_score(score, 0.3, reasons, f"molti short aperti: possibile squeeze ({fmt_number(long_short, 2)})")
 
+    # Rischio.
     if drawdown_p25 is not None:
         if drawdown_p25 <= -22:
             risk_score += 3.0
-            risk_reasons.append(f"drawdown P25 molto pesante ({fmt_pct(drawdown_p25)})")
+            risk_reasons.append(f"zona bassa storica molto profonda ({fmt_pct(drawdown_p25)})")
         elif drawdown_p25 <= -16:
             risk_score += 2.3
-            risk_reasons.append(f"drawdown P25 pesante ({fmt_pct(drawdown_p25)})")
+            risk_reasons.append(f"zona bassa storica profonda ({fmt_pct(drawdown_p25)})")
         elif drawdown_p25 <= -10:
             risk_score += 1.4
-            risk_reasons.append(f"drawdown P25 importante ({fmt_pct(drawdown_p25)})")
+            risk_reasons.append(f"zona bassa storica importante ({fmt_pct(drawdown_p25)})")
         elif drawdown_p25 <= -7:
             risk_score += 0.8
-            risk_reasons.append(f"drawdown P25 moderato ({fmt_pct(drawdown_p25)})")
+            risk_reasons.append(f"zona bassa storica moderata ({fmt_pct(drawdown_p25)})")
 
     if dump_rate is not None and dump_rate >= 60:
         risk_score += 0.8
-        risk_reasons.append(f"spike spesso scaricato ({fmt_pct(dump_rate)})")
+        risk_reasons.append(f"gli spike venivano spesso scaricati ({fmt_pct(dump_rate)})")
 
     if bounce_rate is not None and bounce_rate <= 30:
         risk_score += 0.5
@@ -703,17 +572,18 @@ def build_decision(asset):
     else:
         risk_label = "BASSO"
 
-    if directional_score >= 3.2:
+    if score >= 3.2:
         direction = "BULLISH"
-    elif directional_score >= 1.3:
+    elif score >= 1.3:
         direction = "LEGGERMENTE BULLISH"
-    elif directional_score <= -3.2:
+    elif score <= -3.2:
         direction = "BEARISH"
-    elif directional_score <= -1.3:
+    elif score <= -1.3:
         direction = "LEGGERMENTE BEARISH"
     else:
         direction = "NEUTRALE / INCERTO"
 
+    # Spot.
     if direction == "BULLISH":
         if risk_label in ["BASSO", "MEDIO"]:
             spot_action = "COMPRA / ACCUMULA"
@@ -728,72 +598,96 @@ def build_decision(asset):
     else:
         spot_action = "ASPETTA / HOLD"
 
-    leverage_action = "NO LEVA"
-    leverage_direction = "nessuna"
-    max_leverage = "spot / 1x"
+    # Long a leva.
+    long_action = "NO LONG A LEVA"
+    max_long_leverage = "nessuna"
 
-    if directional_score >= 3.2 and risk_label == "BASSO":
-        leverage_action = "LONG POSSIBILE MA SOLO BASSO"
-        leverage_direction = "long"
-        max_leverage = "max 3x isolated"
-    elif directional_score >= 2.2 and risk_label in ["BASSO", "MEDIO"]:
-        leverage_action = "LONG PRUDENTE"
-        leverage_direction = "long"
-        max_leverage = "max 2x isolated"
-    elif directional_score <= -3.2 and risk_label in ["BASSO", "MEDIO"]:
-        leverage_action = "SHORT PRUDENTE"
-        leverage_direction = "short"
-        max_leverage = "max 2x isolated"
-    elif directional_score <= -2.2 and dump_rate is not None and dump_rate >= 55:
-        leverage_action = "SHORT SOLO DOPO SPIKE"
-        leverage_direction = "short condizionato"
-        max_leverage = "max 2x isolated"
-    else:
-        leverage_action = "NO LEVA"
-        leverage_direction = "nessuna"
-        max_leverage = "spot / 1x"
+    if score >= 3.2 and risk_label == "BASSO":
+        long_action = "LONG POSSIBILE"
+        max_long_leverage = "max 3x isolated"
+    elif score >= 2.2 and risk_label in ["BASSO", "MEDIO"]:
+        long_action = "LONG PRUDENTE"
+        max_long_leverage = "max 2x isolated"
+    elif score >= 1.3 and risk_label == "BASSO":
+        long_action = "LONG SOLO SU PULLBACK"
+        max_long_leverage = "max 2x isolated"
 
-    if risk_label in ["ALTO", "MOLTO ALTO"] and leverage_action != "NO LEVA":
-        leverage_action = "LEVA SCONSIGLIATA"
-        leverage_direction = "nessuna"
-        max_leverage = "spot / 1x"
+    if risk_label in ["ALTO", "MOLTO ALTO"]:
+        long_action = "NO LONG A LEVA"
+        max_long_leverage = "nessuna"
+
+    # Short a leva.
+    # Nota: NO LONG non significa automaticamente SHORT.
+    # Lo short viene favorito solo se il quadro è bearish o se lo spike viene spesso scaricato.
+    short_action = "NO SHORT"
+    max_short_leverage = "nessuna"
+
+    if score <= -3.2 and risk_label in ["BASSO", "MEDIO"]:
+        short_action = "SHORT POSSIBILE"
+        max_short_leverage = "max 2x isolated"
+    elif score <= -3.2 and risk_label in ["ALTO", "MOLTO ALTO"]:
+        short_action = "SHORT SOLO DOPO SPIKE"
+        max_short_leverage = "max 1x-2x isolated"
+    elif score <= -1.3 and dump_rate is not None and dump_rate >= 55:
+        short_action = "SHORT SOLO DOPO SPIKE"
+        max_short_leverage = "max 2x isolated"
+    elif dump_rate is not None and dump_rate >= 65 and score <= 0:
+        short_action = "SHORT SOLO DOPO SPIKE"
+        max_short_leverage = "max 1x-2x isolated"
+
+    if score >= 1.3:
+        short_action = "NO SHORT"
+        max_short_leverage = "nessuna"
 
     pullback_zone = bounce.get("first_price_now")
     bounce_target = bounce.get("second_price_now")
     spike_zone = dump.get("first_price_now")
     dump_target = dump.get("second_price_now")
 
-    drawdown_p25_price = price_from_pct(current_price, drawdown_p25)
-    max_gain_p75_price = price_from_pct(current_price, max_gain_p75)
+    zona_bassa_storica_price = price_from_pct(current_price, drawdown_p25)
+    zona_alta_storica_price = price_from_pct(current_price, max_gain_p75)
 
     plan_parts = []
 
     if spot_action in ["COMPRA / ACCUMULA", "ACCUMULA SOLO SU PULLBACK"]:
         if pullback_zone is not None:
-            plan_parts.append(f"zona accumulo/pullback: circa {fmt_price(pullback_zone)}")
+            plan_parts.append(f"spot: valutare accumulo solo verso {fmt_price(pullback_zone)}")
         else:
-            plan_parts.append("accumulo solo su prezzo migliore")
+            plan_parts.append("spot: accumulo solo su prezzo migliore")
     elif "TAKE PROFIT" in spot_action:
         if spike_zone is not None:
-            plan_parts.append(f"prendere profitto su spike verso {fmt_price(spike_zone)}")
+            plan_parts.append(f"spot: prendere profitto su spike verso {fmt_price(spike_zone)}")
         else:
-            plan_parts.append("prendere profitto su spike")
+            plan_parts.append("spot: prendere profitto su spike")
     elif "VENDI" in spot_action:
-        plan_parts.append("ridurre esposizione, evitare nuovi long")
+        plan_parts.append("spot: ridurre esposizione o stare fuori")
     else:
-        plan_parts.append("aspettare conferma, non forzare entrate")
+        plan_parts.append("spot: aspettare, non forzare entrate")
 
-    if spike_zone is not None:
-        plan_parts.append(f"zona spike/attenzione: circa {fmt_price(spike_zone)}")
+    if long_action != "NO LONG A LEVA":
+        plan_parts.append(f"long: {long_action.lower()}, {max_long_leverage}")
+    else:
+        plan_parts.append("long: evitato")
 
-    if drawdown_p25_price is not None:
-        plan_parts.append(f"zona rischio storica P25: circa {fmt_price(drawdown_p25_price)}")
+    if short_action != "NO SHORT":
+        if spike_zone is not None and dump_target is not None:
+            plan_parts.append(
+                f"short: solo dopo spike verso {fmt_price(spike_zone)}, "
+                f"possibile target scarico {fmt_price(dump_target)}"
+            )
+        else:
+            plan_parts.append(f"short: {short_action.lower()}")
+    else:
+        plan_parts.append("short: evitato")
 
-    if max_gain_p75_price is not None:
-        plan_parts.append(f"target rialzo storico P75: circa {fmt_price(max_gain_p75_price)}")
+    if zona_bassa_storica_price is not None:
+        plan_parts.append(f"zona bassa storica/rischio: {fmt_price(zona_bassa_storica_price)}")
+
+    if zona_alta_storica_price is not None:
+        plan_parts.append(f"zona alta storica/take profit: {fmt_price(zona_alta_storica_price)}")
 
     if not reasons:
-        reasons.append("dati insufficienti o segnali misti")
+        reasons.append("segnali misti o dati insufficienti")
 
     if not risk_reasons:
         risk_reasons.append("rischio non eccessivo dai dati disponibili")
@@ -803,19 +697,20 @@ def build_decision(asset):
         "asset_short": asset_short(asset),
         "current_price": current_price,
         "generated_at_utc": latest_prediction_time(asset),
-        "directional_score": directional_score,
+        "directional_score": score,
         "risk_score": risk_score,
         "direction": direction,
         "risk_label": risk_label,
         "spot_action": spot_action,
-        "leverage_action": leverage_action,
-        "leverage_direction": leverage_direction,
-        "max_leverage": max_leverage,
+        "long_action": long_action,
+        "short_action": short_action,
+        "max_long_leverage": max_long_leverage,
+        "max_short_leverage": max_short_leverage,
         "positive_rate_30d": positive_rate,
         "return_30d_median": median_return,
         "return_30d_avg": avg_return,
-        "drawdown_30d_p25": drawdown_p25,
-        "max_gain_30d_p75": max_gain_p75,
+        "zona_bassa_storica_pct": drawdown_p25,
+        "zona_alta_storica_pct": max_gain_p75,
         "bounce_rate_after_pullback": bounce_rate,
         "dump_rate_after_spike": dump_rate,
         "funding_rate_pct": funding,
@@ -825,10 +720,10 @@ def build_decision(asset):
         "bounce_target": bounce_target,
         "spike_zone": spike_zone,
         "dump_target": dump_target,
-        "drawdown_p25_price": drawdown_p25_price,
-        "max_gain_p75_price": max_gain_p75_price,
-        "main_reasons": "; ".join(reasons[:6]),
-        "risk_reasons": "; ".join(risk_reasons[:5]),
+        "zona_bassa_storica_price": zona_bassa_storica_price,
+        "zona_alta_storica_price": zona_alta_storica_price,
+        "main_reasons": "; ".join(reasons[:7]),
+        "risk_reasons": "; ".join(risk_reasons[:6]),
         "plan": "; ".join(plan_parts),
         "futures_note": futures.get("futures_note"),
     }
@@ -846,10 +741,11 @@ def build_dashboard(decisions):
                 fmt_price(d["current_price"]),
                 d["direction"],
                 d["spot_action"],
-                d["leverage_action"],
-                d["max_leverage"],
+                d["long_action"],
+                d["short_action"],
+                d["max_long_leverage"],
+                d["max_short_leverage"],
                 d["risk_label"],
-                d["plan"],
             ]
         )
 
@@ -857,30 +753,89 @@ def build_dashboard(decisions):
         [
             "Asset",
             "Prezzo",
-            "Direzione scanner",
+            "Direzione",
             "Spot",
-            "Leva",
-            "Max leva",
+            "Long leva",
+            "Short leva",
+            "Max long",
+            "Max short",
             "Rischio",
-            "Piano pratico",
         ],
         rows,
     )
 
 
-def build_simple_verdict(d):
-    asset = d["asset_short"]
+def build_simple_explanation():
+    return "\n".join(
+        [
+            "## Spiegazione semplice",
+            "",
+            "### Zona alta storica",
+            "",
+            "Prima si chiamava `target rialzo storico P75`.",
+            "",
+            "Nome più chiaro: **zona alta storica**.",
+            "",
+            "Vuol dire:",
+            "",
+            "> nei casi storici simili, quella era una zona alta raggiunta nei movimenti migliori.",
+            "",
+            "Non vuol dire che il prezzo ci deve arrivare.",
+            "",
+            "Uso pratico:",
+            "",
+            "> se il prezzo arriva lì, non inseguire alla cieca; pensa a prendere profitto o alleggerire.",
+            "",
+            "### Zona bassa storica",
+            "",
+            "Prima si chiamava `drawdown P25`.",
+            "",
+            "Nome più chiaro: **zona bassa storica**.",
+            "",
+            "Vuol dire:",
+            "",
+            "> nei casi storici simili, quella era una discesa pesante ma non impossibile.",
+            "",
+            "Uso pratico:",
+            "",
+            "> se fai leva, la liquidazione non dovrebbe stare vicino a quella zona.",
+            "",
+            "### Long e short",
+            "",
+            "Il report ora separa le due cose:",
+            "",
+            "- **Long leva**: comprare con leva sperando che salga.",
+            "- **Short leva**: vendere con leva sperando che scenda.",
+            "",
+            "Nota importante:",
+            "",
+            "> `NO LONG` non significa automaticamente `SHORT`.",
+            "",
+            "A volte la scelta migliore è semplicemente non fare niente.",
+            "",
+            "Lo short viene indicato solo se:",
+            "",
+            "- il quadro è bearish;",
+            "- oppure gli spike vengono spesso scaricati;",
+            "- e il report prova a indicare la zona dove avrebbe più senso, di solito **dopo uno spike**, non dopo che è già crollato.",
+            "",
+        ]
+    )
 
+
+def build_simple_verdict(d):
     lines = []
 
-    lines.append(f"## {asset_name(d['asset'])} — {asset}")
+    lines.append(f"## {asset_name(d['asset'])} — {d['asset_short']}")
     lines.append("")
     lines.append(f"Prezzo usato: **{fmt_price(d['current_price'])}**")
     lines.append("")
-    lines.append(f"- **Direzione scanner:** {d['direction']}")
-    lines.append(f"- **Azione spot:** {d['spot_action']}")
-    lines.append(f"- **Leva:** {d['leverage_action']}")
-    lines.append(f"- **Max leva prudente:** {d['max_leverage']}")
+    lines.append(f"- **Direzione:** {d['direction']}")
+    lines.append(f"- **Spot:** {d['spot_action']}")
+    lines.append(f"- **Long a leva:** {d['long_action']}")
+    lines.append(f"- **Short a leva:** {d['short_action']}")
+    lines.append(f"- **Max long:** {d['max_long_leverage']}")
+    lines.append(f"- **Max short:** {d['max_short_leverage']}")
     lines.append(f"- **Rischio:** {d['risk_label']}")
     lines.append("")
     lines.append("### Perché")
@@ -891,29 +846,61 @@ def build_simple_verdict(d):
     lines.append("")
     lines.append(f"- {d['risk_reasons']}")
     lines.append("")
-    lines.append("### Numeri utili")
+    lines.append("### Numeri semplici")
     lines.append("")
     lines.append(
         md_table(
             [
                 "Dato",
                 "Valore",
+                "Traduzione",
             ],
             [
-                ["Casi positivi 30 giorni", fmt_pct(d["positive_rate_30d"])],
-                ["Rendimento mediano 30 giorni", fmt_pct(d["return_30d_median"])],
-                ["Drawdown storico P25", fmt_pct(d["drawdown_30d_p25"])],
-                ["Max gain storico P75", fmt_pct(d["max_gain_30d_p75"])],
-                ["Rimbalzo dopo -5% → +10%", fmt_pct(d["bounce_rate_after_pullback"])],
-                ["Dump dopo +10% → -5%", fmt_pct(d["dump_rate_after_spike"])],
-                ["Funding", fmt_pct(d["funding_rate_pct"])],
-                ["Long/Short ratio", fmt_number(d["long_short_ratio"], 2)],
-                ["Open interest change", fmt_pct(d["open_interest_change_pct"])],
+                [
+                    "Casi positivi 30 giorni",
+                    fmt_pct(d["positive_rate_30d"]),
+                    "quante volte i casi simili chiudevano verdi dopo 30 giorni",
+                ],
+                [
+                    "Rendimento mediano",
+                    fmt_pct(d["return_30d_median"]),
+                    "risultato centrale dei casi storici",
+                ],
+                [
+                    "Zona bassa storica",
+                    fmt_pct(d["zona_bassa_storica_pct"]),
+                    "discesa pesante da rispettare",
+                ],
+                [
+                    "Zona alta storica",
+                    fmt_pct(d["zona_alta_storica_pct"]),
+                    "zona alta dove non inseguire troppo",
+                ],
+                [
+                    "Rimbalzo dopo -5% → +10%",
+                    fmt_pct(d["bounce_rate_after_pullback"]),
+                    "se scende prima, quante volte poi rimbalza forte",
+                ],
+                [
+                    "Dump dopo +10% → -5%",
+                    fmt_pct(d["dump_rate_after_spike"]),
+                    "se fa spike prima, quante volte poi scarica",
+                ],
+                [
+                    "Funding",
+                    fmt_pct(d["funding_rate_pct"]),
+                    "se è alto positivo, troppi long possono essere un rischio",
+                ],
+                [
+                    "Long/Short ratio",
+                    fmt_number(d["long_short_ratio"], 2),
+                    "se è alto, ci sono molti long aperti",
+                ],
             ],
         )
     )
     lines.append("")
-    lines.append("### Aree operative secondo lo scanner")
+    lines.append("### Aree operative")
     lines.append("")
     lines.append(
         md_table(
@@ -926,7 +913,7 @@ def build_simple_verdict(d):
                 [
                     "Pullback -5%",
                     fmt_price(d["pullback_zone"]),
-                    "zona dove valutare accumulo, se il resto resta favorevole",
+                    "zona dove valutare accumulo, non comprare a caso",
                 ],
                 [
                     "Target rimbalzo +10%",
@@ -936,7 +923,7 @@ def build_simple_verdict(d):
                 [
                     "Spike +10%",
                     fmt_price(d["spike_zone"]),
-                    "zona dove evitare di inseguire, valutare profitto",
+                    "zona dove non inseguire; possibile take profit o short solo se il quadro è bearish",
                 ],
                 [
                     "Dump -5%",
@@ -944,14 +931,14 @@ def build_simple_verdict(d):
                     "zona di scarico dopo spike",
                 ],
                 [
-                    "Drawdown P25",
-                    fmt_price(d["drawdown_p25_price"]),
-                    "zona rischio storica; la liquidazione dovrebbe stare oltre questa zona",
+                    "Zona bassa storica",
+                    fmt_price(d["zona_bassa_storica_price"]),
+                    "zona rischio; con leva bisogna rispettarla",
                 ],
                 [
-                    "Max gain P75",
-                    fmt_price(d["max_gain_p75_price"]),
-                    "zona rialzista storica favorevole",
+                    "Zona alta storica",
+                    fmt_price(d["zona_alta_storica_price"]),
+                    "zona alta; se ci arriva, pensare a profitto",
                 ],
             ],
         )
@@ -978,31 +965,19 @@ def build_decision_report(decisions):
     lines.append(f"Generato: **{rome_now}**  ")
     lines.append(f"UTC: **{utc_now}**")
     lines.append("")
-    lines.append("Questo report trasforma i dati dello scanner in una lettura operativa.")
+    lines.append("Questo report prende tutti i dati dello scanner e li trasforma in una lettura pratica.")
     lines.append("")
-    lines.append("Non è un ordine automatico. È una bussola:")
+    lines.append("Scopo:")
     lines.append("")
-    lines.append("- cosa favorisce lo scanner;")
-    lines.append("- cosa evitare;")
-    lines.append("- se ha senso spot, long, short o nessuna leva;")
-    lines.append("- quanta leva massima usare in modo prudente.")
-    lines.append("")
-    lines.append("Regola dura usata dal file:")
-    lines.append("")
-    lines.append("> se il rischio è alto o i segnali sono misti, la leva viene sconsigliata.")
+    lines.append("- capire se conviene spot, long, short o aspettare;")
+    lines.append("- separare long e short, invece di mettere tutto dentro una sola voce;")
+    lines.append("- usare parole semplici per zone alte, zone basse e rischio leva.")
     lines.append("")
     lines.append("## Dashboard veloce")
     lines.append("")
     lines.append(build_dashboard(decisions))
     lines.append("")
-    lines.append("## Come leggere le decisioni")
-    lines.append("")
-    lines.append("- **COMPRA / ACCUMULA**: il quadro statistico favorisce rialzo, ma sempre con gestione del rischio.")
-    lines.append("- **ACCUMULA SOLO SU PULLBACK**: non inseguire il prezzo; comprare solo su discesa.")
-    lines.append("- **HOLD / ASPETTA**: dati misti; meglio non forzare.")
-    lines.append("- **TAKE PROFIT SU SPIKE**: se sale forte, lo scanner preferisce prudenza.")
-    lines.append("- **SHORT PRUDENTE**: possibile solo se i dati sono ribassisti e il rischio non è alto.")
-    lines.append("- **NO LEVA**: la leva non compensa il rischio storico.")
+    lines.append(build_simple_explanation())
     lines.append("")
     lines.append("## Dettaglio per asset")
     lines.append("")
@@ -1022,36 +997,21 @@ def build_main_report_block(decisions):
                 d["asset_short"],
                 d["direction"],
                 d["spot_action"],
-                d["leverage_action"],
-                d["max_leverage"],
+                d["long_action"],
+                d["short_action"],
+                d["max_long_leverage"],
+                d["max_short_leverage"],
                 d["risk_label"],
             ]
         )
 
-    strongest = sorted(decisions, key=lambda x: x["directional_score"], reverse=True)
-    riskiest = sorted(decisions, key=lambda x: x["risk_score"], reverse=True)
-
-    best = strongest[0] if strongest else None
-    worst_risk = riskiest[0] if riskiest else None
-
     quick_lines = []
-
-    if best is not None:
-        quick_lines.append(
-            f"- Asset più forte secondo lo scanner: **{best['asset_short']}** "
-            f"({best['direction']}, score {fmt_number(best['directional_score'], 2)})."
-        )
-
-    if worst_risk is not None:
-        quick_lines.append(
-            f"- Asset più rischioso: **{worst_risk['asset_short']}** "
-            f"(rischio {worst_risk['risk_label']})."
-        )
 
     for d in decisions:
         quick_lines.append(
             f"- **{d['asset_short']}**: spot = **{d['spot_action']}**, "
-            f"leva = **{d['leverage_action']}**, max = **{d['max_leverage']}**."
+            f"long = **{d['long_action']}**, short = **{d['short_action']}**, "
+            f"rischio = **{d['risk_label']}**."
         )
 
     return "\n".join(
@@ -1062,15 +1022,17 @@ def build_main_report_block(decisions):
             "",
             "Report separato completo: [decision_report.md](decision_report.md)",
             "",
-            "Questa è la sintesi automatica dello scanner. Trasforma frattali, drawdown, sequenze e futures in una bussola operativa.",
+            "Sintesi automatica dello scanner: spot, long, short e rischio.",
             "",
             md_table(
                 [
                     "Asset",
                     "Direzione",
                     "Spot",
-                    "Leva",
-                    "Max leva",
+                    "Long leva",
+                    "Short leva",
+                    "Max long",
+                    "Max short",
                     "Rischio",
                 ],
                 rows,
@@ -1080,7 +1042,11 @@ def build_main_report_block(decisions):
             "",
             "\n".join(quick_lines),
             "",
-            "Nota: la leva è limitata apposta. Se i dati sono misti o il rischio è alto, il file preferisce **NO LEVA**.",
+            "## Nota semplice",
+            "",
+            "- **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.",
+            "- **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.",
+            "- **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.",
             "",
             "<!-- DECISION_REPORT_END -->",
         ]
@@ -1103,7 +1069,6 @@ def inject_into_main_report(decisions):
         current = before + "\n\n" + after
 
     block = build_main_report_block(decisions).strip()
-
     new_text = block + "\n\n" + current.lstrip()
 
     with open(MAIN_REPORT_PATH, "w", encoding="utf-8") as f:
