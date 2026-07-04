@@ -49,9 +49,12 @@ def safe_float(value):
     try:
         if pd.isna(value):
             return None
+
         value = float(value)
+
         if np.isnan(value) or np.isinf(value):
             return None
+
         return value
     except Exception:
         return None
@@ -145,7 +148,8 @@ def get_latest_two_by_asset(log, asset):
 
     rows = rows.sort_values(["prediction_date_dt", "generated_at_dt"])
 
-    # Se fai più run manuali nello stesso giorno, tiene solo l'ultima previsione di quel giorno.
+    # Se fai più run manuali nello stesso giorno,
+    # tiene solo l'ultima previsione di quel giorno.
     daily = rows.groupby("prediction_date_dt", as_index=False).tail(1)
     daily = daily.sort_values("prediction_date_dt")
 
@@ -156,6 +160,9 @@ def get_latest_two_by_asset(log, asset):
 
 
 def diff_pct_points(today, yesterday, col):
+    if today is None or yesterday is None:
+        return None
+
     a = safe_float(today.get(col))
     b = safe_float(yesterday.get(col))
 
@@ -166,6 +173,9 @@ def diff_pct_points(today, yesterday, col):
 
 
 def diff_price_pct(today, yesterday, col):
+    if today is None or yesterday is None:
+        return None
+
     a = safe_float(today.get(col))
     b = safe_float(yesterday.get(col))
 
@@ -189,7 +199,10 @@ def classify_change(today, yesterday):
             "level": "PRIMA PREVISIONE",
             "score": 0,
             "tone": "nuovo",
-            "reasons": ["C'è solo una previsione salvata per questo asset. Da domani potrà confrontare oggi vs ieri."],
+            "reasons": [
+                "C'è solo una previsione salvata per questo asset. "
+                "Da domani potrà confrontare oggi vs ieri."
+            ],
         }
 
     score = 0
@@ -204,13 +217,10 @@ def classify_change(today, yesterday):
         score += 3
         reasons.append(f"Verdetto cambiato: {verdict_yesterday} → {verdict_today}")
 
-        bullish_words = ["RIALZISTA"]
-        bearish_words = ["RIBASSISTA"]
-
-        if any(w in verdict_today for w in bullish_words) and not any(w in verdict_yesterday for w in bullish_words):
+        if "RIALZISTA" in verdict_today and "RIALZISTA" not in verdict_yesterday:
             improvement += 2
 
-        if any(w in verdict_today for w in bearish_words) and not any(w in verdict_yesterday for w in bearish_words):
+        if "RIBASSISTA" in verdict_today and "RIBASSISTA" not in verdict_yesterday:
             worsening += 2
 
         if "NEUTRALE" in verdict_today and "RIBASSISTA" in verdict_yesterday:
@@ -224,10 +234,14 @@ def classify_change(today, yesterday):
     if positive_delta is not None:
         if abs(positive_delta) >= 10:
             score += 3
-            reasons.append(f"Casi positivi cambiati molto: {fmt_delta(positive_delta, ' punti')}")
+            reasons.append(
+                f"Casi positivi cambiati molto: {fmt_delta(positive_delta, ' punti')}"
+            )
         elif abs(positive_delta) >= 5:
             score += 1
-            reasons.append(f"Casi positivi cambiati: {fmt_delta(positive_delta, ' punti')}")
+            reasons.append(
+                f"Casi positivi cambiati: {fmt_delta(positive_delta, ' punti')}"
+            )
 
         if positive_delta > 0:
             improvement += 1
@@ -239,10 +253,16 @@ def classify_change(today, yesterday):
     if return_p50_delta is not None:
         if abs(return_p50_delta) >= 5:
             score += 2
-            reasons.append(f"Scenario centrale 30 giorni cambiato molto: {fmt_delta(return_p50_delta, ' punti')}")
+            reasons.append(
+                f"Scenario centrale 30 giorni cambiato molto: "
+                f"{fmt_delta(return_p50_delta, ' punti')}"
+            )
         elif abs(return_p50_delta) >= 2:
             score += 1
-            reasons.append(f"Scenario centrale 30 giorni cambiato: {fmt_delta(return_p50_delta, ' punti')}")
+            reasons.append(
+                f"Scenario centrale 30 giorni cambiato: "
+                f"{fmt_delta(return_p50_delta, ' punti')}"
+            )
 
         if return_p50_delta > 0:
             improvement += 1
@@ -252,33 +272,52 @@ def classify_change(today, yesterday):
     drawdown_p25_delta = diff_pct_points(today, yesterday, "drawdown_p25_pct")
 
     if drawdown_p25_delta is not None:
-        # Per il drawdown: più negativo = peggio. Quindi -5 punti è peggioramento.
+        # Per il drawdown:
+        # più negativo = peggio.
+        # meno negativo = meglio.
         if drawdown_p25_delta <= -5:
             score += 2
             worsening += 2
-            reasons.append(f"Drawdown brutto peggiorato: {fmt_delta(drawdown_p25_delta, ' punti')}")
+            reasons.append(
+                f"Drawdown brutto peggiorato: {fmt_delta(drawdown_p25_delta, ' punti')}"
+            )
         elif drawdown_p25_delta >= 5:
             score += 2
             improvement += 2
-            reasons.append(f"Drawdown brutto migliorato: {fmt_delta(drawdown_p25_delta, ' punti')}")
+            reasons.append(
+                f"Drawdown brutto migliorato: {fmt_delta(drawdown_p25_delta, ' punti')}"
+            )
         elif abs(drawdown_p25_delta) >= 2:
             score += 1
+
             if drawdown_p25_delta > 0:
                 improvement += 1
-                reasons.append(f"Drawdown migliorato leggermente: {fmt_delta(drawdown_p25_delta, ' punti')}")
+                reasons.append(
+                    f"Drawdown migliorato leggermente: "
+                    f"{fmt_delta(drawdown_p25_delta, ' punti')}"
+                )
             else:
                 worsening += 1
-                reasons.append(f"Drawdown peggiorato leggermente: {fmt_delta(drawdown_p25_delta, ' punti')}")
+                reasons.append(
+                    f"Drawdown peggiorato leggermente: "
+                    f"{fmt_delta(drawdown_p25_delta, ' punti')}"
+                )
 
     max_gain_p75_delta = diff_pct_points(today, yesterday, "max_gain_p75_pct")
 
     if max_gain_p75_delta is not None:
         if abs(max_gain_p75_delta) >= 8:
             score += 2
-            reasons.append(f"Potenziale rialzo buono cambiato molto: {fmt_delta(max_gain_p75_delta, ' punti')}")
+            reasons.append(
+                f"Potenziale rialzo buono cambiato molto: "
+                f"{fmt_delta(max_gain_p75_delta, ' punti')}"
+            )
         elif abs(max_gain_p75_delta) >= 4:
             score += 1
-            reasons.append(f"Potenziale rialzo buono cambiato: {fmt_delta(max_gain_p75_delta, ' punti')}")
+            reasons.append(
+                f"Potenziale rialzo buono cambiato: "
+                f"{fmt_delta(max_gain_p75_delta, ' punti')}"
+            )
 
         if max_gain_p75_delta > 0:
             improvement += 1
@@ -290,10 +329,14 @@ def classify_change(today, yesterday):
     if price_delta is not None:
         if abs(price_delta) >= 5:
             score += 2
-            reasons.append(f"Prezzo attuale cambiato molto: {fmt_delta(price_delta, '%')}")
+            reasons.append(
+                f"Prezzo attuale cambiato molto: {fmt_delta(price_delta, '%')}"
+            )
         elif abs(price_delta) >= 2:
             score += 1
-            reasons.append(f"Prezzo attuale cambiato: {fmt_delta(price_delta, '%')}")
+            reasons.append(
+                f"Prezzo attuale cambiato: {fmt_delta(price_delta, '%')}"
+            )
 
     if not reasons:
         reasons.append("Nessuna variazione importante rispetto alla previsione precedente.")
@@ -326,7 +369,10 @@ def simple_sentence(asset, change):
     tone = change["tone"]
 
     if level == "PRIMA PREVISIONE":
-        return f"{short}: prima previsione salvata. Da domani si potrà fare il confronto giorno su giorno."
+        return (
+            f"{short}: prima previsione salvata. "
+            "Da domani si potrà fare il confronto giorno su giorno."
+        )
 
     if level == "NESSUN DATO":
         return f"{short}: nessun dato disponibile."
@@ -374,14 +420,41 @@ def build_report(log):
         if yesterday is not None:
             yesterday_date = fmt_date(yesterday.get("prediction_date"))
             yesterday_verdict = str(yesterday.get("verdict", "n/d"))
-            positive_delta = fmt_delta(diff_pct_points(today, yesterday, "positive_cases_30d"), " punti")
-            return_delta = fmt_delta(diff_pct_points(today, yesterday, "return_p50_pct"), " punti")
-            drawdown_delta = fmt_delta(diff_pct_points(today, yesterday, "drawdown_p25_pct"), " punti")
-            max_gain_delta = fmt_delta(diff_pct_points(today, yesterday, "max_gain_p75_pct"), " punti")
-            price_delta = fmt_delta(diff_price_pct(today, yesterday, "current_price"), "%")
+            yesterday_price = fmt_price(yesterday.get("current_price"))
+            yesterday_positive = fmt_pct(yesterday.get("positive_cases_30d"))
+            yesterday_return_p50 = fmt_pct(yesterday.get("return_p50_pct"))
+            yesterday_drawdown_p25 = fmt_pct(yesterday.get("drawdown_p25_pct"))
+            yesterday_max_gain_p75 = fmt_pct(yesterday.get("max_gain_p75_pct"))
+
+            positive_delta = fmt_delta(
+                diff_pct_points(today, yesterday, "positive_cases_30d"),
+                " punti",
+            )
+            return_delta = fmt_delta(
+                diff_pct_points(today, yesterday, "return_p50_pct"),
+                " punti",
+            )
+            drawdown_delta = fmt_delta(
+                diff_pct_points(today, yesterday, "drawdown_p25_pct"),
+                " punti",
+            )
+            max_gain_delta = fmt_delta(
+                diff_pct_points(today, yesterday, "max_gain_p75_pct"),
+                " punti",
+            )
+            price_delta = fmt_delta(
+                diff_price_pct(today, yesterday, "current_price"),
+                "%",
+            )
         else:
             yesterday_date = "n/d"
             yesterday_verdict = "n/d"
+            yesterday_price = "n/d"
+            yesterday_positive = "n/d"
+            yesterday_return_p50 = "n/d"
+            yesterday_drawdown_p25 = "n/d"
+            yesterday_max_gain_p75 = "n/d"
+
             positive_delta = "n/d"
             return_delta = "n/d"
             drawdown_delta = "n/d"
@@ -416,12 +489,17 @@ def build_report(log):
     ["Dato", "Ieri", "Oggi", "Differenza"],
     [
         ["Data previsione", yesterday_date, today_date, "-"],
-        ["Verdetto", yesterday_verdict, today_verdict, "cambio verdetto" if today_verdict != yesterday_verdict else "uguale"],
-        ["Prezzo attuale", fmt_price(yesterday.get("current_price")) if yesterday is not None else "n/d", today_price, price_delta],
-        ["Casi positivi 30d", fmt_pct(yesterday.get("positive_cases_30d")) if yesterday is not None else "n/d", today_positive, positive_delta],
-        ["Return 30d centrale P50", fmt_pct(yesterday.get("return_p50_pct")) if yesterday is not None else "n/d", today_return_p50, return_delta],
-        ["Drawdown brutto P25", fmt_pct(yesterday.get("drawdown_p25_pct")) if yesterday is not None else "n/d", today_drawdown_p25, drawdown_delta],
-        ["Max gain buono P75", fmt_pct(yesterday.get("max_gain_p75_pct")) if yesterday is not None else "n/d", today_max_gain_p75, max_gain_delta],
+        [
+            "Verdetto",
+            yesterday_verdict,
+            today_verdict,
+            "cambio verdetto" if today_verdict != yesterday_verdict else "uguale",
+        ],
+        ["Prezzo attuale", yesterday_price, today_price, price_delta],
+        ["Casi positivi 30d", yesterday_positive, today_positive, positive_delta],
+        ["Return 30d centrale P50", yesterday_return_p50, today_return_p50, return_delta],
+        ["Drawdown brutto P25", yesterday_drawdown_p25, today_drawdown_p25, drawdown_delta],
+        ["Max gain buono P75", yesterday_max_gain_p75, today_max_gain_p75, max_gain_delta],
     ],
 )}
 
@@ -488,14 +566,20 @@ def build_main_report_block(log):
                 change["tone"],
                 str(today.get("verdict", "n/d")) if today is not None else "n/d",
                 fmt_pct(today.get("positive_cases_30d")) if today is not None else "n/d",
-                fmt_delta(diff_pct_points(today, yesterday, "positive_cases_30d"), " punti") if yesterday is not None else "n/d",
+                (
+                    fmt_delta(
+                        diff_pct_points(today, yesterday, "positive_cases_30d"),
+                        " punti",
+                    )
+                    if yesterday is not None
+                    else "n/d"
+                ),
             ]
         )
 
         simple_lines.append(f"- {simple_sentence(asset, change)}")
 
     return f"""
-
 <!-- DAILY_CHANGE_START -->
 
 ---
@@ -532,15 +616,59 @@ def inject_into_main_report(log):
     start_marker = "<!-- DAILY_CHANGE_START -->"
     end_marker = "<!-- DAILY_CHANGE_END -->"
 
+    # Rimuove il vecchio blocco, se esiste già.
     if start_marker in current and end_marker in current:
         before = current.split(start_marker)[0].rstrip()
         after = current.split(end_marker, 1)[1].lstrip()
         current = before + "\n\n" + after
 
-    block = build_main_report_block(log)
+    block = build_main_report_block(log).strip()
+
+    # Lo mettiamo all'inizio del report, prima delle sezioni lunghe.
+    # Così appena apri latest_report.md capisci subito se vale la pena leggere tutto.
+    insertion_markers = [
+        "\n# Come leggere questo report",
+        "\n# Scheda veloce",
+        "\n# Lettura velocissima",
+        "\n## Lettura velocissima",
+        "\n# Mappa semplice",
+        "\n# Come leggere correttamente",
+    ]
+
+    insert_pos = None
+
+    for marker in insertion_markers:
+        pos = current.find(marker)
+        if pos != -1:
+            insert_pos = pos
+            break
+
+    if insert_pos is not None:
+        new_text = (
+            current[:insert_pos].rstrip()
+            + "\n\n"
+            + block
+            + "\n\n"
+            + current[insert_pos:].lstrip()
+        )
+    else:
+        # Piano B: se non trova i titoli previsti,
+        # lo mette subito dopo la prima riga del report.
+        first_newline = current.find("\n")
+
+        if first_newline != -1:
+            new_text = (
+                current[: first_newline + 1].rstrip()
+                + "\n\n"
+                + block
+                + "\n\n"
+                + current[first_newline + 1 :].lstrip()
+            )
+        else:
+            new_text = block + "\n\n" + current
 
     with open(MAIN_REPORT_PATH, "w", encoding="utf-8") as f:
-        f.write(current.rstrip() + "\n\n" + block.strip() + "\n")
+        f.write(new_text.rstrip() + "\n")
 
 
 def main():
