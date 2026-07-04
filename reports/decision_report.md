@@ -1,183 +1,224 @@
 # Decisione operativa sintetica
 
-Generato: **2026-07-04 22:45:41 CEST**  
-UTC: **2026-07-04 20:45:41 UTC**
+Generato: **2026-07-04 22:55:12 CEST**  
+UTC: **2026-07-04 20:55:12 UTC**
 
-Questo report trasforma i dati dello scanner in una lettura operativa.
+Questo report prende tutti i dati dello scanner e li trasforma in una lettura pratica.
 
-Non è un ordine automatico. È una bussola:
+Scopo:
 
-- cosa favorisce lo scanner;
-- cosa evitare;
-- se ha senso spot, long, short o nessuna leva;
-- quanta leva massima usare in modo prudente.
-
-Regola dura usata dal file:
-
-> se il rischio è alto o i segnali sono misti, la leva viene sconsigliata.
+- capire se conviene spot, long, short o aspettare;
+- separare long e short, invece di mettere tutto dentro una sola voce;
+- usare parole semplici per zone alte, zone basse e rischio leva.
 
 ## Dashboard veloce
 
-| Asset | Prezzo | Direzione scanner | Spot | Leva | Max leva | Rischio | Piano pratico |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 63.197 $ | NEUTRALE / INCERTO | ASPETTA / HOLD | NO LEVA | spot / 1x | MEDIO | aspettare conferma, non forzare entrate; zona spike/attenzione: circa 69.517 $; zona rischio storica P25: circa 53.355 $; target rialzo storico P75: circa 79.015 $ |
-| SOL | 81,93 $ | NEUTRALE / INCERTO | ASPETTA / HOLD | NO LEVA | spot / 1x | ALTO | aspettare conferma, non forzare entrate; zona spike/attenzione: circa 90,12 $; zona rischio storica P25: circa 68,47 $; target rialzo storico P75: circa 102,55 $ |
-| DOGE | 0,07803 $ | BEARISH | VENDI PARZIALE / STAI FUORI | LEVA SCONSIGLIATA | spot / 1x | MOLTO ALTO | ridurre esposizione, evitare nuovi long; zona spike/attenzione: circa 0,08583 $; zona rischio storica P25: circa 0,05128 $; target rialzo storico P75: circa 0,08888 $ |
+| Asset | Prezzo | Direzione | Spot | Long leva | Short leva | Max long | Max short | Rischio |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BTC | 63.250 $ | NEUTRALE / INCERTO | ASPETTA / HOLD | NO LONG A LEVA | NO SHORT | nessuna | nessuna | MEDIO |
+| SOL | 81,92 $ | NEUTRALE / INCERTO | ASPETTA / HOLD | NO LONG A LEVA | NO SHORT | nessuna | nessuna | ALTO |
+| DOGE | 0,07798 $ | BEARISH | VENDI PARZIALE / STAI FUORI | NO LONG A LEVA | SHORT SOLO DOPO SPIKE | nessuna | max 1x-2x isolated | MOLTO ALTO |
 
-## Come leggere le decisioni
+## Spiegazione semplice
 
-- **COMPRA / ACCUMULA**: il quadro statistico favorisce rialzo, ma sempre con gestione del rischio.
-- **ACCUMULA SOLO SU PULLBACK**: non inseguire il prezzo; comprare solo su discesa.
-- **HOLD / ASPETTA**: dati misti; meglio non forzare.
-- **TAKE PROFIT SU SPIKE**: se sale forte, lo scanner preferisce prudenza.
-- **SHORT PRUDENTE**: possibile solo se i dati sono ribassisti e il rischio non è alto.
-- **NO LEVA**: la leva non compensa il rischio storico.
+### Zona alta storica
+
+Prima si chiamava `target rialzo storico P75`.
+
+Nome più chiaro: **zona alta storica**.
+
+Vuol dire:
+
+> nei casi storici simili, quella era una zona alta raggiunta nei movimenti migliori.
+
+Non vuol dire che il prezzo ci deve arrivare.
+
+Uso pratico:
+
+> se il prezzo arriva lì, non inseguire alla cieca; pensa a prendere profitto o alleggerire.
+
+### Zona bassa storica
+
+Prima si chiamava `drawdown P25`.
+
+Nome più chiaro: **zona bassa storica**.
+
+Vuol dire:
+
+> nei casi storici simili, quella era una discesa pesante ma non impossibile.
+
+Uso pratico:
+
+> se fai leva, la liquidazione non dovrebbe stare vicino a quella zona.
+
+### Long e short
+
+Il report ora separa le due cose:
+
+- **Long leva**: comprare con leva sperando che salga.
+- **Short leva**: vendere con leva sperando che scenda.
+
+Nota importante:
+
+> `NO LONG` non significa automaticamente `SHORT`.
+
+A volte la scelta migliore è semplicemente non fare niente.
+
+Lo short viene indicato solo se:
+
+- il quadro è bearish;
+- oppure gli spike vengono spesso scaricati;
+- e il report prova a indicare la zona dove avrebbe più senso, di solito **dopo uno spike**, non dopo che è già crollato.
+
 
 ## Dettaglio per asset
 
 ## Bitcoin — BTC
 
-Prezzo usato: **63.197 $**
+Prezzo usato: **63.250 $**
 
-- **Direzione scanner:** NEUTRALE / INCERTO
-- **Azione spot:** ASPETTA / HOLD
-- **Leva:** NO LEVA
-- **Max leva prudente:** spot / 1x
+- **Direzione:** NEUTRALE / INCERTO
+- **Spot:** ASPETTA / HOLD
+- **Long a leva:** NO LONG A LEVA
+- **Short a leva:** NO SHORT
+- **Max long:** nessuna
+- **Max short:** nessuna
 - **Rischio:** MEDIO
 
 ### Perché
 
-- casi positivi sotto la media (+40,00%); potenziale rialzo storico P75 alto (+25,03%); rimbalzo dopo -5% debole (+27,27%); dump dopo spike poco frequente (+17,39%); long/short molto sbilanciato sui long (1,77)
+- casi positivi sotto la media (+40,00%); zona alta storica abbastanza lontana (+25,03%); rimbalzo dopo discesa debole (+27,27%); dump dopo spike poco frequente (+17,39%); troppi long aperti (1,77)
 
 ### Rischi principali
 
-- drawdown P25 importante (-15,57%); rimbalzo dopo discesa debole (+27,27%)
+- zona bassa storica importante (-15,57%); rimbalzo dopo discesa debole (+27,27%)
 
-### Numeri utili
+### Numeri semplici
 
-| Dato | Valore |
-| --- | --- |
-| Casi positivi 30 giorni | +40,00% |
-| Rendimento mediano 30 giorni | -2,14% |
-| Drawdown storico P25 | -15,57% |
-| Max gain storico P75 | +25,03% |
-| Rimbalzo dopo -5% → +10% | +27,27% |
-| Dump dopo +10% → -5% | +17,39% |
-| Funding | +0,01% |
-| Long/Short ratio | 1,77 |
-| Open interest change | n/d |
+| Dato | Valore | Traduzione |
+| --- | --- | --- |
+| Casi positivi 30 giorni | +40,00% | quante volte i casi simili chiudevano verdi dopo 30 giorni |
+| Rendimento mediano | -2,14% | risultato centrale dei casi storici |
+| Zona bassa storica | -15,57% | discesa pesante da rispettare |
+| Zona alta storica | +25,03% | zona alta dove non inseguire troppo |
+| Rimbalzo dopo -5% → +10% | +27,27% | se scende prima, quante volte poi rimbalza forte |
+| Dump dopo +10% → -5% | +17,39% | se fa spike prima, quante volte poi scarica |
+| Funding | +0,01% | se è alto positivo, troppi long possono essere un rischio |
+| Long/Short ratio | 1,77 | se è alto, ci sono molti long aperti |
 
-### Aree operative secondo lo scanner
+### Aree operative
 
 | Area | Prezzo | Uso pratico |
 | --- | --- | --- |
-| Pullback -5% | 60.037 $ | zona dove valutare accumulo, se il resto resta favorevole |
-| Target rimbalzo +10% | 69.517 $ | zona obiettivo dopo pullback |
-| Spike +10% | 69.517 $ | zona dove evitare di inseguire, valutare profitto |
-| Dump -5% | 60.037 $ | zona di scarico dopo spike |
-| Drawdown P25 | 53.355 $ | zona rischio storica; la liquidazione dovrebbe stare oltre questa zona |
-| Max gain P75 | 79.015 $ | zona rialzista storica favorevole |
+| Pullback -5% | 60.088 $ | zona dove valutare accumulo, non comprare a caso |
+| Target rimbalzo +10% | 69.576 $ | zona obiettivo dopo pullback |
+| Spike +10% | 69.576 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
+| Dump -5% | 60.088 $ | zona di scarico dopo spike |
+| Zona bassa storica | 53.400 $ | zona rischio; con leva bisogna rispettarla |
+| Zona alta storica | 79.082 $ | zona alta; se ci arriva, pensare a profitto |
 
 ### Piano sintetico
 
-> aspettare conferma, non forzare entrate; zona spike/attenzione: circa 69.517 $; zona rischio storica P25: circa 53.355 $; target rialzo storico P75: circa 79.015 $
+> spot: aspettare, non forzare entrate; long: evitato; short: evitato; zona bassa storica/rischio: 53.400 $; zona alta storica/take profit: 79.082 $
 
 ---
 
 ## Solana — SOL
 
-Prezzo usato: **81,93 $**
+Prezzo usato: **81,92 $**
 
-- **Direzione scanner:** NEUTRALE / INCERTO
-- **Azione spot:** ASPETTA / HOLD
-- **Leva:** NO LEVA
-- **Max leva prudente:** spot / 1x
+- **Direzione:** NEUTRALE / INCERTO
+- **Spot:** ASPETTA / HOLD
+- **Long a leva:** NO LONG A LEVA
+- **Short a leva:** NO SHORT
+- **Max long:** nessuna
+- **Max short:** nessuna
 - **Rischio:** ALTO
 
 ### Perché
 
-- potenziale rialzo storico P75 alto (+25,17%); rimbalzo dopo -5% debole (+24,00%); long/short molto sbilanciato sui long (3,28)
+- zona alta storica abbastanza lontana (+25,17%); rimbalzo dopo discesa debole (+24,00%); troppi long aperti (3,28)
 
 ### Rischi principali
 
-- drawdown P25 pesante (-16,42%); rimbalzo dopo discesa debole (+24,00%)
+- zona bassa storica profonda (-16,42%); rimbalzo dopo discesa debole (+24,00%)
 
-### Numeri utili
+### Numeri semplici
 
-| Dato | Valore |
-| --- | --- |
-| Casi positivi 30 giorni | +47,50% |
-| Rendimento mediano 30 giorni | -0,24% |
-| Drawdown storico P25 | -16,42% |
-| Max gain storico P75 | +25,17% |
-| Rimbalzo dopo -5% → +10% | +24,00% |
-| Dump dopo +10% → -5% | +26,09% |
-| Funding | +0,00% |
-| Long/Short ratio | 3,28 |
-| Open interest change | n/d |
+| Dato | Valore | Traduzione |
+| --- | --- | --- |
+| Casi positivi 30 giorni | +47,50% | quante volte i casi simili chiudevano verdi dopo 30 giorni |
+| Rendimento mediano | -0,24% | risultato centrale dei casi storici |
+| Zona bassa storica | -16,42% | discesa pesante da rispettare |
+| Zona alta storica | +25,17% | zona alta dove non inseguire troppo |
+| Rimbalzo dopo -5% → +10% | +24,00% | se scende prima, quante volte poi rimbalza forte |
+| Dump dopo +10% → -5% | +26,09% | se fa spike prima, quante volte poi scarica |
+| Funding | +0,00% | se è alto positivo, troppi long possono essere un rischio |
+| Long/Short ratio | 3,28 | se è alto, ci sono molti long aperti |
 
-### Aree operative secondo lo scanner
+### Aree operative
 
 | Area | Prezzo | Uso pratico |
 | --- | --- | --- |
-| Pullback -5% | 77,83 $ | zona dove valutare accumulo, se il resto resta favorevole |
-| Target rimbalzo +10% | 90,12 $ | zona obiettivo dopo pullback |
-| Spike +10% | 90,12 $ | zona dove evitare di inseguire, valutare profitto |
-| Dump -5% | 77,83 $ | zona di scarico dopo spike |
-| Drawdown P25 | 68,47 $ | zona rischio storica; la liquidazione dovrebbe stare oltre questa zona |
-| Max gain P75 | 102,55 $ | zona rialzista storica favorevole |
+| Pullback -5% | 77,82 $ | zona dove valutare accumulo, non comprare a caso |
+| Target rimbalzo +10% | 90,11 $ | zona obiettivo dopo pullback |
+| Spike +10% | 90,11 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
+| Dump -5% | 77,82 $ | zona di scarico dopo spike |
+| Zona bassa storica | 68,46 $ | zona rischio; con leva bisogna rispettarla |
+| Zona alta storica | 102,54 $ | zona alta; se ci arriva, pensare a profitto |
 
 ### Piano sintetico
 
-> aspettare conferma, non forzare entrate; zona spike/attenzione: circa 90,12 $; zona rischio storica P25: circa 68,47 $; target rialzo storico P75: circa 102,55 $
+> spot: aspettare, non forzare entrate; long: evitato; short: evitato; zona bassa storica/rischio: 68,46 $; zona alta storica/take profit: 102,54 $
 
 ---
 
 ## Dogecoin — DOGE
 
-Prezzo usato: **0,07803 $**
+Prezzo usato: **0,07798 $**
 
-- **Direzione scanner:** BEARISH
-- **Azione spot:** VENDI PARZIALE / STAI FUORI
-- **Leva:** LEVA SCONSIGLIATA
-- **Max leva prudente:** spot / 1x
+- **Direzione:** BEARISH
+- **Spot:** VENDI PARZIALE / STAI FUORI
+- **Long a leva:** NO LONG A LEVA
+- **Short a leva:** SHORT SOLO DOPO SPIKE
+- **Max long:** nessuna
+- **Max short:** max 1x-2x isolated
 - **Rischio:** MOLTO ALTO
 
 ### Perché
 
-- pochi casi storici positivi (+22,50%); mediana 30 giorni negativa (-16,73%); media 30 giorni negativa (-12,55%); rimbalzo dopo -5% debole (+11,76%); dump dopo spike +10% da monitorare (+64,71%); long/short molto sbilanciato sui long (3,92)
+- pochi casi storici positivi (+22,50%); rendimento mediano negativo (-16,73%); media 30 giorni negativa (-12,55%); rimbalzo dopo discesa debole (+11,76%); dump dopo spike da monitorare (+64,71%); troppi long aperti (3,92)
 
 ### Rischi principali
 
-- drawdown P25 molto pesante (-34,28%); spike spesso scaricato (+64,71%); rimbalzo dopo discesa debole (+11,76%)
+- zona bassa storica molto profonda (-34,28%); gli spike venivano spesso scaricati (+64,71%); rimbalzo dopo discesa debole (+11,76%)
 
-### Numeri utili
+### Numeri semplici
 
-| Dato | Valore |
-| --- | --- |
-| Casi positivi 30 giorni | +22,50% |
-| Rendimento mediano 30 giorni | -16,73% |
-| Drawdown storico P25 | -34,28% |
-| Max gain storico P75 | +13,90% |
-| Rimbalzo dopo -5% → +10% | +11,76% |
-| Dump dopo +10% → -5% | +64,71% |
-| Funding | +0,01% |
-| Long/Short ratio | 3,92 |
-| Open interest change | n/d |
+| Dato | Valore | Traduzione |
+| --- | --- | --- |
+| Casi positivi 30 giorni | +22,50% | quante volte i casi simili chiudevano verdi dopo 30 giorni |
+| Rendimento mediano | -16,73% | risultato centrale dei casi storici |
+| Zona bassa storica | -34,28% | discesa pesante da rispettare |
+| Zona alta storica | +13,90% | zona alta dove non inseguire troppo |
+| Rimbalzo dopo -5% → +10% | +11,76% | se scende prima, quante volte poi rimbalza forte |
+| Dump dopo +10% → -5% | +64,71% | se fa spike prima, quante volte poi scarica |
+| Funding | +0,01% | se è alto positivo, troppi long possono essere un rischio |
+| Long/Short ratio | 3,92 | se è alto, ci sono molti long aperti |
 
-### Aree operative secondo lo scanner
+### Aree operative
 
 | Area | Prezzo | Uso pratico |
 | --- | --- | --- |
-| Pullback -5% | 0,07413 $ | zona dove valutare accumulo, se il resto resta favorevole |
-| Target rimbalzo +10% | 0,08583 $ | zona obiettivo dopo pullback |
-| Spike +10% | 0,08583 $ | zona dove evitare di inseguire, valutare profitto |
-| Dump -5% | 0,07413 $ | zona di scarico dopo spike |
-| Drawdown P25 | 0,05128 $ | zona rischio storica; la liquidazione dovrebbe stare oltre questa zona |
-| Max gain P75 | 0,08888 $ | zona rialzista storica favorevole |
+| Pullback -5% | 0,07408 $ | zona dove valutare accumulo, non comprare a caso |
+| Target rimbalzo +10% | 0,08578 $ | zona obiettivo dopo pullback |
+| Spike +10% | 0,08578 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
+| Dump -5% | 0,07408 $ | zona di scarico dopo spike |
+| Zona bassa storica | 0,05125 $ | zona rischio; con leva bisogna rispettarla |
+| Zona alta storica | 0,08882 $ | zona alta; se ci arriva, pensare a profitto |
 
 ### Piano sintetico
 
-> ridurre esposizione, evitare nuovi long; zona spike/attenzione: circa 0,08583 $; zona rischio storica P25: circa 0,05128 $; target rialzo storico P75: circa 0,08888 $
+> spot: ridurre esposizione o stare fuori; long: evitato; short: solo dopo spike verso 0,08578 $, possibile target scarico 0,07408 $; zona bassa storica/rischio: 0,05125 $; zona alta storica/take profit: 0,08882 $
 
 ---
