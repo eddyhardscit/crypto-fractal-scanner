@@ -17,37 +17,34 @@ TARGETS = ["BTC-USD", "SOL-USD", "DOGE-USD"]
 
 FORWARD_DAYS = 30
 
-# Prima scende, poi rimbalza
+# Prima scende, poi rimbalza.
 PULLBACK_LEVELS = [-5, -10, -15]
 REBOUND_TARGETS = [10, 20]
 
-# Prima sale, poi scarica
+# Prima sale, poi scarica.
 SPIKE_LEVELS = [10, 20]
 DUMP_TARGETS = [0, -5, -10]
 
 
 def asset_name(asset):
-    if asset == "BTC-USD":
-        return "Bitcoin"
-    if asset == "SOL-USD":
-        return "Solana"
-    if asset == "DOGE-USD":
-        return "Dogecoin"
-    return asset
+    names = {
+        "BTC-USD": "Bitcoin",
+        "SOL-USD": "Solana",
+        "DOGE-USD": "Dogecoin",
+    }
+    return names.get(asset, asset)
 
 
 def asset_short(asset):
-    return asset.replace("-USD", "")
+    return str(asset).replace("-USD", "")
 
 
 def matches_path(asset):
-    short = asset_short(asset)
-    return f"reports/{short}_matches.csv"
+    return f"reports/{asset_short(asset)}_matches.csv"
 
 
 def percentiles_path(asset):
-    short = asset_short(asset)
-    return f"reports/{short}_percentiles.csv"
+    return f"reports/{asset_short(asset)}_percentiles.csv"
 
 
 def read_csv_safe(path):
@@ -211,7 +208,7 @@ def drawdown_p25_pct(asset, matches):
 
 
 def build_all_matches():
-    rows = []
+    all_rows = []
 
     for asset in TARGETS:
         path = matches_path(asset)
@@ -221,12 +218,12 @@ def build_all_matches():
             continue
 
         matches["target_asset"] = asset
-        rows.append(matches)
+        all_rows.append(matches)
 
-    if not rows:
+    if not all_rows:
         return pd.DataFrame()
 
-    return pd.concat(rows, ignore_index=True)
+    return pd.concat(all_rows, ignore_index=True)
 
 
 def download_needed_data(all_matches):
@@ -318,7 +315,7 @@ def get_forward_path(row, data):
 def analyze_bounce_match(row, data, pullback_pct, rebound_pct, p75_pct):
     """
     Sequenza:
-    prima scende almeno a pullback_pct
+    prima scende almeno a pullback_pct,
     poi, solo dopo, controlla se sale a rebound_pct / P75.
     """
     start_price, path = get_forward_path(row, data)
@@ -374,7 +371,7 @@ def analyze_bounce_match(row, data, pullback_pct, rebound_pct, p75_pct):
 def analyze_dump_match(row, data, spike_pct, dump_pct, p25_pct):
     """
     Sequenza contraria:
-    prima sale almeno a spike_pct
+    prima sale almeno a spike_pct,
     poi, solo dopo, controlla se scarica a dump_pct / P25.
     """
     start_price, path = get_forward_path(row, data)
@@ -436,7 +433,6 @@ def summarize_bounce_condition(asset, matches, data, current_price, pullback_pct
     pullback_days = []
     rebound_days = []
     p75_days = []
-
     min_returns = []
     max_returns = []
 
@@ -511,7 +507,6 @@ def summarize_dump_condition(asset, matches, data, current_price, spike_pct, dum
     spike_days = []
     dump_days = []
     p25_days = []
-
     min_returns = []
     max_returns = []
 
@@ -589,6 +584,7 @@ def simple_strength(rate):
         return "media"
     if value >= 35:
         return "bassa"
+
     return "debole"
 
 
@@ -740,43 +736,38 @@ def build_bounce_section(bounce_summaries):
             ]
         )
 
-    text = f"""
-# 1. Rimbalzo dopo drawdown
-
-Questa sezione risponde alla domanda:
-
-> Se prima scende, storicamente poi rimbalza?
-
-Lettura base: **discesa -5%** e poi **rimbalzo +10%**.
-
-{md_table(
-    [
-        "Asset",
-        "Zona -5% oggi",
-        "Casi scesi",
-        "Poi rimbalzo +10%",
-        "Traduzione",
-    ],
-    quick_rows,
-)}
-
-"""
+    text = []
+    text.append("# 1. Rimbalzo dopo drawdown\n")
+    text.append("Questa sezione risponde alla domanda:\n")
+    text.append("> Se prima scende, storicamente poi rimbalza?\n")
+    text.append("Lettura base: **discesa -5%** e poi **rimbalzo +10%**.\n")
+    text.append(md_table(
+        [
+            "Asset",
+            "Zona -5% oggi",
+            "Casi scesi",
+            "Poi rimbalzo +10%",
+            "Traduzione",
+        ],
+        quick_rows,
+    ))
+    text.append("")
 
     for asset in TARGETS:
         asset_summaries = [s for s in bounce_summaries if s["asset"] == asset]
 
-        text += f"\n## {asset_name(asset)} — rimbalzo dopo discesa\n\n"
+        text.append(f"\n## {asset_name(asset)} — rimbalzo dopo discesa\n")
 
         if not asset_summaries:
-            text += "Dati insufficienti.\n\n---\n"
+            text.append("Dati insufficienti.\n\n---")
             continue
 
         current_price = asset_summaries[0].get("current_price")
         p75_pct = asset_summaries[0].get("p75_pct")
         p75_price = asset_summaries[0].get("p75_price_now")
 
-        text += f"Prezzo attuale usato: **{fmt_price(current_price)}**  \n"
-        text += f"Zona rialzo P75 usata: **{fmt_pct(p75_pct)} → {fmt_price(p75_price)}**\n\n"
+        text.append(f"Prezzo attuale usato: **{fmt_price(current_price)}**  ")
+        text.append(f"Zona rialzo P75 usata: **{fmt_pct(p75_pct)} → {fmt_price(p75_price)}**\n")
 
         detail_rows = []
 
@@ -798,7 +789,7 @@ Lettura base: **discesa -5%** e poi **rimbalzo +10%**.
                 ]
             )
 
-        text += md_table(
+        text.append(md_table(
             [
                 "Discesa",
                 "Prezzo discesa",
@@ -814,17 +805,17 @@ Lettura base: **discesa -5%** e poi **rimbalzo +10%**.
                 "Giorni al target",
             ],
             detail_rows,
-        )
+        ))
 
-        text += "\n\n### Traduzione semplice\n\n"
+        text.append("\n### Traduzione semplice\n")
 
         for s in asset_summaries:
             if s["pullback_pct"] == -5 and s["rebound_pct"] in REBOUND_TARGETS:
-                text += f"- {simple_bounce_interpretation(s)}\n"
+                text.append(f"- {simple_bounce_interpretation(s)}")
 
-        text += "\n---\n"
+        text.append("\n---")
 
-    return text
+    return "\n".join(text)
 
 
 def build_dump_section(dump_summaries):
@@ -847,43 +838,38 @@ def build_dump_section(dump_summaries):
             ]
         )
 
-    text = f"""
-# 2. Dump dopo spike
-
-Questa sezione risponde alla domanda contraria:
-
-> Se prima sale forte, storicamente poi scarica?
-
-Lettura base: **spike +10%** e poi **scarico -5%**.
-
-{md_table(
-    [
-        "Asset",
-        "Zona +10% oggi",
-        "Casi con spike",
-        "Poi dump -5%",
-        "Traduzione",
-    ],
-    quick_rows,
-)}
-
-"""
+    text = []
+    text.append("# 2. Dump dopo spike\n")
+    text.append("Questa sezione risponde alla domanda contraria:\n")
+    text.append("> Se prima sale forte, storicamente poi scarica?\n")
+    text.append("Lettura base: **spike +10%** e poi **scarico -5%**.\n")
+    text.append(md_table(
+        [
+            "Asset",
+            "Zona +10% oggi",
+            "Casi con spike",
+            "Poi dump -5%",
+            "Traduzione",
+        ],
+        quick_rows,
+    ))
+    text.append("")
 
     for asset in TARGETS:
         asset_summaries = [s for s in dump_summaries if s["asset"] == asset]
 
-        text += f"\n## {asset_name(asset)} — dump dopo spike\n\n"
+        text.append(f"\n## {asset_name(asset)} — dump dopo spike\n")
 
         if not asset_summaries:
-            text += "Dati insufficienti.\n\n---\n"
+            text.append("Dati insufficienti.\n\n---")
             continue
 
         current_price = asset_summaries[0].get("current_price")
         p25_pct = asset_summaries[0].get("p25_pct")
         p25_price = asset_summaries[0].get("p25_price_now")
 
-        text += f"Prezzo attuale usato: **{fmt_price(current_price)}**  \n"
-        text += f"Zona rischio P25 usata: **{fmt_pct(p25_pct)} → {fmt_price(p25_price)}**\n\n"
+        text.append(f"Prezzo attuale usato: **{fmt_price(current_price)}**  ")
+        text.append(f"Zona rischio P25 usata: **{fmt_pct(p25_pct)} → {fmt_price(p25_price)}**\n")
 
         detail_rows = []
 
@@ -905,7 +891,7 @@ Lettura base: **spike +10%** e poi **scarico -5%**.
                 ]
             )
 
-        text += md_table(
+        text.append(md_table(
             [
                 "Spike",
                 "Prezzo spike",
@@ -921,33 +907,278 @@ Lettura base: **spike +10%** e poi **scarico -5%**.
                 "Giorni al dump",
             ],
             detail_rows,
-        )
+        ))
 
-        text += "\n\n### Traduzione semplice\n\n"
+        text.append("\n### Traduzione semplice\n")
 
         for s in asset_summaries:
             if s["spike_pct"] == 10 and s["dump_pct"] in [0, -5, -10]:
-                text += f"- {simple_dump_interpretation(s)}\n"
+                text.append(f"- {simple_dump_interpretation(s)}")
 
-        text += "\n---\n"
+        text.append("\n---")
 
-    return text
+    return "\n".join(text)
 
 
 def build_full_report(bounce_summaries, dump_summaries):
     rome_now = datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z")
     utc_now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
-    text = f"""# Sequenze dopo il pattern: rimbalzo e dump
+    parts = []
+    parts.append("# Sequenze dopo il pattern: rimbalzo e dump\n")
+    parts.append(f"Generato: **{rome_now}**  ")
+    parts.append(f"UTC: **{utc_now}**\n")
+    parts.append("Questo report controlla l'ordine degli eventi nei 40 casi storici più simili.\n")
+    parts.append("Non guarda solo se durante i 30 giorni c'è stato un minimo e un massimo.")
+    parts.append("Controlla proprio la sequenza temporale:\n")
+    parts.append("- prima scende → poi rimbalza")
+    parts.append("- prima sale/spike → poi scarica\n")
+    parts.append("## Come usarlo\n")
+    parts.append("- **Rimbalzo dopo drawdown**: utile per capire se una discesa può diventare zona di rimbalzo.")
+    parts.append("- **Dump dopo spike**: utile per capire se una salita forte può diventare zona da prendere profitto.")
+    parts.append("- Non è una certezza. È una statistica storica sui casi più simili.\n")
+    parts.append("---\n")
+    parts.append(build_bounce_section(bounce_summaries))
+    parts.append("\n\n")
+    parts.append(build_dump_section(dump_summaries))
 
-Generato: **{rome_now}**  
-UTC: **{utc_now}**
+    return "\n".join(parts)
 
-Questo report controlla l'ordine degli eventi nei 40 casi storici più simili.
 
-Non guarda solo se durante i 30 giorni c'è stato un minimo e un massimo.  
-Controlla proprio la sequenza temporale:
+def build_main_report_block(bounce_summaries, dump_summaries):
+    bounce_rows = []
+    dump_rows = []
+    simple_lines = []
 
-```text
-1. prima scende → poi rimbalza
-2. prima sale/spike → poi scarica
+    for asset in TARGETS:
+        best_bounce = best_bounce_for_asset(bounce_summaries, asset)
+
+        if best_bounce is None:
+            bounce_rows.append([asset_short(asset), "n/d", "n/d", "n/d", "n/d"])
+            simple_lines.append(f"- **{asset_short(asset)} rimbalzo**: dati insufficienti.")
+        else:
+            bounce_rows.append(
+                [
+                    asset_short(asset),
+                    fmt_price(best_bounce["pullback_price_now"]),
+                    f"{best_bounce['touched_count']}/{best_bounce['total_valid_matches']}",
+                    fmt_pct(best_bounce["rebound_rate_after_pullback"]),
+                    simple_strength(best_bounce["rebound_rate_after_pullback"]),
+                ]
+            )
+            simple_lines.append(f"- **{simple_bounce_interpretation(best_bounce)}**")
+
+    for asset in TARGETS:
+        best_dump = best_dump_for_asset(dump_summaries, asset)
+
+        if best_dump is None:
+            dump_rows.append([asset_short(asset), "n/d", "n/d", "n/d", "n/d"])
+            simple_lines.append(f"- **{asset_short(asset)} dump**: dati insufficienti.")
+        else:
+            dump_rows.append(
+                [
+                    asset_short(asset),
+                    fmt_price(best_dump["spike_price_now"]),
+                    f"{best_dump['touched_count']}/{best_dump['total_valid_matches']}",
+                    fmt_pct(best_dump["dump_rate_after_spike"]),
+                    simple_strength(best_dump["dump_rate_after_spike"]),
+                ]
+            )
+            simple_lines.append(f"- **{simple_dump_interpretation(best_dump)}**")
+
+    return "\n".join([
+        "<!-- BOUNCE_AFTER_DRAWDOWN_START -->",
+        "",
+        "---",
+        "",
+        "# Sequenze: rimbalzo dopo discesa / dump dopo spike",
+        "",
+        "Report separato completo: [bounce_after_drawdown_report.md](bounce_after_drawdown_report.md)",
+        "",
+        "Questa sezione controlla l'ordine degli eventi:",
+        "",
+        "- prima scende → poi rimbalza",
+        "- prima sale → poi scarica",
+        "",
+        "## 1. Rimbalzo dopo drawdown",
+        "",
+        "Lettura base: **discesa -5%** e poi **rimbalzo +10%**.",
+        "",
+        md_table(
+            [
+                "Asset",
+                "Zona -5% oggi",
+                "Casi scesi",
+                "Poi rimbalzo +10%",
+                "Forza",
+            ],
+            bounce_rows,
+        ),
+        "",
+        "## 2. Dump dopo spike",
+        "",
+        "Lettura base: **spike +10%** e poi **dump -5%**.",
+        "",
+        md_table(
+            [
+                "Asset",
+                "Zona +10% oggi",
+                "Casi spike",
+                "Poi dump -5%",
+                "Forza",
+            ],
+            dump_rows,
+        ),
+        "",
+        "## Traduzione veloce",
+        "",
+        "\n".join(simple_lines),
+        "",
+        "<!-- BOUNCE_AFTER_DRAWDOWN_END -->",
+    ])
+
+
+def inject_into_main_report(bounce_summaries, dump_summaries):
+    if not os.path.exists(MAIN_REPORT_PATH):
+        return
+
+    with open(MAIN_REPORT_PATH, "r", encoding="utf-8") as f:
+        current = f.read()
+
+    start_marker = "<!-- BOUNCE_AFTER_DRAWDOWN_START -->"
+    end_marker = "<!-- BOUNCE_AFTER_DRAWDOWN_END -->"
+
+    if start_marker in current and end_marker in current:
+        before = current.split(start_marker)[0].rstrip()
+        after = current.split(end_marker, 1)[1].lstrip()
+        current = before + "\n\n" + after
+
+    block = build_main_report_block(bounce_summaries, dump_summaries).strip()
+
+    daily_end = "<!-- DAILY_CHANGE_END -->"
+
+    if daily_end in current:
+        insert_pos = current.find(daily_end) + len(daily_end)
+        new_text = (
+            current[:insert_pos].rstrip()
+            + "\n\n"
+            + block
+            + "\n\n"
+            + current[insert_pos:].lstrip()
+        )
+    else:
+        insertion_markers = [
+            "\n# Come leggere questo report",
+            "\n# Scheda veloce",
+            "\n# Lettura velocissima",
+            "\n## Lettura velocissima",
+            "\n# Mappa semplice",
+        ]
+
+        insert_pos = None
+
+        for marker in insertion_markers:
+            pos = current.find(marker)
+            if pos != -1:
+                insert_pos = pos
+                break
+
+        if insert_pos is not None:
+            new_text = (
+                current[:insert_pos].rstrip()
+                + "\n\n"
+                + block
+                + "\n\n"
+                + current[insert_pos:].lstrip()
+            )
+        else:
+            new_text = block + "\n\n" + current
+
+    with open(MAIN_REPORT_PATH, "w", encoding="utf-8") as f:
+        f.write(new_text.rstrip() + "\n")
+
+
+def write_csv(bounce_summaries, dump_summaries):
+    rows = []
+
+    for item in bounce_summaries:
+        rows.append(item)
+
+    for item in dump_summaries:
+        rows.append(item)
+
+    df = pd.DataFrame(rows)
+    df.to_csv(BOUNCE_CSV_PATH, index=False)
+
+
+def main():
+    os.makedirs(REPORT_DIR, exist_ok=True)
+
+    all_matches = build_all_matches()
+
+    if all_matches.empty:
+        report = "# Sequenze dopo il pattern\n\nNessun match disponibile.\n"
+
+        with open(BOUNCE_REPORT_PATH, "w", encoding="utf-8") as f:
+            f.write(report)
+
+        print("No matches available for sequence report.")
+        return
+
+    market_data = download_needed_data(all_matches)
+
+    bounce_summaries = []
+    dump_summaries = []
+
+    for asset in TARGETS:
+        path = matches_path(asset)
+        matches = read_csv_safe(path)
+
+        if matches.empty:
+            continue
+
+        current_price = latest_current_price(asset)
+        p75_pct = max_gain_p75_pct(asset, matches)
+        p25_pct = drawdown_p25_pct(asset, matches)
+
+        for pullback_pct in PULLBACK_LEVELS:
+            for rebound_pct in REBOUND_TARGETS:
+                summary = summarize_bounce_condition(
+                    asset=asset,
+                    matches=matches,
+                    data=market_data,
+                    current_price=current_price,
+                    pullback_pct=pullback_pct,
+                    rebound_pct=rebound_pct,
+                    p75_pct=p75_pct,
+                )
+                bounce_summaries.append(summary)
+
+        for spike_pct in SPIKE_LEVELS:
+            for dump_pct in DUMP_TARGETS:
+                summary = summarize_dump_condition(
+                    asset=asset,
+                    matches=matches,
+                    data=market_data,
+                    current_price=current_price,
+                    spike_pct=spike_pct,
+                    dump_pct=dump_pct,
+                    p25_pct=p25_pct,
+                )
+                dump_summaries.append(summary)
+
+    report = build_full_report(bounce_summaries, dump_summaries)
+
+    with open(BOUNCE_REPORT_PATH, "w", encoding="utf-8") as f:
+        f.write(report)
+
+    write_csv(bounce_summaries, dump_summaries)
+    inject_into_main_report(bounce_summaries, dump_summaries)
+
+    print(f"Wrote {BOUNCE_REPORT_PATH}")
+    print(f"Wrote {BOUNCE_CSV_PATH}")
+    print(f"Updated {MAIN_REPORT_PATH}")
+
+
+if __name__ == "__main__":
+    main()
