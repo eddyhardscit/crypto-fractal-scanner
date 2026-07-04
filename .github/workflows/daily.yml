@@ -30,12 +30,17 @@ jobs:
       - name: Run scanner
         run: python scanner.py
 
-      - name: Commit report
+      - name: Run liquidations report
+        env:
+          COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
+        run: python liquidations_report.py
+
+      - name: Commit reports
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add reports/
-          git commit -m "Update daily crypto scanner report" || echo "No changes to commit"
+          git commit -m "Update daily crypto scanner reports" || echo "No changes to commit"
           git push
 
       - name: Send email
@@ -44,4 +49,5 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           REPORT_URL: https://github.com/eddyhardscit/crypto-fractal-scanner/blob/main/reports/latest_report.md
+          LIQ_REPORT_URL: https://github.com/eddyhardscit/crypto-fractal-scanner/blob/main/reports/liquidation_report.md
         run: python send_email.py
