@@ -1,0 +1,4 @@
+asset,symbol,mark_price,price_change_24h_pct,funding_rate_pct,current_oi_value,oi_value_24h_change_pct,oi_value_7d_change_pct,long_account_pct,short_account_pct,global_long_short_ratio,top_long_pct,top_short_pct,top_long_short_ratio,taker_buy_sell_ratio,futures_label,futures_strength,downside_score,upside_score,stress_score
+BTC,BTCUSDT,,,,,,,,,,,,,,NEUTRALE / MISTO,1,0,0,0
+SOL,SOLUSDT,,,,,,,,,,,,,,NEUTRALE / MISTO,1,0,0,0
+DOGE,DOGEUSDT,,,,,,,,,,,,,,NEUTRALE / MISTO,1,0,0,0
