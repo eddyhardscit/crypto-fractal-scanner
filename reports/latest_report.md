@@ -1,6 +1,6 @@
 # Report giornaliero BTC / SOL / DOGE
 
-Aggiornato il: **2026-07-04 19:50:19 UTC**
+Aggiornato il: **2026-07-04 19:58:42 UTC**
 
 Questo report confronta il grafico attuale di Bitcoin, Solana e Dogecoin con tanti grafici storici di altre crypto.
 
@@ -22,7 +22,7 @@ Report separato completo: [daily_change_report.md](daily_change_report.md)
 | --- | --- | --- | --- | --- | --- |
 | BTC | CAMBIAMENTO FORTE | miglioramento | NEUTRALE / INCERTO | +40.00% | +5.00 punti |
 | SOL | CAMBIAMENTO MEDIO | miglioramento | NEUTRALE / INCERTO | +47.50% | +10.00 punti |
-| DOGE | NESSUN CAMBIAMENTO FORTE | peggioramento | RIBASSISTA | +25.00% | +2.50 punti |
+| DOGE | NESSUN CAMBIAMENTO FORTE | peggioramento | RIBASSISTA | +22.50% | 0.00 punti |
 
 <!-- DAILY_CHANGE_END -->
 
@@ -30,43 +30,29 @@ Report separato completo: [daily_change_report.md](daily_change_report.md)
 
 ---
 
-# Sequenze: rimbalzo dopo discesa / dump dopo spike
+# Sequenze pratiche: rimbalzo / dump
 
 Report separato completo: [bounce_after_drawdown_report.md](bounce_after_drawdown_report.md)
 
-Questa sezione controlla l'ordine degli eventi:
+Questa sezione serve a rispondere subito a due domande:
 
-- prima scende → poi rimbalza
-- prima sale → poi scarica
+- **Se scende, è una zona di rimbalzo?**
+- **Se sale forte, è una zona da prendere profitto?**
 
-## 1. Rimbalzo dopo drawdown
-
-Lettura base: **discesa -5%** e poi **rimbalzo +10%**.
-
-| Asset | Zona -5% oggi | Casi scesi | Poi rimbalzo +10% | Forza |
-| --- | --- | --- | --- | --- |
-| BTC | 60.084 $ | 22/40 | +27,27% | debole |
-| SOL | 77,70 $ | 25/40 | +24,00% | debole |
-| DOGE | 0,07458 $ | 34/40 | +11,76% | debole |
-
-## 2. Dump dopo spike
-
-Lettura base: **spike +10%** e poi **dump -5%**.
-
-| Asset | Zona +10% oggi | Casi spike | Poi dump -5% | Forza |
-| --- | --- | --- | --- | --- |
-| BTC | 69.571 $ | 23/40 | +17,39% | debole |
-| SOL | 89,97 $ | 23/40 | +26,09% | debole |
-| DOGE | 0,08635 $ | 16/40 | +62,50% | media |
+| Asset | Se scende a -5% | Poi +10% | Lettura discesa | Se sale a +10% | Poi dump -5% | Lettura spike |
+| --- | --- | --- | --- | --- | --- | --- |
+| BTC | 60.097 $ | +27,27% | rimbalzo poco frequente | 69.586 $ | +17,39% | spike storicamente più resistente |
+| SOL | 77,74 $ | +24,00% | rimbalzo poco frequente | 90,01 $ | +26,09% | spike storicamente più resistente |
+| DOGE | 0,07458 $ | +11,76% | rimbalzo poco frequente | 0,08636 $ | +64,71% | attenzione a prendere profitto |
 
 ## Traduzione veloce
 
-- **BTC: dopo una discesa di -5,00%, il rimbalzo a +10,00% era poco frequente.**
-- **SOL: dopo una discesa di -5,00%, il rimbalzo a +10,00% era poco frequente.**
-- **DOGE: dopo una discesa di -5,00%, il rimbalzo a +10,00% era poco frequente.**
-- **BTC: dopo uno spike di +10,00%, lo scarico a -5,00% era poco frequente.**
-- **SOL: dopo uno spike di +10,00%, lo scarico a -5,00% era poco frequente.**
-- **DOGE: dopo uno spike di +10,00%, lo scarico a -5,00% avveniva circa una volta su due.**
+- **BTC: se prima scende a -5,00%, poi il rimbalzo a +10,00% è avvenuto nel +27,27% dei casi. Lettura: rimbalzo poco frequente.**
+- **BTC: se prima sale a +10,00%, poi lo scarico a -5,00% è avvenuto nel +17,39% dei casi. Lettura: spike storicamente più resistente.**
+- **SOL: se prima scende a -5,00%, poi il rimbalzo a +10,00% è avvenuto nel +24,00% dei casi. Lettura: rimbalzo poco frequente.**
+- **SOL: se prima sale a +10,00%, poi lo scarico a -5,00% è avvenuto nel +26,09% dei casi. Lettura: spike storicamente più resistente.**
+- **DOGE: se prima scende a -5,00%, poi il rimbalzo a +10,00% è avvenuto nel +11,76% dei casi. Lettura: rimbalzo poco frequente.**
+- **DOGE: se prima sale a +10,00%, poi lo scarico a -5,00% è avvenuto nel +64,71% dei casi. Lettura: attenzione a prendere profitto.**
 
 <!-- BOUNCE_AFTER_DRAWDOWN_END -->
 
@@ -132,12 +118,12 @@ Questa è la parte da leggere per prima. Ti dice subito se lo scenario è più d
 - Casi positivi / salita storica: **40,00%**
 - Casi negativi / discesa storica: **60,00%**
 - Quanto è netto il segnale: **debole**
-- Prezzo attuale: **63.246,45 $**
-- Return normale fra 30 giorni: **61.889,86 $** (-2,14%)
-- Drawdown normale durante il mese: **59.905,44 $** (-5,28%)
-- Drawdown brutto da rispettare: **53.396,77 $** (-15,57%)
-- Max gain normale durante il mese: **71.769,05 $** (13,48%)
-- Max gain buono / take profit ottimistico: **79.077,10 $** (25,03%)
+- Prezzo attuale: **63.260,12 $**
+- Return normale fra 30 giorni: **61.903,24 $** (-2,14%)
+- Drawdown normale durante il mese: **59.918,39 $** (-5,28%)
+- Drawdown brutto da rispettare: **53.408,31 $** (-15,57%)
+- Max gain normale durante il mese: **71.784,57 $** (13,48%)
+- Max gain buono / take profit ottimistico: **79.094,20 $** (25,03%)
 
 **Come leggerlo:** casi positivi/negativi ti dicono la direzione più probabile. Return ti dice il prezzo finale fra 30 giorni. Drawdown ti dice il rischio di discesa durante il mese. Max gain ti dice il possibile rialzo durante il mese.
 
@@ -146,26 +132,26 @@ Questa è la parte da leggere per prima. Ti dice subito se lo scenario è più d
 - Casi positivi / salita storica: **47,50%**
 - Casi negativi / discesa storica: **52,50%**
 - Quanto è netto il segnale: **molto debole / quasi pari**
-- Prezzo attuale: **81,79 $**
-- Return normale fra 30 giorni: **81,60 $** (-0,24%)
-- Drawdown normale durante il mese: **74,60 $** (-8,79%)
-- Drawdown brutto da rispettare: **68,36 $** (-16,42%)
-- Max gain normale durante il mese: **92,23 $** (12,76%)
-- Max gain buono / take profit ottimistico: **102,38 $** (25,17%)
+- Prezzo attuale: **81,83 $**
+- Return normale fra 30 giorni: **81,64 $** (-0,24%)
+- Drawdown normale durante il mese: **74,63 $** (-8,79%)
+- Drawdown brutto da rispettare: **68,39 $** (-16,42%)
+- Max gain normale durante il mese: **92,27 $** (12,76%)
+- Max gain buono / take profit ottimistico: **102,43 $** (25,17%)
 
 **Come leggerlo:** casi positivi/negativi ti dicono la direzione più probabile. Return ti dice il prezzo finale fra 30 giorni. Drawdown ti dice il rischio di discesa durante il mese. Max gain ti dice il possibile rialzo durante il mese.
 
 ## Dogecoin
 - Direzione più probabile a 30 giorni: **DISCESA**
-- Casi positivi / salita storica: **25,00%**
-- Casi negativi / discesa storica: **75,00%**
+- Casi positivi / salita storica: **22,50%**
+- Casi negativi / discesa storica: **77,50%**
 - Quanto è netto il segnale: **forte**
 - Prezzo attuale: **0,08 $**
 - Return normale fra 30 giorni: **0,07 $** (-16,73%)
 - Drawdown normale durante il mese: **0,06 $** (-25,34%)
 - Drawdown brutto da rispettare: **0,05 $** (-34,28%)
-- Max gain normale durante il mese: **0,08 $** (7,82%)
-- Max gain buono / take profit ottimistico: **0,09 $** (13,04%)
+- Max gain normale durante il mese: **0,08 $** (8,10%)
+- Max gain buono / take profit ottimistico: **0,09 $** (13,90%)
 
 **Come leggerlo:** casi positivi/negativi ti dicono la direzione più probabile. Return ti dice il prezzo finale fra 30 giorni. Drawdown ti dice il rischio di discesa durante il mese. Max gain ti dice il possibile rialzo durante il mese.
 
@@ -180,7 +166,7 @@ Il quadro generale oggi è prudente/debole. Lo scanner vede più rischio di disc
 # Bitcoin — mappa semplice dei prossimi 30 giorni
 
 **Semaforo:** 🟡 GIALLO / Incerto
-**Prezzo attuale:** 63.246,45 $
+**Prezzo attuale:** 63.260,12 $
 
 **Direzione più probabile a 30 giorni:** **DISCESA**
 - Probabilità storica di salita: **40,00%**
@@ -199,11 +185,11 @@ La lettura principale è ribassista, con segnale debole. Nei casi storici simili
 
 **Return** significa rendimento finale. Qui guardiamo dove potrebbe stare il prezzo **alla fine dei 30 giorni**, non durante il percorso.
 
-- Se va molto male: **52.475,97 $** (-17,03%)
-- Se va male: **57.892,17 $** (-8,47%)
-- Scenario normale: **61.889,86 $** (-2,14%)
-- Se va bene: **68.654,96 $** (8,55%)
-- Se va molto bene: **77.359,53 $** (22,31%)
+- Se va molto male: **52.487,31 $** (-17,03%)
+- Se va male: **57.904,68 $** (-8,47%)
+- Scenario normale: **61.903,24 $** (-2,14%)
+- Se va bene: **68.669,80 $** (8,55%)
+- Se va molto bene: **77.376,25 $** (22,31%)
 
 **Come leggerlo:** se vuoi sapere dove potrebbe trovarsi il prezzo fra 30 giorni, guarda soprattutto lo **scenario normale**.
 
@@ -211,9 +197,9 @@ La lettura principale è ribassista, con segnale debole. Nei casi storici simili
 
 **Drawdown** significa la discesa massima durante il periodo. Non è il prezzo finale: è il punto più basso che il prezzo può toccare durante il mese.
 
-- Discesa normale: **59.905,44 $** (-5,28%)
-- Discesa brutta: **53.396,77 $** (-15,57%)
-- Discesa molto brutta: **42.893,37 $** (-32,18%)
+- Discesa normale: **59.918,39 $** (-5,28%)
+- Discesa brutta: **53.408,31 $** (-15,57%)
+- Discesa molto brutta: **42.902,64 $** (-32,18%)
 
 **Come leggerlo:** se usi leva, questa è la parte più importante. Anche se dopo 30 giorni il prezzo recupera, durante il mese può prima scendere qui.
 
@@ -221,15 +207,15 @@ La lettura principale è ribassista, con segnale debole. Nei casi storici simili
 
 **Max gain** significa il massimo rialzo toccato durante il mese. Non è il prezzo finale: può essere anche solo uno spike temporaneo.
 
-- Rialzo normale: **71.769,05 $** (13,48%)
-- Rialzo buono: **79.077,10 $** (25,03%)
-- Rialzo molto forte: **88.233,07 $** (39,51%)
+- Rialzo normale: **71.784,57 $** (13,48%)
+- Rialzo buono: **79.094,20 $** (25,03%)
+- Rialzo molto forte: **88.252,15 $** (39,51%)
 
 **Come leggerlo:** questa parte serve per capire possibili zone di take profit. Il rialzo normale è più realistico; il rialzo molto forte è possibile ma meno comune.
 
 ## Lettura pratica finale
 
-Scenario normale: nei casi simili, Bitcoin tendeva a muoversi tra una zona bassa intorno a **59.905,44 $** e uno spike normale intorno a **71.769,05 $**.
+Scenario normale: nei casi simili, Bitcoin tendeva a muoversi tra una zona bassa intorno a **59.918,39 $** e uno spike normale intorno a **71.784,57 $**.
 
 La chiusura a 30 giorni era più spesso negativa: salita 40,00%, discesa 60,00%. Quindi la lettura principale è prudente/debole.
 
@@ -240,7 +226,7 @@ Nota leva BTC: se la liquidazione è vicina a 51.000 $, guarda soprattutto la di
 # Solana — mappa semplice dei prossimi 30 giorni
 
 **Semaforo:** 🟡 GIALLO / Incerto
-**Prezzo attuale:** 81,79 $
+**Prezzo attuale:** 81,83 $
 
 **Direzione più probabile a 30 giorni:** **INCERTO**
 - Probabilità storica di salita: **47,50%**
@@ -259,11 +245,11 @@ La lettura principale è incerta, con segnale molto debole / quasi pari. Nei cas
 
 **Return** significa rendimento finale. Qui guardiamo dove potrebbe stare il prezzo **alla fine dei 30 giorni**, non durante il percorso.
 
-- Se va molto male: **66,89 $** (-18,22%)
-- Se va male: **74,63 $** (-8,76%)
-- Scenario normale: **81,60 $** (-0,24%)
-- Se va bene: **87,54 $** (7,03%)
-- Se va molto bene: **99,94 $** (22,19%)
+- Se va molto male: **66,59 $** (-18,62%)
+- Se va male: **74,66 $** (-8,76%)
+- Scenario normale: **81,64 $** (-0,24%)
+- Se va bene: **87,58 $** (7,03%)
+- Se va molto bene: **99,99 $** (22,19%)
 
 **Come leggerlo:** se vuoi sapere dove potrebbe trovarsi il prezzo fra 30 giorni, guarda soprattutto lo **scenario normale**.
 
@@ -271,9 +257,9 @@ La lettura principale è incerta, con segnale molto debole / quasi pari. Nei cas
 
 **Drawdown** significa la discesa massima durante il periodo. Non è il prezzo finale: è il punto più basso che il prezzo può toccare durante il mese.
 
-- Discesa normale: **74,60 $** (-8,79%)
-- Discesa brutta: **68,36 $** (-16,42%)
-- Discesa molto brutta: **62,62 $** (-23,43%)
+- Discesa normale: **74,63 $** (-8,79%)
+- Discesa brutta: **68,39 $** (-16,42%)
+- Discesa molto brutta: **61,04 $** (-25,40%)
 
 **Come leggerlo:** se usi leva, questa è la parte più importante. Anche se dopo 30 giorni il prezzo recupera, durante il mese può prima scendere qui.
 
@@ -281,15 +267,15 @@ La lettura principale è incerta, con segnale molto debole / quasi pari. Nei cas
 
 **Max gain** significa il massimo rialzo toccato durante il mese. Non è il prezzo finale: può essere anche solo uno spike temporaneo.
 
-- Rialzo normale: **92,23 $** (12,76%)
-- Rialzo buono: **102,38 $** (25,17%)
-- Rialzo molto forte: **117,49 $** (43,65%)
+- Rialzo normale: **92,27 $** (12,76%)
+- Rialzo buono: **102,43 $** (25,17%)
+- Rialzo molto forte: **117,55 $** (43,65%)
 
 **Come leggerlo:** questa parte serve per capire possibili zone di take profit. Il rialzo normale è più realistico; il rialzo molto forte è possibile ma meno comune.
 
 ## Lettura pratica finale
 
-Scenario normale: nei casi simili, Solana tendeva a muoversi tra una zona bassa intorno a **74,60 $** e uno spike normale intorno a **92,23 $**.
+Scenario normale: nei casi simili, Solana tendeva a muoversi tra una zona bassa intorno a **74,63 $** e uno spike normale intorno a **92,27 $**.
 
 La chiusura a 30 giorni è incerta: salita 47,50%, discesa 52,50%. Non c'è un vantaggio netto.
 
@@ -301,8 +287,8 @@ La chiusura a 30 giorni è incerta: salita 47,50%, discesa 52,50%. Non c'è un v
 **Prezzo attuale:** 0,08 $
 
 **Direzione più probabile a 30 giorni:** **DISCESA**
-- Probabilità storica di salita: **25,00%**
-- Probabilità storica di discesa: **75,00%**
+- Probabilità storica di salita: **22,50%**
+- Probabilità storica di discesa: **77,50%**
 - Quanto è netto il segnale: **forte**
 
 ## Come leggere questa parte
@@ -320,7 +306,7 @@ La lettura principale è ribassista, con segnale forte. Nei casi storici simili,
 - Se va molto male: **0,05 $** (-33,48%)
 - Se va male: **0,06 $** (-24,25%)
 - Scenario normale: **0,07 $** (-16,73%)
-- Se va bene: **0,08 $** (-1,53%)
+- Se va bene: **0,08 $** (-2,56%)
 - Se va molto bene: **0,09 $** (12,59%)
 
 **Come leggerlo:** se vuoi sapere dove potrebbe trovarsi il prezzo fra 30 giorni, guarda soprattutto lo **scenario normale**.
@@ -339,8 +325,8 @@ La lettura principale è ribassista, con segnale forte. Nei casi storici simili,
 
 **Max gain** significa il massimo rialzo toccato durante il mese. Non è il prezzo finale: può essere anche solo uno spike temporaneo.
 
-- Rialzo normale: **0,08 $** (7,82%)
-- Rialzo buono: **0,09 $** (13,04%)
+- Rialzo normale: **0,08 $** (8,10%)
+- Rialzo buono: **0,09 $** (13,90%)
 - Rialzo molto forte: **0,10 $** (25,97%)
 
 **Come leggerlo:** questa parte serve per capire possibili zone di take profit. Il rialzo normale è più realistico; il rialzo molto forte è possibile ma meno comune.
@@ -349,7 +335,7 @@ La lettura principale è ribassista, con segnale forte. Nei casi storici simili,
 
 Scenario normale: nei casi simili, Dogecoin tendeva a muoversi tra una zona bassa intorno a **0,06 $** e uno spike normale intorno a **0,08 $**.
 
-La chiusura a 30 giorni era più spesso negativa: salita 25,00%, discesa 75,00%. Quindi la lettura principale è prudente/debole.
+La chiusura a 30 giorni era più spesso negativa: salita 22,50%, discesa 77,50%. Quindi la lettura principale è prudente/debole.
 
 ---
 
@@ -423,7 +409,7 @@ Per ora si usa solo lo scanner storico grezzo. Quando ci saranno abbastanza prev
 
 ## Semaforo: 🟡 GIALLO / Incerto
 
-**Prezzo attuale:** 63.246,45 $
+**Prezzo attuale:** 63.260,12 $
 
 Bitcoin è in una situazione incerta. Lo scanner non vede un vantaggio chiaro né per la salita né per la discesa. In questi casi è meglio non forzare la previsione.
 
@@ -446,10 +432,10 @@ Bitcoin è in una situazione incerta. Lo scanner non vede un vantaggio chiaro n�
 
 ## Livelli principali
 
-- Scenario medio a 30 giorni: **64.928,79 $**
-- Scenario centrale a 30 giorni: **61.889,86 $**
-- Zona di rischio media: **56.072,87 $**
-- Zona di rialzo media: **75.220,30 $**
+- Scenario medio a 30 giorni: **64.942,82 $**
+- Scenario centrale a 30 giorni: **61.903,24 $**
+- Zona di rischio media: **56.084,99 $**
+- Zona di rialzo media: **75.236,56 $**
 
 **Come leggerli:** scenario centrale = prezzo finale più normale a 30 giorni. Zona rischio = dove può scendere durante il mese. Zona rialzo = dove può arrivare durante uno spike.
 
@@ -457,45 +443,45 @@ Bitcoin è in una situazione incerta. Lo scanner non vede un vantaggio chiaro n�
 
 **Return** significa prezzo finale dopo 30 giorni rispetto al prezzo di oggi.
 
-- **Percentile 10%**: -17,03% → **52.475,97 $**
+- **Percentile 10%**: -17,03% → **52.487,31 $**
   - Percentile 10: se va molto male, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 25%**: -8,47% → **57.892,17 $**
+- **Percentile 25%**: -8,47% → **57.904,68 $**
   - Percentile 25: se va male, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 50%**: -2,14% → **61.889,86 $**
+- **Percentile 50%**: -2,14% → **61.903,24 $**
   - Percentile 50: scenario normale. È il valore principale da guardare per il prezzo fra 30 giorni.
-- **Percentile 75%**: 8,55% → **68.654,96 $**
+- **Percentile 75%**: 8,55% → **68.669,80 $**
   - Percentile 75: se va bene, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 90%**: 22,31% → **77.359,53 $**
+- **Percentile 90%**: 22,31% → **77.376,25 $**
   - Percentile 90: se va molto bene, fra 30 giorni il prezzo può arrivare circa in questa zona.
 
 ## Percentili drawdown — discesa durante i 30 giorni
 
 **Drawdown** significa quanto può scendere il prezzo durante il mese, anche se poi recupera.
 
-- **Percentile 10%**: -32,18% → **42.893,37 $**
+- **Percentile 10%**: -32,18% → **42.902,64 $**
   - Percentile 10: rischio molto brutto. Durante i 30 giorni il prezzo può scendere fino a questa zona o peggio.
-- **Percentile 25%**: -15,57% → **53.396,77 $**
+- **Percentile 25%**: -15,57% → **53.408,31 $**
   - Percentile 25: rischio brutto. Durante i 30 giorni il prezzo può scendere fino a questa zona.
-- **Percentile 50%**: -5,28% → **59.905,44 $**
+- **Percentile 50%**: -5,28% → **59.918,39 $**
   - Percentile 50: discesa normale durante il mese. È il drawdown centrale.
-- **Percentile 75%**: -3,14% → **61.260,75 $**
+- **Percentile 75%**: -3,14% → **61.273,99 $**
   - Percentile 75: discesa contenuta. Scenario abbastanza tranquillo.
-- **Percentile 90%**: -1,87% → **62.062,68 $**
+- **Percentile 90%**: -1,87% → **62.076,10 $**
   - Percentile 90: discesa molto contenuta. Scenario molto tranquillo.
 
 ## Percentili max gain — rialzo durante i 30 giorni
 
 **Max gain** significa il massimo rialzo che il prezzo può toccare durante il mese, anche solo temporaneamente.
 
-- **Percentile 10%**: 0,00% → **63.246,45 $**
+- **Percentile 10%**: 0,00% → **63.260,12 $**
   - Percentile 10: rialzo scarso. Durante i 30 giorni il prezzo è salito poco.
-- **Percentile 25%**: 5,26% → **66.574,52 $**
+- **Percentile 25%**: 5,26% → **66.588,91 $**
   - Percentile 25: rialzo modesto. Durante i 30 giorni il prezzo ha fatto poca strada verso l'alto.
-- **Percentile 50%**: 13,48% → **71.769,05 $**
+- **Percentile 50%**: 13,48% → **71.784,57 $**
   - Percentile 50: rialzo normale. È lo spike centrale più realistico.
-- **Percentile 75%**: 25,03% → **79.077,10 $**
+- **Percentile 75%**: 25,03% → **79.094,20 $**
   - Percentile 75: rialzo buono. Zona interessante per possibile take profit.
-- **Percentile 90%**: 39,51% → **88.233,07 $**
+- **Percentile 90%**: 39,51% → **88.252,15 $**
   - Percentile 90: rialzo molto forte. Possibile, ma meno comune.
 
 ## Dati tecnici per controllo
@@ -507,7 +493,7 @@ Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. No
 | DOT-USD         | 2023-06-10   | 2023-09-17 |        87.69 |        -9.81 |          -9.84 |           4.57 |
 | KSM-USD         | 2022-03-05   | 2022-06-12 |        87.49 |        -8.02 |          -9.39 |          13.41 |
 | FIL-USD         | 2023-06-09   | 2023-09-16 |        87.28 |        -2.12 |          -4.67 |           4.08 |
-| AVAX-USD        | 2023-06-11   | 2023-09-18 |        86.6  |        -2.17 |          -3.57 |          16.94 |
+| AVAX-USD        | 2023-06-11   | 2023-09-18 |        86.59 |        -2.17 |          -3.57 |          16.94 |
 | ETH-USD         | 2023-06-10   | 2023-09-17 |        86.4  |        -3.54 |          -5.13 |           6.83 |
 | LRC-USD         | 2018-09-14   | 2018-12-22 |        85.95 |        55.58 |         -16.08 |          55.79 |
 | YFI-USD         | 2023-06-09   | 2023-09-16 |        85.79 |        -6.47 |          -8.36 |           0.54 |
@@ -521,7 +507,7 @@ Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. No
 
 ## Semaforo: 🟡 GIALLO / Incerto
 
-**Prezzo attuale:** 81,79 $
+**Prezzo attuale:** 81,83 $
 
 Solana è in una situazione incerta. Lo scanner non vede un vantaggio chiaro né per la salita né per la discesa. In questi casi è meglio non forzare la previsione.
 
@@ -534,20 +520,20 @@ Solana è in una situazione incerta. Lo scanner non vede un vantaggio chiaro né
 
 ## Cosa dicono i 40 casi storici più simili
 
-- Somiglianza media dei pattern: **76,40%**
-- Rendimento medio dopo 30 giorni: **0,09%**
+- Somiglianza media dei pattern: **76,49%**
+- Rendimento medio dopo 30 giorni: **0,04%**
 - Rendimento centrale dopo 30 giorni: **-0,24%**
-- Discesa media durante i 30 giorni: **-11,69%**
-- Massimo rialzo medio durante i 30 giorni: **20,83%**
+- Discesa media durante i 30 giorni: **-11,95%**
+- Massimo rialzo medio durante i 30 giorni: **20,65%**
 
 **Come leggerli:** il rendimento dopo 30 giorni guarda il prezzo finale. La discesa media guarda il rischio durante il mese. Il massimo rialzo medio guarda il possibile spike durante il mese.
 
 ## Livelli principali
 
-- Scenario medio a 30 giorni: **81,87 $**
-- Scenario centrale a 30 giorni: **81,60 $**
-- Zona di rischio media: **72,23 $**
-- Zona di rialzo media: **98,83 $**
+- Scenario medio a 30 giorni: **81,86 $**
+- Scenario centrale a 30 giorni: **81,64 $**
+- Zona di rischio media: **72,05 $**
+- Zona di rialzo media: **98,73 $**
 
 **Come leggerli:** scenario centrale = prezzo finale più normale a 30 giorni. Zona rischio = dove può scendere durante il mese. Zona rialzo = dove può arrivare durante uno spike.
 
@@ -555,45 +541,45 @@ Solana è in una situazione incerta. Lo scanner non vede un vantaggio chiaro né
 
 **Return** significa prezzo finale dopo 30 giorni rispetto al prezzo di oggi.
 
-- **Percentile 10%**: -18,22% → **66,89 $**
+- **Percentile 10%**: -18,62% → **66,59 $**
   - Percentile 10: se va molto male, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 25%**: -8,76% → **74,63 $**
+- **Percentile 25%**: -8,76% → **74,66 $**
   - Percentile 25: se va male, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 50%**: -0,24% → **81,60 $**
+- **Percentile 50%**: -0,24% → **81,64 $**
   - Percentile 50: scenario normale. È il valore principale da guardare per il prezzo fra 30 giorni.
-- **Percentile 75%**: 7,03% → **87,54 $**
+- **Percentile 75%**: 7,03% → **87,58 $**
   - Percentile 75: se va bene, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 90%**: 22,19% → **99,94 $**
+- **Percentile 90%**: 22,19% → **99,99 $**
   - Percentile 90: se va molto bene, fra 30 giorni il prezzo può arrivare circa in questa zona.
 
 ## Percentili drawdown — discesa durante i 30 giorni
 
 **Drawdown** significa quanto può scendere il prezzo durante il mese, anche se poi recupera.
 
-- **Percentile 10%**: -23,43% → **62,62 $**
+- **Percentile 10%**: -25,40% → **61,04 $**
   - Percentile 10: rischio molto brutto. Durante i 30 giorni il prezzo può scendere fino a questa zona o peggio.
-- **Percentile 25%**: -16,42% → **68,36 $**
+- **Percentile 25%**: -16,42% → **68,39 $**
   - Percentile 25: rischio brutto. Durante i 30 giorni il prezzo può scendere fino a questa zona.
-- **Percentile 50%**: -8,79% → **74,60 $**
+- **Percentile 50%**: -8,79% → **74,63 $**
   - Percentile 50: discesa normale durante il mese. È il drawdown centrale.
-- **Percentile 75%**: -3,77% → **78,70 $**
+- **Percentile 75%**: -3,77% → **78,74 $**
   - Percentile 75: discesa contenuta. Scenario abbastanza tranquillo.
-- **Percentile 90%**: -1,95% → **80,19 $**
+- **Percentile 90%**: -1,95% → **80,23 $**
   - Percentile 90: discesa molto contenuta. Scenario molto tranquillo.
 
 ## Percentili max gain — rialzo durante i 30 giorni
 
 **Max gain** significa il massimo rialzo che il prezzo può toccare durante il mese, anche solo temporaneamente.
 
-- **Percentile 10%**: 3,52% → **84,67 $**
+- **Percentile 10%**: 2,88% → **84,19 $**
   - Percentile 10: rialzo scarso. Durante i 30 giorni il prezzo è salito poco.
-- **Percentile 25%**: 6,55% → **87,15 $**
+- **Percentile 25%**: 6,10% → **86,82 $**
   - Percentile 25: rialzo modesto. Durante i 30 giorni il prezzo ha fatto poca strada verso l'alto.
-- **Percentile 50%**: 12,76% → **92,23 $**
+- **Percentile 50%**: 12,76% → **92,27 $**
   - Percentile 50: rialzo normale. È lo spike centrale più realistico.
-- **Percentile 75%**: 25,17% → **102,38 $**
+- **Percentile 75%**: 25,17% → **102,43 $**
   - Percentile 75: rialzo buono. Zona interessante per possibile take profit.
-- **Percentile 90%**: 43,65% → **117,49 $**
+- **Percentile 90%**: 43,65% → **117,55 $**
   - Percentile 90: rialzo molto forte. Possibile, ma meno comune.
 
 ## Dati tecnici per controllo
@@ -605,13 +591,13 @@ Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. No
 | WAVES-USD       | 2019-02-16   | 2019-05-26 |        81.34 |       -14.85 |         -15.54 |           1.21 |
 | LRC-USD         | 2018-09-14   | 2018-12-22 |        80.15 |        55.58 |         -16.08 |          55.79 |
 | QTUM-USD        | 2018-09-14   | 2018-12-22 |        79.46 |       -14.34 |         -14.34 |          16.52 |
-| EOS-USD         | 2023-06-10   | 2023-09-17 |        78.67 |        -2.79 |          -3.83 |           8.16 |
+| EOS-USD         | 2023-06-10   | 2023-09-17 |        78.66 |        -2.79 |          -3.83 |           8.16 |
 | TRX-USD         | 2018-09-14   | 2018-12-22 |        78.27 |        22.15 |         -11.82 |          35.54 |
-| LINK-USD        | 2025-11-26   | 2026-03-05 |        77.94 |        -5.48 |          -8.61 |           7.94 |
-| APT-USD         | 2024-08-27   | 2024-12-04 |        77.87 |        -4.91 |         -13.84 |           3.57 |
-| ONE-USD         | 2020-01-02   | 2020-04-10 |        77.78 |         2.26 |          -1.13 |          13.63 |
+| LINK-USD        | 2025-11-26   | 2026-03-05 |        77.93 |        -5.48 |          -8.61 |           7.94 |
+| CHZ-USD         | 2024-04-14   | 2024-07-22 |        77.9  |       -20.46 |         -29.51 |           0    |
+| APT-USD         | 2024-08-27   | 2024-12-04 |        77.86 |        -4.91 |         -13.84 |           3.57 |
+| ONE-USD         | 2020-01-02   | 2020-04-10 |        77.77 |         2.26 |          -1.13 |          13.63 |
 | MKR-USD         | 2020-01-03   | 2020-04-11 |        77.51 |         2.69 |          -5.91 |          20.88 |
-| OMG-USD         | 2025-11-26   | 2026-03-05 |        77.51 |        -6.89 |          -7.33 |           3.05 |
 
 ---
 
@@ -625,18 +611,18 @@ Dogecoin richiede prudenza. La statistica dei casi simili indica più possibilit
 
 ## Casi positivi e negativi
 
-- Casi positivi dopo 30 giorni: **25,00%**
-- Casi negativi dopo 30 giorni: **75,00%**
+- Casi positivi dopo 30 giorni: **22,50%**
+- Casi negativi dopo 30 giorni: **77,50%**
 
 **Come leggerli:** questi numeri dicono quante volte, nei 40 casi storici simili, il prezzo ha chiuso sopra o sotto dopo 30 giorni. Sono la parte più semplice per capire se storicamente era più probabile salita o discesa.
 
 ## Cosa dicono i 40 casi storici più simili
 
-- Somiglianza media dei pattern: **83,39%**
-- Rendimento medio dopo 30 giorni: **-12,10%**
+- Somiglianza media dei pattern: **83,49%**
+- Rendimento medio dopo 30 giorni: **-12,55%**
 - Rendimento centrale dopo 30 giorni: **-16,73%**
-- Discesa media durante i 30 giorni: **-23,45%**
-- Massimo rialzo medio durante i 30 giorni: **11,23%**
+- Discesa media durante i 30 giorni: **-23,68%**
+- Massimo rialzo medio durante i 30 giorni: **11,38%**
 
 **Come leggerli:** il rendimento dopo 30 giorni guarda il prezzo finale. La discesa media guarda il rischio durante il mese. Il massimo rialzo medio guarda il possibile spike durante il mese.
 
@@ -659,7 +645,7 @@ Dogecoin richiede prudenza. La statistica dei casi simili indica più possibilit
   - Percentile 25: se va male, fra 30 giorni il prezzo può stare circa in questa zona.
 - **Percentile 50%**: -16,73% → **0,07 $**
   - Percentile 50: scenario normale. È il valore principale da guardare per il prezzo fra 30 giorni.
-- **Percentile 75%**: -1,53% → **0,08 $**
+- **Percentile 75%**: -2,56% → **0,08 $**
   - Percentile 75: se va bene, fra 30 giorni il prezzo può stare circa in questa zona.
 - **Percentile 90%**: 12,59% → **0,09 $**
   - Percentile 90: se va molto bene, fra 30 giorni il prezzo può arrivare circa in questa zona.
@@ -687,9 +673,9 @@ Dogecoin richiede prudenza. La statistica dei casi simili indica più possibilit
   - Percentile 10: rialzo scarso. Durante i 30 giorni il prezzo è salito poco.
 - **Percentile 25%**: 3,61% → **0,08 $**
   - Percentile 25: rialzo modesto. Durante i 30 giorni il prezzo ha fatto poca strada verso l'alto.
-- **Percentile 50%**: 7,82% → **0,08 $**
+- **Percentile 50%**: 8,10% → **0,08 $**
   - Percentile 50: rialzo normale. È lo spike centrale più realistico.
-- **Percentile 75%**: 13,04% → **0,09 $**
+- **Percentile 75%**: 13,90% → **0,09 $**
   - Percentile 75: rialzo buono. Zona interessante per possibile take profit.
 - **Percentile 90%**: 25,97% → **0,10 $**
   - Percentile 90: rialzo molto forte. Possibile, ma meno comune.
@@ -704,12 +690,12 @@ Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. No
 | XLM-USD         | 2019-09-24   | 2020-01-01 |        86.96 |        35.43 |          -2.95 |          37.33 |
 | DASH-USD        | 2022-02-15   | 2022-05-25 |        86.6  |       -16.64 |         -32.93 |           3.9  |
 | VET-USD         | 2022-02-17   | 2022-05-27 |        86.51 |       -15.95 |         -24.97 |          14.05 |
+| CHZ-USD         | 2022-02-19   | 2022-05-29 |        85.59 |        -9.76 |         -23.41 |          13.85 |
 | XTZ-USD         | 2025-12-01   | 2026-03-10 |        85.29 |        -2.7  |          -6.44 |          11.03 |
 | 1INCH-USD       | 2022-02-17   | 2022-05-27 |        85.03 |       -22.62 |         -38.42 |          12.12 |
 | OMG-USD         | 2022-02-15   | 2022-05-25 |        85    |       -20.46 |         -32.01 |           8.79 |
-| ZEC-USD         | 2019-05-12   | 2019-08-19 |        84.78 |        -2.92 |         -17.99 |           0    |
+| ZEC-USD         | 2019-05-12   | 2019-08-19 |        84.77 |        -2.92 |         -17.99 |           0    |
 | ETC-USD         | 2022-02-15   | 2022-05-25 |        84.75 |       -30.88 |         -42.16 |           4.68 |
-| HBAR-USD        | 2020-06-27   | 2020-10-04 |        84.53 |        -7.04 |          -7.04 |          12.71 |
 
 <!-- CALIBRATION_READABLE_START -->
 
@@ -758,9 +744,9 @@ Report separato completo: [liquidation_report.md](liquidation_report.md)
 
 | Asset | Prezzo | Funding | OI 24h | Long/Short | Lettura futures | Forza |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | $63,277 | +0.0076% | +18.72% | 1.76 | Rischio sotto | 5/5 |
-| SOL | $81.79 | +0.0035% | -20.72% | 3.26 | Misto | 1/5 |
-| DOGE | $0.07855 | +0.0072% | +7.99% | 3.87 | Rischio sotto | 5/5 |
+| BTC | $63,258 | +0.0077% | +18.72% | 1.76 | Rischio sotto | 5/5 |
+| SOL | $81.76 | +0.0033% | -20.86% | 3.28 | Misto | 1/5 |
+| DOGE | $0.07848 | +0.0069% | +7.38% | 3.87 | Rischio sotto | 5/5 |
 
 ## Come usarla insieme al frattale
 
