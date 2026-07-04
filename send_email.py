@@ -5,44 +5,51 @@ from email.message import EmailMessage
 
 
 REPORT_PATH = "reports/latest_report.md"
+LIQ_REPORT_PATH = "reports/liquidation_report.md"
 
 DEFAULT_REPORT_URL = (
     "https://github.com/eddyhardscit/crypto-fractal-scanner/"
     "blob/main/reports/latest_report.md"
 )
 
+DEFAULT_LIQ_REPORT_URL = (
+    "https://github.com/eddyhardscit/crypto-fractal-scanner/"
+    "blob/main/reports/liquidation_report.md"
+)
 
-def extract_fast_reading(report_text):
-    """
-    Prende dal report solo la parte 'Lettura velocissima',
-    così l'email non diventa lunghissima.
-    """
-    possible_titles = [
-        "# Lettura velocissima",
-        "## Lettura velocissima",
-    ]
 
+def extract_section(report_text, titles, max_chars=4000):
     start = -1
 
-    for title in possible_titles:
+    for title in titles:
         start = report_text.find(title)
         if start != -1:
             break
 
     if start == -1:
-        return report_text[:3000]
+        return report_text[:max_chars]
 
-    end = report_text.find("\n---", start)
+    end_candidates = []
 
-    if end == -1:
-        end = start + 4000
+    next_hr = report_text.find("\n---", start + 1)
+    if next_hr != -1:
+        end_candidates.append(next_hr)
 
-    summary = report_text[start:end].strip()
+    next_h1 = report_text.find("\n# ", start + 1)
+    if next_h1 != -1:
+        end_candidates.append(next_h1)
 
-    if len(summary) > 4000:
-        summary = summary[:4000] + "\n\n[Riassunto tagliato: apri il report completo.]"
+    if end_candidates:
+        end = min(end_candidates)
+    else:
+        end = start + max_chars
 
-    return summary
+    section = report_text[start:end].strip()
+
+    if len(section) > max_chars:
+        section = section[:max_chars] + "\n\n[Sezione tagliata: apri il report completo.]"
+
+    return section
 
 
 def main():
@@ -50,6 +57,7 @@ def main():
     email_password = os.environ.get("EMAIL_PASSWORD")
     email_to = os.environ.get("EMAIL_TO")
     report_url = os.environ.get("REPORT_URL", DEFAULT_REPORT_URL)
+    liq_report_url = os.environ.get("LIQ_REPORT_URL", DEFAULT_LIQ_REPORT_URL)
 
     if not email_user:
         raise RuntimeError("EMAIL_USER non trovato nei GitHub Secrets.")
@@ -66,7 +74,26 @@ def main():
     with open(REPORT_PATH, "r", encoding="utf-8") as f:
         report_text = f.read()
 
-    fast_reading = extract_fast_reading(report_text)
+    fast_reading = extract_section(
+        report_text,
+        [
+            "# Lettura velocissima",
+            "## Lettura velocissima",
+        ],
+        max_chars=3500,
+    )
+
+    futures_summary = ""
+
+    if "Sintesi futures / liquidazioni" in report_text:
+        futures_summary = extract_section(
+            report_text,
+            [
+                "# Sintesi futures / liquidazioni",
+                "## Sintesi futures / liquidazioni",
+            ],
+            max_chars=2500,
+        )
 
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
@@ -74,25 +101,45 @@ def main():
 
     body = f"""Report crypto aggiornato.
 
-Link al report completo:
+Link report frattale completo:
 {report_url}
 
-In allegato trovi anche il file latest_report.md.
+Link report liquidazioni/futures:
+{liq_report_url}
 
+In allegato trovi:
+- latest_report.md
+- liquidation_report.md, se generato correttamente
+
+------------------------------
+LETTURA VELOCE
 ------------------------------
 
 {fast_reading}
+"""
+
+    if futures_summary:
+        body += f"""
+
+------------------------------
+SINTESI FUTURES / LIQUIDAZIONI
+------------------------------
+
+{futures_summary}
+"""
+
+    body += """
 
 ------------------------------
 
 Nota:
 Il report è statistico, non è una previsione certa.
-Guarda soprattutto:
-- direzione più probabile;
-- casi positivi / negativi;
-- return 30d;
+Per la leva guarda soprattutto:
+- direzione frattale;
 - drawdown 30d;
-- max gain 30d.
+- funding;
+- open interest;
+- rischio flush sotto / short squeeze sopra.
 """
 
     msg = EmailMessage()
@@ -108,6 +155,15 @@ Guarda soprattutto:
             subtype="markdown",
             filename="latest_report.md",
         )
+
+    if os.path.exists(LIQ_REPORT_PATH):
+        with open(LIQ_REPORT_PATH, "rb") as f:
+            msg.add_attachment(
+                f.read(),
+                maintype="text",
+                subtype="markdown",
+                filename="liquidation_report.md",
+            )
 
     with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
         smtp.starttls()
