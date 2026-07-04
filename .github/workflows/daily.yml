@@ -29,6 +29,9 @@ jobs:
       - name: Run scanner
         run: python scanner.py
 
+      - name: Run calibration status report
+        run: python calibration_status_report.py
+
       - name: Run liquidations report
         run: python liquidations_report.py
 
