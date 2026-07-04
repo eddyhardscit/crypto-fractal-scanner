@@ -10,20 +10,18 @@ import yfinance as yf
 REPORT_DIR = "reports"
 MAIN_REPORT_PATH = "reports/latest_report.md"
 PREDICTION_LOG_PATH = "reports/prediction_log.csv"
-BOUNCE_REPORT_PATH = "reports/bounce_after_drawdown_report.md"
-BOUNCE_CSV_PATH = "reports/bounce_after_drawdown_metrics.csv"
+SEQUENCE_REPORT_PATH = "reports/bounce_after_drawdown_report.md"
+SEQUENCE_CSV_PATH = "reports/bounce_after_drawdown_metrics.csv"
 
 TARGETS = ["BTC-USD", "SOL-USD", "DOGE-USD"]
 
 FORWARD_DAYS = 30
 
-# Prima scende, poi rimbalza.
-PULLBACK_LEVELS = [-5, -10, -15]
-REBOUND_TARGETS = [10, 20]
+BOUNCE_PULLBACKS = [-5, -10, -15]
+BOUNCE_REBOUNDS = [10, 20]
 
-# Prima sale, poi scarica.
-SPIKE_LEVELS = [10, 20]
-DUMP_TARGETS = [0, -5, -10]
+DUMP_SPIKES = [10, 20]
+DUMP_DUMPS = [0, -5, -10]
 
 
 def asset_name(asset):
@@ -41,10 +39,6 @@ def asset_short(asset):
 
 def matches_path(asset):
     return f"reports/{asset_short(asset)}_matches.csv"
-
-
-def percentiles_path(asset):
-    return f"reports/{asset_short(asset)}_percentiles.csv"
 
 
 def read_csv_safe(path):
@@ -122,18 +116,6 @@ def fmt_days(value):
     return fmt_number(value, 1)
 
 
-def fmt_dump_level(value):
-    value = safe_float(value)
-
-    if value is None:
-        return "n/d"
-
-    if value == 0:
-        return "0% / prezzo iniziale"
-
-    return fmt_pct(value)
-
-
 def md_table(headers, rows):
     def clean(x):
         return str(x).replace("|", "\\|").replace("\n", " ")
@@ -170,41 +152,6 @@ def latest_current_price(asset):
         rows = rows.sort_values("generated_at_dt")
 
     return safe_float(rows.iloc[-1].get("current_price"))
-
-
-def percentile_metric_pct(asset, matches, metric, percentile):
-    pfile = percentiles_path(asset)
-    percentiles = read_csv_safe(pfile)
-
-    if not percentiles.empty:
-        needed = {"metric", "percentile", "percent_value"}
-
-        if needed.issubset(percentiles.columns):
-            rows = percentiles[
-                (percentiles["metric"].astype(str) == metric)
-                & (pd.to_numeric(percentiles["percentile"], errors="coerce") == percentile)
-            ]
-
-            if not rows.empty:
-                value = safe_float(rows.iloc[0].get("percent_value"))
-                if value is not None:
-                    return value
-
-    if not matches.empty and metric in matches.columns:
-        values = pd.to_numeric(matches[metric], errors="coerce").dropna()
-
-        if len(values) > 0:
-            return float(np.percentile(values, percentile))
-
-    return None
-
-
-def max_gain_p75_pct(asset, matches):
-    return percentile_metric_pct(asset, matches, "max_gain_30d", 75)
-
-
-def drawdown_p25_pct(asset, matches):
-    return percentile_metric_pct(asset, matches, "drawdown_30d", 25)
 
 
 def build_all_matches():
@@ -312,384 +259,186 @@ def get_forward_path(row, data):
     return start_price, path
 
 
-def analyze_bounce_match(row, data, pullback_pct, rebound_pct, p75_pct):
-    """
-    Sequenza:
-    prima scende almeno a pullback_pct,
-    poi, solo dopo, controlla se sale a rebound_pct / P75.
-    """
-    start_price, path = get_forward_path(row, data)
+def first_touch_day(path, start_price, level_pct, direction):
+    level_price = start_price * (1 + level_pct / 100)
 
-    if start_price is None or path is None:
+    if direction == "down":
+        positions = np.where(path.values <= level_price)[0]
+    else:
+        positions = np.where(path.values >= level_price)[0]
+
+    if len(positions) == 0:
         return None
 
-    pullback_price = start_price * (1 + pullback_pct / 100)
-    rebound_price = start_price * (1 + rebound_pct / 100)
-
-    touched_positions = np.where(path.values <= pullback_price)[0]
-    touched_pullback = len(touched_positions) > 0
-
-    result = {
-        "valid": True,
-        "touched_pullback": touched_pullback,
-        "pullback_day": np.nan,
-        "rebound_hit": False,
-        "rebound_day": np.nan,
-        "p75_hit": False,
-        "p75_day": np.nan,
-        "min_return_pct": (path.min() / start_price - 1) * 100,
-        "max_return_pct": (path.max() / start_price - 1) * 100,
-    }
-
-    if not touched_pullback:
-        return result
-
-    pullback_day = int(touched_positions[0])
-    result["pullback_day"] = pullback_day
-
-    after_pullback = path.iloc[pullback_day:]
-
-    rebound_positions = np.where(after_pullback.values >= rebound_price)[0]
-
-    if len(rebound_positions) > 0:
-        rebound_day = pullback_day + int(rebound_positions[0])
-        result["rebound_hit"] = True
-        result["rebound_day"] = rebound_day
-
-    if p75_pct is not None:
-        p75_price = start_price * (1 + p75_pct / 100)
-        p75_positions = np.where(after_pullback.values >= p75_price)[0]
-
-        if len(p75_positions) > 0:
-            p75_day = pullback_day + int(p75_positions[0])
-            result["p75_hit"] = True
-            result["p75_day"] = p75_day
-
-    return result
+    return int(positions[0])
 
 
-def analyze_dump_match(row, data, spike_pct, dump_pct, p25_pct):
-    """
-    Sequenza contraria:
-    prima sale almeno a spike_pct,
-    poi, solo dopo, controlla se scarica a dump_pct / P25.
-    """
-    start_price, path = get_forward_path(row, data)
+def summarize_sequence(asset, matches, data, current_price, sequence_type, first_pct, second_pct):
+    total_valid = 0
+    first_hits = 0
+    second_hits_after_first = 0
 
-    if start_price is None or path is None:
-        return None
+    first_days = []
+    second_days = []
 
-    spike_price = start_price * (1 + spike_pct / 100)
-    dump_price = start_price * (1 + dump_pct / 100)
-
-    spike_positions = np.where(path.values >= spike_price)[0]
-    touched_spike = len(spike_positions) > 0
-
-    result = {
-        "valid": True,
-        "touched_spike": touched_spike,
-        "spike_day": np.nan,
-        "dump_hit": False,
-        "dump_day": np.nan,
-        "p25_hit": False,
-        "p25_day": np.nan,
-        "min_return_pct": (path.min() / start_price - 1) * 100,
-        "max_return_pct": (path.max() / start_price - 1) * 100,
-    }
-
-    if not touched_spike:
-        return result
-
-    spike_day = int(spike_positions[0])
-    result["spike_day"] = spike_day
-
-    after_spike = path.iloc[spike_day:]
-
-    dump_positions = np.where(after_spike.values <= dump_price)[0]
-
-    if len(dump_positions) > 0:
-        dump_day = spike_day + int(dump_positions[0])
-        result["dump_hit"] = True
-        result["dump_day"] = dump_day
-
-    if p25_pct is not None:
-        p25_price = start_price * (1 + p25_pct / 100)
-        p25_positions = np.where(after_spike.values <= p25_price)[0]
-
-        if len(p25_positions) > 0:
-            p25_day = spike_day + int(p25_positions[0])
-            result["p25_hit"] = True
-            result["p25_day"] = p25_day
-
-    return result
-
-
-def summarize_bounce_condition(asset, matches, data, current_price, pullback_pct, rebound_pct, p75_pct):
-    total_matches = 0
-    touched = 0
-    rebound_hits = 0
-    p75_hits = 0
-
-    pullback_days = []
-    rebound_days = []
-    p75_days = []
-    min_returns = []
-    max_returns = []
+    if sequence_type == "bounce":
+        first_direction = "down"
+        second_direction = "up"
+    else:
+        first_direction = "up"
+        second_direction = "down"
 
     for _, row in matches.iterrows():
-        result = analyze_bounce_match(row, data, pullback_pct, rebound_pct, p75_pct)
+        start_price, path = get_forward_path(row, data)
 
-        if result is None or not result.get("valid"):
+        if start_price is None or path is None:
             continue
 
-        total_matches += 1
-        min_returns.append(result["min_return_pct"])
-        max_returns.append(result["max_return_pct"])
+        total_valid += 1
 
-        if result["touched_pullback"]:
-            touched += 1
-            pullback_days.append(result["pullback_day"])
+        first_day = first_touch_day(
+            path=path,
+            start_price=start_price,
+            level_pct=first_pct,
+            direction=first_direction,
+        )
 
-            if result["rebound_hit"]:
-                rebound_hits += 1
-                rebound_days.append(result["rebound_day"])
+        if first_day is None:
+            continue
 
-            if result["p75_hit"]:
-                p75_hits += 1
-                p75_days.append(result["p75_day"])
+        first_hits += 1
+        first_days.append(first_day)
 
-    touched_rate_all = (touched / total_matches * 100) if total_matches else np.nan
-    rebound_rate_after = (rebound_hits / touched * 100) if touched else np.nan
-    p75_rate_after = (p75_hits / touched * 100) if touched else np.nan
+        after_first = path.iloc[first_day:]
 
-    pullback_price_now = None
-    rebound_price_now = None
-    p75_price_now = None
+        second_day_partial = first_touch_day(
+            path=after_first,
+            start_price=start_price,
+            level_pct=second_pct,
+            direction=second_direction,
+        )
+
+        if second_day_partial is not None:
+            second_hits_after_first += 1
+            second_days.append(first_day + second_day_partial)
+
+    first_rate = (first_hits / total_valid * 100) if total_valid else np.nan
+    second_rate = (
+        second_hits_after_first / first_hits * 100
+        if first_hits
+        else np.nan
+    )
+
+    first_price_now = None
+    second_price_now = None
 
     if current_price is not None:
-        pullback_price_now = current_price * (1 + pullback_pct / 100)
-        rebound_price_now = current_price * (1 + rebound_pct / 100)
-
-        if p75_pct is not None:
-            p75_price_now = current_price * (1 + p75_pct / 100)
+        first_price_now = current_price * (1 + first_pct / 100)
+        second_price_now = current_price * (1 + second_pct / 100)
 
     return {
-        "type": "bounce_after_drawdown",
         "asset": asset,
-        "pullback_pct": pullback_pct,
-        "rebound_pct": rebound_pct,
-        "p75_pct": p75_pct,
+        "sequence_type": sequence_type,
+        "first_pct": first_pct,
+        "second_pct": second_pct,
         "current_price": current_price,
-        "pullback_price_now": pullback_price_now,
-        "rebound_price_now": rebound_price_now,
-        "p75_price_now": p75_price_now,
-        "total_valid_matches": total_matches,
-        "touched_count": touched,
-        "touched_rate_all": touched_rate_all,
-        "rebound_hits_after_pullback": rebound_hits,
-        "rebound_rate_after_pullback": rebound_rate_after,
-        "p75_hits_after_pullback": p75_hits,
-        "p75_rate_after_pullback": p75_rate_after,
-        "avg_days_to_pullback": float(np.nanmean(pullback_days)) if pullback_days else np.nan,
-        "avg_days_to_rebound": float(np.nanmean(rebound_days)) if rebound_days else np.nan,
-        "avg_days_to_p75": float(np.nanmean(p75_days)) if p75_days else np.nan,
-        "avg_min_return_pct": float(np.nanmean(min_returns)) if min_returns else np.nan,
-        "avg_max_return_pct": float(np.nanmean(max_returns)) if max_returns else np.nan,
+        "first_price_now": first_price_now,
+        "second_price_now": second_price_now,
+        "total_valid": total_valid,
+        "first_hits": first_hits,
+        "first_rate": first_rate,
+        "second_hits_after_first": second_hits_after_first,
+        "second_rate_after_first": second_rate,
+        "avg_days_to_first": float(np.nanmean(first_days)) if first_days else np.nan,
+        "avg_days_to_second": float(np.nanmean(second_days)) if second_days else np.nan,
     }
 
 
-def summarize_dump_condition(asset, matches, data, current_price, spike_pct, dump_pct, p25_pct):
-    total_matches = 0
-    touched = 0
-    dump_hits = 0
-    p25_hits = 0
-
-    spike_days = []
-    dump_days = []
-    p25_days = []
-    min_returns = []
-    max_returns = []
-
-    for _, row in matches.iterrows():
-        result = analyze_dump_match(row, data, spike_pct, dump_pct, p25_pct)
-
-        if result is None or not result.get("valid"):
-            continue
-
-        total_matches += 1
-        min_returns.append(result["min_return_pct"])
-        max_returns.append(result["max_return_pct"])
-
-        if result["touched_spike"]:
-            touched += 1
-            spike_days.append(result["spike_day"])
-
-            if result["dump_hit"]:
-                dump_hits += 1
-                dump_days.append(result["dump_day"])
-
-            if result["p25_hit"]:
-                p25_hits += 1
-                p25_days.append(result["p25_day"])
-
-    touched_rate_all = (touched / total_matches * 100) if total_matches else np.nan
-    dump_rate_after = (dump_hits / touched * 100) if touched else np.nan
-    p25_rate_after = (p25_hits / touched * 100) if touched else np.nan
-
-    spike_price_now = None
-    dump_price_now = None
-    p25_price_now = None
-
-    if current_price is not None:
-        spike_price_now = current_price * (1 + spike_pct / 100)
-        dump_price_now = current_price * (1 + dump_pct / 100)
-
-        if p25_pct is not None:
-            p25_price_now = current_price * (1 + p25_pct / 100)
-
-    return {
-        "type": "dump_after_spike",
-        "asset": asset,
-        "spike_pct": spike_pct,
-        "dump_pct": dump_pct,
-        "p25_pct": p25_pct,
-        "current_price": current_price,
-        "spike_price_now": spike_price_now,
-        "dump_price_now": dump_price_now,
-        "p25_price_now": p25_price_now,
-        "total_valid_matches": total_matches,
-        "touched_count": touched,
-        "touched_rate_all": touched_rate_all,
-        "dump_hits_after_spike": dump_hits,
-        "dump_rate_after_spike": dump_rate_after,
-        "p25_hits_after_spike": p25_hits,
-        "p25_rate_after_spike": p25_rate_after,
-        "avg_days_to_spike": float(np.nanmean(spike_days)) if spike_days else np.nan,
-        "avg_days_to_dump": float(np.nanmean(dump_days)) if dump_days else np.nan,
-        "avg_days_to_p25": float(np.nanmean(p25_days)) if p25_days else np.nan,
-        "avg_min_return_pct": float(np.nanmean(min_returns)) if min_returns else np.nan,
-        "avg_max_return_pct": float(np.nanmean(max_returns)) if max_returns else np.nan,
-    }
-
-
-def simple_strength(rate):
+def strength_label(rate):
     value = safe_float(rate)
 
     if value is None:
         return "n/d"
 
     if value >= 65:
-        return "alta"
+        return "ALTA"
     if value >= 50:
-        return "media"
+        return "MEDIA"
     if value >= 35:
-        return "bassa"
+        return "BASSA"
 
-    return "debole"
+    return "DEBOLE"
 
 
-def simple_bounce_interpretation(summary):
-    rate = safe_float(summary.get("rebound_rate_after_pullback"))
-    touched = int(summary.get("touched_count", 0))
-    total = int(summary.get("total_valid_matches", 0))
-    pullback_pct = summary.get("pullback_pct")
-    rebound_pct = summary.get("rebound_pct")
-    asset = asset_short(summary.get("asset"))
-
-    if total == 0:
-        return f"{asset}: dati insufficienti."
-
-    if touched == 0:
-        return (
-            f"{asset}: nei casi storici simili non ci sono stati abbastanza esempi "
-            f"di discesa {fmt_pct(pullback_pct)}."
-        )
+def bounce_verdict(summary):
+    rate = safe_float(summary.get("second_rate_after_first"))
 
     if rate is None:
-        return f"{asset}: dati insufficienti dopo la discesa."
+        return "dati insufficienti"
 
     if rate >= 65:
-        return (
-            f"{asset}: quando prima scendeva di {fmt_pct(pullback_pct)}, "
-            f"spesso poi riusciva a rimbalzare fino a {fmt_pct(rebound_pct)}."
-        )
-
+        return "buona zona storica di rimbalzo"
     if rate >= 50:
-        return (
-            f"{asset}: dopo una discesa di {fmt_pct(pullback_pct)}, "
-            f"il rimbalzo a {fmt_pct(rebound_pct)} avveniva circa una volta su due."
-        )
-
+        return "rimbalzo possibile"
     if rate >= 35:
-        return (
-            f"{asset}: dopo una discesa di {fmt_pct(pullback_pct)}, "
-            f"il rimbalzo a {fmt_pct(rebound_pct)} era possibile ma non dominante."
-        )
+        return "rimbalzo debole"
+    return "rimbalzo poco frequente"
+
+
+def dump_verdict(summary):
+    rate = safe_float(summary.get("second_rate_after_first"))
+
+    if rate is None:
+        return "dati insufficienti"
+
+    if rate >= 65:
+        return "spike spesso scaricato"
+    if rate >= 50:
+        return "attenzione a prendere profitto"
+    if rate >= 35:
+        return "scarico possibile"
+    return "spike storicamente più resistente"
+
+
+def simple_bounce_sentence(summary):
+    asset = asset_short(summary["asset"])
+    first_pct = summary["first_pct"]
+    second_pct = summary["second_pct"]
+    rate = summary["second_rate_after_first"]
 
     return (
-        f"{asset}: dopo una discesa di {fmt_pct(pullback_pct)}, "
-        f"il rimbalzo a {fmt_pct(rebound_pct)} era poco frequente."
+        f"{asset}: se prima scende a {fmt_pct(first_pct)}, "
+        f"poi il rimbalzo a {fmt_pct(second_pct)} è avvenuto nel "
+        f"{fmt_pct(rate)} dei casi. Lettura: {bounce_verdict(summary)}."
     )
 
 
-def simple_dump_interpretation(summary):
-    rate = safe_float(summary.get("dump_rate_after_spike"))
-    touched = int(summary.get("touched_count", 0))
-    total = int(summary.get("total_valid_matches", 0))
-    spike_pct = summary.get("spike_pct")
-    dump_pct = summary.get("dump_pct")
-    asset = asset_short(summary.get("asset"))
+def simple_dump_sentence(summary):
+    asset = asset_short(summary["asset"])
+    first_pct = summary["first_pct"]
+    second_pct = summary["second_pct"]
+    rate = summary["second_rate_after_first"]
 
-    if total == 0:
-        return f"{asset}: dati insufficienti."
-
-    if touched == 0:
-        return (
-            f"{asset}: nei casi storici simili non ci sono stati abbastanza esempi "
-            f"di spike {fmt_pct(spike_pct)}."
-        )
-
-    if rate is None:
-        return f"{asset}: dati insufficienti dopo lo spike."
-
-    dump_text = "al prezzo iniziale" if dump_pct == 0 else f"a {fmt_pct(dump_pct)}"
-
-    if rate >= 65:
-        return (
-            f"{asset}: quando prima faceva uno spike di {fmt_pct(spike_pct)}, "
-            f"spesso poi scaricava {dump_text}."
-        )
-
-    if rate >= 50:
-        return (
-            f"{asset}: dopo uno spike di {fmt_pct(spike_pct)}, "
-            f"lo scarico {dump_text} avveniva circa una volta su due."
-        )
-
-    if rate >= 35:
-        return (
-            f"{asset}: dopo uno spike di {fmt_pct(spike_pct)}, "
-            f"lo scarico {dump_text} era possibile ma non dominante."
-        )
+    if second_pct == 0:
+        dump_text = "al prezzo iniziale"
+    else:
+        dump_text = f"a {fmt_pct(second_pct)}"
 
     return (
-        f"{asset}: dopo uno spike di {fmt_pct(spike_pct)}, "
-        f"lo scarico {dump_text} era poco frequente."
+        f"{asset}: se prima sale a {fmt_pct(first_pct)}, "
+        f"poi lo scarico {dump_text} è avvenuto nel "
+        f"{fmt_pct(rate)} dei casi. Lettura: {dump_verdict(summary)}."
     )
 
 
-def best_bounce_for_asset(bounce_summaries, asset):
+def get_summary(summaries, asset, sequence_type, first_pct, second_pct):
     rows = [
-        s for s in bounce_summaries
-        if s["asset"] == asset
-        and s["pullback_pct"] == -5
-        and s["rebound_pct"] == 10
+        item for item in summaries
+        if item["asset"] == asset
+        and item["sequence_type"] == sequence_type
+        and item["first_pct"] == first_pct
+        and item["second_pct"] == second_pct
     ]
-
-    if rows:
-        return rows[0]
-
-    rows = [s for s in bounce_summaries if s["asset"] == asset]
 
     if rows:
         return rows[0]
@@ -697,348 +446,297 @@ def best_bounce_for_asset(bounce_summaries, asset):
     return None
 
 
-def best_dump_for_asset(dump_summaries, asset):
-    rows = [
-        s for s in dump_summaries
-        if s["asset"] == asset
-        and s["spike_pct"] == 10
-        and s["dump_pct"] == -5
-    ]
-
-    if rows:
-        return rows[0]
-
-    rows = [s for s in dump_summaries if s["asset"] == asset]
-
-    if rows:
-        return rows[0]
-
-    return None
-
-
-def build_bounce_section(bounce_summaries):
-    quick_rows = []
+def build_quick_dashboard(summaries):
+    rows = []
 
     for asset in TARGETS:
-        best = best_bounce_for_asset(bounce_summaries, asset)
+        bounce = get_summary(
+            summaries,
+            asset=asset,
+            sequence_type="bounce",
+            first_pct=-5,
+            second_pct=10,
+        )
 
-        if best is None:
-            quick_rows.append([asset_short(asset), "n/d", "n/d", "n/d", "dati insufficienti"])
-            continue
+        dump = get_summary(
+            summaries,
+            asset=asset,
+            sequence_type="dump",
+            first_pct=10,
+            second_pct=-5,
+        )
 
-        quick_rows.append(
+        if bounce is None:
+            bounce_zone = "n/d"
+            bounce_rate = "n/d"
+            bounce_reading = "n/d"
+        else:
+            bounce_zone = fmt_price(bounce["first_price_now"])
+            bounce_rate = fmt_pct(bounce["second_rate_after_first"])
+            bounce_reading = bounce_verdict(bounce)
+
+        if dump is None:
+            spike_zone = "n/d"
+            dump_rate = "n/d"
+            dump_reading = "n/d"
+        else:
+            spike_zone = fmt_price(dump["first_price_now"])
+            dump_rate = fmt_pct(dump["second_rate_after_first"])
+            dump_reading = dump_verdict(dump)
+
+        rows.append(
             [
                 asset_short(asset),
-                fmt_price(best["pullback_price_now"]),
-                f"{best['touched_count']}/{best['total_valid_matches']}",
-                fmt_pct(best["rebound_rate_after_pullback"]),
-                simple_bounce_interpretation(best),
+                bounce_zone,
+                bounce_rate,
+                bounce_reading,
+                spike_zone,
+                dump_rate,
+                dump_reading,
             ]
         )
 
-    text = []
-    text.append("# 1. Rimbalzo dopo drawdown\n")
-    text.append("Questa sezione risponde alla domanda:\n")
-    text.append("> Se prima scende, storicamente poi rimbalza?\n")
-    text.append("Lettura base: **discesa -5%** e poi **rimbalzo +10%**.\n")
-    text.append(md_table(
+    return md_table(
         [
             "Asset",
-            "Zona -5% oggi",
-            "Casi scesi",
-            "Poi rimbalzo +10%",
-            "Traduzione",
-        ],
-        quick_rows,
-    ))
-    text.append("")
-
-    for asset in TARGETS:
-        asset_summaries = [s for s in bounce_summaries if s["asset"] == asset]
-
-        text.append(f"\n## {asset_name(asset)} — rimbalzo dopo discesa\n")
-
-        if not asset_summaries:
-            text.append("Dati insufficienti.\n\n---")
-            continue
-
-        current_price = asset_summaries[0].get("current_price")
-        p75_pct = asset_summaries[0].get("p75_pct")
-        p75_price = asset_summaries[0].get("p75_price_now")
-
-        text.append(f"Prezzo attuale usato: **{fmt_price(current_price)}**  ")
-        text.append(f"Zona rialzo P75 usata: **{fmt_pct(p75_pct)} → {fmt_price(p75_price)}**\n")
-
-        detail_rows = []
-
-        for s in asset_summaries:
-            detail_rows.append(
-                [
-                    fmt_pct(s["pullback_pct"]),
-                    fmt_price(s["pullback_price_now"]),
-                    f"{s['touched_count']}/{s['total_valid_matches']}",
-                    fmt_pct(s["touched_rate_all"]),
-                    fmt_pct(s["rebound_pct"]),
-                    fmt_price(s["rebound_price_now"]),
-                    f"{s['rebound_hits_after_pullback']}/{s['touched_count']}",
-                    fmt_pct(s["rebound_rate_after_pullback"]),
-                    f"{s['p75_hits_after_pullback']}/{s['touched_count']}",
-                    fmt_pct(s["p75_rate_after_pullback"]),
-                    fmt_days(s["avg_days_to_pullback"]),
-                    fmt_days(s["avg_days_to_rebound"]),
-                ]
-            )
-
-        text.append(md_table(
-            [
-                "Discesa",
-                "Prezzo discesa",
-                "Casi scesi",
-                "% casi scesi",
-                "Target rimbalzo",
-                "Prezzo rimbalzo",
-                "Poi target",
-                "% poi target",
-                "Poi P75",
-                "% poi P75",
-                "Giorni al minimo",
-                "Giorni al target",
-            ],
-            detail_rows,
-        ))
-
-        text.append("\n### Traduzione semplice\n")
-
-        for s in asset_summaries:
-            if s["pullback_pct"] == -5 and s["rebound_pct"] in REBOUND_TARGETS:
-                text.append(f"- {simple_bounce_interpretation(s)}")
-
-        text.append("\n---")
-
-    return "\n".join(text)
-
-
-def build_dump_section(dump_summaries):
-    quick_rows = []
-
-    for asset in TARGETS:
-        best = best_dump_for_asset(dump_summaries, asset)
-
-        if best is None:
-            quick_rows.append([asset_short(asset), "n/d", "n/d", "n/d", "dati insufficienti"])
-            continue
-
-        quick_rows.append(
-            [
-                asset_short(asset),
-                fmt_price(best["spike_price_now"]),
-                f"{best['touched_count']}/{best['total_valid_matches']}",
-                fmt_pct(best["dump_rate_after_spike"]),
-                simple_dump_interpretation(best),
-            ]
-        )
-
-    text = []
-    text.append("# 2. Dump dopo spike\n")
-    text.append("Questa sezione risponde alla domanda contraria:\n")
-    text.append("> Se prima sale forte, storicamente poi scarica?\n")
-    text.append("Lettura base: **spike +10%** e poi **scarico -5%**.\n")
-    text.append(md_table(
-        [
-            "Asset",
-            "Zona +10% oggi",
-            "Casi con spike",
+            "Se scende a -5%",
+            "Poi +10%",
+            "Lettura discesa",
+            "Se sale a +10%",
             "Poi dump -5%",
-            "Traduzione",
+            "Lettura spike",
         ],
-        quick_rows,
-    ))
-    text.append("")
-
-    for asset in TARGETS:
-        asset_summaries = [s for s in dump_summaries if s["asset"] == asset]
-
-        text.append(f"\n## {asset_name(asset)} — dump dopo spike\n")
-
-        if not asset_summaries:
-            text.append("Dati insufficienti.\n\n---")
-            continue
-
-        current_price = asset_summaries[0].get("current_price")
-        p25_pct = asset_summaries[0].get("p25_pct")
-        p25_price = asset_summaries[0].get("p25_price_now")
-
-        text.append(f"Prezzo attuale usato: **{fmt_price(current_price)}**  ")
-        text.append(f"Zona rischio P25 usata: **{fmt_pct(p25_pct)} → {fmt_price(p25_price)}**\n")
-
-        detail_rows = []
-
-        for s in asset_summaries:
-            detail_rows.append(
-                [
-                    fmt_pct(s["spike_pct"]),
-                    fmt_price(s["spike_price_now"]),
-                    f"{s['touched_count']}/{s['total_valid_matches']}",
-                    fmt_pct(s["touched_rate_all"]),
-                    fmt_dump_level(s["dump_pct"]),
-                    fmt_price(s["dump_price_now"]),
-                    f"{s['dump_hits_after_spike']}/{s['touched_count']}",
-                    fmt_pct(s["dump_rate_after_spike"]),
-                    f"{s['p25_hits_after_spike']}/{s['touched_count']}",
-                    fmt_pct(s["p25_rate_after_spike"]),
-                    fmt_days(s["avg_days_to_spike"]),
-                    fmt_days(s["avg_days_to_dump"]),
-                ]
-            )
-
-        text.append(md_table(
-            [
-                "Spike",
-                "Prezzo spike",
-                "Casi spike",
-                "% casi spike",
-                "Target dump",
-                "Prezzo dump",
-                "Poi dump",
-                "% poi dump",
-                "Poi P25",
-                "% poi P25",
-                "Giorni allo spike",
-                "Giorni al dump",
-            ],
-            detail_rows,
-        ))
-
-        text.append("\n### Traduzione semplice\n")
-
-        for s in asset_summaries:
-            if s["spike_pct"] == 10 and s["dump_pct"] in [0, -5, -10]:
-                text.append(f"- {simple_dump_interpretation(s)}")
-
-        text.append("\n---")
-
-    return "\n".join(text)
+        rows,
+    )
 
 
-def build_full_report(bounce_summaries, dump_summaries):
+def build_full_report(summaries):
     rome_now = datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z")
     utc_now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
     parts = []
-    parts.append("# Sequenze dopo il pattern: rimbalzo e dump\n")
+
+    parts.append("# Sequenze pratiche: rimbalzo dopo discesa / dump dopo spike")
+    parts.append("")
     parts.append(f"Generato: **{rome_now}**  ")
-    parts.append(f"UTC: **{utc_now}**\n")
-    parts.append("Questo report controlla l'ordine degli eventi nei 40 casi storici più simili.\n")
-    parts.append("Non guarda solo se durante i 30 giorni c'è stato un minimo e un massimo.")
-    parts.append("Controlla proprio la sequenza temporale:\n")
-    parts.append("- prima scende → poi rimbalza")
-    parts.append("- prima sale/spike → poi scarica\n")
-    parts.append("## Come usarlo\n")
-    parts.append("- **Rimbalzo dopo drawdown**: utile per capire se una discesa può diventare zona di rimbalzo.")
-    parts.append("- **Dump dopo spike**: utile per capire se una salita forte può diventare zona da prendere profitto.")
-    parts.append("- Non è una certezza. È una statistica storica sui casi più simili.\n")
-    parts.append("---\n")
-    parts.append(build_bounce_section(bounce_summaries))
-    parts.append("\n\n")
-    parts.append(build_dump_section(dump_summaries))
+    parts.append(f"UTC: **{utc_now}**")
+    parts.append("")
+    parts.append("Questo report guarda l'ordine degli eventi nei 40 casi storici più simili.")
+    parts.append("")
+    parts.append("- **Prima scende → poi rimbalza**: utile per capire se comprare/accumulare una discesa.")
+    parts.append("- **Prima sale → poi scarica**: utile per capire se prendere profitto dopo uno spike.")
+    parts.append("")
+    parts.append("## Lettura pratica veloce")
+    parts.append("")
+    parts.append(build_quick_dashboard(summaries))
+    parts.append("")
+    parts.append("## Come leggere")
+    parts.append("")
+    parts.append("- **Se scende a -5%**: prezzo che corrisponde a una discesa del 5% da oggi.")
+    parts.append("- **Poi +10%**: tra i casi che prima sono scesi, quanti poi sono saliti almeno del 10% dal prezzo iniziale.")
+    parts.append("- **Se sale a +10%**: prezzo che corrisponde a uno spike del 10% da oggi.")
+    parts.append("- **Poi dump -5%**: tra i casi che prima sono saliti, quanti poi sono tornati a -5% dal prezzo iniziale.")
+    parts.append("- **Non è una certezza**: è una statistica storica sui casi più simili.")
+    parts.append("")
+    parts.append("---")
+    parts.append("")
+
+    for asset in TARGETS:
+        parts.append(f"# {asset_name(asset)} — {asset_short(asset)}")
+        parts.append("")
+        parts.append("## Lettura semplice")
+        parts.append("")
+
+        base_bounce = get_summary(summaries, asset, "bounce", -5, 10)
+        base_dump = get_summary(summaries, asset, "dump", 10, -5)
+
+        if base_bounce is not None:
+            parts.append(f"- {simple_bounce_sentence(base_bounce)}")
+
+        if base_dump is not None:
+            parts.append(f"- {simple_dump_sentence(base_dump)}")
+
+        parts.append("")
+        parts.append("## Tabella rimbalzo dopo discesa")
+        parts.append("")
+
+        bounce_rows = []
+
+        for first_pct in BOUNCE_PULLBACKS:
+            for second_pct in BOUNCE_REBOUNDS:
+                item = get_summary(summaries, asset, "bounce", first_pct, second_pct)
+
+                if item is None:
+                    continue
+
+                bounce_rows.append(
+                    [
+                        fmt_pct(first_pct),
+                        fmt_price(item["first_price_now"]),
+                        f"{item['first_hits']}/{item['total_valid']}",
+                        fmt_pct(item["first_rate"]),
+                        fmt_pct(second_pct),
+                        fmt_price(item["second_price_now"]),
+                        f"{item['second_hits_after_first']}/{item['first_hits']}",
+                        fmt_pct(item["second_rate_after_first"]),
+                        strength_label(item["second_rate_after_first"]),
+                        fmt_days(item["avg_days_to_first"]),
+                        fmt_days(item["avg_days_to_second"]),
+                    ]
+                )
+
+        parts.append(
+            md_table(
+                [
+                    "Prima scende",
+                    "Prezzo",
+                    "Casi scesi",
+                    "% casi scesi",
+                    "Poi rimbalzo",
+                    "Prezzo target",
+                    "Casi riusciti",
+                    "% riusciti",
+                    "Forza",
+                    "Giorni discesa",
+                    "Giorni target",
+                ],
+                bounce_rows,
+            )
+        )
+
+        parts.append("")
+        parts.append("## Tabella dump dopo spike")
+        parts.append("")
+
+        dump_rows = []
+
+        for first_pct in DUMP_SPIKES:
+            for second_pct in DUMP_DUMPS:
+                item = get_summary(summaries, asset, "dump", first_pct, second_pct)
+
+                if item is None:
+                    continue
+
+                dump_rows.append(
+                    [
+                        fmt_pct(first_pct),
+                        fmt_price(item["first_price_now"]),
+                        f"{item['first_hits']}/{item['total_valid']}",
+                        fmt_pct(item["first_rate"]),
+                        "prezzo iniziale" if second_pct == 0 else fmt_pct(second_pct),
+                        fmt_price(item["second_price_now"]),
+                        f"{item['second_hits_after_first']}/{item['first_hits']}",
+                        fmt_pct(item["second_rate_after_first"]),
+                        strength_label(item["second_rate_after_first"]),
+                        fmt_days(item["avg_days_to_first"]),
+                        fmt_days(item["avg_days_to_second"]),
+                    ]
+                )
+
+        parts.append(
+            md_table(
+                [
+                    "Prima sale",
+                    "Prezzo",
+                    "Casi spike",
+                    "% casi spike",
+                    "Poi scarica",
+                    "Prezzo target",
+                    "Casi scarico",
+                    "% scarico",
+                    "Forza",
+                    "Giorni spike",
+                    "Giorni dump",
+                ],
+                dump_rows,
+            )
+        )
+
+        parts.append("")
+        parts.append("---")
+        parts.append("")
 
     return "\n".join(parts)
 
 
-def build_main_report_block(bounce_summaries, dump_summaries):
-    bounce_rows = []
-    dump_rows = []
-    simple_lines = []
+def build_main_report_block(summaries):
+    rows = []
+    fast_lines = []
 
     for asset in TARGETS:
-        best_bounce = best_bounce_for_asset(bounce_summaries, asset)
+        bounce = get_summary(summaries, asset, "bounce", -5, 10)
+        dump = get_summary(summaries, asset, "dump", 10, -5)
 
-        if best_bounce is None:
-            bounce_rows.append([asset_short(asset), "n/d", "n/d", "n/d", "n/d"])
-            simple_lines.append(f"- **{asset_short(asset)} rimbalzo**: dati insufficienti.")
+        if bounce is None:
+            bounce_zone = "n/d"
+            bounce_rate = "n/d"
+            bounce_reading = "n/d"
         else:
-            bounce_rows.append(
-                [
-                    asset_short(asset),
-                    fmt_price(best_bounce["pullback_price_now"]),
-                    f"{best_bounce['touched_count']}/{best_bounce['total_valid_matches']}",
-                    fmt_pct(best_bounce["rebound_rate_after_pullback"]),
-                    simple_strength(best_bounce["rebound_rate_after_pullback"]),
-                ]
-            )
-            simple_lines.append(f"- **{simple_bounce_interpretation(best_bounce)}**")
+            bounce_zone = fmt_price(bounce["first_price_now"])
+            bounce_rate = fmt_pct(bounce["second_rate_after_first"])
+            bounce_reading = bounce_verdict(bounce)
+            fast_lines.append(f"- **{simple_bounce_sentence(bounce)}**")
 
-    for asset in TARGETS:
-        best_dump = best_dump_for_asset(dump_summaries, asset)
-
-        if best_dump is None:
-            dump_rows.append([asset_short(asset), "n/d", "n/d", "n/d", "n/d"])
-            simple_lines.append(f"- **{asset_short(asset)} dump**: dati insufficienti.")
+        if dump is None:
+            spike_zone = "n/d"
+            dump_rate = "n/d"
+            dump_reading = "n/d"
         else:
-            dump_rows.append(
+            spike_zone = fmt_price(dump["first_price_now"])
+            dump_rate = fmt_pct(dump["second_rate_after_first"])
+            dump_reading = dump_verdict(dump)
+            fast_lines.append(f"- **{simple_dump_sentence(dump)}**")
+
+        rows.append(
+            [
+                asset_short(asset),
+                bounce_zone,
+                bounce_rate,
+                bounce_reading,
+                spike_zone,
+                dump_rate,
+                dump_reading,
+            ]
+        )
+
+    return "\n".join(
+        [
+            "<!-- BOUNCE_AFTER_DRAWDOWN_START -->",
+            "",
+            "---",
+            "",
+            "# Sequenze pratiche: rimbalzo / dump",
+            "",
+            "Report separato completo: [bounce_after_drawdown_report.md](bounce_after_drawdown_report.md)",
+            "",
+            "Questa sezione serve a rispondere subito a due domande:",
+            "",
+            "- **Se scende, è una zona di rimbalzo?**",
+            "- **Se sale forte, è una zona da prendere profitto?**",
+            "",
+            md_table(
                 [
-                    asset_short(asset),
-                    fmt_price(best_dump["spike_price_now"]),
-                    f"{best_dump['touched_count']}/{best_dump['total_valid_matches']}",
-                    fmt_pct(best_dump["dump_rate_after_spike"]),
-                    simple_strength(best_dump["dump_rate_after_spike"]),
-                ]
-            )
-            simple_lines.append(f"- **{simple_dump_interpretation(best_dump)}**")
-
-    return "\n".join([
-        "<!-- BOUNCE_AFTER_DRAWDOWN_START -->",
-        "",
-        "---",
-        "",
-        "# Sequenze: rimbalzo dopo discesa / dump dopo spike",
-        "",
-        "Report separato completo: [bounce_after_drawdown_report.md](bounce_after_drawdown_report.md)",
-        "",
-        "Questa sezione controlla l'ordine degli eventi:",
-        "",
-        "- prima scende → poi rimbalza",
-        "- prima sale → poi scarica",
-        "",
-        "## 1. Rimbalzo dopo drawdown",
-        "",
-        "Lettura base: **discesa -5%** e poi **rimbalzo +10%**.",
-        "",
-        md_table(
-            [
-                "Asset",
-                "Zona -5% oggi",
-                "Casi scesi",
-                "Poi rimbalzo +10%",
-                "Forza",
-            ],
-            bounce_rows,
-        ),
-        "",
-        "## 2. Dump dopo spike",
-        "",
-        "Lettura base: **spike +10%** e poi **dump -5%**.",
-        "",
-        md_table(
-            [
-                "Asset",
-                "Zona +10% oggi",
-                "Casi spike",
-                "Poi dump -5%",
-                "Forza",
-            ],
-            dump_rows,
-        ),
-        "",
-        "## Traduzione veloce",
-        "",
-        "\n".join(simple_lines),
-        "",
-        "<!-- BOUNCE_AFTER_DRAWDOWN_END -->",
-    ])
+                    "Asset",
+                    "Se scende a -5%",
+                    "Poi +10%",
+                    "Lettura discesa",
+                    "Se sale a +10%",
+                    "Poi dump -5%",
+                    "Lettura spike",
+                ],
+                rows,
+            ),
+            "",
+            "## Traduzione veloce",
+            "",
+            "\n".join(fast_lines),
+            "",
+            "<!-- BOUNCE_AFTER_DRAWDOWN_END -->",
+        ]
+    )
 
 
-def inject_into_main_report(bounce_summaries, dump_summaries):
+def inject_into_main_report(summaries):
     if not os.path.exists(MAIN_REPORT_PATH):
         return
 
@@ -1053,7 +751,7 @@ def inject_into_main_report(bounce_summaries, dump_summaries):
         after = current.split(end_marker, 1)[1].lstrip()
         current = before + "\n\n" + after
 
-    block = build_main_report_block(bounce_summaries, dump_summaries).strip()
+    block = build_main_report_block(summaries).strip()
 
     daily_end = "<!-- DAILY_CHANGE_END -->"
 
@@ -1067,23 +765,10 @@ def inject_into_main_report(bounce_summaries, dump_summaries):
             + current[insert_pos:].lstrip()
         )
     else:
-        insertion_markers = [
-            "\n# Come leggere questo report",
-            "\n# Scheda veloce",
-            "\n# Lettura velocissima",
-            "\n## Lettura velocissima",
-            "\n# Mappa semplice",
-        ]
+        marker = "\n# Come leggere questo report"
+        insert_pos = current.find(marker)
 
-        insert_pos = None
-
-        for marker in insertion_markers:
-            pos = current.find(marker)
-            if pos != -1:
-                insert_pos = pos
-                break
-
-        if insert_pos is not None:
+        if insert_pos != -1:
             new_text = (
                 current[:insert_pos].rstrip()
                 + "\n\n"
@@ -1098,17 +783,9 @@ def inject_into_main_report(bounce_summaries, dump_summaries):
         f.write(new_text.rstrip() + "\n")
 
 
-def write_csv(bounce_summaries, dump_summaries):
-    rows = []
-
-    for item in bounce_summaries:
-        rows.append(item)
-
-    for item in dump_summaries:
-        rows.append(item)
-
-    df = pd.DataFrame(rows)
-    df.to_csv(BOUNCE_CSV_PATH, index=False)
+def write_csv(summaries):
+    df = pd.DataFrame(summaries)
+    df.to_csv(SEQUENCE_CSV_PATH, index=False)
 
 
 def main():
@@ -1117,9 +794,9 @@ def main():
     all_matches = build_all_matches()
 
     if all_matches.empty:
-        report = "# Sequenze dopo il pattern\n\nNessun match disponibile.\n"
+        report = "# Sequenze pratiche\n\nNessun match disponibile.\n"
 
-        with open(BOUNCE_REPORT_PATH, "w", encoding="utf-8") as f:
+        with open(SEQUENCE_REPORT_PATH, "w", encoding="utf-8") as f:
             f.write(report)
 
         print("No matches available for sequence report.")
@@ -1127,8 +804,7 @@ def main():
 
     market_data = download_needed_data(all_matches)
 
-    bounce_summaries = []
-    dump_summaries = []
+    summaries = []
 
     for asset in TARGETS:
         path = matches_path(asset)
@@ -1138,45 +814,45 @@ def main():
             continue
 
         current_price = latest_current_price(asset)
-        p75_pct = max_gain_p75_pct(asset, matches)
-        p25_pct = drawdown_p25_pct(asset, matches)
 
-        for pullback_pct in PULLBACK_LEVELS:
-            for rebound_pct in REBOUND_TARGETS:
-                summary = summarize_bounce_condition(
-                    asset=asset,
-                    matches=matches,
-                    data=market_data,
-                    current_price=current_price,
-                    pullback_pct=pullback_pct,
-                    rebound_pct=rebound_pct,
-                    p75_pct=p75_pct,
+        for first_pct in BOUNCE_PULLBACKS:
+            for second_pct in BOUNCE_REBOUNDS:
+                summaries.append(
+                    summarize_sequence(
+                        asset=asset,
+                        matches=matches,
+                        data=market_data,
+                        current_price=current_price,
+                        sequence_type="bounce",
+                        first_pct=first_pct,
+                        second_pct=second_pct,
+                    )
                 )
-                bounce_summaries.append(summary)
 
-        for spike_pct in SPIKE_LEVELS:
-            for dump_pct in DUMP_TARGETS:
-                summary = summarize_dump_condition(
-                    asset=asset,
-                    matches=matches,
-                    data=market_data,
-                    current_price=current_price,
-                    spike_pct=spike_pct,
-                    dump_pct=dump_pct,
-                    p25_pct=p25_pct,
+        for first_pct in DUMP_SPIKES:
+            for second_pct in DUMP_DUMPS:
+                summaries.append(
+                    summarize_sequence(
+                        asset=asset,
+                        matches=matches,
+                        data=market_data,
+                        current_price=current_price,
+                        sequence_type="dump",
+                        first_pct=first_pct,
+                        second_pct=second_pct,
+                    )
                 )
-                dump_summaries.append(summary)
 
-    report = build_full_report(bounce_summaries, dump_summaries)
+    report = build_full_report(summaries)
 
-    with open(BOUNCE_REPORT_PATH, "w", encoding="utf-8") as f:
+    with open(SEQUENCE_REPORT_PATH, "w", encoding="utf-8") as f:
         f.write(report)
 
-    write_csv(bounce_summaries, dump_summaries)
-    inject_into_main_report(bounce_summaries, dump_summaries)
+    write_csv(summaries)
+    inject_into_main_report(summaries)
 
-    print(f"Wrote {BOUNCE_REPORT_PATH}")
-    print(f"Wrote {BOUNCE_CSV_PATH}")
+    print(f"Wrote {SEQUENCE_REPORT_PATH}")
+    print(f"Wrote {SEQUENCE_CSV_PATH}")
     print(f"Updated {MAIN_REPORT_PATH}")
 
 
