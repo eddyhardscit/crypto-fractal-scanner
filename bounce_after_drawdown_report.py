@@ -17,13 +17,18 @@ TARGETS = ["BTC-USD", "SOL-USD", "DOGE-USD"]
 
 FORWARD_DAYS = 30
 
-# Prima scende, poi rimbalza.
-BOUNCE_PULLBACKS = [-5, -10, -15]
-BOUNCE_REBOUNDS = [10, 20]
+# Report principale: resta semplice.
+MAIN_BOUNCE_PULLBACK = -5
+MAIN_BOUNCE_REBOUND = 10
+MAIN_DUMP_SPIKE = 10
+MAIN_DUMP_TARGET = -5
 
-# Prima sale, poi scarica.
-DUMP_SPIKES = [10, 20]
-DUMP_DUMPS = [0, -5, -10]
+# Report dettagliato: soglie più complete, senza renderlo infinito.
+BOUNCE_PULLBACKS = [-5, -8, -10, -15]
+BOUNCE_REBOUNDS = [5, 10, 15, 20]
+
+DUMP_SPIKES = [5, 10, 15, 20]
+DUMP_DUMPS = [0, -5, -8, -10, -15]
 
 
 def asset_name(asset):
@@ -275,6 +280,27 @@ def first_touch_day(path, start_price, level_pct, direction):
     return int(positions[0])
 
 
+def move_between_levels_pct(first_pct, second_pct):
+    """
+    Movimento reale dal primo livello al secondo livello.
+
+    Esempio:
+    +10% -> -5%
+    100 -> 110 -> 95
+    movimento reale = 95 / 110 - 1 = -13,64%
+    """
+    try:
+        first_mult = 1 + float(first_pct) / 100
+        second_mult = 1 + float(second_pct) / 100
+
+        if first_mult <= 0:
+            return None
+
+        return (second_mult / first_mult - 1) * 100
+    except Exception:
+        return None
+
+
 def summarize_sequence(asset, matches, data, current_price, sequence_type, first_pct, second_pct):
     total_valid = 0
     first_hits = 0
@@ -325,11 +351,7 @@ def summarize_sequence(asset, matches, data, current_price, sequence_type, first
             second_days.append(first_day + second_day_partial)
 
     first_rate = (first_hits / total_valid * 100) if total_valid else np.nan
-
-    if first_hits:
-        second_rate = second_hits_after_first / first_hits * 100
-    else:
-        second_rate = np.nan
+    second_rate = (second_hits_after_first / first_hits * 100) if first_hits else np.nan
 
     first_price_now = None
     second_price_now = None
@@ -351,6 +373,7 @@ def summarize_sequence(asset, matches, data, current_price, sequence_type, first
         "first_rate": first_rate,
         "second_hits_after_first": second_hits_after_first,
         "second_rate_after_first": second_rate,
+        "real_move_from_first_to_second_pct": move_between_levels_pct(first_pct, second_pct),
         "avg_days_to_first": float(np.nanmean(first_days)) if first_days else np.nan,
         "avg_days_to_second": float(np.nanmean(second_days)) if second_days else np.nan,
     }
@@ -417,6 +440,13 @@ def get_summary(summaries, asset, sequence_type, first_pct, second_pct):
     return None
 
 
+def pct_as_ratio_text(second_hits, first_hits):
+    if not first_hits:
+        return "n/d"
+
+    return f"{second_hits}/{first_hits}"
+
+
 def simple_bounce_sentence(summary):
     asset = asset_short(summary["asset"])
     first_pct = summary["first_pct"]
@@ -425,11 +455,14 @@ def simple_bounce_sentence(summary):
     first_hits = summary["first_hits"]
     total = summary["total_valid"]
     second_hits = summary["second_hits_after_first"]
+    real_move = summary["real_move_from_first_to_second_pct"]
 
     return (
         f"{asset}: su {total} casi simili, {first_hits} prima sono scesi a "
         f"{fmt_pct(first_pct)}. Tra quei {first_hits}, {second_hits} poi sono "
-        f"rimbalzati a {fmt_pct(second_pct)}. Percentuale: {fmt_pct(rate)}. "
+        f"rimbalzati fino a {fmt_pct(second_pct)}. Percentuale: {fmt_pct(rate)} "
+        f"({pct_as_ratio_text(second_hits, first_hits)}). Dal livello {fmt_pct(first_pct)} "
+        f"al target {fmt_pct(second_pct)} il movimento reale sarebbe circa {fmt_pct(real_move)}. "
         f"Lettura: {bounce_verdict(summary)}."
     )
 
@@ -442,6 +475,7 @@ def simple_dump_sentence(summary):
     first_hits = summary["first_hits"]
     total = summary["total_valid"]
     second_hits = summary["second_hits_after_first"]
+    real_move = summary["real_move_from_first_to_second_pct"]
 
     if second_pct == 0:
         dump_text = "al prezzo iniziale"
@@ -451,7 +485,9 @@ def simple_dump_sentence(summary):
     return (
         f"{asset}: su {total} casi simili, {first_hits} prima sono saliti a "
         f"{fmt_pct(first_pct)}. Tra quei {first_hits}, {second_hits} poi sono "
-        f"scaricati {dump_text}. Percentuale: {fmt_pct(rate)}. "
+        f"scaricati {dump_text}. Percentuale: {fmt_pct(rate)} "
+        f"({pct_as_ratio_text(second_hits, first_hits)}). Dal livello {fmt_pct(first_pct)} "
+        f"al target {fmt_pct(second_pct)} il movimento reale sarebbe circa {fmt_pct(real_move)}. "
         f"Lettura: {dump_verdict(summary)}."
     )
 
@@ -461,38 +497,63 @@ def simple_explanation_text():
         [
             "## Spiegazione semplice delle percentuali",
             "",
-            "Esempio:",
+            "Queste percentuali sono **condizionate**.",
+            "",
+            "Vuol dire che il report controlla sempre due passaggi, in ordine:",
+            "",
+            "1. Prima deve succedere la prima cosa.",
+            "2. Solo dopo si controlla se succede la seconda cosa.",
+            "",
+            "### Esempio rimbalzo",
             "",
             "`Se scende a -5% → poi +10% = 24%`",
             "",
             "Vuol dire:",
             "",
             "- Lo scanner prende i 40 casi storici più simili.",
-            "- Prima guarda quanti di quei casi sono scesi almeno del 5%.",
-            "- Poi, solo tra quelli che sono scesi, guarda quanti sono rimbalzati fino a +10%.",
-            "- Il 24% è quindi una percentuale **condizionata**: prima deve succedere la discesa, poi si controlla il rimbalzo.",
+            "- Prima guarda quanti sono scesi almeno a -5% dal prezzo iniziale.",
+            "- Poi, solo tra quelli che sono scesi, guarda quanti sono arrivati a +10% dal prezzo iniziale.",
+            "- Se il risultato è 24%, vuol dire circa 1 caso su 4.",
             "",
-            "Non vuol dire che se il prezzo arriva lì allora deve rimbalzare.",
+            "Esempio con prezzo iniziale 100 $:",
             "",
-            "Vuol dire solo:",
+            "- -5% = 95 $",
+            "- +10% = 110 $",
+            "- il movimento reale da 95 $ a 110 $ non è +10%, ma circa +15,79%.",
             "",
-            "> Storicamente, nei casi simili, dopo quella discesa il rimbalzo forte è successo in quella percentuale di casi.",
+            "Quindi `poi +10%` non significa +10% dal minimo. Significa +10% dal prezzo iniziale.",
             "",
-            "Altro esempio:",
+            "### Esempio dump dopo spike",
             "",
             "`Se sale a +10% → poi dump -5% = 62%`",
             "",
             "Vuol dire:",
             "",
-            "- Prima il prezzo fa uno spike del 10%.",
-            "- Dopo quello spike, si controlla se scarica fino a -5% dal prezzo iniziale.",
-            "- Se la percentuale è alta, lo spike storicamente veniva spesso scaricato.",
-            "- Se la percentuale è bassa, lo spike storicamente reggeva meglio.",
+            "- Prima il prezzo deve salire almeno a +10% dal prezzo iniziale.",
+            "- Poi si controlla se, dopo quello spike, scende fino a -5% dal prezzo iniziale.",
+            "- Se il risultato è 62%, vuol dire che questo scarico è successo più di metà delle volte.",
             "",
-            "Nota importante:",
+            "Esempio con prezzo iniziale 100 $:",
             "",
-            "- Il `+10%` e il `-5%` sono calcolati dal prezzo iniziale del pattern, non dal minimo o dal massimo.",
-            "- Questa sezione controlla l'ordine degli eventi: prima succede A, poi succede B.",
+            "- +10% = 110 $",
+            "- -5% = 95 $",
+            "- il movimento reale da 110 $ a 95 $ non è -5%, ma circa -13,64%.",
+            "",
+            "Quindi `dump -5%` non significa -5% dallo spike. Significa che torna fino a 5% sotto il prezzo iniziale.",
+            "",
+            "### Soglie controllate",
+            "",
+            "Nel report principale vedi solo la lettura più semplice:",
+            "",
+            "- discesa -5% → rimbalzo +10%",
+            "- spike +10% → dump -5%",
+            "",
+            "Nel report dettagliato invece lo scanner controlla anche soglie intermedie:",
+            "",
+            "- discese: -5%, -8%, -10%, -15%",
+            "- rimbalzi: +5%, +10%, +15%, +20%",
+            "- spike: +5%, +10%, +15%, +20%",
+            "- dump: 0%, -5%, -8%, -10%, -15%",
             "",
         ]
     )
@@ -506,44 +567,56 @@ def build_quick_dashboard(summaries):
             summaries,
             asset=asset,
             sequence_type="bounce",
-            first_pct=-5,
-            second_pct=10,
+            first_pct=MAIN_BOUNCE_PULLBACK,
+            second_pct=MAIN_BOUNCE_REBOUND,
         )
 
         dump = get_summary(
             summaries,
             asset=asset,
             sequence_type="dump",
-            first_pct=10,
-            second_pct=-5,
+            first_pct=MAIN_DUMP_SPIKE,
+            second_pct=MAIN_DUMP_TARGET,
         )
 
         if bounce is None:
             bounce_zone = "n/d"
+            bounce_target = "n/d"
             bounce_rate = "n/d"
+            bounce_real_move = "n/d"
             bounce_reading = "n/d"
         else:
             bounce_zone = fmt_price(bounce["first_price_now"])
+            bounce_target = fmt_price(bounce["second_price_now"])
             bounce_rate = fmt_pct(bounce["second_rate_after_first"])
+            bounce_real_move = fmt_pct(bounce["real_move_from_first_to_second_pct"])
             bounce_reading = bounce_verdict(bounce)
 
         if dump is None:
             spike_zone = "n/d"
+            dump_target = "n/d"
             dump_rate = "n/d"
+            dump_real_move = "n/d"
             dump_reading = "n/d"
         else:
             spike_zone = fmt_price(dump["first_price_now"])
+            dump_target = fmt_price(dump["second_price_now"])
             dump_rate = fmt_pct(dump["second_rate_after_first"])
+            dump_real_move = fmt_pct(dump["real_move_from_first_to_second_pct"])
             dump_reading = dump_verdict(dump)
 
         rows.append(
             [
                 asset_short(asset),
                 bounce_zone,
+                bounce_target,
                 bounce_rate,
+                bounce_real_move,
                 bounce_reading,
                 spike_zone,
+                dump_target,
                 dump_rate,
+                dump_real_move,
                 dump_reading,
             ]
         )
@@ -552,10 +625,14 @@ def build_quick_dashboard(summaries):
         [
             "Asset",
             "Se scende a -5%",
-            "Poi +10%",
+            "Target +10%",
+            "% casi",
+            "Movimento reale",
             "Lettura discesa",
             "Se sale a +10%",
-            "Poi dump -5%",
+            "Target -5%",
+            "% casi",
+            "Movimento reale",
             "Lettura spike",
         ],
         rows,
@@ -592,8 +669,20 @@ def build_full_report(summaries):
         parts.append("## Lettura semplice")
         parts.append("")
 
-        base_bounce = get_summary(summaries, asset, "bounce", -5, 10)
-        base_dump = get_summary(summaries, asset, "dump", 10, -5)
+        base_bounce = get_summary(
+            summaries,
+            asset,
+            "bounce",
+            MAIN_BOUNCE_PULLBACK,
+            MAIN_BOUNCE_REBOUND,
+        )
+        base_dump = get_summary(
+            summaries,
+            asset,
+            "dump",
+            MAIN_DUMP_SPIKE,
+            MAIN_DUMP_TARGET,
+        )
 
         if base_bounce is not None:
             parts.append(f"- {simple_bounce_sentence(base_bounce)}")
@@ -624,6 +713,7 @@ def build_full_report(summaries):
                         fmt_price(item["second_price_now"]),
                         f"{item['second_hits_after_first']}/{item['first_hits']}",
                         fmt_pct(item["second_rate_after_first"]),
+                        fmt_pct(item["real_move_from_first_to_second_pct"]),
                         strength_label(item["second_rate_after_first"]),
                         fmt_days(item["avg_days_to_first"]),
                         fmt_days(item["avg_days_to_second"]),
@@ -637,10 +727,11 @@ def build_full_report(summaries):
                     "Prezzo",
                     "Casi scesi",
                     "% casi scesi",
-                    "Poi rimbalzo",
+                    "Poi rimbalza a",
                     "Prezzo target",
                     "Casi riusciti",
                     "% riusciti",
+                    "Movimento reale",
                     "Forza",
                     "Giorni discesa",
                     "Giorni target",
@@ -672,6 +763,7 @@ def build_full_report(summaries):
                         fmt_price(item["second_price_now"]),
                         f"{item['second_hits_after_first']}/{item['first_hits']}",
                         fmt_pct(item["second_rate_after_first"]),
+                        fmt_pct(item["real_move_from_first_to_second_pct"]),
                         strength_label(item["second_rate_after_first"]),
                         fmt_days(item["avg_days_to_first"]),
                         fmt_days(item["avg_days_to_second"]),
@@ -682,13 +774,14 @@ def build_full_report(summaries):
             md_table(
                 [
                     "Prima sale",
-                    "Prezzo",
+                    "Prezzo spike",
                     "Casi spike",
                     "% casi spike",
-                    "Poi scarica",
+                    "Poi scarica a",
                     "Prezzo target",
                     "Casi scarico",
                     "% scarico",
+                    "Movimento reale",
                     "Forza",
                     "Giorni spike",
                     "Giorni dump",
@@ -709,26 +802,46 @@ def build_main_report_block(summaries):
     fast_lines = []
 
     for asset in TARGETS:
-        bounce = get_summary(summaries, asset, "bounce", -5, 10)
-        dump = get_summary(summaries, asset, "dump", 10, -5)
+        bounce = get_summary(
+            summaries,
+            asset,
+            "bounce",
+            MAIN_BOUNCE_PULLBACK,
+            MAIN_BOUNCE_REBOUND,
+        )
+        dump = get_summary(
+            summaries,
+            asset,
+            "dump",
+            MAIN_DUMP_SPIKE,
+            MAIN_DUMP_TARGET,
+        )
 
         if bounce is None:
             bounce_zone = "n/d"
+            bounce_target = "n/d"
             bounce_rate = "n/d"
+            bounce_real_move = "n/d"
             bounce_reading = "n/d"
         else:
             bounce_zone = fmt_price(bounce["first_price_now"])
+            bounce_target = fmt_price(bounce["second_price_now"])
             bounce_rate = fmt_pct(bounce["second_rate_after_first"])
+            bounce_real_move = fmt_pct(bounce["real_move_from_first_to_second_pct"])
             bounce_reading = bounce_verdict(bounce)
             fast_lines.append(f"- **{simple_bounce_sentence(bounce)}**")
 
         if dump is None:
             spike_zone = "n/d"
+            dump_target = "n/d"
             dump_rate = "n/d"
+            dump_real_move = "n/d"
             dump_reading = "n/d"
         else:
             spike_zone = fmt_price(dump["first_price_now"])
+            dump_target = fmt_price(dump["second_price_now"])
             dump_rate = fmt_pct(dump["second_rate_after_first"])
+            dump_real_move = fmt_pct(dump["real_move_from_first_to_second_pct"])
             dump_reading = dump_verdict(dump)
             fast_lines.append(f"- **{simple_dump_sentence(dump)}**")
 
@@ -736,10 +849,14 @@ def build_main_report_block(summaries):
             [
                 asset_short(asset),
                 bounce_zone,
+                bounce_target,
                 bounce_rate,
+                bounce_real_move,
                 bounce_reading,
                 spike_zone,
+                dump_target,
                 dump_rate,
+                dump_real_move,
                 dump_reading,
             ]
         )
@@ -754,7 +871,7 @@ def build_main_report_block(summaries):
             "",
             "Report separato completo: [bounce_after_drawdown_report.md](bounce_after_drawdown_report.md)",
             "",
-            "Questa sezione serve a rispondere subito a due domande:",
+            "Questa sezione risponde subito a due domande:",
             "",
             "- **Se scende, è una zona di rimbalzo?**",
             "- **Se sale forte, è una zona da prendere profitto?**",
@@ -762,11 +879,15 @@ def build_main_report_block(summaries):
             md_table(
                 [
                     "Asset",
-                    "Se scende a -5%",
-                    "Poi +10%",
+                    "Scende a",
+                    "Target rimbalzo",
+                    "% casi rimbalzo",
+                    "Movimento reale",
                     "Lettura discesa",
-                    "Se sale a +10%",
-                    "Poi dump -5%",
+                    "Sale a",
+                    "Target dump",
+                    "% casi dump",
+                    "Movimento reale",
                     "Lettura spike",
                 ],
                 rows,
@@ -774,19 +895,32 @@ def build_main_report_block(summaries):
             "",
             "## Spiegazione ultra semplice",
             "",
-            "`Poi +10% = 24%` significa:",
+            "`% casi rimbalzo` e `% casi dump` non sono percentuali assolute.",
             "",
-            "- prima il prezzo deve scendere alla zona indicata;",
-            "- poi si guarda se, dopo quella discesa, è riuscito a salire a +10%;",
-            "- 24% vuol dire che è successo in circa 1 caso su 4;",
-            "- quindi non è un rimbalzo forte statisticamente.",
+            "Sono percentuali **condizionate**:",
             "",
-            "`Poi dump -5% = 62%` significa:",
+            "- prima deve succedere la prima cosa;",
+            "- solo dopo si controlla se succede la seconda.",
             "",
-            "- prima il prezzo deve salire alla zona indicata;",
-            "- poi si guarda se, dopo quello spike, è scaricato fino a -5%;",
-            "- 62% vuol dire che è successo spesso, più di metà delle volte;",
-            "- quindi quello spike può essere una zona da prendere profitto.",
+            "Esempio rimbalzo:",
+            "",
+            "- prezzo iniziale 100 $",
+            "- scende a -5% = 95 $",
+            "- poi target +10% = 110 $",
+            "- da 95 $ a 110 $ il movimento reale è circa +15,79%",
+            "",
+            "Quindi `poi +10%` non vuol dire +10% dal minimo. Vuol dire +10% dal prezzo iniziale.",
+            "",
+            "Esempio dump:",
+            "",
+            "- prezzo iniziale 100 $",
+            "- sale a +10% = 110 $",
+            "- poi target -5% = 95 $",
+            "- da 110 $ a 95 $ il movimento reale è circa -13,64%",
+            "",
+            "Quindi `dump -5%` non vuol dire -5% dallo spike. Vuol dire che torna fino a 5% sotto il prezzo iniziale.",
+            "",
+            "Nel report principale vedi solo la sintesi. Nel report separato ci sono anche soglie intermedie: -8%, +5%, +15%, ecc.",
             "",
             "## Traduzione veloce",
             "",
