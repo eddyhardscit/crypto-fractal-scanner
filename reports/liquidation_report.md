@@ -1,7 +1,7 @@
 # Report semplice futures / liquidazioni BTC / SOL / DOGE
 
-Generato: **2026-07-04 14:59:54 CEST**  
-UTC: **2026-07-04 12:59:54 UTC**
+Generato: **2026-07-04 20:57:02 CEST**  
+UTC: **2026-07-04 18:57:02 UTC**
 
 Fonte dati: **OKX Futures pubblici**.  
 Questo report non è la vera heatmap CoinGlass. Serve a capire se il mercato futures è carico di long, short o leva.
@@ -11,16 +11,16 @@ Questo report non è la vera heatmap CoinGlass. Serve a capire se il mercato fut
 | Asset | Lettura | Forza | Cosa significa in pratica |
 | --- | --- | --- | --- |
 | BTC | Rischio sotto | 5/5 | Per un long a leva: prudenza alta. Guarda bene liquidazione e drawdown del report frattale. |
-| SOL | Rischio sotto | 2/5 | Per un long a leva: prudenza alta. Guarda bene liquidazione e drawdown del report frattale. |
+| SOL | Misto | 1/5 | Qui pesa di più il report frattale. |
 | DOGE | Rischio sotto | 5/5 | Per un long a leva: prudenza alta. Guarda bene liquidazione e drawdown del report frattale. |
 
 ## Numeri principali
 
 | Asset | Prezzo | Prezzo 24h | Funding | Open Interest | OI 24h | Long/Short |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | $62,635 | +1.11% | +0.0100% | $1.99B | +25.17% | 1.96 |
-| SOL | $81.56 | +0.09% | +0.0100% | $277.79M | -17.18% | 3.39 |
-| DOGE | $0.07711 | +1.46% | +0.0100% | $75.12M | +14.03% | 4.05 |
+| BTC | $63,149 | +1.51% | +0.0071% | $1.93B | +18.99% | 1.75 |
+| SOL | $82.24 | +0.06% | +0.0035% | $275.89M | -20.42% | 3.25 |
+| DOGE | $0.07916 | +2.95% | +0.0088% | $77.28M | +8.91% | 3.82 |
 
 ## Spiegazione rapida dei termini
 
@@ -55,13 +55,13 @@ BTC: i futures sembrano più vulnerabili verso una discesa improvvisa. Non signi
 
 | Dato | Valore | Traduzione |
 | --- | --- | --- |
-| Prezzo | $62,635 | prezzo futures/mark usato come riferimento |
-| Prezzo 24h | +1.11% | movimento dell'ultimo giorno |
-| Funding | +0.0100% | positivo = long pagano; negativo = short pagano |
-| Prossimo funding | 2026-07-04 18:00 | prossimo aggiornamento funding |
-| Open Interest stimato | $1.99B | leva aperta stimata in dollari |
-| Open Interest 24h | +25.17% | leva entrata o uscita nelle ultime 24h |
-| Long/Short ratio | 1.96 | sopra 1 = più long; sotto 1 = più short |
+| Prezzo | $63,149 | prezzo futures/mark usato come riferimento |
+| Prezzo 24h | +1.51% | movimento dell'ultimo giorno |
+| Funding | +0.0071% | positivo = long pagano; negativo = short pagano |
+| Prossimo funding | 2026-07-05 02:00 | prossimo aggiornamento funding |
+| Open Interest stimato | $1.93B | leva aperta stimata in dollari |
+| Open Interest 24h | +18.99% | leva entrata o uscita nelle ultime 24h |
+| Long/Short ratio | 1.75 | sopra 1 = più long; sotto 1 = più short |
 
 ### Livelli teorici di liquidazione
 
@@ -69,10 +69,10 @@ Questi NON sono la vera heatmap. Sono solo una stima semplice: se una posizione 
 
 | Leva | Long liquidato circa sotto | Short liquidato circa sopra |
 | --- | --- | --- |
-| 5x | $50,108 | $75,162 |
-| 10x | $56,372 | $68,899 |
-| 20x | $59,504 | $65,767 |
-| 50x | $61,383 | $63,888 |
+| 5x | $50,519 | $75,779 |
+| 10x | $56,834 | $69,464 |
+| 20x | $59,992 | $66,306 |
+| 50x | $61,886 | $64,412 |
 
 ### Note tecniche usate dallo score
 
@@ -86,12 +86,12 @@ Questi NON sono la vera heatmap. Sono solo una stima semplice: se una posizione 
 
 ### Lettura semplice
 
-**RISCHIO DISCESA / FLUSH SOTTO**  
-**Forza segnale: 2/5**
+**NEUTRALE / POCO CHIARO**  
+**Forza segnale: 1/5**
 
-SOL: i futures sembrano più vulnerabili verso una discesa improvvisa. Non significa che deve scendere, ma se rompe sotto può accelerare.
+SOL: i futures non danno una lettura chiara. Non si vede uno sbilanciamento forte né long né short.
 
-**Tradotto operativamente:** Per un long a leva: prudenza alta. Guarda bene liquidazione e drawdown del report frattale.
+**Tradotto operativamente:** Qui pesa di più il report frattale.
 
 ### Perché
 
@@ -103,13 +103,13 @@ SOL: i futures sembrano più vulnerabili verso una discesa improvvisa. Non signi
 
 | Dato | Valore | Traduzione |
 | --- | --- | --- |
-| Prezzo | $81.56 | prezzo futures/mark usato come riferimento |
-| Prezzo 24h | +0.09% | movimento dell'ultimo giorno |
-| Funding | +0.0100% | positivo = long pagano; negativo = short pagano |
-| Prossimo funding | 2026-07-04 18:00 | prossimo aggiornamento funding |
-| Open Interest stimato | $277.79M | leva aperta stimata in dollari |
-| Open Interest 24h | -17.18% | leva entrata o uscita nelle ultime 24h |
-| Long/Short ratio | 3.39 | sopra 1 = più long; sotto 1 = più short |
+| Prezzo | $82.24 | prezzo futures/mark usato come riferimento |
+| Prezzo 24h | +0.06% | movimento dell'ultimo giorno |
+| Funding | +0.0035% | positivo = long pagano; negativo = short pagano |
+| Prossimo funding | 2026-07-05 02:00 | prossimo aggiornamento funding |
+| Open Interest stimato | $275.89M | leva aperta stimata in dollari |
+| Open Interest 24h | -20.42% | leva entrata o uscita nelle ultime 24h |
+| Long/Short ratio | 3.25 | sopra 1 = più long; sotto 1 = più short |
 
 ### Livelli teorici di liquidazione
 
@@ -117,14 +117,13 @@ Questi NON sono la vera heatmap. Sono solo una stima semplice: se una posizione 
 
 | Leva | Long liquidato circa sotto | Short liquidato circa sopra |
 | --- | --- | --- |
-| 5x | $65.25 | $97.87 |
-| 10x | $73.40 | $89.72 |
-| 20x | $77.48 | $85.64 |
-| 50x | $79.93 | $83.19 |
+| 5x | $65.79 | $98.69 |
+| 10x | $74.02 | $90.46 |
+| 20x | $78.13 | $86.35 |
+| 50x | $80.60 | $83.88 |
 
 ### Note tecniche usate dallo score
 
-- funding positivo: mercato leggermente carico di long
 - open interest in forte calo: parte della leva è già uscita
 - long/short ratio alto: più mercato sbilanciato long
 
@@ -151,13 +150,13 @@ DOGE: i futures sembrano più vulnerabili verso una discesa improvvisa. Non sign
 
 | Dato | Valore | Traduzione |
 | --- | --- | --- |
-| Prezzo | $0.07711 | prezzo futures/mark usato come riferimento |
-| Prezzo 24h | +1.46% | movimento dell'ultimo giorno |
-| Funding | +0.0100% | positivo = long pagano; negativo = short pagano |
-| Prossimo funding | 2026-07-04 18:00 | prossimo aggiornamento funding |
-| Open Interest stimato | $75.12M | leva aperta stimata in dollari |
-| Open Interest 24h | +14.03% | leva entrata o uscita nelle ultime 24h |
-| Long/Short ratio | 4.05 | sopra 1 = più long; sotto 1 = più short |
+| Prezzo | $0.07916 | prezzo futures/mark usato come riferimento |
+| Prezzo 24h | +2.95% | movimento dell'ultimo giorno |
+| Funding | +0.0088% | positivo = long pagano; negativo = short pagano |
+| Prossimo funding | 2026-07-05 02:00 | prossimo aggiornamento funding |
+| Open Interest stimato | $77.28M | leva aperta stimata in dollari |
+| Open Interest 24h | +8.91% | leva entrata o uscita nelle ultime 24h |
+| Long/Short ratio | 3.82 | sopra 1 = più long; sotto 1 = più short |
 
 ### Livelli teorici di liquidazione
 
@@ -165,14 +164,13 @@ Questi NON sono la vera heatmap. Sono solo una stima semplice: se una posizione 
 
 | Leva | Long liquidato circa sotto | Short liquidato circa sopra |
 | --- | --- | --- |
-| 5x | $0.06169 | $0.09253 |
-| 10x | $0.06940 | $0.08482 |
-| 20x | $0.07325 | $0.08097 |
-| 50x | $0.07557 | $0.07865 |
+| 5x | $0.06333 | $0.09499 |
+| 10x | $0.07124 | $0.08708 |
+| 20x | $0.07520 | $0.08312 |
+| 50x | $0.07758 | $0.08074 |
 
 ### Note tecniche usate dallo score
 
-- funding positivo: mercato leggermente carico di long
 - open interest in forte aumento: entra molta leva
 - prezzo su + leva su + funding positivo: rischio pulizia dei long sotto
 - long/short ratio alto: più mercato sbilanciato long
