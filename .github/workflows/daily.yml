@@ -38,6 +38,9 @@ jobs:
       - name: Run daily change report
         run: python daily_change_report.py
 
+      - name: Run bounce after drawdown report
+        run: python bounce_after_drawdown_report.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions"
