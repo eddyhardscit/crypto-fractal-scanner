@@ -17,9 +17,11 @@ TARGETS = ["BTC-USD", "SOL-USD", "DOGE-USD"]
 
 FORWARD_DAYS = 30
 
+# Prima scende, poi rimbalza.
 BOUNCE_PULLBACKS = [-5, -10, -15]
 BOUNCE_REBOUNDS = [10, 20]
 
+# Prima sale, poi scarica.
 DUMP_SPIKES = [10, 20]
 DUMP_DUMPS = [0, -5, -10]
 
@@ -323,11 +325,11 @@ def summarize_sequence(asset, matches, data, current_price, sequence_type, first
             second_days.append(first_day + second_day_partial)
 
     first_rate = (first_hits / total_valid * 100) if total_valid else np.nan
-    second_rate = (
-        second_hits_after_first / first_hits * 100
-        if first_hits
-        else np.nan
-    )
+
+    if first_hits:
+        second_rate = second_hits_after_first / first_hits * 100
+    else:
+        second_rate = np.nan
 
     first_price_now = None
     second_price_now = None
@@ -400,37 +402,6 @@ def dump_verdict(summary):
     return "spike storicamente più resistente"
 
 
-def simple_bounce_sentence(summary):
-    asset = asset_short(summary["asset"])
-    first_pct = summary["first_pct"]
-    second_pct = summary["second_pct"]
-    rate = summary["second_rate_after_first"]
-
-    return (
-        f"{asset}: se prima scende a {fmt_pct(first_pct)}, "
-        f"poi il rimbalzo a {fmt_pct(second_pct)} è avvenuto nel "
-        f"{fmt_pct(rate)} dei casi. Lettura: {bounce_verdict(summary)}."
-    )
-
-
-def simple_dump_sentence(summary):
-    asset = asset_short(summary["asset"])
-    first_pct = summary["first_pct"]
-    second_pct = summary["second_pct"]
-    rate = summary["second_rate_after_first"]
-
-    if second_pct == 0:
-        dump_text = "al prezzo iniziale"
-    else:
-        dump_text = f"a {fmt_pct(second_pct)}"
-
-    return (
-        f"{asset}: se prima sale a {fmt_pct(first_pct)}, "
-        f"poi lo scarico {dump_text} è avvenuto nel "
-        f"{fmt_pct(rate)} dei casi. Lettura: {dump_verdict(summary)}."
-    )
-
-
 def get_summary(summaries, asset, sequence_type, first_pct, second_pct):
     rows = [
         item for item in summaries
@@ -444,6 +415,87 @@ def get_summary(summaries, asset, sequence_type, first_pct, second_pct):
         return rows[0]
 
     return None
+
+
+def simple_bounce_sentence(summary):
+    asset = asset_short(summary["asset"])
+    first_pct = summary["first_pct"]
+    second_pct = summary["second_pct"]
+    rate = summary["second_rate_after_first"]
+    first_hits = summary["first_hits"]
+    total = summary["total_valid"]
+    second_hits = summary["second_hits_after_first"]
+
+    return (
+        f"{asset}: su {total} casi simili, {first_hits} prima sono scesi a "
+        f"{fmt_pct(first_pct)}. Tra quei {first_hits}, {second_hits} poi sono "
+        f"rimbalzati a {fmt_pct(second_pct)}. Percentuale: {fmt_pct(rate)}. "
+        f"Lettura: {bounce_verdict(summary)}."
+    )
+
+
+def simple_dump_sentence(summary):
+    asset = asset_short(summary["asset"])
+    first_pct = summary["first_pct"]
+    second_pct = summary["second_pct"]
+    rate = summary["second_rate_after_first"]
+    first_hits = summary["first_hits"]
+    total = summary["total_valid"]
+    second_hits = summary["second_hits_after_first"]
+
+    if second_pct == 0:
+        dump_text = "al prezzo iniziale"
+    else:
+        dump_text = f"a {fmt_pct(second_pct)}"
+
+    return (
+        f"{asset}: su {total} casi simili, {first_hits} prima sono saliti a "
+        f"{fmt_pct(first_pct)}. Tra quei {first_hits}, {second_hits} poi sono "
+        f"scaricati {dump_text}. Percentuale: {fmt_pct(rate)}. "
+        f"Lettura: {dump_verdict(summary)}."
+    )
+
+
+def simple_explanation_text():
+    return "\n".join(
+        [
+            "## Spiegazione semplice delle percentuali",
+            "",
+            "Esempio:",
+            "",
+            "`Se scende a -5% → poi +10% = 24%`",
+            "",
+            "Vuol dire:",
+            "",
+            "- Lo scanner prende i 40 casi storici più simili.",
+            "- Prima guarda quanti di quei casi sono scesi almeno del 5%.",
+            "- Poi, solo tra quelli che sono scesi, guarda quanti sono rimbalzati fino a +10%.",
+            "- Il 24% è quindi una percentuale **condizionata**: prima deve succedere la discesa, poi si controlla il rimbalzo.",
+            "",
+            "Non vuol dire che se il prezzo arriva lì allora deve rimbalzare.",
+            "",
+            "Vuol dire solo:",
+            "",
+            "> Storicamente, nei casi simili, dopo quella discesa il rimbalzo forte è successo in quella percentuale di casi.",
+            "",
+            "Altro esempio:",
+            "",
+            "`Se sale a +10% → poi dump -5% = 62%`",
+            "",
+            "Vuol dire:",
+            "",
+            "- Prima il prezzo fa uno spike del 10%.",
+            "- Dopo quello spike, si controlla se scarica fino a -5% dal prezzo iniziale.",
+            "- Se la percentuale è alta, lo spike storicamente veniva spesso scaricato.",
+            "- Se la percentuale è bassa, lo spike storicamente reggeva meglio.",
+            "",
+            "Nota importante:",
+            "",
+            "- Il `+10%` e il `-5%` sono calcolati dal prezzo iniziale del pattern, non dal minimo o dal massimo.",
+            "- Questa sezione controlla l'ordine degli eventi: prima succede A, poi succede B.",
+            "",
+        ]
+    )
 
 
 def build_quick_dashboard(summaries):
@@ -523,21 +575,14 @@ def build_full_report(summaries):
     parts.append("")
     parts.append("Questo report guarda l'ordine degli eventi nei 40 casi storici più simili.")
     parts.append("")
-    parts.append("- **Prima scende → poi rimbalza**: utile per capire se comprare/accumulare una discesa.")
-    parts.append("- **Prima sale → poi scarica**: utile per capire se prendere profitto dopo uno spike.")
+    parts.append("- **Prima scende → poi rimbalza**: utile per capire se una discesa può diventare zona di rimbalzo.")
+    parts.append("- **Prima sale → poi scarica**: utile per capire se una salita forte può diventare zona da prendere profitto.")
     parts.append("")
     parts.append("## Lettura pratica veloce")
     parts.append("")
     parts.append(build_quick_dashboard(summaries))
     parts.append("")
-    parts.append("## Come leggere")
-    parts.append("")
-    parts.append("- **Se scende a -5%**: prezzo che corrisponde a una discesa del 5% da oggi.")
-    parts.append("- **Poi +10%**: tra i casi che prima sono scesi, quanti poi sono saliti almeno del 10% dal prezzo iniziale.")
-    parts.append("- **Se sale a +10%**: prezzo che corrisponde a uno spike del 10% da oggi.")
-    parts.append("- **Poi dump -5%**: tra i casi che prima sono saliti, quanti poi sono tornati a -5% dal prezzo iniziale.")
-    parts.append("- **Non è una certezza**: è una statistica storica sui casi più simili.")
-    parts.append("")
+    parts.append(simple_explanation_text())
     parts.append("---")
     parts.append("")
 
@@ -726,6 +771,22 @@ def build_main_report_block(summaries):
                 ],
                 rows,
             ),
+            "",
+            "## Spiegazione ultra semplice",
+            "",
+            "`Poi +10% = 24%` significa:",
+            "",
+            "- prima il prezzo deve scendere alla zona indicata;",
+            "- poi si guarda se, dopo quella discesa, è riuscito a salire a +10%;",
+            "- 24% vuol dire che è successo in circa 1 caso su 4;",
+            "- quindi non è un rimbalzo forte statisticamente.",
+            "",
+            "`Poi dump -5% = 62%` significa:",
+            "",
+            "- prima il prezzo deve salire alla zona indicata;",
+            "- poi si guarda se, dopo quello spike, è scaricato fino a -5%;",
+            "- 62% vuol dire che è successo spesso, più di metà delle volte;",
+            "- quindi quello spike può essere una zona da prendere profitto.",
             "",
             "## Traduzione veloce",
             "",
