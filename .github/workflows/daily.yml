@@ -35,6 +35,9 @@ jobs:
       - name: Run liquidations report
         run: python liquidations_report.py
 
+      - name: Run daily change report
+        run: python daily_change_report.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions"
