@@ -44,6 +44,9 @@ jobs:
       - name: Run decision report
         run: python decision_report.py
 
+      - name: Run BTC 2022 vs SOL 2026 fractal report
+        run: python btc_2022_vs_sol_2026_report.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions"
