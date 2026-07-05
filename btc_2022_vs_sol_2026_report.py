@@ -39,6 +39,7 @@ BTC_BOTTOM_SEARCH_END = "2023-01-31"
 SOL_BOTTOM_SEARCH_START = "2026-06-01"
 
 FORECAST_DAYS = [7, 14, 30, 60, 90, 120, 180, 365]
+CHART_LABEL_DAYS = [7, 14, 30, 60, 90, 120]
 
 STAGE_BUCKETS = [
     (0, 14, "Step 1 - prossime 2 settimane"),
@@ -861,6 +862,71 @@ def current_phase(sol_current_price, key_levels, verdict):
     }
 
 
+def build_operational_plan(sol_current_price, key_levels, verdict, phase):
+    price = safe_float(sol_current_price)
+    confirm_1 = safe_float(key_levels.get("confirm_1"))
+    confirm_2 = safe_float(key_levels.get("confirm_2"))
+    soft_invalid = safe_float(key_levels.get("soft_invalid"))
+    hard_invalid = safe_float(key_levels.get("hard_invalid"))
+
+    verdict_label = verdict.get("label", "")
+    phase_label = phase.get("label", "")
+
+    if price is None:
+        summary = "Dati insufficienti per una lettura operativa."
+        rows = [
+            ["Spot anticipato", "NO", "Mancano dati sufficienti."],
+            ["Aggiunta su conferma", "NO", "Mancano dati sufficienti."],
+            ["Rischio inseguimento", "n/d", "Mancano dati sufficienti."],
+        ]
+        return summary, rows
+
+    if "NO" in verdict_label or "ROTTO" in phase_label or "DEBOLE" in phase_label:
+        summary = "Operatività prudente: il frattale non è abbastanza valido per usarlo come guida principale."
+        rows = [
+            ["Spot anticipato", "NO / molto prudente", "Il frattale BTC 2022 non conferma abbastanza."],
+            ["Aggiunta su conferma", "Solo se migliora", f"Prima deve recuperare e superare {fmt_price(confirm_1)}."],
+            ["Rischio inseguimento", "ALTO", "Comprare solo perché sale sarebbe poco giustificato dal frattale."],
+            ["Invalidazione", fmt_price(hard_invalid), "Sotto questa zona il paragone è quasi rotto."],
+        ]
+        return summary, rows
+
+    if "FASE ANTICIPATA" in phase_label:
+        summary = "Fase anticipata: ingresso migliore come prezzo, ma certezza ancora bassa. Ha senso ragionare a tranche, non tutto insieme."
+        rows = [
+            ["Spot anticipato", "SÌ, ma a tranche", "La zona è ancora prima della conferma piena."],
+            ["Aggiunta su conferma", "SÌ", f"Aggiunta sensata se rompe e tiene {fmt_price(confirm_1)}."],
+            ["Seconda conferma", fmt_price(confirm_2), "Sopra questa zona il frattale diventa molto più credibile."],
+            ["Rischio inseguimento", "BASSO / MEDIO", "Non sei ancora troppo in ritardo, ma serve invalidazione chiara."],
+            ["Invalidazione soft", fmt_price(soft_invalid), "Sotto questa zona il frattale si indebolisce."],
+            ["Invalidazione forte", fmt_price(hard_invalid), "Sotto questa zona il frattale è quasi rotto."],
+        ]
+        return summary, rows
+
+    if "CONFERMA INIZIALE" in phase_label:
+        summary = "Conferma iniziale: il frattale sta migliorando, ma una parte della mossa è già partita. Meglio evitare di comprare tutto in breakout."
+        rows = [
+            ["Spot anticipato", "GIÀ TARDIVO", "La parte migliore era prima della conferma."],
+            ["Aggiunta su conferma", "SÌ, ma piccola", f"Possibile sopra {fmt_price(confirm_2)} o su retest pulito."],
+            ["Rischio inseguimento", "MEDIO", "Comprare aggressivo ora significa pagare la conferma."],
+            ["Gestione", "Tenere / aggiungere su pullback", "Meglio scalare che inseguire una candela forte."],
+            ["Invalidazione soft", fmt_price(soft_invalid), "Se torna sotto, la conferma perde valore."],
+            ["Invalidazione forte", fmt_price(hard_invalid), "Sotto questa zona il frattale è quasi rotto."],
+        ]
+        return summary, rows
+
+    summary = "Conferma forte: il frattale è più chiaro, ma il rischio principale diventa inseguire troppo tardi."
+    rows = [
+        ["Spot anticipato", "NO", "La fase anticipata è passata."],
+        ["Aggiunta su conferma", "Solo su retest", "Meglio aspettare scarichi o consolidamenti."],
+        ["Rischio inseguimento", "ALTO", "Più aumenta la conferma, più peggiora il rapporto rischio/rendimento."],
+        ["Gestione", "Prendere profitto parziale / trailing", "Qui conta proteggere la mossa già fatta."],
+        ["Invalidazione soft", fmt_price(soft_invalid), "Sotto questa zona il frattale si indebolisce."],
+        ["Invalidazione forte", fmt_price(hard_invalid), "Sotto questa zona il frattale è quasi rotto."],
+    ]
+    return summary, rows
+
+
 def build_next_step_text(phase, stages):
     if not stages:
         return "Dati insufficienti per descrivere il prossimo step."
@@ -1081,6 +1147,38 @@ def generate_fractal_chart(btc_path, sol_path, sol_elapsed_days):
 
         ax.axvline(sol_elapsed_days, linestyle=":", alpha=0.8, label="Oggi SOL")
 
+        if sol_current_norm is not None:
+            ax.scatter([sol_elapsed_days], [sol_current_norm], s=55, zorder=5)
+            ax.annotate(
+                "Oggi SOL",
+                xy=(sol_elapsed_days, sol_current_norm),
+                xytext=(8, 10),
+                textcoords="offset points",
+                fontsize=9,
+            )
+
+        for day in CHART_LABEL_DAYS:
+            idx = btc_current_idx + day
+
+            if idx > chart_end_idx or btc_current_norm is None or btc_current_norm <= 0 or sol_current_norm is None:
+                continue
+
+            btc_norm = safe_float(btc_path["norm"].iloc[idx])
+
+            if btc_norm is None:
+                continue
+
+            y = sol_current_norm * (btc_norm / btc_current_norm)
+
+            ax.scatter([idx], [y], s=28, zorder=5)
+            ax.annotate(
+                f"+{day}g",
+                xy=(idx, y),
+                xytext=(5, 7),
+                textcoords="offset points",
+                fontsize=8,
+            )
+
         ax.set_title("Frattale sovrapposto: BTC 2022 vs SOL 2026")
         ax.set_xlabel("Giorni dal bottom")
         ax.set_ylabel("Prezzo normalizzato a 100 dal bottom")
@@ -1097,7 +1195,7 @@ def generate_fractal_chart(btc_path, sol_path, sol_elapsed_days):
         return False
 
 
-def generate_projection_chart(sol_path, projection_daily, key_levels):
+def generate_projection_chart(sol_path, projection_daily, key_levels, projections):
     if not CHARTS_AVAILABLE:
         return False
 
@@ -1120,6 +1218,41 @@ def generate_projection_chart(sol_path, projection_daily, key_levels):
             linestyle=":",
             label="Proiezione SOL beta",
         )
+
+        sol_current_date = sol_path.index[-1]
+        sol_current_price = safe_float(sol_path["Close"].iloc[-1])
+
+        if sol_current_price is not None:
+            ax.axvline(sol_current_date, linestyle=":", alpha=0.75)
+            ax.scatter([sol_current_date], [sol_current_price], s=55, zorder=5)
+            ax.annotate(
+                f"Oggi: {fmt_price(sol_current_price)}",
+                xy=(sol_current_date, sol_current_price),
+                xytext=(8, 10),
+                textcoords="offset points",
+                fontsize=9,
+            )
+
+        for p in projections:
+            horizon = p.get("horizon_days")
+
+            if horizon not in CHART_LABEL_DAYS:
+                continue
+
+            date_value = pd.to_datetime(p.get("sol_future_date"))
+            price_value = safe_float(p.get("sol_projection_base_price"))
+
+            if price_value is None:
+                continue
+
+            ax.scatter([date_value], [price_value], s=35, zorder=5)
+            ax.annotate(
+                f"{horizon}g\n{fmt_price(price_value)}",
+                xy=(date_value, price_value),
+                xytext=(6, 8),
+                textcoords="offset points",
+                fontsize=8,
+            )
 
         levels = [
             ("Prima conferma", key_levels.get("confirm_1")),
@@ -1167,7 +1300,7 @@ def build_chart_block(fractal_chart_ok, projection_chart_ok):
     if fractal_chart_ok:
         lines.append("### Grafico 1 - Frattale sovrapposto BTC 2022 vs SOL 2026")
         lines.append("")
-        lines.append("Questo grafico normalizza entrambi i prezzi a 100 dal rispettivo bottom. Serve per vedere subito se la forma è simile.")
+        lines.append("Questo grafico normalizza entrambi i prezzi a 100 dal rispettivo bottom. I marker +7g, +14g, +30g, ecc. indicano dove andrebbe SOL se continuasse a seguire BTC.")
         lines.append("")
         lines.append(f"![Frattale BTC 2022 vs SOL 2026]({FRACTAL_CHART_FILE})")
         lines.append("")
@@ -1178,13 +1311,30 @@ def build_chart_block(fractal_chart_ok, projection_chart_ok):
     if projection_chart_ok:
         lines.append("### Grafico 2 - Proiezione SOL in dollari")
         lines.append("")
-        lines.append("Questo grafico mostra SOL storico e la proiezione futura in dollari se continua a seguire BTC 2022.")
+        lines.append("Questo grafico mostra SOL storico, il punto di oggi, i livelli chiave e la proiezione futura in dollari.")
         lines.append("")
         lines.append(f"![Proiezione SOL BTC 2022]({PROJECTION_CHART_FILE})")
         lines.append("")
     else:
         lines.append("Grafico proiezione non generato. Controlla che `matplotlib` sia installato.")
         lines.append("")
+
+    return "\n".join(lines)
+
+
+def build_operational_block(operational_summary, operational_rows):
+    lines = []
+
+    lines.append("## Lettura operativa")
+    lines.append("")
+    lines.append(operational_summary)
+    lines.append("")
+    lines.append(
+        md_table(
+            ["Voce", "Risposta", "Perché"],
+            operational_rows,
+        )
+    )
 
     return "\n".join(lines)
 
@@ -1280,6 +1430,8 @@ def build_report(
     key_levels,
     phase,
     next_step_text,
+    operational_summary,
+    operational_rows,
     projections,
     stages,
     fractal_chart_ok,
@@ -1297,13 +1449,16 @@ def build_report(
     lines.append("")
     lines.append(f"Ultima candela SOL usata: **{fmt_date_it(sol_current_date)}**")
     lines.append("")
-    lines.append("Questo report risponde a tre domande:")
+    lines.append("Questo report risponde a quattro domande:")
     lines.append("")
     lines.append("1. **SOL sta seguendo il frattale di Bitcoin post-bottom novembre 2022?**")
     lines.append("2. **In che fase siamo: anticipo, conferma, o rischio inseguimento?**")
     lines.append("3. **Se lo sta seguendo, quali dovrebbero essere i prossimi step con date precise?**")
+    lines.append("4. **Operativamente ha più senso anticipare, aspettare conferma, o evitare di inseguire?**")
     lines.append("")
     lines.append(build_verdict_block(verdict, key_levels, phase, next_step_text))
+    lines.append("")
+    lines.append(build_operational_block(operational_summary, operational_rows))
     lines.append("")
     lines.append(build_chart_block(fractal_chart_ok, projection_chart_ok))
     lines.append("")
@@ -1350,7 +1505,7 @@ def build_report(
     lines.append("")
     lines.append("## Come leggerlo semplice")
     lines.append("")
-    lines.append("- **Fase anticipata**: prezzo buono, ma certezza bassa.")
+    lines.append("- **Fase anticipata**: prezzo migliore, ma certezza bassa.")
     lines.append("- **Conferma iniziale**: il frattale sta migliorando, ma una parte della mossa è già partita.")
     lines.append("- **Conferma forte**: frattale più chiaro, ma aumenta il rischio di inseguire.")
     lines.append("- **Sotto pressione / rotto**: il paragone con BTC 2022 perde valore.")
@@ -1370,6 +1525,8 @@ def build_main_report_block(
     key_levels,
     phase,
     next_step_text,
+    operational_summary,
+    operational_rows,
     stages,
     projections,
     fractal_chart_ok,
@@ -1479,6 +1636,15 @@ def build_main_report_block(
             f"- **Giorno BTC equivalente:** {btc_equiv_date.date()}",
             f"- **Prossimo step:** {next_step_text}",
             "",
+            "## Lettura operativa veloce",
+            "",
+            operational_summary,
+            "",
+            md_table(
+                ["Voce", "Risposta", "Perché"],
+                operational_rows,
+            ),
+            "",
             "## Grafici",
             "",
             "\n".join(chart_lines).strip(),
@@ -1519,6 +1685,8 @@ def inject_into_main_report(
     key_levels,
     phase,
     next_step_text,
+    operational_summary,
+    operational_rows,
     stages,
     projections,
     fractal_chart_ok,
@@ -1547,6 +1715,8 @@ def inject_into_main_report(
         key_levels=key_levels,
         phase=phase,
         next_step_text=next_step_text,
+        operational_summary=operational_summary,
+        operational_rows=operational_rows,
         stages=stages,
         projections=projections,
         fractal_chart_ok=fractal_chart_ok,
@@ -1718,6 +1888,13 @@ def main():
         stages=stages,
     )
 
+    operational_summary, operational_rows = build_operational_plan(
+        sol_current_price=sol_current_price,
+        key_levels=key_levels,
+        verdict=verdict,
+        phase=phase,
+    )
+
     projection_daily = make_daily_projection_path(
         btc_path=btc_path,
         sol_current_price=sol_current_price,
@@ -1737,6 +1914,7 @@ def main():
         sol_path=sol_path,
         projection_daily=projection_daily,
         key_levels=key_levels,
+        projections=projections,
     )
 
     report = build_report(
@@ -1758,6 +1936,8 @@ def main():
         key_levels=key_levels,
         phase=phase,
         next_step_text=next_step_text,
+        operational_summary=operational_summary,
+        operational_rows=operational_rows,
         projections=projections,
         stages=stages,
         fractal_chart_ok=fractal_chart_ok,
@@ -1791,6 +1971,7 @@ def main():
         "phase_label": phase.get("label"),
         "phase_risk": phase.get("risk"),
         "next_step_text": next_step_text,
+        "operational_summary": operational_summary,
         "beta_ratio": beta_ratio,
         "confirm_1": key_levels.get("confirm_1"),
         "confirm_2": key_levels.get("confirm_2"),
@@ -1811,6 +1992,8 @@ def main():
         key_levels=key_levels,
         phase=phase,
         next_step_text=next_step_text,
+        operational_summary=operational_summary,
+        operational_rows=operational_rows,
         stages=stages,
         projections=projections,
         fractal_chart_ok=fractal_chart_ok,
