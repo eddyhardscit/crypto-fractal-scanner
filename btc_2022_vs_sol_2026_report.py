@@ -7,11 +7,28 @@ import pandas as pd
 import yfinance as yf
 
 
+try:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    CHARTS_AVAILABLE = True
+except Exception:
+    CHARTS_AVAILABLE = False
+
+
 REPORT_DIR = "reports"
 MAIN_REPORT_PATH = "reports/latest_report.md"
 
 REPORT_PATH = "reports/btc_2022_vs_sol_2026_report.md"
 CSV_PATH = "reports/btc_2022_vs_sol_2026_metrics.csv"
+
+FRACTAL_CHART_PATH = "reports/btc_2022_vs_sol_2026_fractal_chart.png"
+PROJECTION_CHART_PATH = "reports/btc_2022_vs_sol_2026_projection_chart.png"
+
+FRACTAL_CHART_FILE = "btc_2022_vs_sol_2026_fractal_chart.png"
+PROJECTION_CHART_FILE = "btc_2022_vs_sol_2026_projection_chart.png"
 
 BTC_TICKER = "BTC-USD"
 SOL_TICKER = "SOL-USD"
@@ -316,6 +333,96 @@ def quality_label(score):
     return "DEBOLE"
 
 
+def phase_gap_status(sol_norm_now, btc_norm_equiv):
+    sol_norm_now = safe_float(sol_norm_now)
+    btc_norm_equiv = safe_float(btc_norm_equiv)
+
+    if sol_norm_now is None or btc_norm_equiv is None or btc_norm_equiv <= 0:
+        return None, "n/d"
+
+    gap_pct = (sol_norm_now / btc_norm_equiv - 1) * 100
+
+    if gap_pct > 15:
+        text = "SOL è più forte / più avanti del BTC equivalente."
+    elif gap_pct > 5:
+        text = "SOL è leggermente più forte del BTC equivalente."
+    elif gap_pct < -15:
+        text = "SOL è più debole / più indietro del BTC equivalente."
+    elif gap_pct < -5:
+        text = "SOL è leggermente più debole del BTC equivalente."
+    else:
+        text = "SOL è abbastanza allineato al BTC equivalente."
+
+    return gap_pct, text
+
+
+def compute_similarity(btc_path, sol_path):
+    compare_len = min(len(btc_path), len(sol_path))
+
+    if compare_len < 15:
+        return {
+            "compare_len": compare_len,
+            "price_similarity": None,
+            "rsi_similarity": None,
+            "ma_similarity": None,
+            "total_similarity": None,
+        }
+
+    btc = btc_path.iloc[:compare_len].copy()
+    sol = sol_path.iloc[:compare_len].copy()
+
+    btc_log_norm = np.log(btc["norm"].reset_index(drop=True) / 100)
+    sol_log_norm = np.log(sol["norm"].reset_index(drop=True) / 100)
+
+    price_corr_sim = correlation_similarity(btc_log_norm, sol_log_norm)
+    price_error_sim = error_similarity(btc_log_norm, sol_log_norm, tolerance=0.45)
+
+    price_similarity = combine_scores(
+        [
+            (price_corr_sim, 0.65),
+            (price_error_sim, 0.35),
+        ]
+    )
+
+    rsi_similarity = mean_abs_similarity(
+        btc["rsi_14"].reset_index(drop=True),
+        sol["rsi_14"].reset_index(drop=True),
+        scale=2.0,
+    )
+
+    ma_scores = []
+
+    for ma in [20, 50, 100]:
+        col = f"dist_ma_{ma}"
+
+        if col in btc.columns and col in sol.columns:
+            ma_scores.append(
+                mean_abs_similarity(
+                    btc[col].reset_index(drop=True),
+                    sol[col].reset_index(drop=True),
+                    scale=2.8,
+                )
+            )
+
+    ma_similarity = combine_scores([(s, 1) for s in ma_scores])
+
+    total_similarity = combine_scores(
+        [
+            (price_similarity, 0.60),
+            (rsi_similarity, 0.25),
+            (ma_similarity, 0.15),
+        ]
+    )
+
+    return {
+        "compare_len": compare_len,
+        "price_similarity": price_similarity,
+        "rsi_similarity": rsi_similarity,
+        "ma_similarity": ma_similarity,
+        "total_similarity": total_similarity,
+    }
+
+
 def direct_verdict(total_similarity, price_similarity, rsi_similarity, ma_similarity, phase_gap_pct):
     total = safe_float(total_similarity)
     price = safe_float(price_similarity)
@@ -404,96 +511,6 @@ def direct_verdict(total_similarity, price_similarity, rsi_similarity, ma_simila
         "action": action,
         "confidence": confidence,
         "reasons": reasons,
-    }
-
-
-def phase_gap_status(sol_norm_now, btc_norm_equiv):
-    sol_norm_now = safe_float(sol_norm_now)
-    btc_norm_equiv = safe_float(btc_norm_equiv)
-
-    if sol_norm_now is None or btc_norm_equiv is None or btc_norm_equiv <= 0:
-        return None, "n/d"
-
-    gap_pct = (sol_norm_now / btc_norm_equiv - 1) * 100
-
-    if gap_pct > 15:
-        text = "SOL è più forte / più avanti del BTC equivalente."
-    elif gap_pct > 5:
-        text = "SOL è leggermente più forte del BTC equivalente."
-    elif gap_pct < -15:
-        text = "SOL è più debole / più indietro del BTC equivalente."
-    elif gap_pct < -5:
-        text = "SOL è leggermente più debole del BTC equivalente."
-    else:
-        text = "SOL è abbastanza allineato al BTC equivalente."
-
-    return gap_pct, text
-
-
-def compute_similarity(btc_path, sol_path):
-    compare_len = min(len(btc_path), len(sol_path))
-
-    if compare_len < 15:
-        return {
-            "compare_len": compare_len,
-            "price_similarity": None,
-            "rsi_similarity": None,
-            "ma_similarity": None,
-            "total_similarity": None,
-        }
-
-    btc = btc_path.iloc[:compare_len].copy()
-    sol = sol_path.iloc[:compare_len].copy()
-
-    btc_log_norm = np.log(btc["norm"].reset_index(drop=True) / 100)
-    sol_log_norm = np.log(sol["norm"].reset_index(drop=True) / 100)
-
-    price_corr_sim = correlation_similarity(btc_log_norm, sol_log_norm)
-    price_error_sim = error_similarity(btc_log_norm, sol_log_norm, tolerance=0.45)
-
-    price_similarity = combine_scores(
-        [
-            (price_corr_sim, 0.65),
-            (price_error_sim, 0.35),
-        ]
-    )
-
-    rsi_similarity = mean_abs_similarity(
-        btc["rsi_14"].reset_index(drop=True),
-        sol["rsi_14"].reset_index(drop=True),
-        scale=2.0,
-    )
-
-    ma_scores = []
-
-    for ma in [20, 50, 100]:
-        col = f"dist_ma_{ma}"
-
-        if col in btc.columns and col in sol.columns:
-            ma_scores.append(
-                mean_abs_similarity(
-                    btc[col].reset_index(drop=True),
-                    sol[col].reset_index(drop=True),
-                    scale=2.8,
-                )
-            )
-
-    ma_similarity = combine_scores([(s, 1) for s in ma_scores])
-
-    total_similarity = combine_scores(
-        [
-            (price_similarity, 0.60),
-            (rsi_similarity, 0.25),
-            (ma_similarity, 0.15),
-        ]
-    )
-
-    return {
-        "compare_len": compare_len,
-        "price_similarity": price_similarity,
-        "rsi_similarity": rsi_similarity,
-        "ma_similarity": ma_similarity,
-        "total_similarity": total_similarity,
     }
 
 
@@ -725,7 +742,7 @@ def build_stage_roadmap(btc_path, sol_current_price, sol_current_date, sol_elaps
     return rows
 
 
-def build_key_levels(sol_current_price, sol_anchor_price, projections, stages):
+def build_key_levels(sol_current_price, sol_anchor_price, projections):
     sol_current_price = safe_float(sol_current_price)
     sol_anchor_price = safe_float(sol_anchor_price)
 
@@ -784,6 +801,86 @@ def build_key_levels(sol_current_price, sol_anchor_price, projections, stages):
         "hard_invalid": hard_invalid,
         "support_note": support_note,
     }
+
+
+def current_phase(sol_current_price, key_levels, verdict):
+    price = safe_float(sol_current_price)
+    confirm_1 = safe_float(key_levels.get("confirm_1"))
+    confirm_2 = safe_float(key_levels.get("confirm_2"))
+    soft_invalid = safe_float(key_levels.get("soft_invalid"))
+    hard_invalid = safe_float(key_levels.get("hard_invalid"))
+
+    verdict_label = verdict.get("label", "")
+
+    if price is None:
+        return {
+            "label": "DATI INSUFFICIENTI",
+            "text": "Non posso classificare la fase attuale.",
+            "risk": "n/d",
+        }
+
+    if "NO" in verdict_label:
+        return {
+            "label": "FRATTALE DEBOLE",
+            "text": "Il paragone con BTC 2022 non è abbastanza forte. Le proiezioni valgono poco.",
+            "risk": "ALTO",
+        }
+
+    if hard_invalid is not None and price <= hard_invalid:
+        return {
+            "label": "FRATTALE ROTTO",
+            "text": "SOL è sotto o vicino al bottom usato. Il frattale BTC 2022 è praticamente invalidato.",
+            "risk": "MOLTO ALTO",
+        }
+
+    if soft_invalid is not None and price <= soft_invalid:
+        return {
+            "label": "SOTTO PRESSIONE",
+            "text": "SOL è nella zona in cui il frattale si indebolisce. Serve recupero veloce.",
+            "risk": "ALTO",
+        }
+
+    if confirm_1 is not None and price < confirm_1:
+        return {
+            "label": "FASE ANTICIPATA",
+            "text": "Il prezzo è ancora prima della conferma. Qui il potenziale è migliore, ma la certezza è bassa.",
+            "risk": "MEDIO / ALTO",
+        }
+
+    if confirm_2 is not None and price < confirm_2:
+        return {
+            "label": "CONFERMA INIZIALE",
+            "text": "SOL ha iniziato a confermare il frattale, ma non è ancora una conferma forte.",
+            "risk": "MEDIO",
+        }
+
+    return {
+        "label": "CONFERMA FORTE / ATTENZIONE A INSEGUIRE",
+        "text": "Il frattale è più confermato, ma una parte della mossa è già stata fatta. Meglio gestire il rischio invece di inseguire a caso.",
+        "risk": "MEDIO / RISCHIO INSEGUIMENTO",
+    }
+
+
+def build_next_step_text(phase, stages):
+    if not stages:
+        return "Dati insufficienti per descrivere il prossimo step."
+
+    first = stages[0]
+
+    low = fmt_price(first.get("sol_low_base_price"))
+    low_date = first.get("sol_low_date_it", "n/d")
+    high = fmt_price(first.get("sol_high_base_price"))
+    high_date = first.get("sol_high_date_it", "n/d")
+    end_price = fmt_price(first.get("sol_end_base_price"))
+    end_date = first.get("sol_stage_end_date_it", "n/d")
+    sequence = first.get("sequence", "n/d")
+
+    return (
+        f"Prossimo step previsto dal frattale: **{sequence}** "
+        f"Zona bassa stimata: **{low}** intorno al **{low_date}**. "
+        f"Zona alta stimata: **{high}** intorno al **{high_date}**. "
+        f"Fine step: circa **{end_price}** entro il **{end_date}**."
+    )
 
 
 def build_projection_table(projections):
@@ -901,7 +998,198 @@ def build_summary_rows(
     ]
 
 
-def build_verdict_block(verdict, key_levels):
+def make_daily_projection_path(btc_path, sol_current_price, sol_current_date, sol_elapsed_days, beta_ratio, max_days=365):
+    rows = []
+
+    if btc_path.empty or sol_current_price is None:
+        return pd.DataFrame()
+
+    btc_current_idx = min(sol_elapsed_days, len(btc_path) - 1)
+    btc_current_norm = safe_float(btc_path["norm"].iloc[btc_current_idx])
+
+    if btc_current_norm is None or btc_current_norm <= 0:
+        return pd.DataFrame()
+
+    max_future_idx = min(len(btc_path) - 1, btc_current_idx + max_days)
+
+    for idx in range(btc_current_idx, max_future_idx + 1):
+        offset = idx - btc_current_idx
+        btc_norm = safe_float(btc_path["norm"].iloc[idx])
+
+        if btc_norm is None:
+            continue
+
+        relative = btc_norm / btc_current_norm
+
+        rows.append(
+            {
+                "offset_days": offset,
+                "sol_date": add_days(sol_current_date, offset),
+                "btc_equiv_date": btc_path.index[idx],
+                "base_price": sol_current_price * relative,
+                "beta_price": projection_price(sol_current_price, relative, beta_ratio),
+                "base_norm": relative * 100,
+            }
+        )
+
+    return pd.DataFrame(rows)
+
+
+def generate_fractal_chart(btc_path, sol_path, sol_elapsed_days):
+    if not CHARTS_AVAILABLE:
+        return False
+
+    try:
+        if btc_path.empty or sol_path.empty:
+            return False
+
+        sol_elapsed_days = int(sol_elapsed_days)
+
+        future_days = 365
+        chart_end_idx = min(len(btc_path) - 1, sol_elapsed_days + future_days)
+
+        btc_chart = btc_path.iloc[:chart_end_idx + 1].copy()
+        btc_x = np.arange(len(btc_chart))
+        btc_y = btc_chart["norm"].values
+
+        sol_actual = sol_path.copy()
+        sol_x = np.arange(len(sol_actual))
+        sol_y = sol_actual["norm"].values
+
+        btc_current_idx = min(sol_elapsed_days, len(btc_path) - 1)
+        btc_current_norm = safe_float(btc_path["norm"].iloc[btc_current_idx])
+        sol_current_norm = safe_float(sol_path["norm"].iloc[-1])
+
+        projection_x = []
+        projection_y = []
+
+        if btc_current_norm is not None and btc_current_norm > 0 and sol_current_norm is not None:
+            for idx in range(btc_current_idx, chart_end_idx + 1):
+                btc_norm = safe_float(btc_path["norm"].iloc[idx])
+
+                if btc_norm is None:
+                    continue
+
+                projection_x.append(idx)
+                projection_y.append(sol_current_norm * (btc_norm / btc_current_norm))
+
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        ax.plot(btc_x, btc_y, label="BTC dal bottom nov 2022")
+        ax.plot(sol_x, sol_y, label="SOL dal bottom giu 2026")
+        ax.plot(projection_x, projection_y, linestyle="--", label="Proiezione SOL se segue BTC")
+
+        ax.axvline(sol_elapsed_days, linestyle=":", alpha=0.8, label="Oggi SOL")
+
+        ax.set_title("Frattale sovrapposto: BTC 2022 vs SOL 2026")
+        ax.set_xlabel("Giorni dal bottom")
+        ax.set_ylabel("Prezzo normalizzato a 100 dal bottom")
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+        fig.tight_layout()
+
+        fig.savefig(FRACTAL_CHART_PATH, dpi=160, bbox_inches="tight")
+        plt.close(fig)
+
+        return True
+    except Exception as e:
+        print(f"Could not generate fractal chart: {e}")
+        return False
+
+
+def generate_projection_chart(sol_path, projection_daily, key_levels):
+    if not CHARTS_AVAILABLE:
+        return False
+
+    try:
+        if sol_path.empty or projection_daily.empty:
+            return False
+
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        ax.plot(sol_path.index, sol_path["Close"], label="SOL storico dal bottom")
+        ax.plot(
+            projection_daily["sol_date"],
+            projection_daily["base_price"],
+            linestyle="--",
+            label="Proiezione SOL base",
+        )
+        ax.plot(
+            projection_daily["sol_date"],
+            projection_daily["beta_price"],
+            linestyle=":",
+            label="Proiezione SOL beta",
+        )
+
+        levels = [
+            ("Prima conferma", key_levels.get("confirm_1")),
+            ("Seconda conferma", key_levels.get("confirm_2")),
+            ("Invalidazione soft", key_levels.get("soft_invalid")),
+            ("Invalidazione forte", key_levels.get("hard_invalid")),
+        ]
+
+        for label, value in levels:
+            value = safe_float(value)
+
+            if value is not None:
+                ax.axhline(value, linestyle="--", alpha=0.35)
+                ax.text(
+                    sol_path.index[-1],
+                    value,
+                    f" {label}: {fmt_price(value)}",
+                    va="center",
+                    fontsize=8,
+                )
+
+        ax.set_title("Proiezione SOL in dollari se segue il frattale BTC 2022")
+        ax.set_xlabel("Data")
+        ax.set_ylabel("Prezzo SOL")
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+        fig.autofmt_xdate()
+        fig.tight_layout()
+
+        fig.savefig(PROJECTION_CHART_PATH, dpi=160, bbox_inches="tight")
+        plt.close(fig)
+
+        return True
+    except Exception as e:
+        print(f"Could not generate projection chart: {e}")
+        return False
+
+
+def build_chart_block(fractal_chart_ok, projection_chart_ok):
+    lines = []
+
+    lines.append("## Grafici")
+    lines.append("")
+
+    if fractal_chart_ok:
+        lines.append("### Grafico 1 - Frattale sovrapposto BTC 2022 vs SOL 2026")
+        lines.append("")
+        lines.append("Questo grafico normalizza entrambi i prezzi a 100 dal rispettivo bottom. Serve per vedere subito se la forma è simile.")
+        lines.append("")
+        lines.append(f"![Frattale BTC 2022 vs SOL 2026]({FRACTAL_CHART_FILE})")
+        lines.append("")
+    else:
+        lines.append("Grafico frattale non generato. Controlla che `matplotlib` sia installato.")
+        lines.append("")
+
+    if projection_chart_ok:
+        lines.append("### Grafico 2 - Proiezione SOL in dollari")
+        lines.append("")
+        lines.append("Questo grafico mostra SOL storico e la proiezione futura in dollari se continua a seguire BTC 2022.")
+        lines.append("")
+        lines.append(f"![Proiezione SOL BTC 2022]({PROJECTION_CHART_FILE})")
+        lines.append("")
+    else:
+        lines.append("Grafico proiezione non generato. Controlla che `matplotlib` sia installato.")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def build_verdict_block(verdict, key_levels, phase, next_step_text):
     reasons = verdict.get("reasons", [])
 
     reason_lines = []
@@ -921,6 +1209,14 @@ def build_verdict_block(verdict, key_levels):
     lines.append(f"### {verdict['label']}")
     lines.append("")
     lines.append(f"**Sintesi:** {verdict['short']}")
+    lines.append("")
+    lines.append(f"**Fase attuale:** {phase['label']}")
+    lines.append("")
+    lines.append(f"**Lettura fase:** {phase['text']}")
+    lines.append("")
+    lines.append(f"**Rischio fase:** {phase['risk']}")
+    lines.append("")
+    lines.append(f"**Prossimo step:** {next_step_text}")
     lines.append("")
     lines.append(f"**Cosa fare con questa informazione:** {verdict['action']}")
     lines.append("")
@@ -982,8 +1278,12 @@ def build_report(
     beta_ratio,
     verdict,
     key_levels,
+    phase,
+    next_step_text,
     projections,
     stages,
+    fractal_chart_ok,
+    projection_chart_ok,
 ):
     rome_now = datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z")
     utc_now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -997,12 +1297,15 @@ def build_report(
     lines.append("")
     lines.append(f"Ultima candela SOL usata: **{fmt_date_it(sol_current_date)}**")
     lines.append("")
-    lines.append("Questo report risponde a due domande:")
+    lines.append("Questo report risponde a tre domande:")
     lines.append("")
     lines.append("1. **SOL sta seguendo il frattale di Bitcoin post-bottom novembre 2022?**")
-    lines.append("2. **Se lo sta seguendo, quali dovrebbero essere i prossimi step con date precise?**")
+    lines.append("2. **In che fase siamo: anticipo, conferma, o rischio inseguimento?**")
+    lines.append("3. **Se lo sta seguendo, quali dovrebbero essere i prossimi step con date precise?**")
     lines.append("")
-    lines.append(build_verdict_block(verdict, key_levels))
+    lines.append(build_verdict_block(verdict, key_levels, phase, next_step_text))
+    lines.append("")
+    lines.append(build_chart_block(fractal_chart_ok, projection_chart_ok))
     lines.append("")
     lines.append("## Prossimi step se il frattale resta valido")
     lines.append("")
@@ -1015,7 +1318,7 @@ def build_report(
     lines.append("- **Data SOL prevista**: il giorno reale futuro, per esempio fra 7 / 14 / 30 giorni.")
     lines.append("- **Data BTC equivalente**: il giorno del frattale BTC 2022 che corrisponde a quella proiezione.")
     lines.append("- **SOL base**: SOL replica la percentuale di BTC.")
-    lines.append("- **SOL beta**: SOL replica BTC ma con volatilità SOL/BTC. È più aggressivo se SOL si muove più forte di BTC.")
+    lines.append("- **SOL beta**: SOL replica BTC ma con volatilità SOL/BTC.")
     lines.append("- **Min percorso**: quanto potrebbe scendere prima di arrivare al prezzo finale dello scenario.")
     lines.append("- **Max percorso**: quale zona alta potrebbe toccare durante lo stesso tratto.")
     lines.append("")
@@ -1047,27 +1350,62 @@ def build_report(
     lines.append("")
     lines.append("## Come leggerlo semplice")
     lines.append("")
-    lines.append("- Se il verdetto è **SÌ**, il frattale BTC 2022 è uno scenario principale.")
-    lines.append("- Se il verdetto è **PARZIALMENTE SÌ**, il frattale è utile, ma serve conferma sui livelli.")
-    lines.append("- Se il verdetto è **SOLO DEBOLMENTE**, usalo solo come scenario secondario.")
-    lines.append("- Se il verdetto è **NO**, la proiezione BTC 2022 non va presa sul serio.")
+    lines.append("- **Fase anticipata**: prezzo buono, ma certezza bassa.")
+    lines.append("- **Conferma iniziale**: il frattale sta migliorando, ma una parte della mossa è già partita.")
+    lines.append("- **Conferma forte**: frattale più chiaro, ma aumenta il rischio di inseguire.")
+    lines.append("- **Sotto pressione / rotto**: il paragone con BTC 2022 perde valore.")
     lines.append("")
-    lines.append("Il punto non è prevedere il futuro con certezza. Il punto è vedere se SOL sta camminando sulla stessa strada di BTC dopo il bottom del 2022.")
-    lines.append("")
-    lines.append("## Nota operativa")
-    lines.append("")
-    lines.append("La cosa più importante non è il target alto, ma il percorso:")
-    lines.append("")
-    lines.append("- se BTC in quella fase prima fece un retest, anche SOL potrebbe prima tornare giù;")
-    lines.append("- se BTC in quella fase partì senza guardarsi indietro, allora SOL dovrebbe iniziare a rompere resistenze;")
-    lines.append("- se SOL non rispetta né tempi né livelli, il frattale perde valore.")
+    lines.append("La certezza arriva sempre tardi. La parte utile è capire quando il frattale è abbastanza plausibile e dove si invalida.")
     lines.append("")
 
     return "\n".join(lines)
 
 
-def build_main_report_block(verdict, similarity, sol_current_date, sol_elapsed_days, btc_equiv_date, key_levels, stages, projections):
+def build_main_report_block(
+    verdict,
+    similarity,
+    sol_current_date,
+    sol_elapsed_days,
+    btc_equiv_date,
+    key_levels,
+    phase,
+    next_step_text,
+    stages,
+    projections,
+    fractal_chart_ok,
+    projection_chart_ok,
+):
     score = similarity.get("total_similarity")
+
+    quick_projection_rows = []
+
+    for p in projections:
+        if p["horizon_days"] in [7, 14, 30, 60, 90, 120]:
+            quick_projection_rows.append(
+                [
+                    f"{p['horizon_days']} giorni",
+                    p["sol_future_date_it"],
+                    fmt_pct(p["btc_move_from_equivalent_today_pct"]),
+                    fmt_price(p["sol_projection_base_price"]),
+                    fmt_price(p["sol_path_low_base_price"]),
+                    fmt_price(p["sol_path_high_base_price"]),
+                ]
+            )
+
+    if quick_projection_rows:
+        quick_projection_table = md_table(
+            [
+                "Orizzonte",
+                "Data SOL prevista",
+                "BTC fece",
+                "SOL base",
+                "Min percorso",
+                "Max percorso",
+            ],
+            quick_projection_rows,
+        )
+    else:
+        quick_projection_table = "Dati insufficienti per la proiezione."
 
     quick_stage_rows = []
 
@@ -1100,35 +1438,23 @@ def build_main_report_block(verdict, similarity, sol_current_date, sol_elapsed_d
     else:
         quick_stage_table = "Dati insufficienti per costruire gli step."
 
-    quick_projection_rows = []
+    chart_lines = []
 
-    for p in projections:
-        if p["horizon_days"] in [7, 14, 30, 60, 90, 120]:
-            quick_projection_rows.append(
-                [
-                    f"{p['horizon_days']} giorni",
-                    p["sol_future_date_it"],
-                    fmt_pct(p["btc_move_from_equivalent_today_pct"]),
-                    fmt_price(p["sol_projection_base_price"]),
-                    fmt_price(p["sol_path_low_base_price"]),
-                    fmt_price(p["sol_path_high_base_price"]),
-                ]
-            )
+    if fractal_chart_ok:
+        chart_lines.append("### Grafico frattale sovrapposto")
+        chart_lines.append("")
+        chart_lines.append(f"![Frattale BTC 2022 vs SOL 2026]({FRACTAL_CHART_FILE})")
+        chart_lines.append("")
 
-    if quick_projection_rows:
-        quick_projection_table = md_table(
-            [
-                "Orizzonte",
-                "Data SOL prevista",
-                "BTC fece",
-                "SOL base",
-                "Min percorso",
-                "Max percorso",
-            ],
-            quick_projection_rows,
-        )
-    else:
-        quick_projection_table = "Dati insufficienti per la proiezione."
+    if projection_chart_ok:
+        chart_lines.append("### Grafico proiezione SOL")
+        chart_lines.append("")
+        chart_lines.append(f"![Proiezione SOL BTC 2022]({PROJECTION_CHART_FILE})")
+        chart_lines.append("")
+
+    if not chart_lines:
+        chart_lines.append("Grafici non generati. Controlla che `matplotlib` sia installato.")
+        chart_lines.append("")
 
     return "\n".join(
         [
@@ -1144,11 +1470,18 @@ def build_main_report_block(verdict, similarity, sol_current_date, sol_elapsed_d
             "",
             f"## Verdetto: {verdict['label']}",
             "",
+            f"- **Fase attuale:** {phase['label']}",
             f"- **Somiglianza totale:** {fmt_pct(score)}",
             f"- **Affidabilità:** {verdict['confidence']}",
+            f"- **Rischio fase:** {phase['risk']}",
             f"- **Sintesi:** {verdict['short']}",
             f"- **SOL è al giorno:** {sol_elapsed_days} dal bottom usato.",
             f"- **Giorno BTC equivalente:** {btc_equiv_date.date()}",
+            f"- **Prossimo step:** {next_step_text}",
+            "",
+            "## Grafici",
+            "",
+            "\n".join(chart_lines).strip(),
             "",
             "## Livelli chiave",
             "",
@@ -1177,7 +1510,20 @@ def build_main_report_block(verdict, similarity, sol_current_date, sol_elapsed_d
     )
 
 
-def inject_into_main_report(verdict, similarity, sol_current_date, sol_elapsed_days, btc_equiv_date, key_levels, stages, projections):
+def inject_into_main_report(
+    verdict,
+    similarity,
+    sol_current_date,
+    sol_elapsed_days,
+    btc_equiv_date,
+    key_levels,
+    phase,
+    next_step_text,
+    stages,
+    projections,
+    fractal_chart_ok,
+    projection_chart_ok,
+):
     if not os.path.exists(MAIN_REPORT_PATH):
         return
 
@@ -1199,8 +1545,12 @@ def inject_into_main_report(verdict, similarity, sol_current_date, sol_elapsed_d
         sol_elapsed_days=sol_elapsed_days,
         btc_equiv_date=btc_equiv_date,
         key_levels=key_levels,
+        phase=phase,
+        next_step_text=next_step_text,
         stages=stages,
         projections=projections,
+        fractal_chart_ok=fractal_chart_ok,
+        projection_chart_ok=projection_chart_ok,
     ).strip()
 
     decision_end = "<!-- DECISION_REPORT_END -->"
@@ -1221,7 +1571,7 @@ def inject_into_main_report(verdict, similarity, sol_current_date, sol_elapsed_d
         f.write(new_text.rstrip() + "\n")
 
 
-def write_csv(summary_dict, projections, stages):
+def write_csv(summary_dict, projections, stages, projection_daily):
     rows = []
 
     base = dict(summary_dict)
@@ -1237,6 +1587,19 @@ def write_csv(summary_dict, projections, stages):
         row = dict(s)
         row["row_type"] = "stage"
         rows.append(row)
+
+    if not projection_daily.empty:
+        for _, item in projection_daily.iterrows():
+            row = {
+                "row_type": "daily_projection",
+                "offset_days": item.get("offset_days"),
+                "sol_date": fmt_date(item.get("sol_date")),
+                "btc_equiv_date": fmt_date(item.get("btc_equiv_date")),
+                "base_price": item.get("base_price"),
+                "beta_price": item.get("beta_price"),
+                "base_norm": item.get("base_norm"),
+            }
+            rows.append(row)
 
     df = pd.DataFrame(rows)
     df.to_csv(CSV_PATH, index=False)
@@ -1334,7 +1697,6 @@ def main():
         sol_current_price=sol_current_price,
         sol_anchor_price=sol_anchor_price,
         projections=projections,
-        stages=stages,
     )
 
     verdict = direct_verdict(
@@ -1343,6 +1705,38 @@ def main():
         rsi_similarity=similarity.get("rsi_similarity"),
         ma_similarity=similarity.get("ma_similarity"),
         phase_gap_pct=phase_gap_pct,
+    )
+
+    phase = current_phase(
+        sol_current_price=sol_current_price,
+        key_levels=key_levels,
+        verdict=verdict,
+    )
+
+    next_step_text = build_next_step_text(
+        phase=phase,
+        stages=stages,
+    )
+
+    projection_daily = make_daily_projection_path(
+        btc_path=btc_path,
+        sol_current_price=sol_current_price,
+        sol_current_date=sol_current_date,
+        sol_elapsed_days=sol_elapsed_days,
+        beta_ratio=beta_ratio,
+        max_days=365,
+    )
+
+    fractal_chart_ok = generate_fractal_chart(
+        btc_path=btc_path,
+        sol_path=sol_path,
+        sol_elapsed_days=sol_elapsed_days,
+    )
+
+    projection_chart_ok = generate_projection_chart(
+        sol_path=sol_path,
+        projection_daily=projection_daily,
+        key_levels=key_levels,
     )
 
     report = build_report(
@@ -1362,8 +1756,12 @@ def main():
         beta_ratio=beta_ratio,
         verdict=verdict,
         key_levels=key_levels,
+        phase=phase,
+        next_step_text=next_step_text,
         projections=projections,
         stages=stages,
+        fractal_chart_ok=fractal_chart_ok,
+        projection_chart_ok=projection_chart_ok,
     )
 
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
@@ -1390,14 +1788,19 @@ def main():
         "quality_label": quality_label(similarity.get("total_similarity")),
         "verdict": verdict.get("label"),
         "verdict_confidence": verdict.get("confidence"),
+        "phase_label": phase.get("label"),
+        "phase_risk": phase.get("risk"),
+        "next_step_text": next_step_text,
         "beta_ratio": beta_ratio,
         "confirm_1": key_levels.get("confirm_1"),
         "confirm_2": key_levels.get("confirm_2"),
         "soft_invalid": key_levels.get("soft_invalid"),
         "hard_invalid": key_levels.get("hard_invalid"),
+        "fractal_chart_ok": fractal_chart_ok,
+        "projection_chart_ok": projection_chart_ok,
     }
 
-    write_csv(summary_dict, projections, stages)
+    write_csv(summary_dict, projections, stages, projection_daily)
 
     inject_into_main_report(
         verdict=verdict,
@@ -1406,14 +1809,21 @@ def main():
         sol_elapsed_days=sol_elapsed_days,
         btc_equiv_date=btc_equiv_date,
         key_levels=key_levels,
+        phase=phase,
+        next_step_text=next_step_text,
         stages=stages,
         projections=projections,
+        fractal_chart_ok=fractal_chart_ok,
+        projection_chart_ok=projection_chart_ok,
     )
 
     print(f"Wrote {REPORT_PATH}")
     print(f"Wrote {CSV_PATH}")
     print(f"Updated {MAIN_REPORT_PATH}")
+    print(f"Fractal chart: {fractal_chart_ok}")
+    print(f"Projection chart: {projection_chart_ok}")
     print(f"Verdict: {verdict.get('label')}")
+    print(f"Phase: {phase.get('label')}")
 
 
 if __name__ == "__main__":
