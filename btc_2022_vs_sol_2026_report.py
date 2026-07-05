@@ -83,6 +83,42 @@ def fmt_price(value):
     return f"{fmt_number(value, 5)} $"
 
 
+def fmt_date(value):
+    try:
+        return pd.to_datetime(value).strftime("%Y-%m-%d")
+    except Exception:
+        return "n/d"
+
+
+def fmt_date_it(value):
+    try:
+        dt = pd.to_datetime(value)
+        months = {
+            1: "gennaio",
+            2: "febbraio",
+            3: "marzo",
+            4: "aprile",
+            5: "maggio",
+            6: "giugno",
+            7: "luglio",
+            8: "agosto",
+            9: "settembre",
+            10: "ottobre",
+            11: "novembre",
+            12: "dicembre",
+        }
+        return f"{dt.day} {months[dt.month]} {dt.year}"
+    except Exception:
+        return "n/d"
+
+
+def add_days(date_value, days):
+    try:
+        return pd.to_datetime(date_value) + pd.Timedelta(days=int(days))
+    except Exception:
+        return None
+
+
 def md_table(headers, rows):
     def clean(x):
         return str(x).replace("|", "\\|").replace("\n", " ")
@@ -493,7 +529,7 @@ def projection_price(sol_current_price, relative_move, beta_ratio=1.0):
     return sol_current_price * np.exp(np.log(relative_move) * beta_ratio)
 
 
-def projection_from_btc(btc_path, sol_current_price, sol_elapsed_days, beta_ratio):
+def projection_from_btc(btc_path, sol_current_price, sol_current_date, sol_elapsed_days, beta_ratio):
     rows = []
 
     if btc_path.empty or sol_current_price is None:
@@ -515,6 +551,8 @@ def projection_from_btc(btc_path, sol_current_price, sol_elapsed_days, beta_rati
 
         if btc_future_norm is None:
             continue
+
+        sol_future_date = add_days(sol_current_date, horizon)
 
         future_slice = btc_path["norm"].iloc[btc_current_idx:future_idx + 1]
         relative_slice = future_slice / btc_current_norm
@@ -540,6 +578,9 @@ def projection_from_btc(btc_path, sol_current_price, sol_elapsed_days, beta_rati
         rows.append(
             {
                 "horizon_days": horizon,
+                "sol_current_date": fmt_date(sol_current_date),
+                "sol_future_date": fmt_date(sol_future_date),
+                "sol_future_date_it": fmt_date_it(sol_future_date),
                 "btc_equivalent_future_date": str(btc_path.index[future_idx].date()),
                 "btc_move_from_equivalent_today_pct": btc_move_pct,
                 "sol_projection_base_price": base_price,
@@ -590,7 +631,7 @@ def stage_sequence_label(low_pct, high_pct, end_pct, low_offset, high_offset):
     return "Laterale / movimento non forte."
 
 
-def build_stage_roadmap(btc_path, sol_current_price, sol_elapsed_days, beta_ratio):
+def build_stage_roadmap(btc_path, sol_current_price, sol_current_date, sol_elapsed_days, beta_ratio):
     rows = []
 
     if btc_path.empty or sol_current_price is None:
@@ -617,6 +658,9 @@ def build_stage_roadmap(btc_path, sol_current_price, sol_elapsed_days, beta_rati
         if stage_slice.empty:
             continue
 
+        sol_stage_start_date = add_days(sol_current_date, start_offset)
+        sol_stage_end_date = add_days(sol_current_date, end_offset)
+
         end_norm = safe_float(btc_path["norm"].iloc[end_idx])
         low_norm = safe_float(stage_slice.min())
         high_norm = safe_float(stage_slice.max())
@@ -624,8 +668,11 @@ def build_stage_roadmap(btc_path, sol_current_price, sol_elapsed_days, beta_rati
         low_idx = stage_slice.idxmin()
         high_idx = stage_slice.idxmax()
 
-        low_offset = (low_idx - btc_path.index[btc_current_idx]).days
-        high_offset = (high_idx - btc_path.index[btc_current_idx]).days
+        low_offset = int((low_idx - btc_path.index[btc_current_idx]).days)
+        high_offset = int((high_idx - btc_path.index[btc_current_idx]).days)
+
+        sol_low_date = add_days(sol_current_date, low_offset)
+        sol_high_date = add_days(sol_current_date, high_offset)
 
         end_relative = end_norm / btc_current_norm
         low_relative = low_norm / btc_current_norm
@@ -651,12 +698,20 @@ def build_stage_roadmap(btc_path, sol_current_price, sol_elapsed_days, beta_rati
                 "stage": stage_name,
                 "start_day": start_offset,
                 "end_day": end_offset,
+                "sol_stage_start_date": fmt_date(sol_stage_start_date),
+                "sol_stage_start_date_it": fmt_date_it(sol_stage_start_date),
+                "sol_stage_end_date": fmt_date(sol_stage_end_date),
+                "sol_stage_end_date_it": fmt_date_it(sol_stage_end_date),
                 "btc_end_date": str(btc_path.index[end_idx].date()),
                 "btc_end_move_pct": end_pct,
                 "btc_low_move_pct": low_pct,
                 "btc_high_move_pct": high_pct,
                 "low_day_offset": low_offset,
                 "high_day_offset": high_offset,
+                "sol_low_date": fmt_date(sol_low_date),
+                "sol_low_date_it": fmt_date_it(sol_low_date),
+                "sol_high_date": fmt_date(sol_high_date),
+                "sol_high_date_it": fmt_date_it(sol_high_date),
                 "sol_end_base_price": end_base_price,
                 "sol_end_beta_price": end_beta_price,
                 "sol_low_base_price": low_base_price,
@@ -741,6 +796,7 @@ def build_projection_table(projections):
         rows.append(
             [
                 f"{p['horizon_days']} giorni",
+                p["sol_future_date_it"],
                 p["btc_equivalent_future_date"],
                 fmt_pct(p["btc_move_from_equivalent_today_pct"]),
                 fmt_price(p["sol_projection_base_price"]),
@@ -755,6 +811,7 @@ def build_projection_table(projections):
     return md_table(
         [
             "Orizzonte",
+            "Data SOL prevista",
             "Data BTC equivalente",
             "BTC fece",
             "SOL base",
@@ -778,13 +835,14 @@ def build_stage_table(stages):
         rows.append(
             [
                 s["stage"],
+                f"{s['sol_stage_start_date_it']} → {s['sol_stage_end_date_it']}",
                 f"{s['start_day']}-{s['end_day']} giorni",
                 s["btc_end_date"],
                 fmt_pct(s["btc_end_move_pct"]),
                 fmt_price(s["sol_end_base_price"]),
                 fmt_price(s["sol_end_beta_price"]),
-                fmt_price(s["sol_low_base_price"]),
-                fmt_price(s["sol_high_base_price"]),
+                f"{fmt_price(s['sol_low_base_price'])} ({s['sol_low_date_it']})",
+                f"{fmt_price(s['sol_high_base_price'])} ({s['sol_high_date_it']})",
                 s["sequence"],
             ]
         )
@@ -792,13 +850,14 @@ def build_stage_table(stages):
     return md_table(
         [
             "Step",
+            "Date SOL previste",
             "Periodo",
             "BTC data equiv.",
             "BTC fine step",
             "SOL fine base",
             "SOL fine beta",
-            "Zona bassa",
-            "Zona alta",
+            "Zona bassa + data",
+            "Zona alta + data",
             "Lettura",
         ],
         rows,
@@ -811,6 +870,7 @@ def build_summary_rows(
     sol_anchor_date,
     sol_anchor_price,
     sol_current_price,
+    sol_current_date,
     sol_elapsed_days,
     btc_equiv_date,
     btc_norm_equiv,
@@ -823,6 +883,7 @@ def build_summary_rows(
     return [
         ["BTC bottom usato", str(btc_anchor_date.date()), fmt_price(btc_anchor_price)],
         ["SOL bottom usato", str(sol_anchor_date.date()), fmt_price(sol_anchor_price)],
+        ["Ultima data SOL usata", fmt_date_it(sol_current_date), "-"],
         ["Prezzo SOL attuale", "-", fmt_price(sol_current_price)],
         ["Giorni SOL dal bottom", "-", sol_elapsed_days],
         ["Data BTC equivalente", str(btc_equiv_date.date()), "-"],
@@ -855,7 +916,7 @@ def build_verdict_block(verdict, key_levels):
 
     lines.append("## Verdetto diretto")
     lines.append("")
-    lines.append(f"**SOL sta seguendo BTC 2022?**")
+    lines.append("**SOL sta seguendo BTC 2022?**")
     lines.append("")
     lines.append(f"### {verdict['label']}")
     lines.append("")
@@ -910,6 +971,7 @@ def build_report(
     sol_anchor_date,
     sol_anchor_price,
     sol_current_price,
+    sol_current_date,
     sol_elapsed_days,
     btc_equiv_date,
     btc_norm_equiv,
@@ -933,21 +995,25 @@ def build_report(
     lines.append(f"Generato: **{rome_now}**  ")
     lines.append(f"UTC: **{utc_now}**")
     lines.append("")
+    lines.append(f"Ultima candela SOL usata: **{fmt_date_it(sol_current_date)}**")
+    lines.append("")
     lines.append("Questo report risponde a due domande:")
     lines.append("")
     lines.append("1. **SOL sta seguendo il frattale di Bitcoin post-bottom novembre 2022?**")
-    lines.append("2. **Se lo sta seguendo, quali dovrebbero essere i prossimi step?**")
+    lines.append("2. **Se lo sta seguendo, quali dovrebbero essere i prossimi step con date precise?**")
     lines.append("")
     lines.append(build_verdict_block(verdict, key_levels))
     lines.append("")
     lines.append("## Prossimi step se il frattale resta valido")
     lines.append("")
-    lines.append("Questa è la parte più pratica: non dice solo il target finale, ma il percorso a step.")
+    lines.append("Questa è la parte più pratica: non dice solo il target finale, ma il percorso a step con le date reali per SOL.")
     lines.append("")
     lines.append(build_stage_table(stages))
     lines.append("")
     lines.append("## Proiezione standard a giorni fissi")
     lines.append("")
+    lines.append("- **Data SOL prevista**: il giorno reale futuro, per esempio fra 7 / 14 / 30 giorni.")
+    lines.append("- **Data BTC equivalente**: il giorno del frattale BTC 2022 che corrisponde a quella proiezione.")
     lines.append("- **SOL base**: SOL replica la percentuale di BTC.")
     lines.append("- **SOL beta**: SOL replica BTC ma con volatilità SOL/BTC. È più aggressivo se SOL si muove più forte di BTC.")
     lines.append("- **Min percorso**: quanto potrebbe scendere prima di arrivare al prezzo finale dello scenario.")
@@ -966,6 +1032,7 @@ def build_report(
                 sol_anchor_date,
                 sol_anchor_price,
                 sol_current_price,
+                sol_current_date,
                 sol_elapsed_days,
                 btc_equiv_date,
                 btc_norm_equiv,
@@ -999,7 +1066,7 @@ def build_report(
     return "\n".join(lines)
 
 
-def build_main_report_block(verdict, similarity, sol_elapsed_days, btc_equiv_date, key_levels, stages, projections):
+def build_main_report_block(verdict, similarity, sol_current_date, sol_elapsed_days, btc_equiv_date, key_levels, stages, projections):
     score = similarity.get("total_similarity")
 
     quick_stage_rows = []
@@ -1008,10 +1075,10 @@ def build_main_report_block(verdict, similarity, sol_elapsed_days, btc_equiv_dat
         quick_stage_rows.append(
             [
                 s["stage"],
-                f"{s['start_day']}-{s['end_day']}g",
+                f"{s['sol_stage_start_date_it']} → {s['sol_stage_end_date_it']}",
                 fmt_pct(s["btc_end_move_pct"]),
-                fmt_price(s["sol_low_base_price"]),
-                fmt_price(s["sol_high_base_price"]),
+                f"{fmt_price(s['sol_low_base_price'])} ({s['sol_low_date_it']})",
+                f"{fmt_price(s['sol_high_base_price'])} ({s['sol_high_date_it']})",
                 fmt_price(s["sol_end_base_price"]),
                 s["sequence"],
             ]
@@ -1021,7 +1088,7 @@ def build_main_report_block(verdict, similarity, sol_elapsed_days, btc_equiv_dat
         quick_stage_table = md_table(
             [
                 "Step",
-                "Periodo",
+                "Date SOL",
                 "BTC fine",
                 "SOL zona bassa",
                 "SOL zona alta",
@@ -1033,6 +1100,36 @@ def build_main_report_block(verdict, similarity, sol_elapsed_days, btc_equiv_dat
     else:
         quick_stage_table = "Dati insufficienti per costruire gli step."
 
+    quick_projection_rows = []
+
+    for p in projections:
+        if p["horizon_days"] in [7, 14, 30, 60, 90, 120]:
+            quick_projection_rows.append(
+                [
+                    f"{p['horizon_days']} giorni",
+                    p["sol_future_date_it"],
+                    fmt_pct(p["btc_move_from_equivalent_today_pct"]),
+                    fmt_price(p["sol_projection_base_price"]),
+                    fmt_price(p["sol_path_low_base_price"]),
+                    fmt_price(p["sol_path_high_base_price"]),
+                ]
+            )
+
+    if quick_projection_rows:
+        quick_projection_table = md_table(
+            [
+                "Orizzonte",
+                "Data SOL prevista",
+                "BTC fece",
+                "SOL base",
+                "Min percorso",
+                "Max percorso",
+            ],
+            quick_projection_rows,
+        )
+    else:
+        quick_projection_table = "Dati insufficienti per la proiezione."
+
     return "\n".join(
         [
             "<!-- BTC_SOL_FRACTAL_START -->",
@@ -1042,6 +1139,8 @@ def build_main_report_block(verdict, similarity, sol_elapsed_days, btc_equiv_dat
             "# Frattale mirato: BTC 2022 vs SOL 2026",
             "",
             "Report separato completo: [btc_2022_vs_sol_2026_report.md](btc_2022_vs_sol_2026_report.md)",
+            "",
+            f"Ultima candela SOL usata: **{fmt_date_it(sol_current_date)}**",
             "",
             f"## Verdetto: {verdict['label']}",
             "",
@@ -1063,6 +1162,10 @@ def build_main_report_block(verdict, similarity, sol_elapsed_days, btc_equiv_dat
                 ],
             ),
             "",
+            "## Proiezione veloce con date SOL",
+            "",
+            quick_projection_table,
+            "",
             "## Prossimi step se SOL segue BTC 2022",
             "",
             quick_stage_table,
@@ -1074,7 +1177,7 @@ def build_main_report_block(verdict, similarity, sol_elapsed_days, btc_equiv_dat
     )
 
 
-def inject_into_main_report(verdict, similarity, sol_elapsed_days, btc_equiv_date, key_levels, stages, projections):
+def inject_into_main_report(verdict, similarity, sol_current_date, sol_elapsed_days, btc_equiv_date, key_levels, stages, projections):
     if not os.path.exists(MAIN_REPORT_PATH):
         return
 
@@ -1092,6 +1195,7 @@ def inject_into_main_report(verdict, similarity, sol_elapsed_days, btc_equiv_dat
     block = build_main_report_block(
         verdict=verdict,
         similarity=similarity,
+        sol_current_date=sol_current_date,
         sol_elapsed_days=sol_elapsed_days,
         btc_equiv_date=btc_equiv_date,
         key_levels=key_levels,
@@ -1190,6 +1294,7 @@ def main():
         return
 
     sol_current_price = safe_float(sol_path["Close"].iloc[-1])
+    sol_current_date = sol_path.index[-1]
     sol_elapsed_days = len(sol_path) - 1
 
     btc_equiv_idx = min(sol_elapsed_days, len(btc_path) - 1)
@@ -1212,6 +1317,7 @@ def main():
     projections = projection_from_btc(
         btc_path=btc_path,
         sol_current_price=sol_current_price,
+        sol_current_date=sol_current_date,
         sol_elapsed_days=sol_elapsed_days,
         beta_ratio=beta_ratio,
     )
@@ -1219,6 +1325,7 @@ def main():
     stages = build_stage_roadmap(
         btc_path=btc_path,
         sol_current_price=sol_current_price,
+        sol_current_date=sol_current_date,
         sol_elapsed_days=sol_elapsed_days,
         beta_ratio=beta_ratio,
     )
@@ -1244,6 +1351,7 @@ def main():
         sol_anchor_date=sol_anchor_date,
         sol_anchor_price=sol_anchor_price,
         sol_current_price=sol_current_price,
+        sol_current_date=sol_current_date,
         sol_elapsed_days=sol_elapsed_days,
         btc_equiv_date=btc_equiv_date,
         btc_norm_equiv=btc_norm_equiv,
@@ -1266,6 +1374,8 @@ def main():
         "btc_anchor_price": btc_anchor_price,
         "sol_anchor_date": str(sol_anchor_date.date()),
         "sol_anchor_price": sol_anchor_price,
+        "sol_current_date": fmt_date(sol_current_date),
+        "sol_current_date_it": fmt_date_it(sol_current_date),
         "sol_current_price": sol_current_price,
         "sol_elapsed_days": sol_elapsed_days,
         "btc_equivalent_date": str(btc_equiv_date.date()),
@@ -1292,6 +1402,7 @@ def main():
     inject_into_main_report(
         verdict=verdict,
         similarity=similarity,
+        sol_current_date=sol_current_date,
         sol_elapsed_days=sol_elapsed_days,
         btc_equiv_date=btc_equiv_date,
         key_levels=key_levels,
