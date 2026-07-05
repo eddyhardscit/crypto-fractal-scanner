@@ -2,7 +2,7 @@ name: Daily Crypto Fractal Scanner
 
 on:
   schedule:
-    - cron: "57 8 * * *"
+    - cron: "23 8 * * *"
   workflow_dispatch:
 
 permissions:
