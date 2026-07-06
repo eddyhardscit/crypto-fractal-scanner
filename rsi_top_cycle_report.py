@@ -143,7 +143,7 @@ def resample_close(df, mode):
     if mode == "weekly":
         out = df["Close"].resample("W").last().dropna().to_frame("Close")
     else:
-        out = df["Close"].resample("M").last().dropna().to_frame("Close")
+        out = df["Close"].resample("ME").last().dropna().to_frame("Close")
     out["rsi"] = rsi(out["Close"], RSI_PERIOD)
     return out.dropna().copy()
 
