@@ -29,6 +29,10 @@ TICKER = "SOL-USD"
 ASSET_NAME = "SOL"
 DOWNLOAD_START = "2020-01-01"
 RSI_PERIOD = 14
+
+# Use recent macro-cycle RSI highs, not the old 2020 SOL spike.
+WEEKLY_ANCHOR_START_DATE = "2023-01-01"
+MONTHLY_ANCHOR_START_DATE = "2023-01-01"
 START_MARKER = "<!-- RSI_TOP_CYCLE_START -->"
 END_MARKER = "<!-- RSI_TOP_CYCLE_END -->"
 
@@ -291,15 +295,36 @@ def classify_distance(current_rsi, line_now, name):
 def build_period_summary(name, df, min_rsi, window, cycle_date=None):
     if df.empty:
         return {"period": name, "ok": False, "current_rsi": None, "line_now": None, "distance": None, "status": "DATI INSUFFICIENTI", "text": "Dati insufficienti.", "anchors": pd.DataFrame(), "model": None, "line_at_cycle_top": None}
-    pivots = find_pivot_highs(df, window=window, min_rsi=min_rsi)
-    anchors = choose_anchors(pivots, df)
+
+    # Important:
+    # The hand-drawn TradingView top-line is the recent macro RSI exhaustion line.
+    # So for SOL we search trendline anchors from 2023 onward.
+    # This avoids the old 2020 RSI spike, which can flatten/distort the monthly line.
+    if str(name).lower() == "weekly":
+        anchor_start = WEEKLY_ANCHOR_START_DATE
+    elif str(name).lower() == "monthly":
+        anchor_start = MONTHLY_ANCHOR_START_DATE
+    else:
+        anchor_start = None
+
+    anchor_df = df.copy()
+    if anchor_start is not None:
+        anchor_df = anchor_df[anchor_df.index >= pd.to_datetime(anchor_start)].copy()
+
+    if anchor_df.empty or len(anchor_df) < 8:
+        anchor_df = df.copy()
+
+    pivots = find_pivot_highs(anchor_df, window=window, min_rsi=min_rsi)
+    anchors = choose_anchors(pivots, anchor_df)
     model = fit_line(anchors)
+
     current_date = df.index[-1]
     current_rsi = safe_float(df["rsi"].iloc[-1])
     current_close = safe_float(df["Close"].iloc[-1])
     line_now = line_value(model, current_date)
     status = classify_distance(current_rsi, line_now, name)
     line_at_cycle_top = line_value(model, cycle_date) if cycle_date is not None else None
+
     return {
         "period": name,
         "ok": model is not None,
@@ -386,15 +411,36 @@ def plot_chart(name, df, summary, ctx, output_path):
         if anchors is not None and not anchors.empty:
             ax.scatter(pd.to_datetime(anchors["date"]), anchors["rsi"], s=55, zorder=5, label="Punti trendline")
             for _, row in anchors.iterrows():
-                ax.annotate(f"{fmt_date(row['date'])}\nRSI {fmt_number(row['rsi'], 1)}", xy=(pd.to_datetime(row["date"]), safe_float(row["rsi"])), xytext=(8, 9), textcoords="offset points", fontsize=8, bbox=dict(boxstyle="round,pad=0.18", fc="white", alpha=0.78))
+                ax.annotate(
+                    f"{fmt_date(row['date'])}\nRSI {fmt_number(row['rsi'], 1)}",
+                    xy=(pd.to_datetime(row["date"]), safe_float(row["rsi"])),
+                    xytext=(8, 9),
+                    textcoords="offset points",
+                    fontsize=8,
+                    bbox=dict(boxstyle="round,pad=0.18", fc="white", alpha=0.78),
+                )
         current_date = df.index[-1]
         current_rsi = safe_float(df["rsi"].iloc[-1])
         if current_rsi is not None:
             ax.scatter([current_date], [current_rsi], s=60, zorder=6)
-            ax.annotate(f"Oggi RSI {fmt_number(current_rsi, 1)}", xy=(current_date, current_rsi), xytext=(8, 12), textcoords="offset points", fontsize=8, bbox=dict(boxstyle="round,pad=0.18", fc="white", alpha=0.82))
+            ax.annotate(
+                f"Oggi RSI {fmt_number(current_rsi, 1)}",
+                xy=(current_date, current_rsi),
+                xytext=(8, 12),
+                textcoords="offset points",
+                fontsize=8,
+                bbox=dict(boxstyle="round,pad=0.18", fc="white", alpha=0.82),
+            )
         if cycle_date is not None and not pd.isna(cycle_date):
             ax.axvline(cycle_date, linestyle=":", alpha=0.45)
-            ax.annotate("Target ciclo", xy=(cycle_date, 50), xytext=(8, 8), textcoords="offset points", fontsize=8, bbox=dict(boxstyle="round,pad=0.18", fc="white", alpha=0.75))
+            ax.annotate(
+                "Target ciclo",
+                xy=(cycle_date, 50),
+                xytext=(8, 8),
+                textcoords="offset points",
+                fontsize=8,
+                bbox=dict(boxstyle="round,pad=0.18", fc="white", alpha=0.75),
+            )
         ax.set_ylim(0, 100)
         ax.set_title(f"{ASSET_NAME} RSI {name}: top-cycle warning")
         ax.set_xlabel("Data")
@@ -429,7 +475,16 @@ def build_report(weekly, monthly, confluence, ctx, weekly_ok, monthly_ok):
     anchor_rows = []
     for period_name, item in [("Weekly", weekly), ("Monthly", monthly)]:
         model = item.get("model") or {}
-        anchor_rows.append([period_name, model.get("anchor_1_date", "n/d"), fmt_number(model.get("anchor_1_rsi"), 2), fmt_price(model.get("anchor_1_price")), model.get("anchor_2_date", "n/d"), fmt_number(model.get("anchor_2_rsi"), 2), fmt_price(model.get("anchor_2_price")), fmt_number(item.get("line_at_cycle_top"), 2)])
+        anchor_rows.append([
+            period_name,
+            model.get("anchor_1_date", "n/d"),
+            fmt_number(model.get("anchor_1_rsi"), 2),
+            fmt_price(model.get("anchor_1_price")),
+            model.get("anchor_2_date", "n/d"),
+            fmt_number(model.get("anchor_2_rsi"), 2),
+            fmt_price(model.get("anchor_2_price")),
+            fmt_number(item.get("line_at_cycle_top"), 2),
+        ])
     lines = []
     lines.append("# RSI top-cycle warning - SOL")
     lines.append("")
@@ -459,7 +514,7 @@ def build_report(weekly, monthly, confluence, ctx, weekly_ok, monthly_ok):
     lines.append("")
     lines.append(md_table(["Periodo", "Ancora 1 data", "Ancora 1 RSI", "Prezzo ancora 1", "Ancora 2 data", "Ancora 2 RSI", "Prezzo ancora 2", "Top-line RSI alla data ciclo"], anchor_rows))
     lines.append("")
-    lines.append("Nota: la trendline RSI e stimata automaticamente sui pivot alti dell'RSI. Non e una certezza matematica; serve come filtro visivo e operativo.")
+    lines.append("Nota: la trendline RSI e stimata automaticamente sui pivot alti recenti dell'RSI, da 2023 in poi. Non e una certezza matematica; serve come filtro visivo e operativo.")
     lines.append("")
     lines.append("## Grafici")
     lines.append("")
@@ -590,23 +645,32 @@ def main():
             f.write("# RSI top-cycle warning - SOL\n\nDati insufficienti: download prezzi vuoto.\n")
         print("RSI top-cycle report: no data")
         return
+
     weekly_df = resample_close(daily, "weekly")
     monthly_df = resample_close(daily, "monthly")
+
     ctx = read_cycle_context()
     cycle_date = pd.to_datetime(ctx.get("cycle_max_base_date"), errors="coerce") if ctx.get("cycle_max_base_date") is not None else None
     if cycle_date is not None and pd.isna(cycle_date):
         cycle_date = None
+
     weekly = build_period_summary("weekly", weekly_df, min_rsi=55, window=7, cycle_date=cycle_date)
     monthly = build_period_summary("monthly", monthly_df, min_rsi=55, window=3, cycle_date=cycle_date)
+
     current_price = safe_float(daily["Close"].iloc[-1])
     confluence = classify_confluence(weekly, monthly, current_price, ctx)
+
     weekly_ok = plot_chart("weekly", weekly_df, weekly, ctx, WEEKLY_CHART_PATH)
     monthly_ok = plot_chart("monthly", monthly_df, monthly, ctx, MONTHLY_CHART_PATH)
+
     report = build_report(weekly, monthly, confluence, ctx, weekly_ok, monthly_ok)
+
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
         f.write(report.rstrip() + "\n")
+
     write_csv(weekly, monthly, confluence, ctx)
     inject_main(build_main_block(weekly, monthly, confluence, weekly_ok, monthly_ok))
+
     print("RSI top-cycle report generated")
     print(f"Weekly RSI chart ok: {weekly_ok} -> {WEEKLY_CHART_PATH}")
     print(f"Monthly RSI chart ok: {monthly_ok} -> {MONTHLY_CHART_PATH}")
