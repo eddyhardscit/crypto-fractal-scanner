@@ -24,11 +24,17 @@ TRACKING_LOG_PATH = "reports/btc_2022_vs_sol_2026_tracking_log.csv"
 FRACTAL_CHART_PATH = "reports/btc_2022_vs_sol_2026_fractal_chart.png"
 PROJECTION_CHART_PATH = "reports/btc_2022_vs_sol_2026_projection_chart.png"
 CYCLE_CHART_PATH = "reports/btc_2022_vs_sol_2026_cycle_chart.png"
+CYCLE_BASE_CHART_PATH = "reports/btc_2022_vs_sol_2026_cycle_base_chart.png"
+CYCLE_BETA_CHART_PATH = "reports/btc_2022_vs_sol_2026_cycle_beta_chart.png"
+CYCLE_LOG_CHART_PATH = "reports/btc_2022_vs_sol_2026_cycle_log_chart.png"
 TRACKING_CHART_PATH = "reports/btc_2022_vs_sol_2026_tracking_chart.png"
 
 FRACTAL_CHART_FILE = "btc_2022_vs_sol_2026_fractal_chart.png"
 PROJECTION_CHART_FILE = "btc_2022_vs_sol_2026_projection_chart.png"
 CYCLE_CHART_FILE = "btc_2022_vs_sol_2026_cycle_chart.png"
+CYCLE_BASE_CHART_FILE = "btc_2022_vs_sol_2026_cycle_base_chart.png"
+CYCLE_BETA_CHART_FILE = "btc_2022_vs_sol_2026_cycle_beta_chart.png"
+CYCLE_LOG_CHART_FILE = "btc_2022_vs_sol_2026_cycle_log_chart.png"
 TRACKING_CHART_FILE = "btc_2022_vs_sol_2026_tracking_chart.png"
 
 BTC_TICKER = "BTC-USD"
@@ -43,7 +49,7 @@ BTC_TOP_SEARCH_END = "2025-12-31"
 SOL_BOTTOM_SEARCH_START = "2026-06-01"
 
 FORECAST_DAYS = [7, 14, 30, 60, 90, 120, 180, 365]
-CHART_LABEL_DAYS = [7, 14, 30, 60, 90, 120]
+CHART_LABEL_DAYS = [7, 30, 60, 120, 365]
 
 STAGE_BUCKETS = [
     (0, 14, "Step 1 - prossime 2 settimane"),
@@ -331,15 +337,15 @@ def phase_gap_status(sol_norm_now, btc_norm_equiv):
     gap_pct = (sol_norm_now / btc_norm_equiv - 1) * 100
 
     if gap_pct > 15:
-        text = "SOL Ã¨ piÃ¹ forte / piÃ¹ avanti del BTC equivalente."
+        text = "SOL e piu forte / piu avanti del BTC equivalente."
     elif gap_pct > 5:
-        text = "SOL Ã¨ leggermente piÃ¹ forte del BTC equivalente."
+        text = "SOL e leggermente piu forte del BTC equivalente."
     elif gap_pct < -15:
-        text = "SOL Ã¨ piÃ¹ debole / piÃ¹ indietro del BTC equivalente."
+        text = "SOL e piu debole / piu indietro del BTC equivalente."
     elif gap_pct < -5:
-        text = "SOL Ã¨ leggermente piÃ¹ debole del BTC equivalente."
+        text = "SOL e leggermente piu debole del BTC equivalente."
     else:
-        text = "SOL Ã¨ abbastanza allineato al BTC equivalente."
+        text = "SOL e abbastanza allineato al BTC equivalente."
 
     return gap_pct, text
 
@@ -429,9 +435,9 @@ def direct_verdict(total_similarity, price_similarity, rsi_similarity, ma_simila
 
     if price is not None:
         if price >= 75:
-            reasons.append("La forma del prezzo Ã¨ molto simile.")
+            reasons.append("La forma del prezzo e molto simile.")
         elif price >= 60:
-            reasons.append("La forma del prezzo Ã¨ abbastanza simile.")
+            reasons.append("La forma del prezzo e abbastanza simile.")
         else:
             reasons.append("La forma del prezzo non combacia abbastanza.")
 
@@ -441,11 +447,11 @@ def direct_verdict(total_similarity, price_similarity, rsi_similarity, ma_simila
         elif rsi_score >= 55:
             reasons.append("La forza RSI conferma solo parzialmente.")
         else:
-            reasons.append("La forza RSI Ã¨ piÃ¹ debole del frattale BTC.")
+            reasons.append("La forza RSI e piu debole del frattale BTC.")
 
     if ma_score is not None:
         if ma_score >= 70:
-            reasons.append("La posizione rispetto alle medie mobili Ã¨ coerente.")
+            reasons.append("La posizione rispetto alle medie mobili e coerente.")
         elif ma_score >= 55:
             reasons.append("Le medie mobili sono solo parzialmente coerenti.")
         else:
@@ -453,11 +459,11 @@ def direct_verdict(total_similarity, price_similarity, rsi_similarity, ma_simila
 
     if gap is not None:
         if gap > 15:
-            reasons.append("SOL Ã¨ piÃ¹ avanti o piÃ¹ forte rispetto al BTC equivalente.")
+            reasons.append("SOL e piu avanti o piu forte rispetto al BTC equivalente.")
         elif gap < -15:
-            reasons.append("SOL Ã¨ piÃ¹ indietro o piÃ¹ debole rispetto al BTC equivalente.")
+            reasons.append("SOL e piu indietro o piu debole rispetto al BTC equivalente.")
         else:
-            reasons.append("SOL Ã¨ abbastanza in linea con il punto equivalente di BTC.")
+            reasons.append("SOL e abbastanza in linea con il punto equivalente di BTC.")
 
     strong_price = price is not None and price >= 72
     decent_price = price is not None and price >= 60
@@ -469,24 +475,24 @@ def direct_verdict(total_similarity, price_similarity, rsi_similarity, ma_simila
         weak_internal = True
 
     if total >= 80 and strong_price and not weak_internal:
-        label = "SÃ, LO STA SEGUENDO BENE"
-        short = "Il frattale BTC 2022 Ã¨ al momento uno scenario forte per SOL."
-        action = "Le proiezioni valgono come scenario principale, finchÃ© SOL non perde i livelli di invalidazione."
+        label = "SI, LO STA SEGUENDO BENE"
+        short = "Il frattale BTC 2022 e al momento uno scenario forte per SOL."
+        action = "Le proiezioni valgono come scenario principale, finche SOL non perde i livelli di invalidazione."
         confidence = "ALTA"
     elif total >= 65 and decent_price:
-        label = "PARZIALMENTE SÃ"
+        label = "PARZIALMENTE SI"
         short = "SOL sta seguendo abbastanza il frattale BTC 2022, ma non in modo perfetto."
         action = "Le proiezioni sono utili, ma vanno confermate con i prossimi livelli."
         confidence = "MEDIA"
     elif total >= 50:
         label = "SOLO DEBOLMENTE"
-        short = "C'Ã¨ una somiglianza, ma non basta per dire che SOL lo stia seguendo davvero."
+        short = "C'e una somiglianza, ma non basta per dire che SOL lo stia seguendo davvero."
         action = "Usalo come scenario secondario, non come guida principale."
         confidence = "BASSA"
     else:
         label = "NO, NON LO STA SEGUENDO BENE"
-        short = "Il paragone con BTC 2022 Ã¨ debole."
-        action = "Le proiezioni sono poco affidabili finchÃ© la somiglianza non migliora."
+        short = "Il paragone con BTC 2022 e debole."
+        action = "Le proiezioni sono poco affidabili finche la somiglianza non migliora."
         confidence = "DEBOLE"
 
     return {
@@ -745,12 +751,20 @@ def build_key_levels(sol_current_price, sol_anchor_price, projections):
         if safe_float(p.get("sol_path_low_base_price")) is not None
     ]
 
-    confirm_1 = max(highs_30) if highs_30 else sol_current_price * 1.05
-    confirm_2 = max(highs_60) if highs_60 else sol_current_price * 1.10
-    soft_invalid = min(lows_30) if lows_30 else sol_current_price * 0.95
+    confirm_1 = max(highs_30) if highs_30 else sol_current_price * 1.08
+    confirm_2 = max(highs_60) if highs_60 else sol_current_price * 1.15
 
-    if soft_invalid >= sol_current_price:
-        soft_invalid = sol_current_price * 0.95
+    projected_low_30 = min(lows_30) if lows_30 else sol_current_price * 0.98
+
+    # Invalidazione soft piu pratica:
+    # prima guardo il minimo previsto dal frattale, ma pretendo anche un drawdown reale.
+    # Cosi non basta una candela normale sotto il prezzo attuale per dire che il frattale e rovinato.
+    soft_invalid = min(projected_low_30, sol_current_price * 0.95)
+
+    # Evita che la soft invalidation venga calcolata troppo vicina al bottom assoluto.
+    # La hard invalidation resta il bottom vero.
+    if sol_anchor_price is not None:
+        soft_invalid = max(soft_invalid, sol_anchor_price * 1.12)
 
     hard_invalid = sol_anchor_price
 
@@ -758,8 +772,10 @@ def build_key_levels(sol_current_price, sol_anchor_price, projections):
         hard_invalid = sol_current_price * 0.90
 
     support_note = (
-        "La prima zona da controllare Ã¨ il minimo percorso previsto nei primi 30 giorni. "
-        "Se SOL perde anche il bottom usato come ancoraggio, il frattale BTC 2022 Ã¨ praticamente invalidato."
+        "La prima zona bassa prevista nei prossimi 30 giorni va letta come area di attenzione. "
+        "Per una lettura piu pratica, considero invalidazione soft solo sotto un drawdown reale "
+        f"di circa 5% dal prezzo attuale ({fmt_price(soft_invalid)}). "
+        "Se SOL perde anche il bottom usato come ancoraggio, il frattale BTC 2022 e praticamente invalidato."
     )
 
     return {
@@ -785,41 +801,41 @@ def current_phase(sol_current_price, key_levels, verdict):
     if "NO" in verdict_label:
         return {
             "label": "FRATTALE DEBOLE",
-            "text": "Il paragone con BTC 2022 non Ã¨ abbastanza forte. Le proiezioni valgono poco.",
+            "text": "Il paragone con BTC 2022 non e abbastanza forte. Le proiezioni valgono poco.",
             "risk": "ALTO",
         }
 
     if hard_invalid is not None and price <= hard_invalid:
         return {
             "label": "FRATTALE ROTTO",
-            "text": "SOL Ã¨ sotto o vicino al bottom usato. Il frattale BTC 2022 Ã¨ praticamente invalidato.",
+            "text": "SOL e sotto o vicino al bottom usato. Il frattale BTC 2022 e praticamente invalidato.",
             "risk": "MOLTO ALTO",
         }
 
     if soft_invalid is not None and price <= soft_invalid:
         return {
             "label": "SOTTO PRESSIONE",
-            "text": "SOL Ã¨ nella zona in cui il frattale si indebolisce. Serve recupero veloce.",
+            "text": "SOL e nella zona in cui il frattale si indebolisce. Serve recupero veloce.",
             "risk": "ALTO",
         }
 
     if confirm_1 is not None and price < confirm_1:
         return {
             "label": "FASE ANTICIPATA",
-            "text": "Il prezzo Ã¨ ancora prima della conferma. Qui il potenziale Ã¨ migliore, ma la certezza Ã¨ bassa.",
+            "text": "Il prezzo e ancora prima della conferma. Qui il potenziale e migliore, ma la certezza e bassa.",
             "risk": "MEDIO / ALTO",
         }
 
     if confirm_2 is not None and price < confirm_2:
         return {
             "label": "CONFERMA INIZIALE",
-            "text": "SOL ha iniziato a confermare il frattale, ma non Ã¨ ancora una conferma forte.",
+            "text": "SOL ha iniziato a confermare il frattale, ma non e ancora una conferma forte.",
             "risk": "MEDIO",
         }
 
     return {
         "label": "CONFERMA FORTE / ATTENZIONE A INSEGUIRE",
-        "text": "Il frattale Ã¨ piÃ¹ confermato, ma una parte della mossa Ã¨ giÃ  stata fatta. Meglio gestire il rischio invece di inseguire a caso.",
+        "text": "Il frattale e piu confermato, ma una parte della mossa e gia stata fatta. Meglio gestire il rischio invece di inseguire a caso.",
         "risk": "MEDIO / RISCHIO INSEGUIMENTO",
     }
 
@@ -844,47 +860,47 @@ def build_operational_plan(sol_current_price, key_levels, verdict, phase):
         return summary, rows
 
     if "NO" in verdict_label or "ROTTO" in phase_label or "DEBOLE" in phase_label:
-        summary = "OperativitÃ  prudente: il frattale non Ã¨ abbastanza valido per usarlo come guida principale."
+        summary = "Operativita prudente: il frattale non e abbastanza valido per usarlo come guida principale."
         rows = [
             ["Spot anticipato", "NO / molto prudente", "Il frattale BTC 2022 non conferma abbastanza."],
             ["Aggiunta su conferma", "Solo se migliora", f"Prima deve recuperare e superare {fmt_price(confirm_1)}."],
-            ["Rischio inseguimento", "ALTO", "Comprare solo perchÃ© sale sarebbe poco giustificato dal frattale."],
-            ["Invalidazione", fmt_price(hard_invalid), "Sotto questa zona il paragone Ã¨ quasi rotto."],
+            ["Rischio inseguimento", "ALTO", "Comprare solo perche sale sarebbe poco giustificato dal frattale."],
+            ["Invalidazione", fmt_price(hard_invalid), "Sotto questa zona il paragone e quasi rotto."],
         ]
         return summary, rows
 
     if "FASE ANTICIPATA" in phase_label:
         summary = "Fase anticipata: ingresso migliore come prezzo, ma certezza ancora bassa. Ha senso ragionare a tranche, non tutto insieme."
         rows = [
-            ["Spot anticipato", "SÃ, ma a tranche", "La zona Ã¨ ancora prima della conferma piena."],
-            ["Aggiunta su conferma", "SÃ", f"Aggiunta sensata se rompe e tiene {fmt_price(confirm_1)}."],
-            ["Seconda conferma", fmt_price(confirm_2), "Sopra questa zona il frattale diventa molto piÃ¹ credibile."],
+            ["Spot anticipato", "SI, ma a tranche", "La zona e ancora prima della conferma piena."],
+            ["Aggiunta su conferma", "SI", f"Aggiunta sensata se rompe e tiene {fmt_price(confirm_1)}."],
+            ["Seconda conferma", fmt_price(confirm_2), "Sopra questa zona il frattale diventa molto piu credibile."],
             ["Rischio inseguimento", "BASSO / MEDIO", "Non sei ancora troppo in ritardo, ma serve invalidazione chiara."],
             ["Invalidazione soft", fmt_price(soft_invalid), "Sotto questa zona il frattale si indebolisce."],
-            ["Invalidazione forte", fmt_price(hard_invalid), "Sotto questa zona il frattale Ã¨ quasi rotto."],
+            ["Invalidazione forte", fmt_price(hard_invalid), "Sotto questa zona il frattale e quasi rotto."],
         ]
         return summary, rows
 
     if "CONFERMA INIZIALE" in phase_label:
-        summary = "Conferma iniziale: il frattale sta migliorando, ma una parte della mossa Ã¨ giÃ  partita. Meglio evitare di comprare tutto in breakout."
+        summary = "Conferma iniziale: il frattale sta migliorando, ma una parte della mossa e gia partita. Meglio evitare di comprare tutto in breakout."
         rows = [
-            ["Spot anticipato", "GIÃ TARDIVO", "La parte migliore era prima della conferma."],
-            ["Aggiunta su conferma", "SÃ, ma piccola", f"Possibile sopra {fmt_price(confirm_2)} o su retest pulito."],
+            ["Spot anticipato", "GIA TARDIVO", "La parte migliore era prima della conferma."],
+            ["Aggiunta su conferma", "SI, ma piccola", f"Possibile sopra {fmt_price(confirm_2)} o su retest pulito."],
             ["Rischio inseguimento", "MEDIO", "Comprare aggressivo ora significa pagare la conferma."],
             ["Gestione", "Tenere / aggiungere su pullback", "Meglio scalare che inseguire una candela forte."],
             ["Invalidazione soft", fmt_price(soft_invalid), "Se torna sotto, la conferma perde valore."],
-            ["Invalidazione forte", fmt_price(hard_invalid), "Sotto questa zona il frattale Ã¨ quasi rotto."],
+            ["Invalidazione forte", fmt_price(hard_invalid), "Sotto questa zona il frattale e quasi rotto."],
         ]
         return summary, rows
 
-    summary = "Conferma forte: il frattale Ã¨ piÃ¹ chiaro, ma il rischio principale diventa inseguire troppo tardi."
+    summary = "Conferma forte: il frattale e piu chiaro, ma il rischio principale diventa inseguire troppo tardi."
     rows = [
-        ["Spot anticipato", "NO", "La fase anticipata Ã¨ passata."],
+        ["Spot anticipato", "NO", "La fase anticipata e passata."],
         ["Aggiunta su conferma", "Solo su retest", "Meglio aspettare scarichi o consolidamenti."],
-        ["Rischio inseguimento", "ALTO", "PiÃ¹ aumenta la conferma, piÃ¹ peggiora il rapporto rischio/rendimento."],
-        ["Gestione", "Prendere profitto parziale / trailing", "Qui conta proteggere la mossa giÃ  fatta."],
+        ["Rischio inseguimento", "ALTO", "Piu aumenta la conferma, piu peggiora il rapporto rischio/rendimento."],
+        ["Gestione", "Prendere profitto parziale / trailing", "Qui conta proteggere la mossa gia fatta."],
         ["Invalidazione soft", fmt_price(soft_invalid), "Sotto questa zona il frattale si indebolisce."],
-        ["Invalidazione forte", fmt_price(hard_invalid), "Sotto questa zona il frattale Ã¨ quasi rotto."],
+        ["Invalidazione forte", fmt_price(hard_invalid), "Sotto questa zona il frattale e quasi rotto."],
     ]
     return summary, rows
 
@@ -1122,7 +1138,7 @@ def build_tracking_status(tracking_df, summary_dict):
     if tracking_df is None or tracking_df.empty or len(tracking_df) < 2:
         return {
             "label": "STORICO INIZIALE",
-            "text": "Ho iniziato ora a registrare lo storico. Da domani potrÃ² dire se il frattale migliora o peggiora.",
+            "text": "Ho iniziato ora a registrare lo storico. Da domani potro dire se il frattale migliora o peggiora.",
             "delta_similarity": None,
             "delta_price": None,
         }
@@ -1155,13 +1171,13 @@ def build_tracking_status(tracking_df, summary_dict):
         text = "Non posso confrontare la somiglianza con ieri."
     elif delta_sim >= 3:
         label = "FRATTALE IN MIGLIORAMENTO"
-        text = f"La somiglianza totale Ã¨ salita di {fmt_pct(delta_sim)} rispetto alla rilevazione precedente."
+        text = f"La somiglianza totale e salita di {fmt_pct(delta_sim)} rispetto alla rilevazione precedente."
     elif delta_sim <= -3:
         label = "FRATTALE IN PEGGIORAMENTO"
-        text = f"La somiglianza totale Ã¨ scesa di {fmt_pct(delta_sim)} rispetto alla rilevazione precedente."
+        text = f"La somiglianza totale e scesa di {fmt_pct(delta_sim)} rispetto alla rilevazione precedente."
     else:
         label = "FRATTALE STABILE"
-        text = f"La somiglianza totale Ã¨ quasi stabile: variazione {fmt_pct(delta_sim)} rispetto alla rilevazione precedente."
+        text = f"La somiglianza totale e quasi stabile: variazione {fmt_pct(delta_sim)} rispetto alla rilevazione precedente."
 
     return {
         "label": label,
@@ -1218,7 +1234,7 @@ def build_stage_table(stages):
         rows.append(
             [
                 s["stage"],
-                f"{s['sol_stage_start_date_it']} â {s['sol_stage_end_date_it']}",
+                f"{s['sol_stage_start_date_it']} -> {s['sol_stage_end_date_it']}",
                 f"{s['start_day']}-{s['end_day']} giorni",
                 s["btc_end_date"],
                 fmt_pct(s["btc_end_move_pct"]),
@@ -1255,10 +1271,10 @@ def build_cycle_table(cycle):
         ["Voce", "Valore", "Lettura"],
         [
             ["Top BTC 2025 usato", f"{cycle.get('btc_top_date_it')} - {fmt_price(cycle.get('btc_top_price'))}", "Massimo close BTC nella finestra 2025."],
-            ["Moltiplicatore BTC bottom â top", f"{fmt_number(cycle.get('btc_bottom_to_top_mult'), 2)}x", "Quanto BTC ha fatto dal bottom 2022 al top 2025."],
+            ["Moltiplicatore BTC bottom -> top", f"{fmt_number(cycle.get('btc_bottom_to_top_mult'), 2)}x", "Quanto BTC ha fatto dal bottom 2022 al top 2025."],
             ["Data SOL equivalente del top", cycle.get("sol_cycle_top_date_it"), "Quando cadrebbe il top se SOL seguisse gli stessi tempi."],
             ["Target ciclo base dal bottom SOL", fmt_price(cycle.get("target_from_bottom_base")), "Proiezione pulita bottom-to-top."],
-            ["Target ciclo beta dal bottom SOL", fmt_price(cycle.get("target_from_bottom_beta")), "Scenario aggressivo, amplificato dalla volatilitÃ  SOL."],
+            ["Target ciclo beta dal bottom SOL", fmt_price(cycle.get("target_from_bottom_beta")), "Scenario aggressivo, amplificato dalla volatilita SOL."],
             ["Target ciclo base da oggi", fmt_price(cycle.get("target_from_current_base")), "Proiezione da prezzo attuale al top equivalente."],
             ["Target ciclo beta da oggi", fmt_price(cycle.get("target_from_current_beta")), "Scenario molto aggressivo da prezzo attuale."],
             ["Massimo percorso base", f"{fmt_price(cycle.get('cycle_max_base_price'))} ({cycle.get('cycle_max_base_date_it')})", "Massimo base lungo tutto il percorso fino al top."],
@@ -1299,8 +1315,8 @@ def build_summary_rows(
         ["Somiglianza RSI", "-", fmt_pct(similarity.get("rsi_similarity"))],
         ["Somiglianza medie", "-", fmt_pct(similarity.get("ma_similarity"))],
         ["Somiglianza totale", "-", fmt_pct(similarity.get("total_similarity"))],
-        ["QualitÃ  frattale", "-", quality_label(similarity.get("total_similarity"))],
-        ["Beta volatilitÃ  SOL/BTC", "-", fmt_number(beta_ratio, 2)],
+        ["Qualita frattale", "-", quality_label(similarity.get("total_similarity"))],
+        ["Beta volatilita SOL/BTC", "-", fmt_number(beta_ratio, 2)],
     ]
 
 
@@ -1382,56 +1398,306 @@ def generate_projection_chart(sol_path, projection_daily, key_levels, projection
         if sol_path.empty or projection_daily.empty:
             return False
 
-        fig, ax = plt.subplots(figsize=(12, 6))
-        ax.plot(sol_path.index, sol_path["Close"], label="SOL storico dal bottom")
-        ax.plot(projection_daily["sol_date"], projection_daily["base_price"], linestyle="--", label="Proiezione SOL base")
-        ax.plot(projection_daily["sol_date"], projection_daily["beta_price"], linestyle=":", label="Proiezione SOL beta")
+        fig, ax = plt.subplots(figsize=(14, 8))
+
+        ax.plot(
+            sol_path.index,
+            sol_path["Close"],
+            linewidth=2,
+            label="SOL storico dal bottom",
+        )
+
+        ax.plot(
+            projection_daily["sol_date"],
+            projection_daily["base_price"],
+            linestyle="--",
+            linewidth=2,
+            label="Proiezione SOL base",
+        )
+
+        ax.plot(
+            projection_daily["sol_date"],
+            projection_daily["beta_price"],
+            linestyle=":",
+            linewidth=1.8,
+            label="Proiezione SOL beta",
+        )
 
         sol_current_date = sol_path.index[-1]
         sol_current_price = safe_float(sol_path["Close"].iloc[-1])
 
         if sol_current_price is not None:
             ax.axvline(sol_current_date, linestyle=":", alpha=0.75)
-            ax.scatter([sol_current_date], [sol_current_price], s=55, zorder=5)
-            ax.annotate(f"Oggi: {fmt_price(sol_current_price)}", xy=(sol_current_date, sol_current_price), xytext=(8, 10), textcoords="offset points", fontsize=9)
+            ax.scatter([sol_current_date], [sol_current_price], s=60, zorder=5)
+
+            ax.annotate(
+                f"Oggi\\n{fmt_price(sol_current_price)}",
+                xy=(sol_current_date, sol_current_price),
+                xytext=(10, 14),
+                textcoords="offset points",
+                fontsize=9,
+                bbox=dict(boxstyle="round,pad=0.25", fc="white", alpha=0.85),
+            )
+
+        # Etichette target solo sui punti piu utili e con offset alternato.
+        label_offsets = {
+            7: (10, 18),
+            30: (10, -26),
+            60: (10, 18),
+            120: (10, -26),
+            365: (10, 18),
+        }
 
         for p in projections:
             horizon = p.get("horizon_days")
+
             if horizon not in CHART_LABEL_DAYS:
                 continue
+
             date_value = pd.to_datetime(p.get("sol_future_date"))
             price_value = safe_float(p.get("sol_projection_base_price"))
+
             if price_value is None:
                 continue
-            ax.scatter([date_value], [price_value], s=35, zorder=5)
-            ax.annotate(f"{horizon}g\n{fmt_price(price_value)}", xy=(date_value, price_value), xytext=(6, 8), textcoords="offset points", fontsize=8)
 
-        levels = [
-            ("Prima conferma", key_levels.get("confirm_1")),
-            ("Seconda conferma", key_levels.get("confirm_2")),
-            ("Invalidazione soft", key_levels.get("soft_invalid")),
-            ("Invalidazione forte", key_levels.get("hard_invalid")),
+            ax.scatter([date_value], [price_value], s=35, zorder=5)
+            dx, dy = label_offsets.get(horizon, (10, 10))
+
+            ax.annotate(
+                f"{horizon}g\\n{fmt_price(price_value)}",
+                xy=(date_value, price_value),
+                xytext=(dx, dy),
+                textcoords="offset points",
+                fontsize=8,
+                bbox=dict(boxstyle="round,pad=0.20", fc="white", alpha=0.80),
+            )
+
+        # Livelli chiave: sul margine destro, non sopra le linee.
+        level_specs = [
+            ("Prima conferma", key_levels.get("confirm_1"), 16),
+            ("Seconda conferma", key_levels.get("confirm_2"), 0),
+            ("Invalidazione soft", key_levels.get("soft_invalid"), -16),
+            ("Invalidazione forte", key_levels.get("hard_invalid"), -32),
         ]
 
-        for label, value in levels:
+        for label, value, y_offset in level_specs:
             value = safe_float(value)
-            if value is not None:
-                ax.axhline(value, linestyle="--", alpha=0.35)
-                ax.text(sol_path.index[-1], value, f" {label}: {fmt_price(value)}", va="center", fontsize=8)
 
+            if value is None:
+                continue
+
+            ax.axhline(value, linestyle="--", alpha=0.35)
+
+            ax.annotate(
+                f"{label}: {fmt_price(value)}",
+                xy=(1.005, value),
+                xycoords=("axes fraction", "data"),
+                xytext=(4, y_offset),
+                textcoords="offset points",
+                ha="left",
+                va="center",
+                fontsize=8,
+                bbox=dict(boxstyle="round,pad=0.20", fc="white", alpha=0.85),
+                annotation_clip=False,
+            )
+
+        # Piu respiro a destra per leggere bene le etichette.
+        last_proj_date = pd.to_datetime(projection_daily["sol_date"]).max()
+        left_date = sol_path.index.min() - pd.Timedelta(days=5)
+        right_date = last_proj_date + pd.Timedelta(days=25)
+        ax.set_xlim(left_date, right_date)
+
+        ax.margins(y=0.12)
         ax.set_title("Proiezione SOL in dollari se segue il frattale BTC 2022")
         ax.set_xlabel("Data")
         ax.set_ylabel("Prezzo SOL")
         ax.grid(True, alpha=0.3)
-        ax.legend()
+        ax.legend(loc="upper left")
+
         fig.autofmt_xdate()
         fig.tight_layout()
-        fig.savefig(PROJECTION_CHART_PATH, dpi=160, bbox_inches="tight")
+        fig.savefig(PROJECTION_CHART_PATH, dpi=180, bbox_inches="tight")
         plt.close(fig)
+
         return True
+
     except Exception as e:
         print(f"Could not generate projection chart: {e}")
         return False
+
+
+def annotate_last_and_max(ax, x_dates, y_values, max_date, max_price, max_label):
+    try:
+        if len(x_dates) == 0 or len(y_values) == 0:
+            return
+
+        last_date = pd.to_datetime(x_dates.iloc[-1] if hasattr(x_dates, "iloc") else x_dates[-1])
+        last_price = safe_float(y_values.iloc[-1] if hasattr(y_values, "iloc") else y_values[-1])
+
+        if last_price is not None:
+            ax.scatter([last_date], [last_price], s=45, zorder=5)
+            ax.annotate(
+                f"Fine percorso\n{fmt_price(last_price)}",
+                xy=(last_date, last_price),
+                xytext=(8, -18),
+                textcoords="offset points",
+                fontsize=8,
+                bbox=dict(boxstyle="round,pad=0.20", fc="white", alpha=0.80),
+            )
+
+        max_price = safe_float(max_price)
+
+        if max_price is not None and max_date is not None:
+            max_date = pd.to_datetime(max_date)
+            ax.scatter([max_date], [max_price], s=55, zorder=6)
+            ax.annotate(
+                f"{max_label}\n{fmt_price(max_price)}",
+                xy=(max_date, max_price),
+                xytext=(8, 10),
+                textcoords="offset points",
+                fontsize=8,
+                bbox=dict(boxstyle="round,pad=0.20", fc="white", alpha=0.80),
+            )
+    except Exception:
+        return
+
+
+def generate_single_cycle_chart(
+    sol_path,
+    cycle_daily,
+    cycle,
+    output_path,
+    mode="base",
+    log_scale=False,
+):
+    if sol_path.empty or cycle_daily.empty or not cycle:
+        return False
+
+    fig, ax = plt.subplots(figsize=(14, 8))
+
+    sol_current_date = sol_path.index[-1]
+    sol_current_price = safe_float(sol_path["Close"].iloc[-1])
+
+    if mode == "base":
+        ax.plot(sol_path.index, sol_path["Close"], linewidth=2, label="SOL reale dal bottom")
+        ax.plot(
+            cycle_daily["sol_date"],
+            cycle_daily["base_price"],
+            linestyle="--",
+            linewidth=2,
+            label="Scenario ciclo BASE",
+        )
+
+        max_date = cycle.get("cycle_max_base_date")
+        max_price = cycle.get("cycle_max_base_price")
+        max_label = "Max base"
+        title = "Ciclo SOL base fino al top equivalente BTC 2025"
+
+        annotate_last_and_max(
+            ax=ax,
+            x_dates=cycle_daily["sol_date"],
+            y_values=cycle_daily["base_price"],
+            max_date=max_date,
+            max_price=max_price,
+            max_label=max_label,
+        )
+
+    elif mode == "beta":
+        ax.plot(sol_path.index, sol_path["Close"], linewidth=2, label="SOL reale dal bottom")
+        ax.plot(
+            cycle_daily["sol_date"],
+            cycle_daily["beta_price"],
+            linestyle=":",
+            linewidth=2,
+            label="Scenario ciclo BETA aggressivo",
+        )
+
+        max_date = cycle.get("cycle_max_beta_date")
+        max_price = cycle.get("cycle_max_beta_price")
+        max_label = "Max beta"
+        title = "Ciclo SOL beta aggressivo fino al top equivalente BTC 2025"
+
+        annotate_last_and_max(
+            ax=ax,
+            x_dates=cycle_daily["sol_date"],
+            y_values=cycle_daily["beta_price"],
+            max_date=max_date,
+            max_price=max_price,
+            max_label=max_label,
+        )
+
+    else:
+        ax.plot(sol_path.index, sol_path["Close"], linewidth=2, label="SOL reale dal bottom")
+        ax.plot(
+            cycle_daily["sol_date"],
+            cycle_daily["base_price"],
+            linestyle="--",
+            linewidth=1.8,
+            label="Scenario ciclo BASE",
+        )
+        ax.plot(
+            cycle_daily["sol_date"],
+            cycle_daily["beta_price"],
+            linestyle=":",
+            linewidth=1.7,
+            label="Scenario ciclo BETA aggressivo",
+        )
+
+        title = "Ciclo SOL base + beta in scala logaritmica" if log_scale else "Ciclo SOL base + beta fino al top BTC 2025"
+
+    if sol_current_price is not None:
+        ax.axvline(sol_current_date, linestyle=":", alpha=0.75)
+        ax.scatter([sol_current_date], [sol_current_price], s=55, zorder=6)
+        ax.annotate(
+            f"Oggi\n{fmt_price(sol_current_price)}",
+            xy=(sol_current_date, sol_current_price),
+            xytext=(8, 10),
+            textcoords="offset points",
+            fontsize=8,
+            bbox=dict(boxstyle="round,pad=0.20", fc="white", alpha=0.80),
+        )
+
+    # Marker annuali solo sul percorso base, per non sporcare troppo il grafico.
+    if mode in ["base", "log"]:
+        for year in [2027, 2028, 2029]:
+            year_rows = cycle_daily[pd.to_datetime(cycle_daily["sol_date"]).dt.year == year]
+            if year_rows.empty:
+                continue
+
+            row = year_rows.iloc[0]
+            date_value = pd.to_datetime(row["sol_date"])
+            price_value = safe_float(row["base_price"])
+
+            if price_value is None:
+                continue
+
+            ax.scatter([date_value], [price_value], s=25, zorder=5)
+            ax.annotate(
+                f"{year}\n{fmt_price(price_value)}",
+                xy=(date_value, price_value),
+                xytext=(5, 7),
+                textcoords="offset points",
+                fontsize=7,
+                bbox=dict(boxstyle="round,pad=0.18", fc="white", alpha=0.75),
+            )
+
+    if log_scale:
+        ax.set_yscale("log")
+        ax.set_ylabel("Prezzo SOL - scala log")
+    else:
+        ax.set_ylabel("Prezzo SOL")
+
+    ax.set_title(title)
+    ax.set_xlabel("Data SOL equivalente")
+    ax.grid(True, alpha=0.3, which="both")
+    ax.legend(loc="upper left")
+
+    fig.autofmt_xdate()
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180, bbox_inches="tight")
+    plt.close(fig)
+
+    return True
 
 
 def generate_cycle_chart(sol_path, cycle_daily, cycle):
@@ -1442,36 +1708,46 @@ def generate_cycle_chart(sol_path, cycle_daily, cycle):
         if sol_path.empty or cycle_daily.empty or not cycle:
             return False
 
-        fig, ax = plt.subplots(figsize=(12, 6))
-        ax.plot(sol_path.index, sol_path["Close"], label="SOL storico dal bottom")
-        ax.plot(cycle_daily["sol_date"], cycle_daily["base_price"], linestyle="--", label="Ciclo base fino a top BTC 2025")
-        ax.plot(cycle_daily["sol_date"], cycle_daily["beta_price"], linestyle=":", label="Ciclo beta aggressivo")
+        base_ok = generate_single_cycle_chart(
+            sol_path=sol_path,
+            cycle_daily=cycle_daily,
+            cycle=cycle,
+            output_path=CYCLE_BASE_CHART_PATH,
+            mode="base",
+            log_scale=False,
+        )
 
-        max_base_date = pd.to_datetime(cycle.get("cycle_max_base_date"))
-        max_base_price = safe_float(cycle.get("cycle_max_base_price"))
-        max_beta_date = pd.to_datetime(cycle.get("cycle_max_beta_date"))
-        max_beta_price = safe_float(cycle.get("cycle_max_beta_price"))
+        beta_ok = generate_single_cycle_chart(
+            sol_path=sol_path,
+            cycle_daily=cycle_daily,
+            cycle=cycle,
+            output_path=CYCLE_BETA_CHART_PATH,
+            mode="beta",
+            log_scale=False,
+        )
 
-        if max_base_price is not None:
-            ax.scatter([max_base_date], [max_base_price], s=45, zorder=5)
-            ax.annotate(f"Max base\n{fmt_price(max_base_price)}", xy=(max_base_date, max_base_price), xytext=(8, 10), textcoords="offset points", fontsize=8)
+        log_ok = generate_single_cycle_chart(
+            sol_path=sol_path,
+            cycle_daily=cycle_daily,
+            cycle=cycle,
+            output_path=CYCLE_LOG_CHART_PATH,
+            mode="log",
+            log_scale=True,
+        )
 
-        if max_beta_price is not None:
-            ax.scatter([max_beta_date], [max_beta_price], s=45, zorder=5)
-            ax.annotate(f"Max beta\n{fmt_price(max_beta_price)}", xy=(max_beta_date, max_beta_price), xytext=(8, 10), textcoords="offset points", fontsize=8)
+        # Mantengo anche il vecchio file combinato per compatibilita con link gia esistenti.
+        legacy_ok = generate_single_cycle_chart(
+            sol_path=sol_path,
+            cycle_daily=cycle_daily,
+            cycle=cycle,
+            output_path=CYCLE_CHART_PATH,
+            mode="log",
+            log_scale=False,
+        )
 
-        ax.set_title("Proiezione ciclo SOL fino al top equivalente BTC 2025")
-        ax.set_xlabel("Data SOL equivalente")
-        ax.set_ylabel("Prezzo SOL")
-        ax.grid(True, alpha=0.3)
-        ax.legend()
-        fig.autofmt_xdate()
-        fig.tight_layout()
-        fig.savefig(CYCLE_CHART_PATH, dpi=160, bbox_inches="tight")
-        plt.close(fig)
-        return True
+        return bool(base_ok or beta_ok or log_ok or legacy_ok)
     except Exception as e:
-        print(f"Could not generate cycle chart: {e}")
+        print(f"Could not generate cycle charts: {e}")
         return False
 
 
@@ -1518,7 +1794,7 @@ def build_chart_block(fractal_chart_ok, projection_chart_ok, cycle_chart_ok, tra
         lines += [
             "### Grafico 1 - Frattale sovrapposto BTC 2022 vs SOL 2026",
             "",
-            "Questo grafico normalizza entrambi i prezzi a 100 dal rispettivo bottom. I marker +7g, +14g, +30g, ecc. indicano dove andrebbe SOL se continuasse a seguire BTC.",
+            "Questo grafico normalizza entrambi i prezzi a 100 dal rispettivo bottom. I marker +7g, +30g, +60g, ecc. indicano dove andrebbe SOL se continuasse a seguire BTC.",
             "",
             f"![Frattale BTC 2022 vs SOL 2026]({FRACTAL_CHART_FILE})",
             "",
@@ -1530,7 +1806,7 @@ def build_chart_block(fractal_chart_ok, projection_chart_ok, cycle_chart_ok, tra
         lines += [
             "### Grafico 2 - Proiezione SOL in dollari a 365 giorni",
             "",
-            "Questo grafico mostra SOL storico, il punto di oggi, i livelli chiave e la proiezione futura in dollari.",
+            "Questo grafico mostra SOL storico, il punto di oggi, i livelli chiave e la proiezione futura in dollari. Le etichette sono volutamente ridotte per non sovrapporsi.",
             "",
             f"![Proiezione SOL BTC 2022]({PROJECTION_CHART_FILE})",
             "",
@@ -1540,17 +1816,29 @@ def build_chart_block(fractal_chart_ok, projection_chart_ok, cycle_chart_ok, tra
 
     if cycle_chart_ok:
         lines += [
-            "### Grafico 3 - Proiezione ciclo fino al top BTC 2025",
+            "### Grafico 3 - Ciclo BASE fino al top BTC 2025",
             "",
-            "Questo grafico estende il frattale fino al top BTC 2025 trovato automaticamente.",
+            "Questo e il grafico principale: mostra SOL reale e lo scenario base, senza farsi schiacciare dalla beta aggressiva.",
             "",
-            f"![Proiezione ciclo SOL fino al top BTC 2025]({CYCLE_CHART_FILE})",
+            f"![Ciclo base SOL BTC 2025]({CYCLE_BASE_CHART_FILE})",
+            "",
+            "### Grafico 4 - Ciclo BASE + BETA in scala logaritmica",
+            "",
+            "Questo serve per vedere insieme scenario base e aggressivo senza perdere la leggibilita della parte iniziale.",
+            "",
+            f"![Ciclo log SOL BTC 2025]({CYCLE_LOG_CHART_FILE})",
+            "",
+            "### Grafico 5 - Ciclo BETA aggressivo separato",
+            "",
+            "Questo e lo scenario estremo/speculativo. Va guardato separato, non come target principale.",
+            "",
+            f"![Ciclo beta SOL BTC 2025]({CYCLE_BETA_CHART_FILE})",
             "",
         ]
 
     if tracking_chart_ok:
         lines += [
-            "### Grafico 4 - Tracking giornaliero somiglianza",
+            "### Grafico 6 - Tracking giornaliero somiglianza",
             "",
             "Questo grafico mostra se il frattale sta migliorando o peggiorando giorno dopo giorno.",
             "",
@@ -1568,7 +1856,7 @@ def build_operational_block(operational_summary, operational_rows):
             "",
             operational_summary,
             "",
-            md_table(["Voce", "Risposta", "PerchÃ©"], operational_rows),
+            md_table(["Voce", "Risposta", "Perche"], operational_rows),
         ]
     )
 
@@ -1596,9 +1884,9 @@ def build_verdict_block(verdict, key_levels, phase, next_step_text):
     lines.append("")
     lines.append(f"**Cosa fare con questa informazione:** {verdict['action']}")
     lines.append("")
-    lines.append(f"**AffidabilitÃ  del frattale:** {verdict['confidence']}")
+    lines.append(f"**Affidabilita del frattale:** {verdict['confidence']}")
     lines.append("")
-    lines.append("### PerchÃ©")
+    lines.append("### Perche")
     lines.append("")
     lines.extend(reason_lines)
     lines.append("")
@@ -1609,9 +1897,9 @@ def build_verdict_block(verdict, key_levels, phase, next_step_text):
             ["Livello", "Prezzo", "Significato"],
             [
                 ["Prima conferma", fmt_price(key_levels.get("confirm_1")), "Se SOL rompe questa zona, il frattale BTC 2022 migliora."],
-                ["Seconda conferma", fmt_price(key_levels.get("confirm_2")), "Se rompe anche questa, lo scenario rialzista diventa piÃ¹ credibile."],
+                ["Seconda conferma", fmt_price(key_levels.get("confirm_2")), "Se rompe anche questa, lo scenario rialzista diventa piu credibile."],
                 ["Invalidazione soft", fmt_price(key_levels.get("soft_invalid")), "Se perde questa zona, il frattale si indebolisce."],
-                ["Invalidazione forte", fmt_price(key_levels.get("hard_invalid")), "Se perde il bottom usato, il paragone con BTC 2022 Ã¨ quasi rotto."],
+                ["Invalidazione forte", fmt_price(key_levels.get("hard_invalid")), "Se perde il bottom usato, il paragone con BTC 2022 e quasi rotto."],
             ],
         )
     )
@@ -1719,7 +2007,7 @@ def build_report(
     lines.append("")
     lines.append("## Prossimi step se il frattale resta valido")
     lines.append("")
-    lines.append("Questa Ã¨ la parte piÃ¹ pratica: non dice solo il target finale, ma il percorso a step con le date reali per SOL.")
+    lines.append("Questa e la parte piu pratica: non dice solo il target finale, ma il percorso a step con le date reali per SOL.")
     lines.append("")
     lines.append(build_stage_table(stages))
     lines.append("")
@@ -1728,7 +2016,7 @@ def build_report(
     lines.append("- **Data SOL prevista**: il giorno reale futuro, per esempio fra 7 / 14 / 30 giorni.")
     lines.append("- **Data BTC equivalente**: il giorno del frattale BTC 2022 che corrisponde a quella proiezione.")
     lines.append("- **SOL base**: SOL replica la percentuale di BTC.")
-    lines.append("- **SOL beta**: SOL replica BTC ma con volatilitÃ  SOL/BTC.")
+    lines.append("- **SOL beta**: SOL replica BTC ma con volatilita SOL/BTC.")
     lines.append("- **Min percorso**: quanto potrebbe scendere prima di arrivare al prezzo finale dello scenario.")
     lines.append("- **Max percorso**: quale zona alta potrebbe toccare durante lo stesso tratto.")
     lines.append("")
@@ -1761,12 +2049,12 @@ def build_report(
     lines.append("## Come leggerlo semplice")
     lines.append("")
     lines.append("- **Fase anticipata**: prezzo migliore, ma certezza bassa.")
-    lines.append("- **Conferma iniziale**: il frattale sta migliorando, ma una parte della mossa Ã¨ giÃ  partita.")
-    lines.append("- **Conferma forte**: frattale piÃ¹ chiaro, ma aumenta il rischio di inseguire.")
+    lines.append("- **Conferma iniziale**: il frattale sta migliorando, ma una parte della mossa e gia partita.")
+    lines.append("- **Conferma forte**: frattale piu chiaro, ma aumenta il rischio di inseguire.")
     lines.append("- **Sotto pressione / rotto**: il paragone con BTC 2022 perde valore.")
-    lines.append("- **Top ciclo BTC 2025**: Ã¨ una proiezione macro, non un segnale di entrata giornaliero.")
+    lines.append("- **Top ciclo BTC 2025**: e una proiezione macro, non un segnale di entrata giornaliero.")
     lines.append("")
-    lines.append("La certezza arriva sempre tardi. La parte utile Ã¨ capire quando il frattale Ã¨ abbastanza plausibile e dove si invalida.")
+    lines.append("La certezza arriva sempre tardi. La parte utile e capire quando il frattale e abbastanza plausibile e dove si invalida.")
     lines.append("")
     return "\n".join(lines)
 
@@ -1818,7 +2106,7 @@ def build_main_report_block(
         quick_stage_rows.append(
             [
                 s["stage"],
-                f"{s['sol_stage_start_date_it']} â {s['sol_stage_end_date_it']}",
+                f"{s['sol_stage_start_date_it']} -> {s['sol_stage_end_date_it']}",
                 fmt_pct(s["btc_end_move_pct"]),
                 f"{fmt_price(s['sol_low_base_price'])} ({s['sol_low_date_it']})",
                 f"{fmt_price(s['sol_high_base_price'])} ({s['sol_high_date_it']})",
@@ -1839,7 +2127,14 @@ def build_main_report_block(
     if projection_chart_ok:
         chart_lines += ["### Grafico proiezione SOL", "", f"![Proiezione SOL BTC 2022]({PROJECTION_CHART_FILE})", ""]
     if cycle_chart_ok:
-        chart_lines += ["### Grafico ciclo fino al top BTC 2025", "", f"![Ciclo SOL BTC 2025]({CYCLE_CHART_FILE})", ""]
+        chart_lines += [
+            "### Grafico ciclo BASE fino al top BTC 2025",
+            "",
+            f"![Ciclo base SOL BTC 2025]({CYCLE_BASE_CHART_FILE})",
+            "",
+            "Nel report completo trovi anche il grafico beta separato e il grafico in scala logaritmica.",
+            "",
+        ]
     if tracking_chart_ok:
         chart_lines += ["### Grafico tracking giornaliero", "", f"![Tracking frattale BTC SOL]({TRACKING_CHART_FILE})", ""]
     if not chart_lines:
@@ -1873,11 +2168,11 @@ def build_main_report_block(
             "",
             f"- **Fase attuale:** {phase['label']}",
             f"- **Somiglianza totale:** {fmt_pct(score)}",
-            f"- **AffidabilitÃ :** {verdict['confidence']}",
+            f"- **Affidabilita:** {verdict['confidence']}",
             f"- **Rischio fase:** {phase['risk']}",
             f"- **Trend tracking:** {tracking_status.get('label')}",
             f"- **Sintesi:** {verdict['short']}",
-            f"- **SOL Ã¨ al giorno:** {sol_elapsed_days} dal bottom usato.",
+            f"- **SOL e al giorno:** {sol_elapsed_days} dal bottom usato.",
             f"- **Giorno BTC equivalente:** {btc_equiv_date.date()}",
             f"- **Prossimo step:** {next_step_text}",
             "",
@@ -1885,7 +2180,7 @@ def build_main_report_block(
             "",
             operational_summary,
             "",
-            md_table(["Voce", "Risposta", "PerchÃ©"], operational_rows),
+            md_table(["Voce", "Risposta", "Perche"], operational_rows),
             "",
             "## Target ciclo fino al top BTC 2025",
             "",
@@ -1901,7 +2196,7 @@ def build_main_report_block(
                 ["Livello", "Prezzo", "Lettura"],
                 [
                     ["Prima conferma", fmt_price(key_levels.get("confirm_1")), "Migliora il frattale."],
-                    ["Seconda conferma", fmt_price(key_levels.get("confirm_2")), "Scenario rialzista piÃ¹ credibile."],
+                    ["Seconda conferma", fmt_price(key_levels.get("confirm_2")), "Scenario rialzista piu credibile."],
                     ["Invalidazione soft", fmt_price(key_levels.get("soft_invalid")), "Il frattale si indebolisce."],
                     ["Invalidazione forte", fmt_price(key_levels.get("hard_invalid")), "Il paragone BTC 2022 si rompe."],
                 ],
@@ -1915,7 +2210,7 @@ def build_main_report_block(
             "",
             quick_stage_table,
             "",
-            "Nota: questa Ã¨ una proiezione analogica. Conta soprattutto se SOL rispetta i livelli di conferma e invalidazione.",
+            "Nota: questa e una proiezione analogica. Conta soprattutto se SOL rispetta i livelli di conferma e invalidazione.",
             "",
             "<!-- BTC_SOL_FRACTAL_END -->",
         ]
