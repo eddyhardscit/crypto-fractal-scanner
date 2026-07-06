@@ -1,28 +1,28 @@
 # RSI top-cycle warning - SOL
 
-Generato: **2026-07-06 16:11:00 CEST**  
-UTC: **2026-07-06 14:11:00 UTC**
+Generato: **2026-07-06 16:23:30 CEST**  
+UTC: **2026-07-06 14:23:30 UTC**
 
 Questo report non usa l'RSI come segnale di entrata. Lo usa come filtro di esaurimento ciclo: quando RSI weekly/monthly torna vicino alla trendline alta, il rischio di top o distribuzione aumenta.
 
 ## Sintesi
 
-| Voce | RSI attuale | Top-line RSI stimata | Distanza | Stato |
-| --- | --- | --- | --- | --- |
-| Weekly RSI | 41,65 | 56,32 | 14,67 | LONTANO DALLA TOP-LINE |
-| Monthly RSI | 41,89 | 41,66 | -0,23 | TOCCO / BREAKOUT LEGGERO |
+| Voce | RSI attuale | Top-line RSI stimata | Distanza | Stato | Qualita linea |
+| --- | --- | --- | --- | --- | --- |
+| Weekly RSI | 41,58 | 56,32 | 14,74 | LONTANO DALLA TOP-LINE | normale |
+| Monthly RSI | 41,86 | 48,69 | 6,83 | IN AVVICINAMENTO | troppo ripida per proiezione 2029 |
 
 ## Confluenza con target ciclo SOL
 
 | Voce | Valore |
 | --- | --- |
-| Prezzo SOL attuale | 80,20 $ |
-| Target ciclo base | 594,92 $ |
+| Prezzo SOL attuale | 80,07 $ |
+| Target ciclo base | 593,96 $ |
 | Avanzamento verso target base | +13,48% |
 | Fase prezzo | inizio ciclo / lontano dal target macro |
-| Rischio top-cycle RSI | MEDIO |
+| Rischio top-cycle RSI | BASSO |
 
-**Lettura:** RSI segnala attenzione. Non e ancora top macro certo, ma non va ignorato.
+**Lettura:** Nessun segnale top-cycle macro attivo. Prezzo ancora lontano dal target ciclo; il filtro RSI serve piu avanti.
 
 ## Come leggerlo
 
@@ -30,13 +30,14 @@ Questo report non usa l'RSI come segnale di entrata. Lo usa come filtro di esaur
 - RSI weekly vicino alla top-line = possibile top locale o take profit parziale.
 - RSI monthly vicino alla top-line = possibile top macro.
 - RSI weekly + monthly vicini alla top-line e prezzo vicino al target ciclo = zona da distribuire, non da inseguire.
+- Se la qualita linea dice 'troppo ripida per proiezione 2029', la linea e utile come resistenza RSI recente, ma non va proiettata fino al target macro.
 
 ## Punti usati per stimare la trendline
 
-| Periodo | Ancora 1 data | Ancora 1 RSI | Prezzo ancora 1 | Ancora 2 data | Ancora 2 RSI | Prezzo ancora 2 | Top-line RSI alla data ciclo |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Weekly | 2023-12-24 | 87,36 | 112,49 $ | 2025-09-14 | 66,36 | 240,56 $ | 22,51 |
-| Monthly | 2024-03-31 | 79,35 | 202,87 $ | 2024-11-30 | 68,56 | 237,74 $ | -2,35 |
+| Periodo | Ancora 1 data | Ancora 1 RSI | Prezzo ancora 1 | Ancora 2 data | Ancora 2 RSI | Prezzo ancora 2 | Top-line RSI alla data ciclo | Qualita linea |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Weekly | 2023-12-24 | 87,36 | 112,49 $ | 2025-09-14 | 66,36 | 240,56 $ | 22,51 | normale |
+| Monthly | 2024-03-31 | 79,35 | 202,87 $ | 2025-09-30 | 59,63 | 208,74 $ | 12,89 | troppo ripida per proiezione 2029 |
 
 Nota: la trendline RSI e stimata automaticamente sui pivot alti recenti dell'RSI, da 2023 in poi. Non e una certezza matematica; serve come filtro visivo e operativo.
 
@@ -53,7 +54,7 @@ Nota: la trendline RSI e stimata automaticamente sui pivot alti recenti dell'RSI
 ## Stato attuale
 
 - **Weekly:** RSI weekly e ancora basso e lontano dalla trendline di esaurimento ciclo.
-- **Monthly:** RSI monthly sta toccando o superando di poco la trendline. Qui il rischio top aumenta molto.
-- **Rischio top-cycle attuale:** MEDIO
+- **Monthly:** RSI monthly si sta avvicinando alla trendline, ma non la sta ancora testando.
+- **Rischio top-cycle attuale:** BASSO
 
 Traduzione pratica: questo filtro diventa molto importante piu avanti, quando SOL si avvicina ai target 211 / 500 / 600. Adesso serve soprattutto a confermare che non siamo ancora in zona top.
