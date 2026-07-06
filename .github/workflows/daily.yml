@@ -47,6 +47,9 @@ jobs:
       - name: Run BTC 2022 vs SOL 2026 fractal report
         run: python btc_2022_vs_sol_2026_report.py
 
+      - name: Run RSI top-cycle report
+        run: python rsi_top_cycle_report.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions"
