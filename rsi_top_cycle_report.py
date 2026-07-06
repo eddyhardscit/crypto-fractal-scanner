@@ -31,9 +31,17 @@ ASSET_NAME = "SOL"
 DOWNLOAD_START = "2020-01-01"
 RSI_PERIOD = 14
 
-# Use recent macro-cycle RSI highs, not the old 2020 SOL spike.
-WEEKLY_ANCHOR_START_DATE = "2023-01-01"
-MONTHLY_ANCHOR_START_DATE = "2023-01-01"
+ANCHOR_START_DATE = "2023-01-01"
+
+WEEKLY_MIN_RSI = 60
+WEEKLY_PIVOT_WINDOW = 7
+WEEKLY_MIN_GAP_DAYS = 180
+WEEKLY_SECOND_MIN_RSI = 60
+
+MONTHLY_MIN_RSI = 55
+MONTHLY_PIVOT_WINDOW = 3
+MONTHLY_MIN_GAP_DAYS = 365
+MONTHLY_SECOND_MIN_RSI = 50
 
 START_MARKER = "<!-- RSI_TOP_CYCLE_START -->"
 END_MARKER = "<!-- RSI_TOP_CYCLE_END -->"
@@ -85,40 +93,18 @@ def fmt_date(value):
         return "n/d"
 
 
-def fmt_date_it(value):
-    try:
-        dt = pd.to_datetime(value)
-        months = {
-            1: "gennaio",
-            2: "febbraio",
-            3: "marzo",
-            4: "aprile",
-            5: "maggio",
-            6: "giugno",
-            7: "luglio",
-            8: "agosto",
-            9: "settembre",
-            10: "ottobre",
-            11: "novembre",
-            12: "dicembre",
-        }
-        return f"{dt.day} {months[dt.month]} {dt.year}"
-    except Exception:
-        return "n/d"
-
-
 def md_table(headers, rows):
     def clean(x):
         return str(x).replace("|", "\\|").replace("\n", " ")
 
-    out = []
-    out.append("| " + " | ".join(clean(h) for h in headers) + " |")
-    out.append("| " + " | ".join("---" for _ in headers) + " |")
+    lines = []
+    lines.append("| " + " | ".join(clean(h) for h in headers) + " |")
+    lines.append("| " + " | ".join("---" for _ in headers) + " |")
 
     for row in rows:
-        out.append("| " + " | ".join(clean(c) for c in row) + " |")
+        lines.append("| " + " | ".join(clean(c) for c in row) + " |")
 
-    return "\n".join(out)
+    return "\n".join(lines)
 
 
 def rsi(close, period=14):
@@ -168,14 +154,13 @@ def resample_close(df, mode):
     if mode == "weekly":
         out = df["Close"].resample("W").last().dropna().to_frame("Close")
     else:
-        # Pandas recent versions require ME instead of M.
         out = df["Close"].resample("ME").last().dropna().to_frame("Close")
 
     out["rsi"] = rsi(out["Close"], RSI_PERIOD)
     return out.dropna().copy()
 
 
-def find_pivot_highs(df, window=7, min_rsi=55):
+def find_pivot_highs(df, window, min_rsi):
     if df.empty or "rsi" not in df.columns:
         return pd.DataFrame(columns=["date", "rsi", "close"])
 
@@ -184,9 +169,8 @@ def find_pivot_highs(df, window=7, min_rsi=55):
     rows = []
 
     for i in range(half, len(s) - half):
-        val = safe_float(s.iloc[i])
-
-        if val is None or val < min_rsi:
+        value = safe_float(s.iloc[i])
+        if value is None or value < min_rsi:
             continue
 
         local = s.iloc[i - half:i + half + 1]
@@ -195,12 +179,12 @@ def find_pivot_highs(df, window=7, min_rsi=55):
         if local_max is None:
             continue
 
-        if val >= local_max:
+        if value >= local_max:
             date = s.index[i]
             rows.append(
                 {
                     "date": date,
-                    "rsi": val,
+                    "rsi": value,
                     "close": safe_float(df.loc[date, "Close"]),
                 }
             )
@@ -211,88 +195,81 @@ def find_pivot_highs(df, window=7, min_rsi=55):
         return pd.DataFrame(columns=["date", "rsi", "close"])
 
     pivots = pivots.sort_values("date").reset_index(drop=True)
-    cleaned = []
-    min_gap_days = 45 if window >= 7 else 120
-
-    for _, row in pivots.iterrows():
-        item = row.to_dict()
-
-        if not cleaned:
-            cleaned.append(item)
-            continue
-
-        gap = (pd.to_datetime(item["date"]) - pd.to_datetime(cleaned[-1]["date"])).days
-
-        if gap < min_gap_days:
-            if safe_float(item["rsi"]) > safe_float(cleaned[-1]["rsi"]):
-                cleaned[-1] = item
-        else:
-            cleaned.append(item)
-
-    return pd.DataFrame(cleaned)
+    return pivots
 
 
-def choose_anchors(pivots, df):
+def choose_anchors(period_name, pivots, df):
+    if df.empty:
+        return pd.DataFrame(columns=["date", "rsi", "close"])
+
+    period = str(period_name).lower()
+
+    if period == "monthly":
+        min_gap = MONTHLY_MIN_GAP_DAYS
+        second_min_rsi = MONTHLY_SECOND_MIN_RSI
+    else:
+        min_gap = WEEKLY_MIN_GAP_DAYS
+        second_min_rsi = WEEKLY_SECOND_MIN_RSI
+
     if pivots is not None and not pivots.empty and len(pivots) >= 2:
         pivots = pivots.copy()
         pivots["date"] = pd.to_datetime(pivots["date"])
         pivots["rsi"] = pd.to_numeric(pivots["rsi"], errors="coerce")
         pivots = pivots.dropna(subset=["date", "rsi"]).sort_values("date")
 
-        if not pivots.empty:
-            # First anchor: the strongest RSI high of the recent cycle.
-            # This avoids using a small early pivot and creating a flat weekly line.
-            first_idx = pivots["rsi"].idxmax()
-            first = pivots.loc[first_idx]
-            first_date = pd.to_datetime(first["date"])
-            first_rsi = safe_float(first["rsi"])
+        first_idx = pivots["rsi"].idxmax()
+        first = pivots.loc[first_idx]
+        first_date = pd.to_datetime(first["date"])
+        first_rsi = safe_float(first["rsi"])
 
-            # Second anchor: a later lower high, far enough from the first anchor.
-            later = pivots[
-                (pd.to_datetime(pivots["date"]) > first_date + pd.Timedelta(days=90)) &
-                (pd.to_numeric(pivots["rsi"], errors="coerce") < first_rsi)
-            ].copy()
+        later = pivots[
+            (pd.to_datetime(pivots["date"]) >= first_date + pd.Timedelta(days=min_gap)) &
+            (pd.to_numeric(pivots["rsi"], errors="coerce") < first_rsi)
+        ].copy()
 
-            if not later.empty:
-                # Prefer meaningful lower highs.
-                strong_later = later[pd.to_numeric(later["rsi"], errors="coerce") >= 65].copy()
+        if later.empty and period == "monthly":
+            all_rows = df.dropna(subset=["rsi"]).copy()
+            all_rows["date"] = all_rows.index
+            all_rows["rsi"] = pd.to_numeric(all_rows["rsi"], errors="coerce")
+            all_rows["close"] = pd.to_numeric(all_rows["Close"], errors="coerce")
+            later = all_rows[
+                (pd.to_datetime(all_rows["date"]) >= first_date + pd.Timedelta(days=min_gap)) &
+                (pd.to_numeric(all_rows["rsi"], errors="coerce") < first_rsi) &
+                (pd.to_numeric(all_rows["rsi"], errors="coerce") >= second_min_rsi)
+            ][["date", "rsi", "close"]].copy()
 
-                if not strong_later.empty:
-                    last = strong_later.iloc[-1]
-                else:
-                    medium_later = later[pd.to_numeric(later["rsi"], errors="coerce") >= 60].copy()
-                    if not medium_later.empty:
-                        last = medium_later.iloc[-1]
-                    else:
-                        last = later.iloc[-1]
+        if not later.empty:
+            later = later[pd.to_numeric(later["rsi"], errors="coerce") >= second_min_rsi].copy()
 
-                out = pd.DataFrame([first, last]).reset_index(drop=True)
+        if not later.empty:
+            last = later.iloc[-1]
+            anchors = pd.DataFrame([first, last]).reset_index(drop=True)
 
-                if pd.to_datetime(out.iloc[0]["date"]) != pd.to_datetime(out.iloc[1]["date"]):
-                    return out
-
-    # Fallback: use the two strongest RSI highs far apart in time.
-    if df.empty:
-        return pd.DataFrame(columns=["date", "rsi", "close"])
+            if pd.to_datetime(anchors.iloc[0]["date"]) != pd.to_datetime(anchors.iloc[1]["date"]):
+                return anchors
 
     c = df.dropna(subset=["rsi"]).copy()
+    c["date"] = c.index
     c["rsi"] = pd.to_numeric(c["rsi"], errors="coerce")
+    c["close"] = pd.to_numeric(c["Close"], errors="coerce")
     c = c.dropna(subset=["rsi"]).sort_values("rsi", ascending=False)
 
     chosen = []
 
-    for date, row in c.iterrows():
+    for _, row in c.iterrows():
         item = {
-            "date": date,
+            "date": row["date"],
             "rsi": safe_float(row["rsi"]),
-            "close": safe_float(row["Close"]),
+            "close": safe_float(row["close"]),
         }
 
         if not chosen:
             chosen.append(item)
             continue
 
-        if abs((pd.to_datetime(date) - pd.to_datetime(chosen[0]["date"])).days) >= 120:
+        gap = abs((pd.to_datetime(item["date"]) - pd.to_datetime(chosen[0]["date"])).days)
+
+        if gap >= min_gap:
             chosen.append(item)
             break
 
@@ -374,7 +351,7 @@ def read_cycle_context():
     return ctx
 
 
-def classify_distance(current_rsi, line_now, name):
+def classify_distance(current_rsi, line_now, period_name):
     current_rsi = safe_float(current_rsi)
     line_now = safe_float(line_now)
 
@@ -393,7 +370,7 @@ def classify_distance(current_rsi, line_now, name):
             "status": "LONTANO DALLA TOP-LINE",
             "distance": distance,
             "score": 0,
-            "text": f"RSI {name} e ancora basso e lontano dalla trendline di esaurimento ciclo.",
+            "text": f"RSI {period_name} e ancora basso e lontano dalla trendline di esaurimento ciclo.",
         }
 
     if distance > 10:
@@ -401,7 +378,7 @@ def classify_distance(current_rsi, line_now, name):
             "status": "LONTANO DALLA TOP-LINE",
             "distance": distance,
             "score": 0,
-            "text": f"RSI {name} e distante dalla trendline. Nessun segnale top-cycle attivo.",
+            "text": f"RSI {period_name} e distante dalla trendline. Nessun segnale top-cycle attivo.",
         }
 
     if distance > 5:
@@ -409,7 +386,7 @@ def classify_distance(current_rsi, line_now, name):
             "status": "IN AVVICINAMENTO",
             "distance": distance,
             "score": 1,
-            "text": f"RSI {name} si sta avvicinando alla trendline, ma non la sta ancora testando.",
+            "text": f"RSI {period_name} si sta avvicinando alla trendline, ma non la sta ancora testando.",
         }
 
     if distance > 0:
@@ -417,7 +394,7 @@ def classify_distance(current_rsi, line_now, name):
             "status": "TEST TOP-LINE",
             "distance": distance,
             "score": 2,
-            "text": f"RSI {name} e vicino alla trendline. Aumenta il rischio di top locale o distribuzione.",
+            "text": f"RSI {period_name} e vicino alla trendline. Aumenta il rischio di top locale o distribuzione.",
         }
 
     if distance >= -3:
@@ -425,21 +402,21 @@ def classify_distance(current_rsi, line_now, name):
             "status": "TOCCO / BREAKOUT LEGGERO",
             "distance": distance,
             "score": 3,
-            "text": f"RSI {name} sta toccando o superando di poco la trendline. Qui il rischio top aumenta molto.",
+            "text": f"RSI {period_name} sta toccando o superando di poco la trendline. Qui il rischio top aumenta molto.",
         }
 
     return {
         "status": "SOPRA TOP-LINE / MANIA",
         "distance": distance,
         "score": 4,
-        "text": f"RSI {name} e sopra la trendline. Possibile fase di estensione estrema o mania.",
+        "text": f"RSI {period_name} e sopra la trendline. Possibile fase di estensione estrema o mania.",
     }
 
 
-def build_period_summary(name, df, min_rsi, window, cycle_date=None):
+def build_period_summary(period_name, df, min_rsi, window, cycle_date=None):
     if df.empty:
         return {
-            "period": name,
+            "period": period_name,
             "ok": False,
             "current_rsi": None,
             "line_now": None,
@@ -449,39 +426,33 @@ def build_period_summary(name, df, min_rsi, window, cycle_date=None):
             "anchors": pd.DataFrame(),
             "model": None,
             "line_at_cycle_top": None,
+            "line_quality": "dati insufficienti",
         }
 
-    # The hand-drawn TradingView top-line is the recent macro RSI exhaustion line.
-    # So for SOL we search trendline anchors from 2023 onward.
-    # This avoids the old 2020 RSI spike and also avoids weak low pivots.
-    if str(name).lower() == "weekly":
-        anchor_start = WEEKLY_ANCHOR_START_DATE
-    elif str(name).lower() == "monthly":
-        anchor_start = MONTHLY_ANCHOR_START_DATE
-    else:
-        anchor_start = None
-
-    anchor_df = df.copy()
-
-    if anchor_start is not None:
-        anchor_df = anchor_df[anchor_df.index >= pd.to_datetime(anchor_start)].copy()
+    anchor_df = df[df.index >= pd.to_datetime(ANCHOR_START_DATE)].copy()
 
     if anchor_df.empty or len(anchor_df) < 8:
         anchor_df = df.copy()
 
     pivots = find_pivot_highs(anchor_df, window=window, min_rsi=min_rsi)
-    anchors = choose_anchors(pivots, anchor_df)
+    anchors = choose_anchors(period_name, pivots, anchor_df)
     model = fit_line(anchors)
 
     current_date = df.index[-1]
     current_rsi = safe_float(df["rsi"].iloc[-1])
     current_close = safe_float(df["Close"].iloc[-1])
+
     line_now = line_value(model, current_date)
-    status = classify_distance(current_rsi, line_now, name)
+    status = classify_distance(current_rsi, line_now, period_name)
+
     line_at_cycle_top = line_value(model, cycle_date) if cycle_date is not None else None
 
+    line_quality = "normale"
+    if safe_float(line_at_cycle_top) is not None and safe_float(line_at_cycle_top) < 20:
+        line_quality = "troppo ripida per proiezione 2029"
+
     return {
-        "period": name,
+        "period": period_name,
         "ok": model is not None,
         "current_date": fmt_date(current_date),
         "current_price": current_close,
@@ -494,6 +465,7 @@ def build_period_summary(name, df, min_rsi, window, cycle_date=None):
         "anchors": anchors,
         "model": model,
         "line_at_cycle_top": line_at_cycle_top,
+        "line_quality": line_quality,
     }
 
 
@@ -503,6 +475,12 @@ def classify_confluence(weekly, monthly, current_price, ctx):
 
     weekly_score = int(weekly.get("score", 0) or 0)
     monthly_score = int(monthly.get("score", 0) or 0)
+
+    if weekly.get("line_quality") == "troppo ripida per proiezione 2029":
+        weekly_score = min(weekly_score, 1)
+
+    if monthly.get("line_quality") == "troppo ripida per proiezione 2029":
+        monthly_score = min(monthly_score, 1)
 
     progress = None
 
@@ -522,9 +500,9 @@ def classify_confluence(weekly, monthly, current_price, ctx):
 
     score = weekly_score + monthly_score
 
-    if progress is not None and progress < 35 and score <= 2:
+    if progress is not None and progress < 35:
         label = "BASSO"
-        action = "Nessun segnale top-cycle attivo. Il filtro RSI serve piu avanti, non adesso."
+        action = "Nessun segnale top-cycle macro attivo. Prezzo ancora lontano dal target ciclo; il filtro RSI serve piu avanti."
     elif score >= 6 and progress is not None and progress >= 80:
         label = "MOLTO ALTO"
         action = "Weekly e monthly RSI sono in zona top-line mentre il prezzo e vicino al target ciclo. Zona da distribuire, non da inseguire."
@@ -536,7 +514,7 @@ def classify_confluence(weekly, monthly, current_price, ctx):
         action = "RSI segnala attenzione. Non e ancora top macro certo, ma non va ignorato."
     else:
         label = "BASSO"
-        action = "RSI non segnala esaurimento ciclo. Guardare prima livelli prezzo e frattale."
+        action = "RSI non segnala esaurimento ciclo macro. Guardare prima livelli prezzo e frattale."
 
     return {
         "label": label,
@@ -547,7 +525,7 @@ def classify_confluence(weekly, monthly, current_price, ctx):
     }
 
 
-def plot_chart(name, df, summary, ctx, output_path):
+def plot_chart(period_name, df, summary, ctx, output_path):
     if not CHARTS_AVAILABLE:
         return False
 
@@ -562,7 +540,7 @@ def plot_chart(name, df, summary, ctx, output_path):
                 va="center",
                 fontsize=12,
             )
-            ax.set_title(f"{ASSET_NAME} RSI {name} top-cycle")
+            ax.set_title(f"{ASSET_NAME} RSI {period_name} top-cycle")
             ax.axis("off")
             fig.tight_layout()
             fig.savefig(output_path, dpi=160, bbox_inches="tight")
@@ -576,15 +554,18 @@ def plot_chart(name, df, summary, ctx, output_path):
 
         end_date = df.index.max()
 
-        if cycle_date is not None and not pd.isna(cycle_date) and cycle_date > end_date:
-            end_date = cycle_date
+        if summary.get("line_quality") != "troppo ripida per proiezione 2029":
+            if cycle_date is not None and not pd.isna(cycle_date) and cycle_date > end_date:
+                end_date = cycle_date
+        else:
+            end_date = df.index.max() + pd.Timedelta(days=365)
 
         trend_dates = pd.date_range(start=df.index.min(), end=end_date, periods=300)
         trend_values = [line_value(model, d) for d in trend_dates]
         trend_values = [np.nan if v is None else max(0, min(100, v)) for v in trend_values]
 
         fig, ax = plt.subplots(figsize=(13, 6))
-        ax.plot(df.index, df["rsi"], linewidth=1.7, label=f"RSI {name}")
+        ax.plot(df.index, df["rsi"], linewidth=1.7, label=f"RSI {period_name}")
         ax.plot(trend_dates, trend_values, linestyle="--", linewidth=1.6, label="RSI top-line stimata")
 
         ax.axhline(70, linestyle=":", alpha=0.45)
@@ -624,7 +605,7 @@ def plot_chart(name, df, summary, ctx, output_path):
                 bbox=dict(boxstyle="round,pad=0.18", fc="white", alpha=0.82),
             )
 
-        if cycle_date is not None and not pd.isna(cycle_date):
+        if cycle_date is not None and not pd.isna(cycle_date) and summary.get("line_quality") != "troppo ripida per proiezione 2029":
             ax.axvline(cycle_date, linestyle=":", alpha=0.45)
             ax.annotate(
                 "Target ciclo",
@@ -636,7 +617,7 @@ def plot_chart(name, df, summary, ctx, output_path):
             )
 
         ax.set_ylim(0, 100)
-        ax.set_title(f"{ASSET_NAME} RSI {name}: top-cycle warning")
+        ax.set_title(f"{ASSET_NAME} RSI {period_name}: top-cycle warning")
         ax.set_xlabel("Data")
         ax.set_ylabel("RSI")
         ax.grid(True, alpha=0.28)
@@ -649,7 +630,7 @@ def plot_chart(name, df, summary, ctx, output_path):
         return os.path.exists(output_path) and os.path.getsize(output_path) > 1000
 
     except Exception as e:
-        print(f"Could not generate RSI {name} chart: {e}")
+        print(f"Could not generate RSI {period_name} chart: {e}")
         return False
 
 
@@ -666,6 +647,7 @@ def build_report(weekly, monthly, confluence, ctx, weekly_ok, monthly_ok):
             fmt_number(weekly.get("line_now"), 2),
             fmt_number(weekly.get("distance"), 2),
             weekly.get("status", "n/d"),
+            weekly.get("line_quality", "n/d"),
         ],
         [
             "Monthly RSI",
@@ -673,6 +655,7 @@ def build_report(weekly, monthly, confluence, ctx, weekly_ok, monthly_ok):
             fmt_number(monthly.get("line_now"), 2),
             fmt_number(monthly.get("distance"), 2),
             monthly.get("status", "n/d"),
+            monthly.get("line_quality", "n/d"),
         ],
     ]
 
@@ -686,11 +669,11 @@ def build_report(weekly, monthly, confluence, ctx, weekly_ok, monthly_ok):
 
     anchor_rows = []
 
-    for period_name, item in [("Weekly", weekly), ("Monthly", monthly)]:
+    for period_label, item in [("Weekly", weekly), ("Monthly", monthly)]:
         model = item.get("model") or {}
         anchor_rows.append(
             [
-                period_name,
+                period_label,
                 model.get("anchor_1_date", "n/d"),
                 fmt_number(model.get("anchor_1_rsi"), 2),
                 fmt_price(model.get("anchor_1_price")),
@@ -698,6 +681,7 @@ def build_report(weekly, monthly, confluence, ctx, weekly_ok, monthly_ok):
                 fmt_number(model.get("anchor_2_rsi"), 2),
                 fmt_price(model.get("anchor_2_price")),
                 fmt_number(item.get("line_at_cycle_top"), 2),
+                item.get("line_quality", "n/d"),
             ]
         )
 
@@ -711,7 +695,12 @@ def build_report(weekly, monthly, confluence, ctx, weekly_ok, monthly_ok):
     lines.append("")
     lines.append("## Sintesi")
     lines.append("")
-    lines.append(md_table(["Voce", "RSI attuale", "Top-line RSI stimata", "Distanza", "Stato"], summary_rows))
+    lines.append(
+        md_table(
+            ["Voce", "RSI attuale", "Top-line RSI stimata", "Distanza", "Stato", "Qualita linea"],
+            summary_rows,
+        )
+    )
     lines.append("")
     lines.append("## Confluenza con target ciclo SOL")
     lines.append("")
@@ -725,6 +714,7 @@ def build_report(weekly, monthly, confluence, ctx, weekly_ok, monthly_ok):
     lines.append("- RSI weekly vicino alla top-line = possibile top locale o take profit parziale.")
     lines.append("- RSI monthly vicino alla top-line = possibile top macro.")
     lines.append("- RSI weekly + monthly vicini alla top-line e prezzo vicino al target ciclo = zona da distribuire, non da inseguire.")
+    lines.append("- Se la qualita linea dice 'troppo ripida per proiezione 2029', la linea e utile come resistenza RSI recente, ma non va proiettata fino al target macro.")
     lines.append("")
     lines.append("## Punti usati per stimare la trendline")
     lines.append("")
@@ -739,6 +729,7 @@ def build_report(weekly, monthly, confluence, ctx, weekly_ok, monthly_ok):
                 "Ancora 2 RSI",
                 "Prezzo ancora 2",
                 "Top-line RSI alla data ciclo",
+                "Qualita linea",
             ],
             anchor_rows,
         )
@@ -781,12 +772,12 @@ def build_main_block(weekly, monthly, confluence, weekly_ok, monthly_ok):
         [
             "Weekly RSI",
             f"{fmt_number(weekly.get('current_rsi'), 2)} / top-line {fmt_number(weekly.get('line_now'), 2)}",
-            weekly.get("status", "n/d"),
+            f"{weekly.get('status', 'n/d')} - {weekly.get('line_quality', 'n/d')}",
         ],
         [
             "Monthly RSI",
             f"{fmt_number(monthly.get('current_rsi'), 2)} / top-line {fmt_number(monthly.get('line_now'), 2)}",
-            monthly.get("status", "n/d"),
+            f"{monthly.get('status', 'n/d')} - {monthly.get('line_quality', 'n/d')}",
         ],
         [
             "Target ciclo base",
@@ -885,6 +876,7 @@ def write_csv(weekly, monthly, confluence, ctx):
                 "anchor_2_rsi": model.get("anchor_2_rsi"),
                 "anchor_2_price": model.get("anchor_2_price"),
                 "line_at_cycle_top": item.get("line_at_cycle_top"),
+                "line_quality": item.get("line_quality"),
             }
         )
 
@@ -927,11 +919,21 @@ def main():
         if pd.isna(cycle_date):
             cycle_date = None
 
-    # Weekly: use stronger pivots to avoid a flat line from weak 57/57 RSI points.
-    weekly = build_period_summary("weekly", weekly_df, min_rsi=60, window=7, cycle_date=cycle_date)
+    weekly = build_period_summary(
+        "weekly",
+        weekly_df,
+        min_rsi=WEEKLY_MIN_RSI,
+        window=WEEKLY_PIVOT_WINDOW,
+        cycle_date=cycle_date,
+    )
 
-    # Monthly: keep 55 because monthly has fewer candles and fewer pivots.
-    monthly = build_period_summary("monthly", monthly_df, min_rsi=55, window=3, cycle_date=cycle_date)
+    monthly = build_period_summary(
+        "monthly",
+        monthly_df,
+        min_rsi=MONTHLY_MIN_RSI,
+        window=MONTHLY_PIVOT_WINDOW,
+        cycle_date=cycle_date,
+    )
 
     current_price = safe_float(daily["Close"].iloc[-1])
     confluence = classify_confluence(weekly, monthly, current_price, ctx)
