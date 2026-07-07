@@ -52,6 +52,9 @@ jobs:
       - name: Run RSI top-cycle report
         run: python rsi_top_cycle_report.py
 
+      - name: Run market regime match report
+        run: python market_regime_match_report.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions"
