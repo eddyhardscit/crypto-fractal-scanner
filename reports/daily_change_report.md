@@ -1,7 +1,7 @@
 # Mini report cambiamenti giornalieri
 
-Generato: **2026-07-07 13:53:50 CEST**  
-UTC: **2026-07-07 11:53:50 UTC**
+Generato: **2026-07-07 14:08:56 CEST**  
+UTC: **2026-07-07 12:08:56 UTC**
 
 Questo report confronta l'ultima previsione salvata con quella precedente, asset per asset.
 
@@ -36,7 +36,7 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 | --- | --- | --- | --- |
 | Data previsione | 2026-07-06 | 2026-07-07 | - |
 | Verdetto | NEUTRALE / INCERTO | RIALZISTA | cambio verdetto |
-| Prezzo attuale | $61,758 | $63,370 | +2.61% |
+| Prezzo attuale | $61,758 | $63,509 | +2.84% |
 | Casi positivi 30d | +50.00% | +62.50% | +12.50 punti |
 | Return 30d centrale P50 | +0.52% | +2.91% | +2.39 punti |
 | Drawdown brutto P25 | -12.74% | -9.26% | +3.48 punti |
@@ -48,7 +48,7 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 - Casi positivi cambiati molto: +12.50 punti
 - Scenario centrale 30 giorni cambiato: +2.39 punti
 - Drawdown migliorato leggermente: +3.48 punti
-- Prezzo attuale cambiato: +2.61%
+- Prezzo attuale cambiato: +2.84%
 
 ---
 
@@ -65,7 +65,7 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 | --- | --- | --- | --- |
 | Data previsione | 2026-07-06 | 2026-07-07 | - |
 | Verdetto | NEUTRALE / INCERTO | NEUTRALE / INCERTO | uguale |
-| Prezzo attuale | $79.93 | $81.27 | +1.68% |
+| Prezzo attuale | $79.93 | $81.52 | +1.99% |
 | Casi positivi 30d | +47.50% | +47.50% | 0.00 punti |
 | Return 30d centrale P50 | -2.01% | -2.37% | -0.37 punti |
 | Drawdown brutto P25 | -23.45% | -23.14% | +0.31 punti |
@@ -90,7 +90,7 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 | --- | --- | --- | --- |
 | Data previsione | 2026-07-06 | 2026-07-07 | - |
 | Verdetto | RIBASSISTA | RIBASSISTA | uguale |
-| Prezzo attuale | $0.07511 | $0.07477 | -0.45% |
+| Prezzo attuale | $0.07511 | $0.07497 | -0.19% |
 | Casi positivi 30d | +15.00% | +17.50% | +2.50 punti |
 | Return 30d centrale P50 | -18.49% | -18.49% | 0.00 punti |
 | Drawdown brutto P25 | -37.24% | -37.60% | -0.36 punti |
