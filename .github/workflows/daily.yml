@@ -58,6 +58,9 @@ jobs:
       - name: Run technical structure report
         run: python technical_structure_report.py
 
+      - name: Run global confluence report
+        run: python global_confluence_report.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions"
