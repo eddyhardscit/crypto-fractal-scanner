@@ -2,7 +2,9 @@ name: Daily Crypto Fractal Scanner
 
 on:
   schedule:
-    - cron: "23 8 * * *"
+    # 14:18 ora italiana/spagnola estiva = 12:18 UTC
+    # Formato cron: minuto ora giorno mese giorno-settimana
+    - cron: "18 12 * * *"
   workflow_dispatch:
 
 permissions:
