@@ -738,6 +738,8 @@ def render_markdown_report(enriched, summary, current_btc_metrics, current_targe
 
     lines.append("## Top regime-adjusted matches")
     lines.append("")
+    lines.append("The table below shows the top matches separately for each target, so BTC does not hide SOL and DOGE.")
+    lines.append("")
 
     top_cols = [
         "target",
@@ -756,20 +758,39 @@ def render_markdown_report(enriched, summary, current_btc_metrics, current_targe
         "max_gain_60d",
     ]
 
-    top = enriched[top_cols].copy()
-    top["start_date"] = pd.to_datetime(top["start_date"]).dt.date.astype(str)
-    top = top.head(30)
+    top_frames = []
 
-    for col in [
-        "similarity",
-        "return_30d",
-        "drawdown_30d",
-        "max_gain_30d",
-        "return_60d",
-        "drawdown_60d",
-        "max_gain_60d",
-    ]:
-        top[col] = top[col].apply(fmt_pct)
+    for target, g in enriched.groupby("target", sort=True):
+        g = g.sort_values(
+            [
+                "same_full_regime_as_today",
+                "same_btc_regime_as_today",
+                "same_asset_regime_as_today",
+                "similarity",
+            ],
+            ascending=[False, False, False, False],
+        ).head(10)
+
+        top_frames.append(g[top_cols].copy())
+
+    if top_frames:
+        top = pd.concat(top_frames, ignore_index=True)
+    else:
+        top = pd.DataFrame(columns=top_cols)
+
+    if not top.empty:
+        top["start_date"] = pd.to_datetime(top["start_date"]).dt.date.astype(str)
+
+        for col in [
+            "similarity",
+            "return_30d",
+            "drawdown_30d",
+            "max_gain_30d",
+            "return_60d",
+            "drawdown_60d",
+            "max_gain_60d",
+        ]:
+            top[col] = top[col].apply(fmt_pct)
 
     lines.append(df_to_markdown(top))
     lines.append("")
