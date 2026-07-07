@@ -40,28 +40,91 @@ def fmt_price(ticker, x):
     x = safe_float(x)
     if pd.isna(x):
         return "n/a"
+
     if "DOGE" in ticker:
         return f"{x:.5f}"
+
     if x >= 1000:
-        return f"{x:,.0f}"
-    return f"{x:.2f}"
+        return f"{x:,.0f}".replace(",", ".")
+
+    return f"{x:.2f}".replace(".", ",")
 
 
 def fmt_pct(x):
     x = safe_float(x)
     if pd.isna(x):
         return "n/a"
-    return f"{x:.2f}%"
+    return f"{x:.2f}%".replace(".", ",")
 
 
 def df_to_markdown(df):
     if df is None or df.empty:
-        return "_No data._"
+        return "_Nessun dato disponibile._"
 
     try:
         return df.to_markdown(index=False)
     except Exception:
         return "```csv\n" + df.to_csv(index=False) + "\n```"
+
+
+def it_label(value):
+    mapping = {
+        "BULLISH_TECNICO": "RIALZISTA TECNICO",
+        "COSTRUTTIVO_MA_NON_CONFERMATO": "COSTRUTTIVO MA NON CONFERMATO",
+        "NEUTRALE_MISTO": "NEUTRALE / MISTO",
+        "DEBOLE": "DEBOLE",
+        "BEARISH_TECNICO": "RIBASSISTA TECNICO",
+
+        "BULLISH_TREND": "Trend rialzista",
+        "BEARISH_TREND": "Trend ribassista",
+        "MIXED_TREND": "Trend misto",
+
+        "MOMENTUM_IMPROVING": "Momentum in miglioramento",
+        "MOMENTUM_WEAK": "Momentum debole",
+        "MOMENTUM_MIXED": "Momentum misto",
+
+        "ACCUMULATION_VOLUME": "Volume da accumulazione",
+        "DISTRIBUTION_VOLUME": "Volume da distribuzione",
+        "NEUTRAL_VOLUME": "Volume neutrale",
+
+        "HH_HL_UPSTRUCTURE": "Struttura rialzista con massimi e minimi crescenti",
+        "LH_LL_DOWNSTRUCTURE": "Struttura ribassista con massimi e minimi decrescenti",
+        "COMPRESSION_TRIANGLE": "Compressione / triangolo",
+        "EXPANDING_VOLATILITY": "Volatilità in espansione",
+        "UNKNOWN": "Sconosciuto",
+
+        "BULLISH_RSI_DIVERGENCE": "Divergenza rialzista RSI",
+        "BEARISH_RSI_DIVERGENCE": "Divergenza ribassista RSI",
+        "HIDDEN_BULLISH_RSI_DIVERGENCE": "Divergenza rialzista nascosta RSI",
+        "HIDDEN_BEARISH_RSI_DIVERGENCE": "Divergenza ribassista nascosta RSI",
+        "NONE": "Nessuna",
+
+        "ACCUMULATION_CANDIDATE": "Possibile accumulazione",
+        "DISTRIBUTION_CANDIDATE": "Possibile distribuzione",
+        "MARKUP": "Markup / fase rialzista",
+        "MARKDOWN": "Markdown / fase ribassista",
+        "RANGE_OR_UNKNOWN": "Range / fase non chiara",
+
+        "ASSENTE": "Assente",
+        "POSSIBILE": "Possibile",
+        "CONFERMATO": "Confermato",
+
+        "ADAM_AND_EVE_BOTTOM": "Adam and Eve Bottom",
+        "EVE_AND_ADAM_BOTTOM": "Eve and Adam Bottom",
+        "ADAM_AND_EVE_TOP": "Adam and Eve Top",
+        "EVE_AND_ADAM_TOP": "Eve and Adam Top",
+    }
+
+    if pd.isna(value):
+        return "n/a"
+
+    value = str(value)
+
+    if "," in value:
+        parts = [p.strip() for p in value.split(",")]
+        return ", ".join(mapping.get(p, p) for p in parts)
+
+    return mapping.get(value, value)
 
 
 def normalize_ohlcv(df):
@@ -99,11 +162,7 @@ def normalize_ohlcv(df):
 
     for col in needed:
         if col not in out.columns:
-            if col == "Open" and "Close" in out.columns:
-                out[col] = out["Close"]
-            elif col == "High" and "Close" in out.columns:
-                out[col] = out["Close"]
-            elif col == "Low" and "Close" in out.columns:
+            if col in ["Open", "High", "Low"] and "Close" in out.columns:
                 out[col] = out["Close"]
             elif col == "Volume":
                 out[col] = np.nan
@@ -140,7 +199,7 @@ def download_asset(ticker):
         )
         return normalize_ohlcv(raw)
     except Exception as e:
-        print(f"Download failed for {ticker}: {e}")
+        print(f"Download fallito per {ticker}: {e}")
         return pd.DataFrame()
 
 
@@ -194,6 +253,7 @@ def add_indicators(df):
     denom = (d["High"] - d["Low"]).replace(0, np.nan)
     mfm = ((d["Close"] - d["Low"]) - (d["High"] - d["Close"])) / denom
     mfv = mfm.fillna(0) * d["Volume"].fillna(0)
+
     d["cmf20"] = (
         mfv.rolling(20, min_periods=10).sum()
         / d["Volume"].rolling(20, min_periods=10).sum().replace(0, np.nan)
@@ -288,11 +348,8 @@ def near(a, b, tolerance_pct):
     return abs(a / b - 1) * 100 <= tolerance_pct
 
 
-def pattern_double_bottom(df, ticker):
-    lows = pivot_rows(df, "low")
-    highs = pivot_rows(df, "high")
-
-    result = {
+def empty_bottom_result():
+    return {
         "status": "ASSENTE",
         "confidence": "LOW",
         "details": "",
@@ -301,6 +358,25 @@ def pattern_double_bottom(df, ticker):
         "confirmed": False,
         "score": 0,
     }
+
+
+def empty_top_result():
+    return {
+        "status": "ASSENTE",
+        "confidence": "LOW",
+        "details": "",
+        "neckline": np.nan,
+        "resistance": np.nan,
+        "confirmed": False,
+        "score": 0,
+    }
+
+
+def pattern_double_bottom(df, ticker):
+    lows = pivot_rows(df, "low")
+    highs = pivot_rows(df, "high")
+
+    result = empty_bottom_result()
 
     if len(lows) < 2:
         return result
@@ -351,7 +427,11 @@ def pattern_double_bottom(df, ticker):
     result.update({
         "status": status,
         "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
-        "details": f"Two similar lows near {fmt_price(ticker, support)} between {d1.date()} and {d2.date()}",
+        "details": (
+            f"Due minimi simili vicino a {fmt_price(ticker, support)} "
+            f"tra {d1.date()} e {d2.date()}. "
+            f"Neckline stimata: {fmt_price(ticker, neckline)}."
+        ),
         "neckline": neckline,
         "support": support,
         "confirmed": confirmed,
@@ -365,15 +445,7 @@ def pattern_triple_bottom(df, ticker):
     lows = pivot_rows(df, "low")
     highs = pivot_rows(df, "high")
 
-    result = {
-        "status": "ASSENTE",
-        "confidence": "LOW",
-        "details": "",
-        "neckline": np.nan,
-        "support": np.nan,
-        "confirmed": False,
-        "score": 0,
-    }
+    result = empty_bottom_result()
 
     if len(lows) < 3:
         return result
@@ -426,7 +498,11 @@ def pattern_triple_bottom(df, ticker):
     result.update({
         "status": status,
         "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
-        "details": f"Three similar lows near {fmt_price(ticker, support)} from {dates[0].date()} to {dates[-1].date()}",
+        "details": (
+            f"Tre minimi simili vicino a {fmt_price(ticker, support)} "
+            f"dal {dates[0].date()} al {dates[-1].date()}. "
+            f"Neckline stimata: {fmt_price(ticker, neckline)}."
+        ),
         "neckline": neckline,
         "support": support,
         "confirmed": confirmed,
@@ -440,15 +516,7 @@ def pattern_double_top(df, ticker):
     highs = pivot_rows(df, "high")
     lows = pivot_rows(df, "low")
 
-    result = {
-        "status": "ASSENTE",
-        "confidence": "LOW",
-        "details": "",
-        "neckline": np.nan,
-        "resistance": np.nan,
-        "confirmed": False,
-        "score": 0,
-    }
+    result = empty_top_result()
 
     if len(highs) < 2:
         return result
@@ -499,7 +567,11 @@ def pattern_double_top(df, ticker):
     result.update({
         "status": status,
         "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
-        "details": f"Two similar highs near {fmt_price(ticker, resistance)} between {d1.date()} and {d2.date()}",
+        "details": (
+            f"Due massimi simili vicino a {fmt_price(ticker, resistance)} "
+            f"tra {d1.date()} e {d2.date()}. "
+            f"Neckline ribassista stimata: {fmt_price(ticker, neckline)}."
+        ),
         "neckline": neckline,
         "resistance": resistance,
         "confirmed": confirmed,
@@ -513,15 +585,7 @@ def pattern_triple_top(df, ticker):
     highs = pivot_rows(df, "high")
     lows = pivot_rows(df, "low")
 
-    result = {
-        "status": "ASSENTE",
-        "confidence": "LOW",
-        "details": "",
-        "neckline": np.nan,
-        "resistance": np.nan,
-        "confirmed": False,
-        "score": 0,
-    }
+    result = empty_top_result()
 
     if len(highs) < 3:
         return result
@@ -574,7 +638,11 @@ def pattern_triple_top(df, ticker):
     result.update({
         "status": status,
         "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
-        "details": f"Three similar highs near {fmt_price(ticker, resistance)} from {dates[0].date()} to {dates[-1].date()}",
+        "details": (
+            f"Tre massimi simili vicino a {fmt_price(ticker, resistance)} "
+            f"dal {dates[0].date()} al {dates[-1].date()}. "
+            f"Neckline ribassista stimata: {fmt_price(ticker, neckline)}."
+        ),
         "neckline": neckline,
         "resistance": resistance,
         "confirmed": confirmed,
@@ -586,10 +654,7 @@ def pattern_triple_top(df, ticker):
 
 def bottom_shape_metrics(df, pivot_date):
     if pivot_date not in df.index:
-        return {
-            "sharp_score": 0,
-            "round_score": 0,
-        }
+        return {"sharp_score": 0, "round_score": 0}
 
     pos = df.index.get_loc(pivot_date)
 
@@ -602,10 +667,7 @@ def bottom_shape_metrics(df, pivot_date):
     window = df.iloc[start:end + 1]
 
     if window.empty:
-        return {
-            "sharp_score": 0,
-            "round_score": 0,
-        }
+        return {"sharp_score": 0, "round_score": 0}
 
     low = safe_float(df.loc[pivot_date, "Low"])
     atr = safe_float(df.loc[pivot_date, "atr14"])
@@ -643,18 +705,12 @@ def bottom_shape_metrics(df, pivot_date):
     if not pd.isna(atr) and low > 0 and (atr / low * 100) < 6:
         round_score += 1
 
-    return {
-        "sharp_score": sharp_score,
-        "round_score": round_score,
-    }
+    return {"sharp_score": sharp_score, "round_score": round_score}
 
 
 def top_shape_metrics(df, pivot_date):
     if pivot_date not in df.index:
-        return {
-            "sharp_score": 0,
-            "round_score": 0,
-        }
+        return {"sharp_score": 0, "round_score": 0}
 
     pos = df.index.get_loc(pivot_date)
 
@@ -667,10 +723,7 @@ def top_shape_metrics(df, pivot_date):
     window = df.iloc[start:end + 1]
 
     if window.empty:
-        return {
-            "sharp_score": 0,
-            "round_score": 0,
-        }
+        return {"sharp_score": 0, "round_score": 0}
 
     high = safe_float(df.loc[pivot_date, "High"])
     atr = safe_float(df.loc[pivot_date, "atr14"])
@@ -708,26 +761,26 @@ def top_shape_metrics(df, pivot_date):
     if not pd.isna(atr) and high > 0 and (atr / high * 100) < 6:
         round_score += 1
 
-    return {
-        "sharp_score": sharp_score,
-        "round_score": round_score,
-    }
+    return {"sharp_score": sharp_score, "round_score": round_score}
+
+
+def empty_adam_eve_bottom_result():
+    out = empty_bottom_result()
+    out["variant"] = ""
+    return out
+
+
+def empty_adam_eve_top_result():
+    out = empty_top_result()
+    out["variant"] = ""
+    return out
 
 
 def pattern_adam_eve_bottom(df, ticker):
     lows = pivot_rows(df, "low")
     highs = pivot_rows(df, "high")
 
-    result = {
-        "status": "ASSENTE",
-        "confidence": "LOW",
-        "variant": "",
-        "details": "",
-        "neckline": np.nan,
-        "support": np.nan,
-        "confirmed": False,
-        "score": 0,
-    }
+    result = empty_adam_eve_bottom_result()
 
     if len(lows) < 2:
         return result
@@ -791,11 +844,19 @@ def pattern_adam_eve_bottom(df, ticker):
     status = "CONFERMATO" if confirmed else "POSSIBILE"
     score = 3 if confirmed else 1
 
+    variant_it = it_label(variant)
+
     result.update({
         "status": status,
         "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
         "variant": variant,
-        "details": f"{variant} near {fmt_price(ticker, support)} from {d1.date()} to {d2.date()}",
+        "details": (
+            f"Possibile pattern {variant_it} vicino a {fmt_price(ticker, support)} "
+            f"dal {d1.date()} al {d2.date()}. "
+            f"Nel modello Adam/Eve un minimo è più appuntito e violento, "
+            f"l'altro è più arrotondato. "
+            f"Neckline stimata: {fmt_price(ticker, neckline)}."
+        ),
         "neckline": neckline,
         "support": support,
         "confirmed": confirmed,
@@ -809,16 +870,7 @@ def pattern_adam_eve_top(df, ticker):
     highs = pivot_rows(df, "high")
     lows = pivot_rows(df, "low")
 
-    result = {
-        "status": "ASSENTE",
-        "confidence": "LOW",
-        "variant": "",
-        "details": "",
-        "neckline": np.nan,
-        "resistance": np.nan,
-        "confirmed": False,
-        "score": 0,
-    }
+    result = empty_adam_eve_top_result()
 
     if len(highs) < 2:
         return result
@@ -882,11 +934,19 @@ def pattern_adam_eve_top(df, ticker):
     status = "CONFERMATO" if confirmed else "POSSIBILE"
     score = -3 if confirmed else -1
 
+    variant_it = it_label(variant)
+
     result.update({
         "status": status,
         "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
         "variant": variant,
-        "details": f"{variant} near {fmt_price(ticker, resistance)} from {d1.date()} to {d2.date()}",
+        "details": (
+            f"Possibile pattern {variant_it} vicino a {fmt_price(ticker, resistance)} "
+            f"dal {d1.date()} al {d2.date()}. "
+            f"Nel modello Adam/Eve un massimo è più appuntito e violento, "
+            f"l'altro è più arrotondato. "
+            f"Neckline ribassista stimata: {fmt_price(ticker, neckline)}."
+        ),
         "neckline": neckline,
         "resistance": resistance,
         "confirmed": confirmed,
@@ -931,7 +991,10 @@ def recent_structure(df):
             structure = "EXPANDING_VOLATILITY"
             score = 0
 
-        details = f"Last lows {l1:.4g}->{l2:.4g}; last highs {h1:.4g}->{h2:.4g}"
+        details = (
+            f"Ultimi minimi: {l1:.4g} -> {l2:.4g}. "
+            f"Ultimi massimi: {h1:.4g} -> {h2:.4g}."
+        )
 
     return structure, score, details
 
@@ -1122,7 +1185,7 @@ def wyckoff_candidate(df):
     recent = recent_slice(df, 120)
 
     if recent.empty:
-        return "UNKNOWN", 0, "Not enough data"
+        return "UNKNOWN", 0, "Dati insufficienti per stimare la fase Wyckoff."
 
     high_120 = safe_float(recent["High"].max())
     low_120 = safe_float(recent["Low"].min())
@@ -1146,18 +1209,40 @@ def wyckoff_candidate(df):
     ma50_up = not pd.isna(ma50_rising) and ma50_rising > 0
 
     if below_ma200 and not pd.isna(ret90) and ret90 < 0 and near_range_low and not pd.isna(rsi_now) and rsi_now < 55:
-        return "ACCUMULATION_CANDIDATE", 1, f"Below MA200, near lower 120d range, RSI {rsi_now:.1f}"
+        return (
+            "ACCUMULATION_CANDIDATE",
+            1,
+            f"Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI {rsi_now:.1f}.",
+        )
 
     if above_ma200 and ma50_up and not pd.isna(ret30) and ret30 > 5:
-        return "MARKUP", 2, "Above MA200 with rising MA50 and positive 30d trend"
+        return (
+            "MARKUP",
+            2,
+            "Prezzo sopra MA200, MA50 in salita e trend a 30 giorni positivo.",
+        )
 
     if above_ma200 and near_range_high and not pd.isna(rsi_now) and rsi_now < 55 and not pd.isna(ret30) and ret30 < 0:
-        return "DISTRIBUTION_CANDIDATE", -2, "Above MA200 but weak momentum near upper range"
+        return (
+            "DISTRIBUTION_CANDIDATE",
+            -2,
+            "Prezzo sopra MA200 ma momentum debole vicino alla parte alta del range.",
+        )
 
     if below_ma200 and not pd.isna(ret90) and ret90 < -10:
-        return "MARKDOWN", -2, "Below MA200 with weak 90d trend"
+        return (
+            "MARKDOWN",
+            -2,
+            "Prezzo sotto MA200 con trend a 90 giorni ancora debole.",
+        )
 
-    return "RANGE_OR_UNKNOWN", 0, f"Position in 120d range: {fmt_pct(pos_in_range * 100 if not pd.isna(pos_in_range) else np.nan)}"
+    pos_txt = fmt_pct(pos_in_range * 100 if not pd.isna(pos_in_range) else np.nan)
+
+    return (
+        "RANGE_OR_UNKNOWN",
+        0,
+        f"Posizione nel range a 120 giorni: {pos_txt}. Fase non abbastanza chiara.",
+    )
 
 
 def support_resistance(df):
@@ -1327,26 +1412,26 @@ def render_report(metrics):
 
     lines = []
 
-    lines.append("# Technical Structure Report")
+    lines.append("# Report struttura tecnica")
     lines.append("")
-    lines.append(f"Generated: {now}")
+    lines.append(f"Generato: {now}")
     lines.append("")
-    lines.append("This report adds classic technical-analysis structure to the scanner.")
+    lines.append("Questo report aggiunge al tuo scanner una lettura classica di analisi tecnica.")
     lines.append("")
-    lines.append("Included modules:")
+    lines.append("Moduli inclusi:")
     lines.append("")
-    lines.append("- MA20 / MA50 / MA200 trend structure")
-    lines.append("- Higher high / higher low versus lower high / lower low")
-    lines.append("- Double bottom, triple bottom, double top, triple top")
-    lines.append("- Adam and Eve bottom / top candidates")
-    lines.append("- RSI divergence and hidden RSI divergence")
-    lines.append("- MACD momentum")
-    lines.append("- OBV / CMF volume confirmation")
-    lines.append("- Simple Wyckoff phase candidate")
-    lines.append("- Technical confluence score")
+    lines.append("- Struttura trend con MA20 / MA50 / MA200")
+    lines.append("- Massimi e minimi crescenti oppure decrescenti")
+    lines.append("- Doppio minimo, triplo minimo, doppio massimo, triplo massimo")
+    lines.append("- Pattern Adam and Eve Bottom / Top")
+    lines.append("- Divergenze RSI e divergenze RSI nascoste")
+    lines.append("- Momentum MACD")
+    lines.append("- Conferma volume con OBV / CMF")
+    lines.append("- Candidato fase Wyckoff")
+    lines.append("- Punteggio tecnico di confluenza")
     lines.append("")
 
-    lines.append("## Summary")
+    lines.append("## Sintesi")
     lines.append("")
 
     summary_rows = []
@@ -1356,42 +1441,45 @@ def render_report(metrics):
 
         summary_rows.append({
             "Asset": r["asset"],
-            "Price": fmt_price(ticker, r["price"]),
-            "Score": int(r["technical_score"]),
-            "Verdict": r["verdict"],
-            "Trend": r["trend"],
-            "Momentum": r["momentum"],
-            "Structure": r["structure"],
-            "Divergence": r["divergence"],
-            "Wyckoff": r["wyckoff"],
-            "Support": fmt_price(ticker, r["support"]),
-            "Resistance": fmt_price(ticker, r["resistance"]),
+            "Prezzo": fmt_price(ticker, r["price"]),
+            "Punteggio": int(r["technical_score"]),
+            "Verdetto": it_label(r["verdict"]),
+            "Trend": it_label(r["trend"]),
+            "Momentum": it_label(r["momentum"]),
+            "Struttura": it_label(r["structure"]),
+            "Divergenza": it_label(r["divergence"]),
+            "Wyckoff": it_label(r["wyckoff"]),
+            "Supporto": fmt_price(ticker, r["support"]),
+            "Resistenza": fmt_price(ticker, r["resistance"]),
         })
 
     lines.append(df_to_markdown(pd.DataFrame(summary_rows)))
     lines.append("")
 
-    lines.append("## Pattern snapshot")
+    lines.append("## Riepilogo pattern")
     lines.append("")
 
     pattern_rows = []
 
     for _, r in metrics.iterrows():
+        adam_bottom = it_label(r["adam_eve_bottom_variant"]) if r["adam_eve_bottom"] != "ASSENTE" else "Assente"
+        adam_top = it_label(r["adam_eve_top_variant"]) if r["adam_eve_top"] != "ASSENTE" else "Assente"
+
         pattern_rows.append({
             "Asset": r["asset"],
-            "Double bottom": r["double_bottom"],
-            "Triple bottom": r["triple_bottom"],
-            "Adam/Eve bottom": r["adam_eve_bottom_variant"] if r["adam_eve_bottom"] != "ASSENTE" else "ASSENTE",
-            "Double top": r["double_top"],
-            "Triple top": r["triple_top"],
-            "Adam/Eve top": r["adam_eve_top_variant"] if r["adam_eve_top"] != "ASSENTE" else "ASSENTE",
-            "Pattern score": int(r["pattern_score"]),
+            "Doppio minimo": it_label(r["double_bottom"]),
+            "Triplo minimo": it_label(r["triple_bottom"]),
+            "Adam/Eve Bottom": adam_bottom,
+            "Doppio massimo": it_label(r["double_top"]),
+            "Triplo massimo": it_label(r["triple_top"]),
+            "Adam/Eve Top": adam_top,
+            "Punteggio pattern": int(r["pattern_score"]),
         })
 
     lines.append(df_to_markdown(pd.DataFrame(pattern_rows)))
     lines.append("")
 
-    lines.append("## Indicator snapshot")
+    lines.append("## Indicatori tecnici")
     lines.append("")
 
     ind_rows = []
@@ -1402,20 +1490,20 @@ def render_report(metrics):
         ind_rows.append({
             "Asset": r["asset"],
             "RSI 14": fmt_num(r["rsi14"], 2),
-            "MACD hist": fmt_num(r["macd_hist"], 5),
+            "Istogramma MACD": fmt_num(r["macd_hist"], 5),
             "MA20": fmt_price(ticker, r["ma20"]),
             "MA50": fmt_price(ticker, r["ma50"]),
             "MA200": fmt_price(ticker, r["ma200"]),
-            "MA50 slope 20d": fmt_pct(r["ma50_slope_20d"]),
-            "MA200 slope 60d": fmt_pct(r["ma200_slope_60d"]),
-            "Return 30d": fmt_pct(r["return_30d"]),
-            "Return 90d": fmt_pct(r["return_90d"]),
+            "Pendenza MA50 20g": fmt_pct(r["ma50_slope_20d"]),
+            "Pendenza MA200 60g": fmt_pct(r["ma200_slope_60d"]),
+            "Rendimento 30g": fmt_pct(r["return_30d"]),
+            "Rendimento 90g": fmt_pct(r["return_90d"]),
         })
 
     lines.append(df_to_markdown(pd.DataFrame(ind_rows)))
     lines.append("")
 
-    lines.append("## Asset details")
+    lines.append("## Dettaglio asset")
     lines.append("")
 
     for _, r in metrics.iterrows():
@@ -1423,74 +1511,72 @@ def render_report(metrics):
 
         lines.append(f"### {r['asset']}")
         lines.append("")
-        lines.append(f"- Price: **{fmt_price(ticker, r['price'])}**")
-        lines.append(f"- Technical score: **{int(r['technical_score'])} / 12**")
-        lines.append(f"- Verdict: **{r['verdict']}**")
-        lines.append(f"- Trend: **{r['trend']}** ({int(r['trend_score'])})")
-        lines.append(f"- Momentum: **{r['momentum']}** ({int(r['momentum_score'])})")
-        lines.append(f"- Volume: **{r['volume']}** ({int(r['volume_score'])})")
-        lines.append(f"- Structure: **{r['structure']}** ({int(r['structure_score'])})")
+        lines.append(f"- Prezzo: **{fmt_price(ticker, r['price'])}**")
+        lines.append(f"- Punteggio tecnico: **{int(r['technical_score'])} / 12**")
+        lines.append(f"- Verdetto: **{it_label(r['verdict'])}**")
+        lines.append(f"- Trend: **{it_label(r['trend'])}** ({int(r['trend_score'])})")
+        lines.append(f"- Momentum: **{it_label(r['momentum'])}** ({int(r['momentum_score'])})")
+        lines.append(f"- Volume: **{it_label(r['volume'])}** ({int(r['volume_score'])})")
+        lines.append(f"- Struttura: **{it_label(r['structure'])}** ({int(r['structure_score'])})")
 
         if r["structure_details"]:
-            lines.append(f"  - {r['structure_details']}")
+            lines.append(f"  - Dettaglio struttura: {r['structure_details']}")
 
-        lines.append(f"- Divergence: **{r['divergence']}** ({int(r['divergence_score'])})")
-        lines.append(f"- Wyckoff candidate: **{r['wyckoff']}** ({int(r['wyckoff_score'])})")
+        lines.append(f"- Divergenza: **{it_label(r['divergence'])}** ({int(r['divergence_score'])})")
+        lines.append(f"- Fase Wyckoff candidata: **{it_label(r['wyckoff'])}** ({int(r['wyckoff_score'])})")
 
         if r["wyckoff_details"]:
-            lines.append(f"  - {r['wyckoff_details']}")
+            lines.append(f"  - Dettaglio Wyckoff: {r['wyckoff_details']}")
 
-        lines.append(f"- Nearest support: **{fmt_price(ticker, r['support'])}**")
-        lines.append(f"- Nearest resistance: **{fmt_price(ticker, r['resistance'])}**")
+        lines.append(f"- Supporto più vicino: **{fmt_price(ticker, r['support'])}**")
+        lines.append(f"- Resistenza più vicina: **{fmt_price(ticker, r['resistance'])}**")
         lines.append("")
 
-        lines.append("Classic patterns:")
+        lines.append("Pattern classici:")
         lines.append("")
-        lines.append(f"- Double bottom: **{r['double_bottom']}**")
+        lines.append(f"- Doppio minimo: **{it_label(r['double_bottom'])}**")
 
         if r["double_bottom_details"]:
             lines.append(f"  - {r['double_bottom_details']}")
 
-        lines.append(f"- Triple bottom: **{r['triple_bottom']}**")
+        lines.append(f"- Triplo minimo: **{it_label(r['triple_bottom'])}**")
 
         if r["triple_bottom_details"]:
             lines.append(f"  - {r['triple_bottom_details']}")
 
-        lines.append(
-            f"- Adam/Eve bottom: **{r['adam_eve_bottom_variant'] if r['adam_eve_bottom'] != 'ASSENTE' else 'ASSENTE'}**"
-        )
+        adam_bottom = it_label(r["adam_eve_bottom_variant"]) if r["adam_eve_bottom"] != "ASSENTE" else "Assente"
+        lines.append(f"- Adam/Eve Bottom: **{adam_bottom}**")
 
         if r["adam_eve_bottom_details"]:
             lines.append(f"  - {r['adam_eve_bottom_details']}")
 
-        lines.append(f"- Double top: **{r['double_top']}**")
+        lines.append(f"- Doppio massimo: **{it_label(r['double_top'])}**")
 
         if r["double_top_details"]:
             lines.append(f"  - {r['double_top_details']}")
 
-        lines.append(f"- Triple top: **{r['triple_top']}**")
+        lines.append(f"- Triplo massimo: **{it_label(r['triple_top'])}**")
 
         if r["triple_top_details"]:
             lines.append(f"  - {r['triple_top_details']}")
 
-        lines.append(
-            f"- Adam/Eve top: **{r['adam_eve_top_variant'] if r['adam_eve_top'] != 'ASSENTE' else 'ASSENTE'}**"
-        )
+        adam_top = it_label(r["adam_eve_top_variant"]) if r["adam_eve_top"] != "ASSENTE" else "Assente"
+        lines.append(f"- Adam/Eve Top: **{adam_top}**")
 
         if r["adam_eve_top_details"]:
             lines.append(f"  - {r['adam_eve_top_details']}")
 
         lines.append("")
 
-    lines.append("## How to read the score")
+    lines.append("## Come leggere il punteggio")
     lines.append("")
-    lines.append("- +7 to +12: strong technical bullish confluence.")
-    lines.append("- +3 to +6: constructive, but still needs confirmation.")
-    lines.append("- -2 to +2: mixed / neutral.")
-    lines.append("- -6 to -3: weak technical structure.")
-    lines.append("- -12 to -7: strong technical bearish confluence.")
+    lines.append("- Da +7 a +12: forte confluenza tecnica rialzista.")
+    lines.append("- Da +3 a +6: struttura costruttiva, ma serve ancora conferma.")
+    lines.append("- Da -2 a +2: situazione mista / neutrale.")
+    lines.append("- Da -6 a -3: struttura tecnica debole.")
+    lines.append("- Da -12 a -7: forte confluenza tecnica ribassista.")
     lines.append("")
-    lines.append("Important: this is not a prediction by itself. It is a technical confluence filter to combine with the fractal scanner, market regime, futures and RSI reports.")
+    lines.append("Nota importante: questo report non è una previsione da solo. È un filtro tecnico da leggere insieme a scanner frattale, market regime, futures e RSI.")
     lines.append("")
 
     return "\n".join(lines) + "\n"
@@ -1528,17 +1614,17 @@ def main():
     rows = []
 
     for ticker in TICKERS:
-        print(f"Analyzing {ticker}...")
+        print(f"Analisi tecnica di {ticker}...")
         row = analyze_asset(ticker)
 
         if row is not None:
             rows.append(row)
 
     if not rows:
-        md = "# Technical Structure Report\n\nNo valid data downloaded.\n"
+        md = "# Report struttura tecnica\n\nNessun dato valido scaricato.\n"
         OUTPUT_REPORT.write_text(md, encoding="utf-8")
         inject_into_latest_report(md)
-        print("No valid data downloaded.")
+        print("Nessun dato valido scaricato.")
         return
 
     metrics = pd.DataFrame(rows)
@@ -1548,8 +1634,8 @@ def main():
     OUTPUT_REPORT.write_text(md, encoding="utf-8")
     inject_into_latest_report(md)
 
-    print(f"Wrote {OUTPUT_REPORT}")
-    print(f"Wrote {OUTPUT_METRICS}")
+    print(f"Creato {OUTPUT_REPORT}")
+    print(f"Creato {OUTPUT_METRICS}")
 
 
 if __name__ == "__main__":
