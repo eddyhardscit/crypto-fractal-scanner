@@ -318,9 +318,6 @@ def extract_asset_block(text, asset_name):
     possible_stops = []
 
     for other in ["# Bitcoin", "# Solana", "# Dogecoin", "# Come leggere correttamente"]:
-        if other == heading:
-            continue
-
         pos = rest.find("\n" + other, len(heading))
 
         if pos != -1:
@@ -407,11 +404,13 @@ def parse_return_percentiles(block):
             "price": np.nan,
         }
 
+    # Formato dettagliato:
+    # Percentile 10%: -12,81% → 54.134,13 $
     for line in section.splitlines():
         clean = clean_text(line)
 
         m = re.search(
-            rf"Percentile\s+([0-9]+)%\s*:\s*([+\-]?[0-9]+(?:[.,][0-9]+)?)\s*%\s*→\s*{NUMBER_PATTERN}\s*\$",
+            rf"Percentile\s+([0-9]+)%\s*:\s*([+\-]?[0-9]+(?:[.,][0-9]+)?)\s*%.*?{NUMBER_PATTERN}\s*\$",
             clean,
             flags=re.IGNORECASE,
         )
@@ -428,6 +427,59 @@ def parse_return_percentiles(block):
             "return_pct": parse_pct(m.group(2)),
             "price": parse_number(m.group(3)),
         }
+
+    # Formato mappa semplice:
+    # Se va molto male: 54.134,13 $ (-12,81%)
+    # Se va male: 60.493,40 $ (-2,57%)
+    # Scenario normale: 64.188,68 $ (3,39%)
+    # Se va bene: 74.215,01 $ (19,54%)
+    # Se va molto bene: 89.248,60 $ (43,75%)
+    label_to_percentile = {
+        "se va molto male": 10,
+        "se va male": 25,
+        "scenario normale": 50,
+        "se va bene": 75,
+        "se va molto bene": 90,
+    }
+
+    ordered_labels = [
+        "se va molto male",
+        "se va molto bene",
+        "se va male",
+        "se va bene",
+        "scenario normale",
+    ]
+
+    for line in section.splitlines():
+        clean = clean_text(line)
+        low = clean.lower()
+
+        matched_label = None
+
+        for label in ordered_labels:
+            if label in low:
+                matched_label = label
+                break
+
+        if matched_label is None:
+            continue
+
+        p = label_to_percentile[matched_label]
+        price = first_price(clean)
+
+        pct = np.nan
+        pct_match = re.search(r"$begin:math:text$\(\[\+\\\-\]\?\[0\-9\]\+\(\?\:\[\.\,\]\[0\-9\]\+\)\?\)\\s\*\%$end:math:text$", clean)
+
+        if pct_match:
+            pct = parse_pct(pct_match.group(1))
+        else:
+            pct = first_pct(clean)
+
+        if not pd.isna(price):
+            out[p] = {
+                "return_pct": pct,
+                "price": price,
+            }
 
     return out
 
@@ -700,6 +752,9 @@ def plot_asset_chart(log_df, asset):
 
     for col in ["p10", "p25", "p50", "p75", "p90"]:
         latest[col] = pd.to_numeric(latest[col], errors="coerce")
+
+    if latest[["p10", "p25", "p50", "p75", "p90"]].isna().all().all():
+        return
 
     actual = download_prices(
         cfg["ticker"],
