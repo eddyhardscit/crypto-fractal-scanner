@@ -61,6 +61,9 @@ jobs:
       - name: Run global confluence report
         run: python global_confluence_report.py
 
+      - name: Run module signal tracker
+        run: python module_signal_tracker.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions"
