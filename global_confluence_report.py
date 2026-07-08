@@ -15,6 +15,9 @@ OUTPUT_METRICS = REPORTS_DIR / "global_confluence_metrics.csv"
 TECHNICAL_METRICS = REPORTS_DIR / "technical_structure_metrics.csv"
 MARKET_REGIME_SUMMARY = REPORTS_DIR / "market_regime_match_summary.csv"
 
+SCANNER_PATH_METRICS = REPORTS_DIR / "scanner_forecast_path_accuracy_metrics.csv"
+FRACTAL_PATH_METRICS = REPORTS_DIR / "fractal_path_accuracy_metrics.csv"
+
 START_MARKER = "<!-- GLOBAL_CONFLUENCE_START -->"
 END_MARKER = "<!-- GLOBAL_CONFLUENCE_END -->"
 
@@ -70,8 +73,11 @@ def it_label(value):
     if value is None:
         return "n/a"
 
-    if isinstance(value, float) and pd.isna(value):
-        return "n/a"
+    try:
+        if pd.isna(value):
+            return "n/a"
+    except Exception:
+        pass
 
     s = str(value).strip()
 
@@ -219,6 +225,16 @@ def read_text(path):
         return ""
 
 
+def load_csv(path):
+    if not path.exists():
+        return pd.DataFrame()
+
+    try:
+        return pd.read_csv(path)
+    except Exception:
+        return pd.DataFrame()
+
+
 def clean_markdown_text(value):
     if value is None:
         return ""
@@ -339,12 +355,9 @@ def extract_asset_block(text, asset):
 
 
 def load_technical_metrics():
-    if not TECHNICAL_METRICS.exists():
-        return {}
+    df = load_csv(TECHNICAL_METRICS)
 
-    try:
-        df = pd.read_csv(TECHNICAL_METRICS)
-    except Exception:
+    if df.empty:
         return {}
 
     out = {}
@@ -359,27 +372,16 @@ def load_technical_metrics():
     return out
 
 
-def load_market_regime_summary():
-    if not MARKET_REGIME_SUMMARY.exists():
-        return pd.DataFrame()
-
-    try:
-        return pd.read_csv(MARKET_REGIME_SUMMARY)
-    except Exception:
-        return pd.DataFrame()
-
-
 def get_market_row(asset, market_df):
     if market_df is None or market_df.empty:
         return None
 
     target = f"{asset}-USD"
 
-    df = market_df.copy()
-
-    if "target" not in df.columns or "group" not in df.columns:
+    if "target" not in market_df.columns or "group" not in market_df.columns:
         return None
 
+    df = market_df.copy()
     df["target"] = df["target"].astype(str)
     df["group"] = df["group"].astype(str)
 
@@ -433,7 +435,7 @@ def extract_positive_negative_and_return(block):
 
     if pd.isna(return_30d):
         m = re.search(
-            r"Return normale fra 30 giorni:.*?\(([+\-0-9,.]+)\s*%\)",
+            r"Return normale fra 30 giorni:.*?$begin:math:text$\(\[\+\\\-0\-9\,\.\]\+\)\\s\*\%$end:math:text$",
             block,
             flags=re.IGNORECASE | re.DOTALL,
         )
@@ -443,7 +445,7 @@ def extract_positive_negative_and_return(block):
 
     if pd.isna(return_30d):
         m = re.search(
-            r"##\s*1\.\s*Return 30d.*?Scenario normale:.*?\(([+\-0-9,.]+)\s*%\)",
+            r"##\s*1\.\s*Return 30d.*?Scenario normale:.*?$begin:math:text$\(\[\+\\\-0\-9\,\.\]\+\)\\s\*\%$end:math:text$",
             block,
             flags=re.IGNORECASE | re.DOTALL,
         )
@@ -948,6 +950,182 @@ def component_daily_change(asset, latest_text):
     }
 
 
+def get_best_metric_row(df, asset, horizon_col):
+    if df is None or df.empty:
+        return None
+
+    if "asset" not in df.columns:
+        return None
+
+    d = df[df["asset"].astype(str).str.upper() == asset.upper()].copy()
+
+    if d.empty:
+        return None
+
+    if "checked_predictions" not in d.columns:
+        return None
+
+    d["checked_predictions_num"] = pd.to_numeric(d["checked_predictions"], errors="coerce").fillna(0)
+
+    d = d.sort_values("checked_predictions_num", ascending=False)
+
+    if d.empty:
+        return None
+
+    return d.iloc[0].to_dict()
+
+
+def score_accuracy_component(n, wide_rate, mid_rate, avg_abs_error, mode="scanner"):
+    n = safe_float(n)
+    wide_rate = safe_float(wide_rate)
+    mid_rate = safe_float(mid_rate)
+    avg_abs_error = safe_float(avg_abs_error)
+
+    if pd.isna(n) or n < 5:
+        return 0, "RACCOLTA DATI"
+
+    if n < 30:
+        if not pd.isna(wide_rate) and not pd.isna(avg_abs_error):
+            if wide_rate >= 75 and avg_abs_error <= 12:
+                return 1, "CONFERMA LEGGERA"
+            if wide_rate < 45 or avg_abs_error > 25:
+                return -1, "ALLARME LEGGERO"
+
+        return 0, "RACCOLTA DATI AVANZATA"
+
+    if not pd.isna(wide_rate) and not pd.isna(mid_rate) and not pd.isna(avg_abs_error):
+        if wide_rate >= 80 and mid_rate >= 50 and avg_abs_error <= 10:
+            return 2, "CONFERMA FORTE"
+        if wide_rate >= 65 and avg_abs_error <= 16:
+            return 1, "CONFERMA MODERATA"
+        if wide_rate < 35 or avg_abs_error > 30:
+            return -2, "ALLARME FORTE"
+        if wide_rate < 50 or avg_abs_error > 22:
+            return -1, "ALLARME MODERATO"
+
+    return 0, "NEUTRALE"
+
+
+def component_scanner_path(asset):
+    df = load_csv(SCANNER_PATH_METRICS)
+
+    if df.empty:
+        return {
+            "score": 0,
+            "summary": "Scanner path non ancora disponibile.",
+            "status": "NON DISPONIBILE",
+            "checked_predictions": 0,
+        }
+
+    row = get_best_metric_row(df, asset, "day_index")
+
+    if row is None:
+        return {
+            "score": 0,
+            "summary": "Scanner path non ancora disponibile per questo asset.",
+            "status": "NON DISPONIBILE",
+            "checked_predictions": 0,
+        }
+
+    n = safe_float(row.get("checked_predictions", 0))
+    day = safe_float(row.get("day_index", np.nan))
+    wide = safe_float(row.get("inside_p10_p90_rate", np.nan))
+    mid = safe_float(row.get("inside_p25_p75_rate", np.nan))
+    err = safe_float(row.get("avg_abs_error_vs_p50", np.nan))
+
+    score, status = score_accuracy_component(n, wide, mid, err, mode="scanner")
+
+    if n < 5:
+        summary = (
+            f"Raccolta dati. Controlli disponibili {int(n) if not pd.isna(n) else 0}. "
+            f"Servono almeno 5 controlli prima di pesare il cono previsionale."
+        )
+    else:
+        summary = (
+            f"Stato {status}, orizzonte migliore {int(day) if not pd.isna(day) else 'n/a'}g, "
+            f"controlli {int(n)}, dentro p10-p90 {fmt_pct(wide)}, "
+            f"dentro p25-p75 {fmt_pct(mid)}, errore medio abs vs p50 {fmt_pct(err)}."
+        )
+
+    return {
+        "score": score,
+        "summary": summary,
+        "status": status,
+        "checked_predictions": n,
+        "day_index": day,
+        "inside_p10_p90_rate": wide,
+        "inside_p25_p75_rate": mid,
+        "avg_abs_error_vs_p50": err,
+    }
+
+
+def component_fractal_path(asset):
+    if asset != "SOL":
+        return {
+            "score": 0,
+            "summary": "Non applicabile a questo asset.",
+            "status": "NON APPLICABILE",
+            "checked_predictions": 0,
+        }
+
+    df = load_csv(FRACTAL_PATH_METRICS)
+
+    if df.empty:
+        return {
+            "score": 0,
+            "summary": "Fractal path non ancora disponibile.",
+            "status": "NON DISPONIBILE",
+            "checked_predictions": 0,
+        }
+
+    row = get_best_metric_row(df, "SOL", "horizon_days")
+
+    if row is None:
+        return {
+            "score": 0,
+            "summary": "Fractal path non ancora disponibile per SOL.",
+            "status": "NON DISPONIBILE",
+            "checked_predictions": 0,
+        }
+
+    n = safe_float(row.get("checked_predictions", 0))
+    horizon = safe_float(row.get("horizon_days", np.nan))
+    inside = safe_float(row.get("inside_band_rate", np.nan))
+    err = safe_float(row.get("avg_abs_error_pct", np.nan))
+    avg_error = safe_float(row.get("avg_error_pct", np.nan))
+
+    score, status = score_accuracy_component(
+        n=n,
+        wide_rate=inside,
+        mid_rate=inside,
+        avg_abs_error=err,
+        mode="fractal",
+    )
+
+    if n < 5:
+        summary = (
+            f"Raccolta dati. Controlli disponibili {int(n) if not pd.isna(n) else 0}. "
+            f"Servono almeno 5 controlli prima di pesare il percorso frattale."
+        )
+    else:
+        summary = (
+            f"Stato {status}, orizzonte migliore {int(horizon) if not pd.isna(horizon) else 'n/a'}g, "
+            f"controlli {int(n)}, dentro banda {fmt_pct(inside)}, "
+            f"errore medio abs {fmt_pct(err)}, errore medio {fmt_pct(avg_error)}."
+        )
+
+    return {
+        "score": score,
+        "summary": summary,
+        "status": status,
+        "checked_predictions": n,
+        "horizon_days": horizon,
+        "inside_band_rate": inside,
+        "avg_abs_error_pct": err,
+        "avg_error_pct": avg_error,
+    }
+
+
 def get_technical_level(asset, technical, field):
     row = technical.get(asset)
 
@@ -1099,7 +1277,8 @@ def plain_interpretation(asset, score):
         if score >= 3:
             return (
                 "SOL ha una confluenza costruttiva, ma va ancora trattato come setup anticipato. "
-                "La conferma vera arriva solo sopra le resistenze tecniche e frattali."
+                "La conferma vera arriva solo sopra le resistenze tecniche e frattali. "
+                "Il nuovo tracking del percorso frattale servirà a capire se sta davvero seguendo BTC 2022."
             )
 
         if score >= 0:
@@ -1125,7 +1304,7 @@ def plain_interpretation(asset, score):
 def build_global_confluence():
     latest_text = read_text(LATEST_REPORT)
     technical = load_technical_metrics()
-    market_df = load_market_regime_summary()
+    market_df = load_csv(MARKET_REGIME_SUMMARY)
 
     sol_fractal_data = parse_sol_fractal(latest_text)
 
@@ -1134,18 +1313,22 @@ def build_global_confluence():
 
     for asset in ASSETS:
         scanner = component_scanner(asset, latest_text)
+        scanner_path = component_scanner_path(asset)
         market = component_market_regime(asset, market_df)
         technical_component = component_technical(asset, technical)
         fractal = component_fractal(asset, latest_text)
+        fractal_path = component_fractal_path(asset)
         rsi_top = component_rsi_top_cycle(asset, latest_text)
         futures = component_futures(asset, latest_text)
         daily = component_daily_change(asset, latest_text)
 
         component_scores = [
             scanner["score"],
+            scanner_path["score"],
             market["score"],
             technical_component["score"],
             fractal["score"],
+            fractal_path["score"],
             rsi_top["score"],
             futures["score"],
             daily["score"],
@@ -1164,9 +1347,11 @@ def build_global_confluence():
             "action": action_label(asset, total_score),
 
             "scanner_score": scanner["score"],
+            "scanner_path_score": scanner_path["score"],
             "market_regime_score": market["score"],
             "technical_score_component": technical_component["score"],
             "fractal_score": fractal["score"],
+            "fractal_path_score": fractal_path["score"],
             "rsi_top_cycle_score": rsi_top["score"],
             "futures_score": futures["score"],
             "daily_change_score": daily["score"],
@@ -1179,9 +1364,11 @@ def build_global_confluence():
 
         details[asset] = {
             "scanner": scanner,
+            "scanner_path": scanner_path,
             "market": market,
             "technical": technical_component,
             "fractal": fractal,
+            "fractal_path": fractal_path,
             "rsi_top": rsi_top,
             "futures": futures,
             "daily": daily,
@@ -1208,9 +1395,11 @@ def render_report(metrics, details):
     lines.append("Moduli letti:")
     lines.append("")
     lines.append("- Scanner frattale/statistico a 30 giorni")
+    lines.append("- Scanner path / cono previsionale")
     lines.append("- Market regime match")
     lines.append("- Struttura tecnica classica")
     lines.append("- Frattale BTC 2022 vs SOL 2026, solo per SOL")
+    lines.append("- Fractal path tracker, solo per SOL")
     lines.append("- RSI top-cycle, soprattutto per SOL")
     lines.append("- Futures / liquidazioni")
     lines.append("- Cambiamento giornaliero")
@@ -1245,9 +1434,11 @@ def render_report(metrics, details):
         module_rows.append({
             "Asset": r["asset"],
             "Scanner": fmt_score(r["scanner_score"]),
+            "Scanner path": fmt_score(r["scanner_path_score"]),
             "Market regime": fmt_score(r["market_regime_score"]),
             "Tecnico": fmt_score(r["technical_score_component"]),
             "Frattale SOL": fmt_score(r["fractal_score"]),
+            "Fractal path": fmt_score(r["fractal_path_score"]),
             "RSI top-cycle": fmt_score(r["rsi_top_cycle_score"]),
             "Futures": fmt_score(r["futures_score"]),
             "Daily change": fmt_score(r["daily_change_score"]),
@@ -1278,9 +1469,11 @@ def render_report(metrics, details):
         lines.append("Dettaglio moduli:")
         lines.append("")
         lines.append(f"- Scanner 30g: **{fmt_score(d['scanner']['score'])}** — {d['scanner']['summary']}")
+        lines.append(f"- Scanner path / cono: **{fmt_score(d['scanner_path']['score'])}** — {d['scanner_path']['summary']}")
         lines.append(f"- Market regime: **{fmt_score(d['market']['score'])}** — {d['market']['summary']}")
         lines.append(f"- Tecnico: **{fmt_score(d['technical']['score'])}** — {d['technical']['summary']}")
         lines.append(f"- Frattale SOL/BTC: **{fmt_score(d['fractal']['score'])}** — {d['fractal']['summary']}")
+        lines.append(f"- Fractal path tracker: **{fmt_score(d['fractal_path']['score'])}** — {d['fractal_path']['summary']}")
         lines.append(f"- RSI top-cycle: **{fmt_score(d['rsi_top']['score'])}** — {d['rsi_top']['summary']}")
         lines.append(f"- Futures/liquidazioni: **{fmt_score(d['futures']['score'])}** — {d['futures']['summary']}")
         lines.append(f"- Cambiamento giornaliero: **{fmt_score(d['daily']['score'])}** — {d['daily']['summary']}")
@@ -1298,7 +1491,8 @@ def render_report(metrics, details):
     lines.append("- Da -1 a -3: confluenza debole o fragile.")
     lines.append("- -4 o meno: confluenza negativa.")
     lines.append("")
-    lines.append("Nota: questo report non sostituisce i singoli report. Serve a capire se i segnali si aiutano tra loro o se sono in conflitto.")
+    lines.append("Nota: Scanner path e Fractal path sono già integrati, ma finché hanno pochi controlli restano quasi sempre a punteggio 0.")
+    lines.append("Servono almeno 5 controlli prima di influire leggermente, e 30+ controlli prima di pesare davvero.")
     lines.append("")
 
     return "\n".join(lines) + "\n"
