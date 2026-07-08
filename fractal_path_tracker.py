@@ -21,12 +21,15 @@ OUTPUT_REPORT = REPORTS_DIR / "fractal_path_accuracy_report.md"
 
 TRACKING_CHART = REPORTS_DIR / "btc_2022_vs_sol_2026_path_tracking_chart.png"
 ERROR_CHART = REPORTS_DIR / "btc_2022_vs_sol_2026_path_error_chart.png"
+BOTTOM_BACKTEST_CHART = REPORTS_DIR / "btc_2022_vs_sol_2026_bottom_backtest_chart.png"
+BOTTOM_BACKTEST_CSV = REPORTS_DIR / "btc_2022_vs_sol_2026_bottom_backtest.csv"
 
 START_MARKER = "<!-- FRACTAL_PATH_TRACKER_START -->"
 END_MARKER = "<!-- FRACTAL_PATH_TRACKER_END -->"
 
 ASSET = "SOL"
-TICKER = "SOL-USD"
+SOL_TICKER = "SOL-USD"
+BTC_TICKER = "BTC-USD"
 SOURCE = "BTC_2022_vs_SOL_2026"
 HORIZONS = [7, 14, 30, 60, 90, 120]
 
@@ -125,9 +128,7 @@ def parse_italian_date(value):
     for it_month, en_month in ITALIAN_MONTHS.items():
         s = re.sub(rf"\b{it_month}\b", en_month, s, flags=re.IGNORECASE)
 
-    dt = pd.to_datetime(s, errors="coerce", dayfirst=True)
-
-    return dt
+    return pd.to_datetime(s, errors="coerce", dayfirst=True)
 
 
 def fmt_pct(x):
@@ -353,10 +354,10 @@ def normalize_ohlcv(df):
     return out
 
 
-def download_prices(start=None):
+def download_prices(ticker, start=None):
     try:
         kwargs = {
-            "tickers": TICKER,
+            "tickers": ticker,
             "interval": "1d",
             "progress": False,
             "auto_adjust": False,
@@ -374,12 +375,12 @@ def download_prices(start=None):
         return normalize_ohlcv(raw)
 
     except Exception as e:
-        print(f"Download prezzi fallito: {e}")
+        print(f"Download prezzi fallito per {ticker}: {e}")
         return pd.DataFrame()
 
 
 def current_price_from_market():
-    df = download_prices(start="2020-01-01")
+    df = download_prices(SOL_TICKER, start="2020-01-01")
 
     if df.empty:
         return np.nan
@@ -400,6 +401,74 @@ def actual_price_on_or_after(df, date):
     return safe_float(d.iloc[0]["Close"])
 
 
+def infer_program_start_date():
+    candidates = []
+
+    known_logs = [
+        REPORTS_DIR / "fractal_path_forecasts.csv",
+        REPORTS_DIR / "module_signal_log.csv",
+        REPORTS_DIR / "scanner_forecast_path_log.csv",
+        REPORTS_DIR / "prediction_log.csv",
+        REPORTS_DIR / "predictions_log.csv",
+        REPORTS_DIR / "forecast_log.csv",
+        REPORTS_DIR / "forecast_history.csv",
+        REPORTS_DIR / "scanner_prediction_log.csv",
+        REPORTS_DIR / "scanner_predictions.csv",
+        REPORTS_DIR / "scanner_prediction_history.csv",
+    ]
+
+    date_columns = [
+        "forecast_date",
+        "prediction_date",
+        "date",
+        "created_at",
+        "created_at_utc",
+    ]
+
+    for path in known_logs:
+        if not path.exists():
+            continue
+
+        try:
+            df = pd.read_csv(path)
+        except Exception:
+            continue
+
+        for col in date_columns:
+            if col not in df.columns:
+                continue
+
+            dates = pd.to_datetime(df[col], errors="coerce")
+            dates = dates.dropna()
+
+            if not dates.empty:
+                candidates.append(dates.min().normalize())
+
+    latest_text = read_text(LATEST_REPORT)
+
+    if latest_text:
+        checks = re.findall(r"Prossimo controllo\s*\|\s*([0-9]{4}-[0-9]{2}-[0-9]{2})", latest_text)
+
+        for c in checks:
+            dt = pd.to_datetime(c, errors="coerce")
+
+            if not pd.isna(dt):
+                candidates.append((dt - pd.Timedelta(days=30)).normalize())
+
+        checks2 = re.findall(r"Prossimo controllo[^0-9]*([0-9]{4}-[0-9]{2}-[0-9]{2})", latest_text)
+
+        for c in checks2:
+            dt = pd.to_datetime(c, errors="coerce")
+
+            if not pd.isna(dt):
+                candidates.append((dt - pd.Timedelta(days=30)).normalize())
+
+    if not candidates:
+        return pd.NaT
+
+    return min(candidates)
+
+
 def infer_bottom_date(meta):
     last_dt = pd.to_datetime(meta.get("last_candle_date", pd.NaT), errors="coerce")
     day_from_bottom = safe_float(meta.get("day_from_bottom", np.nan))
@@ -408,6 +477,16 @@ def infer_bottom_date(meta):
         return pd.to_datetime(meta["forecast_date"])
 
     return (last_dt.normalize() - pd.Timedelta(days=int(day_from_bottom))).normalize()
+
+
+def infer_btc_bottom_date(meta):
+    btc_equiv = pd.to_datetime(meta.get("btc_equivalent_date", pd.NaT), errors="coerce")
+    day_from_bottom = safe_float(meta.get("day_from_bottom", np.nan))
+
+    if pd.isna(btc_equiv) or pd.isna(day_from_bottom):
+        return pd.to_datetime("2022-11-21")
+
+    return (btc_equiv.normalize() - pd.Timedelta(days=int(day_from_bottom))).normalize()
 
 
 def parse_fractal_forecast():
@@ -420,7 +499,7 @@ def parse_fractal_forecast():
         "forecast_date": today_str(),
         "created_at_utc": utc_now().strftime("%Y-%m-%d %H:%M:%S UTC"),
         "asset": ASSET,
-        "ticker": TICKER,
+        "ticker": SOL_TICKER,
         "source": SOURCE,
         "verdict": "",
         "similarity": np.nan,
@@ -430,8 +509,12 @@ def parse_fractal_forecast():
         "start_price": np.nan,
         "last_candle_date": pd.NaT,
         "day_from_bottom": np.nan,
-        "bottom_date": pd.NaT,
-        "bottom_price": np.nan,
+        "sol_bottom_date": pd.NaT,
+        "btc_equivalent_date": pd.NaT,
+        "btc_bottom_date": pd.NaT,
+        "program_start_date": pd.NaT,
+        "sol_bottom_price": np.nan,
+        "btc_bottom_price": np.nan,
         "first_confirmation": np.nan,
         "second_confirmation": np.nan,
         "soft_invalidation": np.nan,
@@ -448,6 +531,12 @@ def parse_fractal_forecast():
 
     if day_line:
         meta["day_from_bottom"] = first_int(day_line)
+
+    btc_equiv_value = line_value(section, "Giorno BTC equivalente")
+    btc_equiv_dt = pd.to_datetime(btc_equiv_value, errors="coerce")
+
+    if not pd.isna(btc_equiv_dt):
+        meta["btc_equivalent_date"] = btc_equiv_dt.strftime("%Y-%m-%d")
 
     verdict_match = re.search(r"##\s*Verdetto:\s*([^\n]+)", section, flags=re.IGNORECASE)
 
@@ -482,18 +571,32 @@ def parse_fractal_forecast():
     meta["soft_invalidation"] = price_for_label("Invalidazione soft")
     meta["strong_invalidation"] = price_for_label("Invalidazione forte")
 
-    bottom_dt = infer_bottom_date(meta)
-    meta["bottom_date"] = bottom_dt.strftime("%Y-%m-%d")
+    sol_bottom_dt = infer_bottom_date(meta)
+    btc_bottom_dt = infer_btc_bottom_date(meta)
+    program_start_dt = infer_program_start_date()
 
-    prices_for_bottom = download_prices(
-        start=(bottom_dt - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
+    if pd.isna(program_start_dt):
+        program_start_dt = pd.to_datetime(meta["forecast_date"])
+
+    meta["sol_bottom_date"] = sol_bottom_dt.strftime("%Y-%m-%d")
+    meta["btc_bottom_date"] = btc_bottom_dt.strftime("%Y-%m-%d")
+    meta["program_start_date"] = program_start_dt.strftime("%Y-%m-%d")
+
+    sol_prices = download_prices(
+        SOL_TICKER,
+        start=(sol_bottom_dt - pd.Timedelta(days=3)).strftime("%Y-%m-%d"),
     )
 
-    if not prices_for_bottom.empty:
-        bottom_slice = prices_for_bottom[prices_for_bottom.index >= bottom_dt]
+    btc_prices = download_prices(
+        BTC_TICKER,
+        start=(btc_bottom_dt - pd.Timedelta(days=3)).strftime("%Y-%m-%d"),
+    )
 
-        if not bottom_slice.empty:
-            meta["bottom_price"] = safe_float(bottom_slice.iloc[0]["Close"])
+    if not sol_prices.empty:
+        meta["sol_bottom_price"] = actual_price_on_or_after(sol_prices, sol_bottom_dt)
+
+    if not btc_prices.empty:
+        meta["btc_bottom_price"] = actual_price_on_or_after(btc_prices, btc_bottom_dt)
 
     proj = parse_markdown_table_after_heading(section, "Proiezione veloce con date SOL")
 
@@ -590,7 +693,7 @@ def update_forecast_checks(log_df):
         min_date = today - pd.Timedelta(days=10)
 
     dl_start = (min_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
-    prices = download_prices(start=dl_start)
+    prices = download_prices(SOL_TICKER, start=dl_start)
 
     for idx, row in log_df.iterrows():
         checked = safe_float(row.get("checked", 0.0))
@@ -713,12 +816,11 @@ def build_projection_points(latest):
         return pd.DataFrame()
 
     first = latest.iloc[0]
-    today_dt = pd.to_datetime(first["forecast_date"])
-
+    forecast_dt = pd.to_datetime(first["forecast_date"])
     start_price = safe_float(first.get("start_price", np.nan))
 
     points = [{
-        "date": today_dt,
+        "date": forecast_dt,
         "base": start_price,
         "min": start_price,
         "max": start_price,
@@ -739,7 +841,164 @@ def build_projection_points(latest):
     return p
 
 
-def plot_tracking_chart(log_df):
+def build_btc_scaled_path(first, end_date):
+    sol_bottom_date = pd.to_datetime(first.get("sol_bottom_date", pd.NaT), errors="coerce")
+    btc_bottom_date = pd.to_datetime(first.get("btc_bottom_date", pd.NaT), errors="coerce")
+    sol_bottom_price = safe_float(first.get("sol_bottom_price", np.nan))
+    btc_bottom_price = safe_float(first.get("btc_bottom_price", np.nan))
+
+    if pd.isna(sol_bottom_date) or pd.isna(btc_bottom_date):
+        return pd.DataFrame()
+
+    if pd.isna(sol_bottom_price) or pd.isna(btc_bottom_price) or btc_bottom_price == 0:
+        return pd.DataFrame()
+
+    max_days = int((pd.to_datetime(end_date).normalize() - sol_bottom_date.normalize()).days)
+
+    if max_days < 0:
+        return pd.DataFrame()
+
+    btc_prices = download_prices(
+        BTC_TICKER,
+        start=(btc_bottom_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d"),
+    )
+
+    rows = []
+
+    for day in range(max_days + 1):
+        btc_date = btc_bottom_date + pd.Timedelta(days=day)
+        sol_mapped_date = sol_bottom_date + pd.Timedelta(days=day)
+        btc_price = actual_price_on_or_after(btc_prices, btc_date)
+
+        if pd.isna(btc_price):
+            continue
+
+        btc_scaled = sol_bottom_price * (btc_price / btc_bottom_price)
+
+        rows.append({
+            "day_from_bottom": day,
+            "sol_mapped_date": sol_mapped_date,
+            "btc_date": btc_date,
+            "btc_price": btc_price,
+            "btc_scaled_to_sol": btc_scaled,
+        })
+
+    return pd.DataFrame(rows)
+
+
+def build_bottom_backtest(first):
+    sol_bottom_date = pd.to_datetime(first.get("sol_bottom_date", pd.NaT), errors="coerce")
+    btc_bottom_date = pd.to_datetime(first.get("btc_bottom_date", pd.NaT), errors="coerce")
+    forecast_date = pd.to_datetime(first.get("forecast_date", today_str()), errors="coerce")
+    program_start_date = pd.to_datetime(first.get("program_start_date", pd.NaT), errors="coerce")
+
+    sol_bottom_price = safe_float(first.get("sol_bottom_price", np.nan))
+    btc_bottom_price = safe_float(first.get("btc_bottom_price", np.nan))
+
+    if pd.isna(sol_bottom_date) or pd.isna(btc_bottom_date):
+        return pd.DataFrame(), {}
+
+    if pd.isna(sol_bottom_price) or pd.isna(btc_bottom_price) or btc_bottom_price == 0:
+        return pd.DataFrame(), {}
+
+    max_day = int((forecast_date.normalize() - sol_bottom_date.normalize()).days)
+
+    if max_day < 0:
+        return pd.DataFrame(), {}
+
+    sol_prices = download_prices(
+        SOL_TICKER,
+        start=(sol_bottom_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d"),
+    )
+
+    btc_prices = download_prices(
+        BTC_TICKER,
+        start=(btc_bottom_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d"),
+    )
+
+    rows = []
+
+    for day in range(max_day + 1):
+        sol_date = sol_bottom_date + pd.Timedelta(days=day)
+        btc_date = btc_bottom_date + pd.Timedelta(days=day)
+
+        sol_price = actual_price_on_or_after(sol_prices, sol_date)
+        btc_price = actual_price_on_or_after(btc_prices, btc_date)
+
+        if pd.isna(sol_price) or pd.isna(btc_price):
+            continue
+
+        btc_scaled = sol_bottom_price * (btc_price / btc_bottom_price)
+        error_pct = np.nan
+
+        if btc_scaled != 0:
+            error_pct = (sol_price / btc_scaled - 1) * 100
+
+        phase = "prima programma"
+
+        if not pd.isna(program_start_date) and sol_date.normalize() >= program_start_date.normalize():
+            phase = "da inizio programma"
+
+        rows.append({
+            "day_from_bottom": day,
+            "sol_date": sol_date.strftime("%Y-%m-%d"),
+            "btc_equivalent_date": btc_date.strftime("%Y-%m-%d"),
+            "sol_price": sol_price,
+            "btc_price": btc_price,
+            "btc_scaled_to_sol": btc_scaled,
+            "error_pct": error_pct,
+            "phase": phase,
+        })
+
+    backtest = pd.DataFrame(rows)
+
+    if backtest.empty:
+        return backtest, {}
+
+    errors = pd.to_numeric(backtest["error_pct"], errors="coerce").dropna()
+
+    last_row = backtest.iloc[-1]
+    last_error = safe_float(last_row.get("error_pct", np.nan))
+
+    last7 = backtest.tail(7)
+    last7_errors = pd.to_numeric(last7["error_pct"], errors="coerce").dropna()
+
+    if not pd.isna(program_start_date):
+        from_program = backtest[pd.to_datetime(backtest["sol_date"]) >= program_start_date.normalize()]
+    else:
+        from_program = pd.DataFrame()
+
+    program_errors = pd.to_numeric(from_program["error_pct"], errors="coerce").dropna() if not from_program.empty else pd.Series(dtype=float)
+
+    avg_abs_error = errors.abs().mean() if len(errors) else np.nan
+    last7_abs_error = last7_errors.abs().mean() if len(last7_errors) else np.nan
+    program_abs_error = program_errors.abs().mean() if len(program_errors) else np.nan
+
+    if pd.isna(last_error):
+        status = "n/a"
+    elif abs(last_error) <= 8:
+        status = "IN LINEA"
+    elif abs(last_error) <= 15:
+        status = "DEVIAZIONE MODERATA"
+    elif last_error > 15:
+        status = "SOL IN ANTICIPO / SOPRA IL FRACTAL"
+    else:
+        status = "SOL IN RITARDO / SOTTO IL FRACTAL"
+
+    summary = {
+        "days_checked": len(backtest),
+        "avg_abs_error_pct": avg_abs_error,
+        "last_error_pct": last_error,
+        "last7_abs_error_pct": last7_abs_error,
+        "program_abs_error_pct": program_abs_error,
+        "status": status,
+        "program_days_checked": len(from_program),
+    }
+
+    return backtest, summary
+
+
+def plot_tracking_chart(log_df, backtest_df=None):
     latest = latest_forecast(log_df)
 
     if latest.empty:
@@ -748,56 +1007,112 @@ def plot_tracking_chart(log_df):
     first = latest.iloc[0]
 
     forecast_date = pd.to_datetime(first["forecast_date"]).normalize()
-    bottom_date = pd.to_datetime(first.get("bottom_date", first["forecast_date"]), errors="coerce")
+    sol_bottom_date = pd.to_datetime(first.get("sol_bottom_date", first["forecast_date"]), errors="coerce")
+    program_start_date = pd.to_datetime(first.get("program_start_date", pd.NaT), errors="coerce")
 
-    if pd.isna(bottom_date):
-        bottom_date = forecast_date
+    if pd.isna(sol_bottom_date):
+        sol_bottom_date = forecast_date
 
     end_date = pd.to_datetime(latest["target_date"], errors="coerce").max()
 
     if pd.isna(end_date):
         end_date = forecast_date + pd.Timedelta(days=120)
 
-    dl_start = (bottom_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
-    actual = download_prices(start=dl_start)
+    sol_prices = download_prices(
+        SOL_TICKER,
+        start=(sol_bottom_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d"),
+    )
 
-    if not actual.empty:
-        actual = actual[(actual.index >= bottom_date.normalize()) & (actual.index <= end_date.normalize())]
+    if not sol_prices.empty:
+        sol_prices = sol_prices[
+            (sol_prices.index >= sol_bottom_date.normalize()) &
+            (sol_prices.index <= end_date.normalize())
+        ]
 
     projection = build_projection_points(latest)
+    btc_scaled = build_btc_scaled_path(first, end_date)
 
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(13, 7))
 
-    if not actual.empty:
-        actual_past = actual[actual.index <= forecast_date]
-        actual_future = actual[actual.index > forecast_date]
+    if not btc_scaled.empty:
+        plt.plot(
+            btc_scaled["sol_mapped_date"],
+            btc_scaled["btc_scaled_to_sol"],
+            linewidth=2,
+            label="BTC 2022 scalato su SOL",
+        )
 
-        if not actual_past.empty:
-            plt.plot(actual_past.index, actual_past["Close"], marker="o", label="SOL reale dal bottom")
+    if not sol_prices.empty:
+        sol_past = sol_prices[sol_prices.index <= forecast_date]
+        sol_future = sol_prices[sol_prices.index > forecast_date]
 
-        if not actual_future.empty:
-            plt.plot(actual_future.index, actual_future["Close"], marker="o", label="SOL reale dopo previsione")
+        if not sol_past.empty:
+            plt.plot(sol_past.index, sol_past["Close"], marker="o", label="SOL reale dal bottom")
+
+        if not sol_future.empty:
+            plt.plot(sol_future.index, sol_future["Close"], marker="o", label="SOL reale dopo previsione")
 
     if not projection.empty:
-        plt.plot(projection["date"], projection["base"], marker="o", label="Frattale base")
+        plt.plot(projection["date"], projection["base"], marker="o", label="Proiezione frattale base")
         plt.plot(projection["date"], projection["min"], linestyle="--", label="Percorso minimo")
         plt.plot(projection["date"], projection["max"], linestyle="--", label="Percorso massimo")
 
         if projection["min"].notna().any() and projection["max"].notna().any():
             plt.fill_between(projection["date"], projection["min"], projection["max"], alpha=0.15)
 
-    plt.axvline(forecast_date, linestyle=":", linewidth=1.2, label="Oggi / inizio previsione")
+    if not pd.isna(sol_bottom_date):
+        plt.axvline(sol_bottom_date, linestyle=":", linewidth=1.2, label="Bottom SOL usato")
 
-    if not pd.isna(bottom_date):
-        plt.axvline(bottom_date, linestyle=":", linewidth=1.2, label="Bottom SOL usato")
+    if not pd.isna(program_start_date):
+        plt.axvline(program_start_date, linestyle="-.", linewidth=1.2, label="Inizio programma/scanner")
 
-    plt.title("SOL dal bottom vs percorso frattale BTC 2022")
-    plt.xlabel("Data")
+    plt.axvline(forecast_date, linestyle=":", linewidth=1.2, label="Oggi / inizio nuova previsione")
+
+    plt.title("BTC 2022 scalato vs SOL reale dal bottom + proiezione futura")
+    plt.xlabel("Data SOL")
     plt.ylabel("Prezzo SOL")
     plt.legend()
     plt.grid(True, alpha=0.25)
     plt.tight_layout()
     plt.savefig(TRACKING_CHART, dpi=160)
+    plt.close()
+
+
+def plot_bottom_backtest_chart(backtest_df, first):
+    if backtest_df is None or backtest_df.empty:
+        return
+
+    df = backtest_df.copy()
+    df["sol_date_dt"] = pd.to_datetime(df["sol_date"], errors="coerce")
+    df = df.dropna(subset=["sol_date_dt"])
+
+    if df.empty:
+        return
+
+    forecast_date = pd.to_datetime(first.get("forecast_date", today_str()), errors="coerce")
+    program_start_date = pd.to_datetime(first.get("program_start_date", pd.NaT), errors="coerce")
+    sol_bottom_date = pd.to_datetime(first.get("sol_bottom_date", pd.NaT), errors="coerce")
+
+    plt.figure(figsize=(13, 6))
+    plt.plot(df["sol_date_dt"], df["sol_price"], marker="o", label="SOL reale")
+    plt.plot(df["sol_date_dt"], df["btc_scaled_to_sol"], linewidth=2, label="BTC 2022 scalato su SOL")
+
+    if not pd.isna(sol_bottom_date):
+        plt.axvline(sol_bottom_date, linestyle=":", linewidth=1.2, label="Bottom SOL")
+
+    if not pd.isna(program_start_date):
+        plt.axvline(program_start_date, linestyle="-.", linewidth=1.2, label="Inizio programma/scanner")
+
+    if not pd.isna(forecast_date):
+        plt.axvline(forecast_date, linestyle=":", linewidth=1.2, label="Oggi")
+
+    plt.title("Backtest dal bottom: SOL reale vs BTC 2022 scalato")
+    plt.xlabel("Data SOL")
+    plt.ylabel("Prezzo SOL")
+    plt.legend()
+    plt.grid(True, alpha=0.25)
+    plt.tight_layout()
+    plt.savefig(BOTTOM_BACKTEST_CHART, dpi=160)
     plt.close()
 
 
@@ -841,7 +1156,7 @@ def yes_no_nan(x):
     return "sì" if x >= 1 else "no"
 
 
-def render_report(log_df, metrics):
+def render_report(log_df, metrics, backtest_df, backtest_summary):
     now = utc_now().strftime("%Y-%m-%d %H:%M UTC")
     latest = latest_forecast(log_df)
 
@@ -853,7 +1168,11 @@ def render_report(log_df, metrics):
     lines.append("")
     lines.append("Questo report controlla se SOL sta seguendo il percorso previsto dal frattale BTC 2022 vs SOL 2026.")
     lines.append("")
-    lines.append("A differenza del grafico frattale principale, qui il percorso parte dal bottom SOL usato dal modello e poi continua con la proiezione futura.")
+    lines.append("Ora il controllo è diviso in tre parti:")
+    lines.append("")
+    lines.append("- confronto dal bottom: BTC 2022 scalato contro SOL reale")
+    lines.append("- tratto da inizio programma/scanner: verifica se il tracking recente sta reggendo")
+    lines.append("- proiezione futura: percorso atteso da oggi in avanti")
     lines.append("")
 
     if latest.empty:
@@ -865,7 +1184,9 @@ def render_report(log_df, metrics):
     lines.append("## Stato ultimo frattale salvato")
     lines.append("")
     lines.append(f"- Data previsione: **{first.get('forecast_date', 'n/a')}**")
-    lines.append(f"- Bottom SOL usato: **{first.get('bottom_date', 'n/a')}**")
+    lines.append(f"- Bottom SOL usato: **{first.get('sol_bottom_date', 'n/a')}**")
+    lines.append(f"- Bottom BTC 2022 equivalente: **{first.get('btc_bottom_date', 'n/a')}**")
+    lines.append(f"- Inizio programma/scanner rilevato: **{first.get('program_start_date', 'n/a')}**")
     lines.append(f"- Prezzo iniziale SOL: **{fmt_price(first.get('start_price', np.nan))}**")
     lines.append(f"- Verdetto: **{first.get('verdict', 'n/a')}**")
     lines.append(f"- Somiglianza: **{fmt_pct(first.get('similarity', np.nan))}**")
@@ -874,10 +1195,48 @@ def render_report(log_df, metrics):
     lines.append(f"- Rischio fase: **{first.get('risk', 'n/a')}**")
     lines.append("")
 
+    if backtest_summary:
+        lines.append("## Confronto dal bottom a oggi")
+        lines.append("")
+        lines.append(f"- Giorni controllati dal bottom: **{backtest_summary.get('days_checked', 0)}**")
+        lines.append(f"- Giorni controllati da inizio programma/scanner: **{backtest_summary.get('program_days_checked', 0)}**")
+        lines.append(f"- Errore medio assoluto dal bottom: **{fmt_pct(backtest_summary.get('avg_abs_error_pct', np.nan))}**")
+        lines.append(f"- Errore medio assoluto ultimi 7 giorni: **{fmt_pct(backtest_summary.get('last7_abs_error_pct', np.nan))}**")
+        lines.append(f"- Errore medio assoluto da inizio programma/scanner: **{fmt_pct(backtest_summary.get('program_abs_error_pct', np.nan))}**")
+        lines.append(f"- Errore ultimo giorno: **{fmt_pct(backtest_summary.get('last_error_pct', np.nan))}**")
+        lines.append(f"- Stato: **{backtest_summary.get('status', 'n/a')}**")
+        lines.append("")
+
     if TRACKING_CHART.exists():
-        lines.append("## Grafico percorso previsto vs realtà")
+        lines.append("## Grafico completo: bottom, inizio programma e proiezione")
         lines.append("")
         lines.append(f"![Tracking percorso frattale]({TRACKING_CHART.name})")
+        lines.append("")
+
+    if BOTTOM_BACKTEST_CHART.exists():
+        lines.append("## Grafico backtest dal bottom")
+        lines.append("")
+        lines.append(f"![Backtest dal bottom]({BOTTOM_BACKTEST_CHART.name})")
+        lines.append("")
+
+    if backtest_df is not None and not backtest_df.empty:
+        last_rows = backtest_df.tail(10).copy()
+        table = []
+
+        for _, r in last_rows.iterrows():
+            table.append({
+                "Giorno": int(r["day_from_bottom"]),
+                "Data SOL": r["sol_date"],
+                "Data BTC eq.": r["btc_equivalent_date"],
+                "SOL reale": fmt_price(r["sol_price"]),
+                "BTC scalato": fmt_price(r["btc_scaled_to_sol"]),
+                "Errore": fmt_pct(r["error_pct"]),
+                "Fase": r["phase"],
+            })
+
+        lines.append("## Ultimi giorni del confronto dal bottom")
+        lines.append("")
+        lines.append(df_to_markdown(pd.DataFrame(table)))
         lines.append("")
 
     table_rows = []
@@ -895,12 +1254,12 @@ def render_report(log_df, metrics):
             "Dentro banda": yes_no_nan(r.get("inside_projected_band", np.nan)),
         })
 
-    lines.append("## Ultima proiezione salvata")
+    lines.append("## Proiezione futura salvata")
     lines.append("")
     lines.append(df_to_markdown(pd.DataFrame(table_rows)))
     lines.append("")
 
-    lines.append("## Accuratezza storica del frattale")
+    lines.append("## Accuratezza storica della proiezione futura")
     lines.append("")
 
     if metrics.empty:
@@ -922,19 +1281,20 @@ def render_report(log_df, metrics):
     lines.append("")
 
     if ERROR_CHART.exists():
-        lines.append("## Grafico errore frattale")
+        lines.append("## Grafico errore proiezioni future")
         lines.append("")
         lines.append(f"![Errore frattale]({ERROR_CHART.name})")
         lines.append("")
 
     lines.append("## Come leggerlo")
     lines.append("")
-    lines.append("- La parte prima di oggi mostra SOL reale dal bottom usato dal frattale.")
-    lines.append("- La parte dopo oggi mostra il percorso frattale previsto.")
-    lines.append("- Se SOL resta tra Min percorso e Max percorso, il frattale è ancora coerente.")
-    lines.append("- Se SOL è vicino alla linea Base, il timing del frattale è buono.")
-    lines.append("- Se SOL sale molto prima della Base prevista, il frattale è rialzista ma accelerato.")
-    lines.append("- Se SOL scende sotto la banda e rompe le invalidazioni, il frattale si indebolisce o si rompe.")
+    lines.append("- BTC 2022 scalato su SOL è il percorso che SOL dovrebbe seguire se il frattale resta valido.")
+    lines.append("- SOL reale mostra cosa ha fatto davvero dal bottom.")
+    lines.append("- La linea 'inizio programma/scanner' separa il backtest retroattivo dalla parte che stiamo monitorando davvero giorno per giorno.")
+    lines.append("- Se SOL resta vicino a BTC scalato, il frattale è in linea.")
+    lines.append("- Se SOL sta sopra BTC scalato, il frattale è in anticipo o più forte.")
+    lines.append("- Se SOL sta sotto BTC scalato, il frattale è in ritardo o più debole.")
+    lines.append("- La proiezione futura va letta insieme alle conferme e invalidazioni del report frattale principale.")
     lines.append("")
 
     return "\n".join(lines) + "\n"
@@ -991,10 +1351,23 @@ def main():
     metrics = summarize_accuracy(log_df)
     metrics.to_csv(ACCURACY_METRICS, index=False)
 
-    plot_tracking_chart(log_df)
+    latest = latest_forecast(log_df)
+    first = latest.iloc[0] if not latest.empty else None
+
+    backtest_df = pd.DataFrame()
+    backtest_summary = {}
+
+    if first is not None:
+        backtest_df, backtest_summary = build_bottom_backtest(first)
+
+        if not backtest_df.empty:
+            backtest_df.to_csv(BOTTOM_BACKTEST_CSV, index=False)
+
+    plot_tracking_chart(log_df, backtest_df)
+    plot_bottom_backtest_chart(backtest_df, first) if first is not None else None
     plot_error_chart(log_df)
 
-    md = render_report(log_df, metrics)
+    md = render_report(log_df, metrics, backtest_df, backtest_summary)
 
     OUTPUT_REPORT.write_text(md, encoding="utf-8")
     inject_into_latest_report(md)
@@ -1003,8 +1376,14 @@ def main():
     print(f"Creato {ACCURACY_METRICS}")
     print(f"Creato {OUTPUT_REPORT}")
 
+    if not backtest_df.empty:
+        print(f"Creato {BOTTOM_BACKTEST_CSV}")
+
     if TRACKING_CHART.exists():
         print(f"Creato {TRACKING_CHART}")
+
+    if BOTTOM_BACKTEST_CHART.exists():
+        print(f"Creato {BOTTOM_BACKTEST_CHART}")
 
     if ERROR_CHART.exists():
         print(f"Creato {ERROR_CHART}")
