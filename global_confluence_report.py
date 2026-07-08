@@ -27,6 +27,64 @@ ASSET_NAMES = {
 }
 
 
+LABELS_IT = {
+    "BULLISH_TECNICO": "rialzista tecnico",
+    "COSTRUTTIVO_MA_NON_CONFERMATO": "costruttivo ma non confermato",
+    "NEUTRALE_MISTO": "neutrale / misto",
+    "DEBOLE": "debole",
+    "BEARISH_TECNICO": "ribassista tecnico",
+
+    "BULLISH_TREND": "trend rialzista",
+    "BEARISH_TREND": "trend ribassista",
+    "MIXED_TREND": "trend misto",
+
+    "MOMENTUM_IMPROVING": "momentum in miglioramento",
+    "MOMENTUM_WEAK": "momentum debole",
+    "MOMENTUM_MIXED": "momentum misto",
+
+    "ACCUMULATION_VOLUME": "volume da accumulazione",
+    "DISTRIBUTION_VOLUME": "volume da distribuzione",
+    "NEUTRAL_VOLUME": "volume neutrale",
+
+    "HH_HL_UPSTRUCTURE": "struttura rialzista con massimi e minimi crescenti",
+    "LH_LL_DOWNSTRUCTURE": "struttura ribassista con massimi e minimi decrescenti",
+    "COMPRESSION_TRIANGLE": "compressione / triangolo",
+    "EXPANDING_VOLATILITY": "volatilità in espansione",
+    "UNKNOWN": "sconosciuto",
+
+    "BULLISH_RSI_DIVERGENCE": "divergenza rialzista RSI",
+    "BEARISH_RSI_DIVERGENCE": "divergenza ribassista RSI",
+    "HIDDEN_BULLISH_RSI_DIVERGENCE": "divergenza rialzista nascosta RSI",
+    "HIDDEN_BEARISH_RSI_DIVERGENCE": "divergenza ribassista nascosta RSI",
+    "NONE": "nessuna",
+
+    "ACCUMULATION_CANDIDATE": "possibile accumulazione",
+    "DISTRIBUTION_CANDIDATE": "possibile distribuzione",
+    "MARKUP": "markup / fase rialzista",
+    "MARKDOWN": "markdown / fase ribassista",
+    "RANGE_OR_UNKNOWN": "range / fase non chiara",
+}
+
+
+def it_label(value):
+    if value is None:
+        return "n/a"
+
+    if isinstance(value, float) and pd.isna(value):
+        return "n/a"
+
+    s = str(value).strip()
+
+    if not s:
+        return "n/a"
+
+    if "," in s:
+        parts = [p.strip() for p in s.split(",")]
+        return ", ".join(LABELS_IT.get(p, p.lower()) for p in parts)
+
+    return LABELS_IT.get(s, s.lower())
+
+
 def safe_float(x):
     try:
         if pd.isna(x):
@@ -41,6 +99,7 @@ def parse_pct(value):
         return np.nan
 
     s = str(value).strip()
+
     if not s or s.lower() == "nan":
         return np.nan
 
@@ -64,6 +123,7 @@ def parse_number(value):
         return np.nan
 
     s = str(value).strip()
+
     if not s or s.lower() == "nan":
         return np.nan
 
@@ -74,7 +134,6 @@ def parse_number(value):
     s = s.replace(" ", "")
 
     if "," in s and "." in s:
-        # Formato italiano tipo 1.234,56
         s = s.replace(".", "").replace(",", ".")
     elif "," in s:
         s = s.replace(",", ".")
@@ -97,29 +156,37 @@ def clamp(value, low, high):
 def fmt_score(x):
     try:
         x = int(x)
+
         if x > 0:
             return f"+{x}"
+
         return str(x)
+
     except Exception:
         return "0"
 
 
 def fmt_pct(x):
     x = safe_float(x)
+
     if pd.isna(x):
         return "n/a"
+
     return f"{x:.2f}%".replace(".", ",")
 
 
 def fmt_num(x, digits=2):
     x = safe_float(x)
+
     if pd.isna(x):
         return "n/a"
+
     return f"{x:.{digits}f}".replace(".", ",")
 
 
 def fmt_price(asset, x):
     x = safe_float(x)
+
     if pd.isna(x):
         return "n/a"
 
@@ -145,10 +212,73 @@ def df_to_markdown(df):
 def read_text(path):
     if not path.exists():
         return ""
+
     try:
         return path.read_text(encoding="utf-8")
     except Exception:
         return ""
+
+
+def clean_markdown_text(value):
+    if value is None:
+        return ""
+
+    s = str(value)
+
+    s = s.replace("**", "")
+    s = s.replace("__", "")
+    s = s.replace("*", "")
+    s = s.replace("`", "")
+    s = s.replace("\r", "")
+    s = s.strip()
+
+    s = re.sub(r"^[\-\s:|]+", "", s)
+    s = re.sub(r"[\s|]+$", "", s)
+
+    return s.strip()
+
+
+def first_pct_from_text(text):
+    if not text:
+        return np.nan
+
+    m = re.search(r"([+\-]?[0-9]+(?:[,.][0-9]+)?)\s*%", text)
+
+    if not m:
+        return np.nan
+
+    return parse_pct(m.group(1))
+
+
+def first_price_from_text(text):
+    if not text:
+        return np.nan
+
+    m = re.search(r"([0-9]+(?:[.,][0-9]+)?)\s*\$", text)
+
+    if not m:
+        return np.nan
+
+    return parse_number(m.group(1))
+
+
+def markdown_line_value(section, label):
+    label_low = label.lower()
+
+    for line in section.splitlines():
+        clean = clean_markdown_text(line)
+
+        if label_low not in clean.lower():
+            continue
+
+        idx = clean.lower().find(label_low)
+        value = clean[idx + len(label):]
+        value = re.sub(r"^[\s:：\-]+", "", value)
+        value = clean_markdown_text(value)
+
+        return value
+
+    return ""
 
 
 def extract_between(text, start_marker, end_marker):
@@ -181,6 +311,7 @@ def extract_section_from_heading(text, heading, stop_headings=None):
 
     for stop in stop_headings:
         pos = rest.find(stop, len(heading))
+
         if pos != -1:
             stop_positions.append(pos)
 
@@ -194,12 +325,13 @@ def extract_asset_block(text, asset):
     name = ASSET_NAMES.get(asset, asset)
 
     patterns = [
-        rf"## {re.escape(name)}\n(.*?)(?=\n## |\n# |\Z)",
-        rf"# {re.escape(name)}[^\\n]*\n(.*?)(?=\n# |\Z)",
+        rf"^##\s+{re.escape(name)}\s*$\n(.*?)(?=^##\s+|^#\s+|\Z)",
+        rf"^#\s+{re.escape(name)}[^\n]*\n(.*?)(?=^#\s+|\Z)",
     ]
 
     for pat in patterns:
-        m = re.search(pat, text, flags=re.DOTALL)
+        m = re.search(pat, text, flags=re.DOTALL | re.MULTILINE)
+
         if m:
             return m.group(1)
 
@@ -265,23 +397,102 @@ def get_market_row(asset, market_df):
 
     for group in preferred_groups:
         g = asset_df[asset_df["group"] == group]
+
         if not g.empty:
             return g.iloc[0].to_dict()
 
     return asset_df.iloc[0].to_dict()
 
 
-def component_scanner(asset, latest_text):
-    name = ASSET_NAMES.get(asset, asset)
+def extract_positive_negative_and_return(block):
+    positive = np.nan
+    negative = np.nan
+    return_30d = np.nan
 
+    for line in block.splitlines():
+        clean = clean_markdown_text(line)
+        low = clean.lower()
+
+        if "casi positivi" in low or "probabilità storica di salita" in low:
+            pct = first_pct_from_text(clean)
+
+            if not pd.isna(pct):
+                positive = pct
+
+        if "casi negativi" in low or "probabilità storica di discesa" in low:
+            pct = first_pct_from_text(clean)
+
+            if not pd.isna(pct):
+                negative = pct
+
+        if "return normale fra 30 giorni" in low:
+            pct = first_pct_from_text(clean)
+
+            if not pd.isna(pct):
+                return_30d = pct
+
+    if pd.isna(return_30d):
+        m = re.search(
+            r"Return normale fra 30 giorni:.*?\(([+\-0-9,.]+)\s*%\)",
+            block,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+
+        if m:
+            return_30d = parse_pct(m.group(1))
+
+    if pd.isna(return_30d):
+        m = re.search(
+            r"##\s*1\.\s*Return 30d.*?Scenario normale:.*?\(([+\-0-9,.]+)\s*%\)",
+            block,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+
+        if m:
+            return_30d = parse_pct(m.group(1))
+
+    if pd.isna(return_30d):
+        m = re.search(
+            r"Percentile 50%.*?([+\-0-9,.]+)\s*%\s*→",
+            block,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+
+        if m:
+            return_30d = parse_pct(m.group(1))
+
+    return positive, negative, return_30d
+
+
+def component_scanner(asset, latest_text):
     fast_section = extract_section_from_heading(
         latest_text,
         "# Lettura velocissima",
-        stop_headings=["\n---\n\n# Mappa", "\n# Mappa", "\n# Controllo", "\n<!-- "],
+        stop_headings=[
+            "\n---\n\n# Mappa",
+            "\n# Mappa",
+            "\n# Controllo",
+            "\n<!-- CALIBRATION",
+            "\n<!-- LIQUIDATION",
+            "\n<!-- MARKET",
+            "\n<!-- TECHNICAL",
+        ],
     )
 
-    search_text = fast_section if fast_section else latest_text
-    block = extract_asset_block(search_text, asset)
+    block = ""
+
+    if fast_section:
+        block = extract_asset_block(fast_section, asset)
+
+    if not block:
+        full_name = ASSET_NAMES.get(asset, asset)
+        detailed_heading = f"# {full_name}"
+        detailed_section = extract_section_from_heading(
+            latest_text,
+            detailed_heading,
+            stop_headings=["\n---\n\n# Approfondimento", "\n---\n\n# ", "\n# Controllo", "\n<!-- "],
+        )
+        block = detailed_section
 
     if not block:
         block = extract_asset_block(latest_text, asset)
@@ -291,45 +502,11 @@ def component_scanner(asset, latest_text):
             "score": 0,
             "summary": "Dati scanner non trovati.",
             "positive_rate": np.nan,
+            "negative_rate": np.nan,
             "return_30d": np.nan,
         }
 
-    positive = np.nan
-    negative = np.nan
-    return_30d = np.nan
-
-    m = re.search(
-        r"(?:Casi positivi.*?|Probabilità storica di salita).*?\*\*([+\-0-9,.]+)%\*\*",
-        block,
-        flags=re.IGNORECASE | re.DOTALL,
-    )
-    if m:
-        positive = parse_pct(m.group(1))
-
-    m = re.search(
-        r"(?:Casi negativi.*?|Probabilità storica di discesa).*?\*\*([+\-0-9,.]+)%\*\*",
-        block,
-        flags=re.IGNORECASE | re.DOTALL,
-    )
-    if m:
-        negative = parse_pct(m.group(1))
-
-    m = re.search(
-        r"Return normale fra 30 giorni:.*?$begin:math:text$\(\[\+\\\-0\-9\,\.\]\+\)\%$end:math:text$",
-        block,
-        flags=re.IGNORECASE | re.DOTALL,
-    )
-    if m:
-        return_30d = parse_pct(m.group(1))
-
-    if pd.isna(return_30d):
-        m = re.search(
-            r"Percentile 50%.*?([+\-0-9,.]+)%\s*→",
-            block,
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-        if m:
-            return_30d = parse_pct(m.group(1))
+    positive, negative, return_30d = extract_positive_negative_and_return(block)
 
     score = 0
 
@@ -455,8 +632,9 @@ def component_technical(asset, technical):
 
     summary = (
         f"Score tecnico {int(tech_score) if not pd.isna(tech_score) else 'n/a'}/12, "
-        f"verdetto {verdict}, trend {trend}, struttura {structure}, "
-        f"divergenza {divergence}, Wyckoff {wyckoff}."
+        f"verdetto {it_label(verdict)}, trend {it_label(trend)}, "
+        f"struttura {it_label(structure)}, divergenza {it_label(divergence)}, "
+        f"Wyckoff {it_label(wyckoff)}."
     )
 
     return {
@@ -489,6 +667,7 @@ def parse_sol_fractal(latest_text):
         "tracking": "",
         "phase": "",
         "risk": "",
+        "verdict": "",
         "first_confirmation": np.nan,
         "second_confirmation": np.nan,
         "soft_invalidation": np.nan,
@@ -500,42 +679,68 @@ def parse_sol_fractal(latest_text):
 
     data["found"] = True
 
-    verdict = ""
-    m = re.search(r"Ver[d]?etto:\s*([A-ZÀ-Ü /]+)", section, flags=re.IGNORECASE)
-    if m:
-        verdict = m.group(1).strip()
+    verdict_line = ""
 
-    m = re.search(r"Somiglianza totale:\s*\+?([0-9,.]+)%", section, flags=re.IGNORECASE)
-    if m:
-        data["similarity"] = parse_pct(m.group(1))
+    for line in section.splitlines():
+        clean = clean_markdown_text(line)
 
-    m = re.search(r"Trend tracking:\s*\*\*([^*]+)\*\*", section, flags=re.IGNORECASE)
-    if m:
-        data["tracking"] = m.group(1).strip()
+        if clean.lower().startswith("# frattale"):
+            continue
 
-    m = re.search(r"Fase attuale:\s*\*\*([^*]+)\*\*", section, flags=re.IGNORECASE)
-    if m:
-        data["phase"] = m.group(1).strip()
+        if "verdetto:" in clean.lower():
+            verdict_line = clean
+            break
 
-    m = re.search(r"Rischio fase:\s*\*\*([^*]+)\*\*", section, flags=re.IGNORECASE)
-    if m:
-        data["risk"] = m.group(1).strip()
+    if verdict_line:
+        data["verdict"] = clean_markdown_text(verdict_line.split(":", 1)[-1])
 
-    def price_after(label):
-        pat = rf"{label}.*?([0-9]+[,.][0-9]+|[0-9]+)\s*\$"
+    similarity_value = markdown_line_value(section, "Somiglianza totale")
+
+    if similarity_value:
+        data["similarity"] = first_pct_from_text(similarity_value)
+
+    if pd.isna(data["similarity"]):
+        m = re.search(
+            r"Somiglianza totale.*?([0-9]+(?:[,.][0-9]+)?)\s*%",
+            section,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+
+        if m:
+            data["similarity"] = parse_pct(m.group(1))
+
+    data["tracking"] = markdown_line_value(section, "Trend tracking")
+    data["phase"] = markdown_line_value(section, "Fase attuale")
+    data["risk"] = markdown_line_value(section, "Rischio fase")
+
+    def price_after_label(label):
+        for line in section.splitlines():
+            clean = clean_markdown_text(line)
+
+            if label.lower() not in clean.lower():
+                continue
+
+            price = first_price_from_text(clean)
+
+            if not pd.isna(price):
+                return price
+
+        pat = rf"{label}.*?([0-9]+(?:[,.][0-9]+)?)\s*\$"
         mm = re.search(pat, section, flags=re.IGNORECASE | re.DOTALL)
+
         if mm:
             return parse_number(mm.group(1))
+
         return np.nan
 
-    data["first_confirmation"] = price_after("Prima conferma")
-    data["second_confirmation"] = price_after("Seconda conferma")
-    data["soft_invalidation"] = price_after("Invalidazione soft")
-    data["strong_invalidation"] = price_after("Invalidazione forte")
+    data["first_confirmation"] = price_after_label("Prima conferma")
+    data["second_confirmation"] = price_after_label("Seconda conferma")
+    data["soft_invalidation"] = price_after_label("Invalidazione soft")
+    data["strong_invalidation"] = price_after_label("Invalidazione forte")
 
     score = 0
 
-    if "SI" in verdict.upper():
+    if "SI" in data["verdict"].upper():
         score += 1
 
     if not pd.isna(data["similarity"]):
@@ -558,7 +763,7 @@ def parse_sol_fractal(latest_text):
     data["score"] = score
 
     data["summary"] = (
-        f"Verdetto {verdict or 'n/a'}, somiglianza {fmt_pct(data['similarity'])}, "
+        f"Verdetto {data['verdict'] or 'n/a'}, somiglianza {fmt_pct(data['similarity'])}, "
         f"tracking {data['tracking'] or 'n/a'}, fase {data['phase'] or 'n/a'}, "
         f"rischio {data['risk'] or 'n/a'}."
     )
@@ -600,14 +805,18 @@ def component_rsi_top_cycle(asset, latest_text):
 
     risk = ""
 
-    m = re.search(r"Rischio top-cycle RSI\s*\|\s*([A-ZÀ-Ü /]+)\s*\|", section, flags=re.IGNORECASE)
-    if m:
-        risk = m.group(1).strip()
+    for line in section.splitlines():
+        clean = clean_markdown_text(line)
 
-    if not risk:
-        m = re.search(r"Rischio top-cycle RSI.*?\*\*([^*]+)\*\*", section, flags=re.IGNORECASE | re.DOTALL)
-        if m:
-            risk = m.group(1).strip()
+        if "Rischio top-cycle RSI" in clean:
+            parts = [p.strip() for p in clean.split("|") if p.strip()]
+
+            if len(parts) >= 2:
+                risk = parts[1]
+            else:
+                risk = clean.split(":", 1)[-1].strip() if ":" in clean else ""
+
+            break
 
     score = 0
 
@@ -675,6 +884,7 @@ def component_futures(asset, latest_text):
 
     force_num = np.nan
     m = re.search(r"([0-9]+)\s*/\s*5", force)
+
     if m:
         force_num = parse_number(m.group(1))
 
@@ -682,9 +892,9 @@ def component_futures(asset, latest_text):
     r = reading.lower()
 
     if not pd.isna(force_num) and force_num >= 4:
-        if "ribass" in r or "long" in r and "rischio" in r:
+        if "ribass" in r or ("long" in r and "rischio" in r):
             score = -1
-        elif "rialz" in r or "short" in r and "rischio" in r:
+        elif "rialz" in r or ("short" in r and "rischio" in r):
             score = 1
 
     if "misto" in r:
@@ -717,14 +927,15 @@ def component_daily_change(asset, latest_text):
 
     for line in section.splitlines():
         if line.strip().startswith(f"- {asset}:"):
-            line_found = line.strip()
+            line_found = clean_markdown_text(line.strip())
             break
 
     score = 0
-
     low = line_found.lower()
 
-    if "miglioramento" in low and "cambiamento" in low:
+    if "nessun cambiamento forte" in low:
+        score = 0
+    elif "miglioramento" in low and "cambiamento" in low:
         score = 1
     elif "peggioramento" in low and "cambiamento" in low:
         score = -1
@@ -762,7 +973,10 @@ def build_levels(asset, technical, fractal_data):
         soft = fractal_data.get("soft_invalidation", np.nan)
         strong = fractal_data.get("strong_invalidation", np.nan)
 
-        confirmations = [fmt_price(asset, resistance)]
+        confirmations = []
+
+        if not pd.isna(resistance):
+            confirmations.append(fmt_price(asset, resistance))
 
         if not pd.isna(first):
             confirmations.append(fmt_price(asset, first))
@@ -869,13 +1083,14 @@ def action_label(asset, score):
     return "n/a"
 
 
-def plain_interpretation(asset, score, components):
+def plain_interpretation(asset, score):
     if asset == "BTC":
         if score >= 3:
             return (
                 "BTC è l'asset messo meglio nel breve. La struttura macro non è ancora pienamente rialzista, "
                 "ma scanner, regime e segnali tecnici interni sono abbastanza coerenti per un recupero prudente."
             )
+
         return (
             "BTC resta il più solido del gruppo, ma la confluenza non è ancora abbastanza forte da inseguire il prezzo."
         )
@@ -886,11 +1101,13 @@ def plain_interpretation(asset, score, components):
                 "SOL ha una confluenza costruttiva, ma va ancora trattato come setup anticipato. "
                 "La conferma vera arriva solo sopra le resistenze tecniche e frattali."
             )
+
         if score >= 0:
             return (
                 "SOL è interessante ma non confermato. Il frattale e alcuni filtri aiutano, "
                 "ma scanner e struttura tecnica non danno ancora una conferma pulita."
             )
+
         return (
             "SOL resta fragile: può avere una base, ma la struttura tecnica non ha ancora girato. "
             "Meglio evitare leva e aspettare conferme sopra le resistenze."
@@ -969,15 +1186,7 @@ def build_global_confluence():
             "futures": futures,
             "daily": daily,
             "levels": levels,
-            "interpretation": plain_interpretation(asset, total_score, {
-                "scanner": scanner,
-                "market": market,
-                "technical": technical_component,
-                "fractal": fractal,
-                "rsi_top": rsi_top,
-                "futures": futures,
-                "daily": daily,
-            }),
+            "interpretation": plain_interpretation(asset, total_score),
         }
 
     metrics = pd.DataFrame(rows)
@@ -1013,10 +1222,8 @@ def render_report(metrics, details):
     summary_rows = []
 
     for _, r in metrics.iterrows():
-        asset = r["asset"]
-
         summary_rows.append({
-            "Asset": asset,
+            "Asset": r["asset"],
             "Punteggio": fmt_score(r["confluence_score"]),
             "Confluenza": r["confluence"],
             "Bias": r["bias"],
@@ -1120,7 +1327,6 @@ def inject_into_latest_report(section_md):
         else:
             new = new_section + "\n\n" + old
     else:
-        # Lo mettiamo prima del Decision Report, così diventa la vera sintesi iniziale.
         decision_marker = "<!-- DECISION_REPORT_START -->"
 
         if decision_marker in old:
