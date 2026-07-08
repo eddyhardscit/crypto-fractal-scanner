@@ -71,6 +71,9 @@ jobs:
       - name: Run scanner forecast tracker
         run: python scanner_forecast_tracker.py
 
+      - name: Build 30d forecast history report
+        run: python forecast_30d_history_report.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions"
