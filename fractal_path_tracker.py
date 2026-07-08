@@ -30,6 +30,21 @@ TICKER = "SOL-USD"
 SOURCE = "BTC_2022_vs_SOL_2026"
 HORIZONS = [7, 14, 30, 60, 90, 120]
 
+ITALIAN_MONTHS = {
+    "gennaio": "January",
+    "febbraio": "February",
+    "marzo": "March",
+    "aprile": "April",
+    "maggio": "May",
+    "giugno": "June",
+    "luglio": "July",
+    "agosto": "August",
+    "settembre": "September",
+    "ottobre": "October",
+    "novembre": "November",
+    "dicembre": "December",
+}
+
 
 def utc_now():
     return datetime.now(timezone.utc)
@@ -97,6 +112,22 @@ def parse_pct(value):
         return float(s)
     except Exception:
         return np.nan
+
+
+def parse_italian_date(value):
+    if value is None:
+        return pd.NaT
+
+    s = str(value).strip().lower()
+    s = s.replace(",", " ")
+    s = re.sub(r"\s+", " ", s)
+
+    for it_month, en_month in ITALIAN_MONTHS.items():
+        s = re.sub(rf"\b{it_month}\b", en_month, s, flags=re.IGNORECASE)
+
+    dt = pd.to_datetime(s, errors="coerce", dayfirst=True)
+
+    return dt
 
 
 def fmt_pct(x):
@@ -199,6 +230,18 @@ def first_pct(text):
 
     if m:
         return parse_pct(m.group(1))
+
+    return np.nan
+
+
+def first_int(text):
+    if not text:
+        return np.nan
+
+    m = re.search(r"([0-9]+)", str(text))
+
+    if m:
+        return int(m.group(1))
 
     return np.nan
 
@@ -357,6 +400,16 @@ def actual_price_on_or_after(df, date):
     return safe_float(d.iloc[0]["Close"])
 
 
+def infer_bottom_date(meta):
+    last_dt = pd.to_datetime(meta.get("last_candle_date", pd.NaT), errors="coerce")
+    day_from_bottom = safe_float(meta.get("day_from_bottom", np.nan))
+
+    if pd.isna(last_dt) or pd.isna(day_from_bottom):
+        return pd.to_datetime(meta["forecast_date"])
+
+    return (last_dt.normalize() - pd.Timedelta(days=int(day_from_bottom))).normalize()
+
+
 def parse_fractal_forecast():
     section = extract_fractal_section()
 
@@ -375,11 +428,26 @@ def parse_fractal_forecast():
         "phase": "",
         "risk": "",
         "start_price": np.nan,
+        "last_candle_date": pd.NaT,
+        "day_from_bottom": np.nan,
+        "bottom_date": pd.NaT,
+        "bottom_price": np.nan,
         "first_confirmation": np.nan,
         "second_confirmation": np.nan,
         "soft_invalidation": np.nan,
         "strong_invalidation": np.nan,
     }
+
+    last_candle_value = line_value(section, "Ultima candela SOL usata")
+    last_dt = parse_italian_date(last_candle_value)
+
+    if not pd.isna(last_dt):
+        meta["last_candle_date"] = last_dt.strftime("%Y-%m-%d")
+
+    day_line = line_value(section, "SOL e al giorno")
+
+    if day_line:
+        meta["day_from_bottom"] = first_int(day_line)
 
     verdict_match = re.search(r"##\s*Verdetto:\s*([^\n]+)", section, flags=re.IGNORECASE)
 
@@ -414,6 +482,19 @@ def parse_fractal_forecast():
     meta["soft_invalidation"] = price_for_label("Invalidazione soft")
     meta["strong_invalidation"] = price_for_label("Invalidazione forte")
 
+    bottom_dt = infer_bottom_date(meta)
+    meta["bottom_date"] = bottom_dt.strftime("%Y-%m-%d")
+
+    prices_for_bottom = download_prices(
+        start=(bottom_dt - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
+    )
+
+    if not prices_for_bottom.empty:
+        bottom_slice = prices_for_bottom[prices_for_bottom.index >= bottom_dt]
+
+        if not bottom_slice.empty:
+            meta["bottom_price"] = safe_float(bottom_slice.iloc[0]["Close"])
+
     proj = parse_markdown_table_after_heading(section, "Proiezione veloce con date SOL")
 
     rows = []
@@ -431,11 +512,11 @@ def parse_fractal_forecast():
             if horizon not in HORIZONS:
                 continue
 
-            target_date = r.get("Data SOL prevista", "")
-            target_dt = pd.to_datetime(target_date, errors="coerce")
+            target_date_raw = r.get("Data SOL prevista", "")
+            target_dt = parse_italian_date(target_date_raw)
 
             if pd.isna(target_dt):
-                continue
+                target_dt = pd.to_datetime(meta["forecast_date"]) + pd.Timedelta(days=horizon)
 
             rows.append({
                 **meta,
@@ -445,14 +526,14 @@ def parse_fractal_forecast():
                 "projected_base": normalize_price_from_cell(r.get("SOL base", np.nan)),
                 "projected_min": normalize_price_from_cell(r.get("Min percorso", np.nan)),
                 "projected_max": normalize_price_from_cell(r.get("Max percorso", np.nan)),
-                "checked": False,
+                "checked": 0.0,
                 "actual_price": np.nan,
                 "error_pct": np.nan,
                 "inside_projected_band": np.nan,
             })
 
     if not rows:
-        for horizon in [7, 14, 30, 60]:
+        for horizon in HORIZONS:
             target_dt = pd.to_datetime(meta["forecast_date"]) + pd.Timedelta(days=horizon)
 
             rows.append({
@@ -463,7 +544,7 @@ def parse_fractal_forecast():
                 "projected_base": np.nan,
                 "projected_min": np.nan,
                 "projected_max": np.nan,
-                "checked": False,
+                "checked": 0.0,
                 "actual_price": np.nan,
                 "error_pct": np.nan,
                 "inside_projected_band": np.nan,
@@ -512,9 +593,9 @@ def update_forecast_checks(log_df):
     prices = download_prices(start=dl_start)
 
     for idx, row in log_df.iterrows():
-        checked = str(row.get("checked", "False")).lower() == "true"
+        checked = safe_float(row.get("checked", 0.0))
 
-        if checked:
+        if not pd.isna(checked) and checked >= 1:
             continue
 
         target_date = pd.to_datetime(row.get("target_date", ""), errors="coerce")
@@ -544,9 +625,9 @@ def update_forecast_checks(log_df):
         if not pd.isna(projected_min) and not pd.isna(projected_max):
             lo = min(projected_min, projected_max)
             hi = max(projected_min, projected_max)
-            inside = bool(lo <= actual <= hi)
+            inside = 1.0 if lo <= actual <= hi else 0.0
 
-        log_df.at[idx, "checked"] = True
+        log_df.at[idx, "checked"] = 1.0
         log_df.at[idx, "actual_price"] = actual
         log_df.at[idx, "error_pct"] = error_pct
         log_df.at[idx, "inside_projected_band"] = inside
@@ -560,7 +641,7 @@ def summarize_accuracy(log_df):
     if log_df.empty:
         return pd.DataFrame()
 
-    checked = log_df[log_df["checked"].astype(str).str.lower() == "true"].copy()
+    checked = log_df[pd.to_numeric(log_df["checked"], errors="coerce").fillna(0) >= 1].copy()
 
     if checked.empty:
         rows = []
@@ -589,13 +670,12 @@ def summarize_accuracy(log_df):
             avg_abs_error = np.nan
             avg_error = np.nan
         else:
-            inside_col = d["inside_projected_band"].astype(str).str.lower()
-            known = inside_col[inside_col.isin(["true", "false", "1", "0"])]
+            inside_values = pd.to_numeric(d["inside_projected_band"], errors="coerce").dropna()
 
-            if len(known) == 0:
+            if len(inside_values) == 0:
                 inside_rate = np.nan
             else:
-                inside_rate = known.isin(["true", "1"]).mean() * 100
+                inside_rate = inside_values.mean() * 100
 
             errors = pd.to_numeric(d["error_pct"], errors="coerce")
             avg_abs_error = errors.abs().mean()
@@ -622,7 +702,41 @@ def latest_forecast(log_df):
     d["forecast_date_dt"] = pd.to_datetime(d["forecast_date"], errors="coerce")
     max_date = d["forecast_date_dt"].max()
 
-    return d[d["forecast_date_dt"] == max_date].sort_values("horizon_days")
+    out = d[d["forecast_date_dt"] == max_date].copy()
+    out["horizon_days"] = pd.to_numeric(out["horizon_days"], errors="coerce")
+
+    return out.sort_values("horizon_days")
+
+
+def build_projection_points(latest):
+    if latest.empty:
+        return pd.DataFrame()
+
+    first = latest.iloc[0]
+    today_dt = pd.to_datetime(first["forecast_date"])
+
+    start_price = safe_float(first.get("start_price", np.nan))
+
+    points = [{
+        "date": today_dt,
+        "base": start_price,
+        "min": start_price,
+        "max": start_price,
+    }]
+
+    for _, r in latest.iterrows():
+        points.append({
+            "date": pd.to_datetime(r["target_date"]),
+            "base": safe_float(r["projected_base"]),
+            "min": safe_float(r["projected_min"]),
+            "max": safe_float(r["projected_max"]),
+        })
+
+    p = pd.DataFrame(points)
+    p = p.dropna(subset=["date"])
+    p = p.sort_values("date")
+
+    return p
 
 
 def plot_tracking_chart(log_df):
@@ -631,48 +745,53 @@ def plot_tracking_chart(log_df):
     if latest.empty:
         return
 
-    start_date = pd.to_datetime(latest["forecast_date"].iloc[0])
-    start_price = safe_float(latest["start_price"].iloc[0])
+    first = latest.iloc[0]
 
-    plot_rows = []
+    forecast_date = pd.to_datetime(first["forecast_date"]).normalize()
+    bottom_date = pd.to_datetime(first.get("bottom_date", first["forecast_date"]), errors="coerce")
 
-    plot_rows.append({
-        "date": start_date,
-        "base": start_price,
-        "min": start_price,
-        "max": start_price,
-    })
+    if pd.isna(bottom_date):
+        bottom_date = forecast_date
 
-    for _, r in latest.iterrows():
-        plot_rows.append({
-            "date": pd.to_datetime(r["target_date"]),
-            "base": safe_float(r["projected_base"]),
-            "min": safe_float(r["projected_min"]),
-            "max": safe_float(r["projected_max"]),
-        })
+    end_date = pd.to_datetime(latest["target_date"], errors="coerce").max()
 
-    p = pd.DataFrame(plot_rows).dropna(subset=["date"])
-    p = p.sort_values("date")
+    if pd.isna(end_date):
+        end_date = forecast_date + pd.Timedelta(days=120)
 
-    if p.empty:
-        return
-
-    dl_start = (start_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
+    dl_start = (bottom_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
     actual = download_prices(start=dl_start)
 
     if not actual.empty:
-        actual = actual[(actual.index >= start_date.normalize()) & (actual.index <= p["date"].max())]
+        actual = actual[(actual.index >= bottom_date.normalize()) & (actual.index <= end_date.normalize())]
 
-    plt.figure(figsize=(11, 6))
-    plt.plot(p["date"], p["base"], marker="o", label="Frattale base")
-    plt.plot(p["date"], p["min"], linestyle="--", label="Percorso minimo")
-    plt.plot(p["date"], p["max"], linestyle="--", label="Percorso massimo")
-    plt.fill_between(p["date"], p["min"], p["max"], alpha=0.15)
+    projection = build_projection_points(latest)
+
+    plt.figure(figsize=(12, 6))
 
     if not actual.empty:
-        plt.plot(actual.index, actual["Close"], marker="o", label="SOL reale")
+        actual_past = actual[actual.index <= forecast_date]
+        actual_future = actual[actual.index > forecast_date]
 
-    plt.title("SOL reale vs percorso frattale BTC 2022")
+        if not actual_past.empty:
+            plt.plot(actual_past.index, actual_past["Close"], marker="o", label="SOL reale dal bottom")
+
+        if not actual_future.empty:
+            plt.plot(actual_future.index, actual_future["Close"], marker="o", label="SOL reale dopo previsione")
+
+    if not projection.empty:
+        plt.plot(projection["date"], projection["base"], marker="o", label="Frattale base")
+        plt.plot(projection["date"], projection["min"], linestyle="--", label="Percorso minimo")
+        plt.plot(projection["date"], projection["max"], linestyle="--", label="Percorso massimo")
+
+        if projection["min"].notna().any() and projection["max"].notna().any():
+            plt.fill_between(projection["date"], projection["min"], projection["max"], alpha=0.15)
+
+    plt.axvline(forecast_date, linestyle=":", linewidth=1.2, label="Oggi / inizio previsione")
+
+    if not pd.isna(bottom_date):
+        plt.axvline(bottom_date, linestyle=":", linewidth=1.2, label="Bottom SOL usato")
+
+    plt.title("SOL dal bottom vs percorso frattale BTC 2022")
     plt.xlabel("Data")
     plt.ylabel("Prezzo SOL")
     plt.legend()
@@ -683,7 +802,7 @@ def plot_tracking_chart(log_df):
 
 
 def plot_error_chart(log_df):
-    checked = log_df[log_df["checked"].astype(str).str.lower() == "true"].copy()
+    checked = log_df[pd.to_numeric(log_df["checked"], errors="coerce").fillna(0) >= 1].copy()
 
     if checked.empty:
         return
@@ -713,6 +832,15 @@ def plot_error_chart(log_df):
     plt.close()
 
 
+def yes_no_nan(x):
+    x = safe_float(x)
+
+    if pd.isna(x):
+        return "n/a"
+
+    return "sì" if x >= 1 else "no"
+
+
 def render_report(log_df, metrics):
     now = utc_now().strftime("%Y-%m-%d %H:%M UTC")
     latest = latest_forecast(log_df)
@@ -725,11 +853,7 @@ def render_report(log_df, metrics):
     lines.append("")
     lines.append("Questo report controlla se SOL sta seguendo il percorso previsto dal frattale BTC 2022 vs SOL 2026.")
     lines.append("")
-    lines.append("Misura tre cose:")
-    lines.append("")
-    lines.append("- il percorso previsto dal frattale")
-    lines.append("- il prezzo reale di SOL")
-    lines.append("- l'errore tra previsione frattale e prezzo reale")
+    lines.append("A differenza del grafico frattale principale, qui il percorso parte dal bottom SOL usato dal modello e poi continua con la proiezione futura.")
     lines.append("")
 
     if latest.empty:
@@ -741,6 +865,7 @@ def render_report(log_df, metrics):
     lines.append("## Stato ultimo frattale salvato")
     lines.append("")
     lines.append(f"- Data previsione: **{first.get('forecast_date', 'n/a')}**")
+    lines.append(f"- Bottom SOL usato: **{first.get('bottom_date', 'n/a')}**")
     lines.append(f"- Prezzo iniziale SOL: **{fmt_price(first.get('start_price', np.nan))}**")
     lines.append(f"- Verdetto: **{first.get('verdict', 'n/a')}**")
     lines.append(f"- Somiglianza: **{fmt_pct(first.get('similarity', np.nan))}**")
@@ -749,12 +874,10 @@ def render_report(log_df, metrics):
     lines.append(f"- Rischio fase: **{first.get('risk', 'n/a')}**")
     lines.append("")
 
-    chart_rel = TRACKING_CHART.name
-
     if TRACKING_CHART.exists():
         lines.append("## Grafico percorso previsto vs realtà")
         lines.append("")
-        lines.append(f"![Tracking percorso frattale]({chart_rel})")
+        lines.append(f"![Tracking percorso frattale]({TRACKING_CHART.name})")
         lines.append("")
 
     table_rows = []
@@ -766,10 +889,10 @@ def render_report(log_df, metrics):
             "Base frattale": fmt_price(r.get("projected_base", np.nan)),
             "Min percorso": fmt_price(r.get("projected_min", np.nan)),
             "Max percorso": fmt_price(r.get("projected_max", np.nan)),
-            "Controllato": "sì" if str(r.get("checked", "False")).lower() == "true" else "no",
+            "Controllato": yes_no_nan(r.get("checked", np.nan)),
             "Prezzo reale": fmt_price(r.get("actual_price", np.nan)),
             "Errore": fmt_pct(r.get("error_pct", np.nan)),
-            "Dentro banda": str(r.get("inside_projected_band", "n/a")),
+            "Dentro banda": yes_no_nan(r.get("inside_projected_band", np.nan)),
         })
 
     lines.append("## Ultima proiezione salvata")
@@ -806,6 +929,8 @@ def render_report(log_df, metrics):
 
     lines.append("## Come leggerlo")
     lines.append("")
+    lines.append("- La parte prima di oggi mostra SOL reale dal bottom usato dal frattale.")
+    lines.append("- La parte dopo oggi mostra il percorso frattale previsto.")
     lines.append("- Se SOL resta tra Min percorso e Max percorso, il frattale è ancora coerente.")
     lines.append("- Se SOL è vicino alla linea Base, il timing del frattale è buono.")
     lines.append("- Se SOL sale molto prima della Base prevista, il frattale è rialzista ma accelerato.")
