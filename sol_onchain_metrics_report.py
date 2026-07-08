@@ -2,8 +2,6 @@ import csv
 import json
 import os
 import re
-import time
-import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -25,6 +23,7 @@ BTC_SOL_END = "<!-- BTC_SOL_FRACTAL_END -->"
 GLOBAL_END = "<!-- GLOBAL_CONFLUENCE_END -->"
 
 SOLANA_RPC_URL = os.getenv("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com")
+LAMPORTS_PER_SOL = 1_000_000_000.0
 
 # Metriche opzionali da provider esterni o inserimento manuale.
 # Se non le hai, lasciale vuote: il report funziona comunque.
@@ -149,6 +148,19 @@ def safe_float(value):
         return float(value)
     except Exception:
         return parse_number(value)
+
+
+def lamports_to_sol(value):
+    value = safe_float(value)
+    if value is None:
+        return None
+
+    # I valori RPC di Solana sono normalmente in lamports.
+    # Se però in futuro un provider restituisse già SOL, non dividiamo valori piccoli.
+    if value > 10_000_000_000:
+        return value / LAMPORTS_PER_SOL
+
+    return value
 
 
 def pct_change(new, old):
@@ -331,7 +343,6 @@ def get_defillama_price():
         "sol_24h_change_pct": None,
     }
 
-    # Prova CoinGecko free endpoint. Se fallisce, usa DefiLlama price.
     params = urllib.parse.urlencode(
         {
             "ids": "solana",
@@ -381,7 +392,6 @@ def get_chain_tvl():
                 result["chain_tvl_change_30d_pct"] = safe_float(item.get("change_1m"))
                 break
 
-    # Fallback / controllo storico.
     hist = http_json("https://api.llama.fi/v2/historicalChainTvl/Solana")
 
     if isinstance(hist, list) and hist:
@@ -446,7 +456,6 @@ def get_overview_metrics(kind):
 
     chart = data.get("totalDataChart") or data.get("totalDataChartBreakdown")
 
-    # Alcune risposte hanno una chart [[timestamp, value], ...].
     if isinstance(chart, list):
         values = []
         for item in chart:
@@ -454,7 +463,6 @@ def get_overview_metrics(kind):
                 value = None
 
                 if isinstance(item[1], dict):
-                    # Nel breakdown possono esserci vari protocolli. Sommo i valori numerici.
                     total = 0.0
                     found = False
                     for v in item[1].values():
@@ -549,7 +557,6 @@ def get_stablecoins():
         if len(values) > 31:
             result["stablecoins_change_30d_pct"] = pct_change(values[-1], values[-31])
 
-    # Fallback current by chain.
     if result["stablecoins_usd"] is None:
         chains = http_json("https://stablecoins.llama.fi/stablecoinchains")
         items = []
@@ -602,9 +609,9 @@ def get_solana_rpc_metrics():
     if isinstance(supply, dict):
         value = supply.get("value", supply)
         if isinstance(value, dict):
-            result["sol_total_supply"] = safe_float(value.get("total"))
-            result["sol_circulating_supply"] = safe_float(value.get("circulating"))
-            result["sol_non_circulating_supply"] = safe_float(value.get("nonCirculating"))
+            result["sol_total_supply"] = lamports_to_sol(value.get("total"))
+            result["sol_circulating_supply"] = lamports_to_sol(value.get("circulating"))
+            result["sol_non_circulating_supply"] = lamports_to_sol(value.get("nonCirculating"))
 
     vote_accounts = rpc_call(
         "getVoteAccounts",
@@ -629,25 +636,26 @@ def get_solana_rpc_metrics():
         for account in delinquent:
             delinquent_stake_lamports += safe_float(account.get("activatedStake")) or 0.0
 
-        activated_stake_sol = current_stake_lamports / 1_000_000_000.0
-        delinquent_stake_sol = delinquent_stake_lamports / 1_000_000_000.0
+        activated_stake_sol = current_stake_lamports / LAMPORTS_PER_SOL
+        delinquent_stake_sol = delinquent_stake_lamports / LAMPORTS_PER_SOL
         total_stake_sol = activated_stake_sol + delinquent_stake_sol
 
-        result["sol_activated_stake"] = total_stake_sol
-        result["sol_delinquent_stake"] = delinquent_stake_sol
         result["sol_current_validators"] = len(current)
         result["sol_delinquent_validators"] = len(delinquent)
 
-        total_supply = safe_float(result["sol_total_supply"])
-        circulating_supply = safe_float(result["sol_circulating_supply"])
+        if total_stake_sol > 0:
+            result["sol_activated_stake"] = total_stake_sol
+            result["sol_delinquent_stake"] = delinquent_stake_sol
 
-        if total_supply:
-            result["sol_stake_ratio_total_pct"] = total_stake_sol / total_supply * 100.0
+            total_supply_sol = safe_float(result["sol_total_supply"])
+            circulating_supply_sol = safe_float(result["sol_circulating_supply"])
 
-        if circulating_supply:
-            result["sol_stake_ratio_circulating_pct"] = total_stake_sol / circulating_supply * 100.0
+            if total_supply_sol and total_supply_sol > 0:
+                result["sol_stake_ratio_total_pct"] = total_stake_sol / total_supply_sol * 100.0
 
-        if total_stake_sol:
+            if circulating_supply_sol and circulating_supply_sol > 0:
+                result["sol_stake_ratio_circulating_pct"] = total_stake_sol / circulating_supply_sol * 100.0
+
             result["sol_delinquent_stake_ratio_pct"] = delinquent_stake_sol / total_stake_sol * 100.0
 
     inflation = rpc_call("getInflationRate")
@@ -674,22 +682,25 @@ def get_all_metrics():
     row["date"] = today_str()
     row["generated_at_utc"] = utc_str()
 
+    dex_metrics = get_overview_metrics("dexs")
+    fees_metrics = get_overview_metrics("fees")
+
     sources = [
         get_defillama_price(),
         get_chain_tvl(),
         {
-            "dex_volume_24h_usd": get_overview_metrics("dexs").get("total24h"),
-            "dex_volume_7d_usd": get_overview_metrics("dexs").get("total7d"),
-            "dex_volume_30d_usd": get_overview_metrics("dexs").get("total30d"),
-            "dex_volume_change_1d_pct": get_overview_metrics("dexs").get("change_1d"),
-            "dex_volume_change_7d_pct": get_overview_metrics("dexs").get("change_7d"),
+            "dex_volume_24h_usd": dex_metrics.get("total24h"),
+            "dex_volume_7d_usd": dex_metrics.get("total7d"),
+            "dex_volume_30d_usd": dex_metrics.get("total30d"),
+            "dex_volume_change_1d_pct": dex_metrics.get("change_1d"),
+            "dex_volume_change_7d_pct": dex_metrics.get("change_7d"),
         },
         {
-            "fees_24h_usd": get_overview_metrics("fees").get("total24h"),
-            "fees_7d_usd": get_overview_metrics("fees").get("total7d"),
-            "fees_30d_usd": get_overview_metrics("fees").get("total30d"),
-            "fees_change_1d_pct": get_overview_metrics("fees").get("change_1d"),
-            "fees_change_7d_pct": get_overview_metrics("fees").get("change_7d"),
+            "fees_24h_usd": fees_metrics.get("total24h"),
+            "fees_7d_usd": fees_metrics.get("total7d"),
+            "fees_30d_usd": fees_metrics.get("total30d"),
+            "fees_change_1d_pct": fees_metrics.get("change_1d"),
+            "fees_change_7d_pct": fees_metrics.get("change_7d"),
         },
         get_stablecoins(),
         get_solana_rpc_metrics(),
@@ -726,7 +737,6 @@ def compute_score(row, previous_row=None):
     realized_price = safe_float(row.get("sol_realized_price_usd"))
     mvrv = safe_float(row.get("sol_mvrv"))
     holder_profit = safe_float(row.get("sol_holder_profit_pct"))
-    holder_loss = safe_float(row.get("sol_holder_loss_pct"))
     exchange_netflow = safe_float(row.get("sol_exchange_netflow_24h_usd"))
 
     tvl_change = safe_float(row.get("chain_tvl_change_7d_pct"))
@@ -769,7 +779,16 @@ def compute_score(row, previous_row=None):
             score = add_component(components, score, "Stablecoin liquidity 7g", fmt_pct(stable_change), 0, "Stablecoin stabili.")
 
     if stake_ratio is not None:
-        if stake_ratio >= 55:
+        if stake_ratio <= 0.01:
+            score = add_component(
+                components,
+                score,
+                "Stake ratio",
+                fmt_pct(stake_ratio, force_sign=False),
+                0,
+                "Dato stake non affidabile o non letto correttamente: non viene penalizzato.",
+            )
+        elif stake_ratio >= 55:
             score = add_component(components, score, "Stake ratio", fmt_pct(stake_ratio, force_sign=False), 1, "Quota staked alta: supply liquida più contenuta.")
         elif stake_ratio < 40:
             score = add_component(components, score, "Stake ratio", fmt_pct(stake_ratio, force_sign=False), -1, "Quota staked bassa: supply più liquida.")
@@ -912,11 +931,14 @@ def build_metric_table(row):
             ["Fees change 7g", fmt_pct(row.get("fees_change_7d_pct")), "Uso rete in crescita/calo."],
             ["Stablecoin su Solana", fmt_usd(row.get("stablecoins_usd")), "Liquidità stabile disponibile su chain."],
             ["Stablecoin 7g", fmt_pct(row.get("stablecoins_change_7d_pct")), "Entrata/uscita liquidità stabile."],
-            ["Supply totale", fmt_number(row.get("sol_total_supply"), 0), "Supply totale da Solana RPC."],
-            ["Supply circolante", fmt_number(row.get("sol_circulating_supply"), 0), "Supply circolante da Solana RPC."],
+            ["Supply totale", fmt_number(row.get("sol_total_supply"), 0), "Supply totale convertita da lamports a SOL."],
+            ["Supply circolante", fmt_number(row.get("sol_circulating_supply"), 0), "Supply circolante convertita da lamports a SOL."],
             ["SOL in stake", fmt_number(row.get("sol_activated_stake"), 0), "Stake attivo stimato da vote accounts."],
-            ["Stake / supply totale", fmt_pct(row.get("sol_stake_ratio_total_pct"), force_sign=False), "Quota supply bloccata in staking."],
+            ["Stake / supply totale", fmt_pct(row.get("sol_stake_ratio_total_pct"), force_sign=False), "Quota supply totale in staking."],
+            ["Stake / supply circolante", fmt_pct(row.get("sol_stake_ratio_circulating_pct"), force_sign=False), "Quota supply circolante in staking."],
             ["Stake delinquent", fmt_pct(row.get("sol_delinquent_stake_ratio_pct"), force_sign=False), "Quota stake su validatori delinquent."],
+            ["Validatori attivi", fmt_number(row.get("sol_current_validators"), 0), "Validatori correnti letti da RPC."],
+            ["Validatori delinquent", fmt_number(row.get("sol_delinquent_validators"), 0), "Validatori delinquent letti da RPC."],
             ["Inflazione stimata", fmt_pct(row.get("sol_inflation_rate_pct"), force_sign=False), "Inflation rate da RPC."],
         ],
     )
@@ -1139,7 +1161,6 @@ def inject_into_main_report(row):
 
     block = build_main_report_block(row).strip()
 
-    # Lo metto vicino al frattale/RSI SOL. Se quei marker non ci sono, lo metto dopo il Global.
     if RSI_END in text:
         pos = text.find(RSI_END) + len(RSI_END)
         new_text = text[:pos].rstrip() + "\n\n" + block + "\n\n" + text[pos:].lstrip()
