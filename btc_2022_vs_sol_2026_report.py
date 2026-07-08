@@ -48,6 +48,10 @@ BTC_TOP_SEARCH_END = "2025-12-31"
 
 SOL_BOTTOM_SEARCH_START = "2026-06-01"
 
+# Data da cui consideriamo iniziato il monitoraggio reale del frattale.
+# Prima di questa data e backtest retroattivo; da questa data in poi e verifica giorno per giorno.
+PROGRAM_START_DATE = os.getenv("PROGRAM_START_DATE", "2026-07-03")
+
 FORECAST_DAYS = [7, 14, 30, 60, 90, 120, 180, 365]
 CHART_LABEL_DAYS = [7, 30, 60, 120, 365]
 
@@ -413,6 +417,212 @@ def compute_similarity(btc_path, sol_path):
         "ma_similarity": ma_similarity,
         "total_similarity": total_similarity,
     }
+
+
+def infer_program_start_date(sol_anchor_date, sol_current_date):
+    anchor = pd.to_datetime(sol_anchor_date).normalize()
+    current = pd.to_datetime(sol_current_date).normalize()
+
+    try:
+        start = pd.to_datetime(PROGRAM_START_DATE).normalize()
+    except Exception:
+        start = current
+
+    if start < anchor:
+        start = anchor
+
+    if start > current:
+        start = current
+
+    return start
+
+
+def alignment_status(avg_abs_gap_pct):
+    gap = safe_float(avg_abs_gap_pct)
+
+    if gap is None:
+        return "n/d"
+    if gap <= 5:
+        return "MOLTO ALLINEATO"
+    if gap <= 10:
+        return "ABBASTANZA ALLINEATO"
+    if gap <= 18:
+        return "DEVIAZIONE MODERATA"
+    return "STACCATO / MOLTO IN ANTICIPO"
+
+
+def compute_segment_alignment(btc_path, sol_path, start_day, end_day):
+    if btc_path.empty or sol_path.empty:
+        return {}
+
+    max_day = min(len(btc_path), len(sol_path)) - 1
+    start_day = int(max(0, start_day))
+    end_day = int(min(max_day, end_day))
+
+    if end_day < start_day:
+        return {
+            "start_day": start_day,
+            "end_day": end_day,
+            "days_checked": 0,
+            "start_date": None,
+            "end_date": None,
+            "avg_abs_gap_pct": None,
+            "median_abs_gap_pct": None,
+            "last_gap_pct": None,
+            "max_positive_gap_pct": None,
+            "max_negative_gap_pct": None,
+            "simple_alignment_score": None,
+            "price_similarity": None,
+            "total_similarity": None,
+            "status": "n/d",
+        }
+
+    btc_seg = btc_path.iloc[start_day:end_day + 1].copy()
+    sol_seg = sol_path.iloc[start_day:end_day + 1].copy()
+
+    compare_len = min(len(btc_seg), len(sol_seg))
+
+    if compare_len <= 0:
+        return {}
+
+    btc_norm = pd.to_numeric(btc_seg["norm"].iloc[:compare_len], errors="coerce").reset_index(drop=True)
+    sol_norm = pd.to_numeric(sol_seg["norm"].iloc[:compare_len], errors="coerce").reset_index(drop=True)
+
+    valid = pd.concat([btc_norm, sol_norm], axis=1)
+    valid.columns = ["btc_norm", "sol_norm"]
+    valid = valid.dropna()
+    valid = valid[valid["btc_norm"] > 0]
+
+    if valid.empty:
+        avg_abs_gap = None
+        median_abs_gap = None
+        last_gap = None
+        max_positive_gap = None
+        max_negative_gap = None
+        simple_score = None
+    else:
+        gaps = (valid["sol_norm"] / valid["btc_norm"] - 1) * 100
+        avg_abs_gap = float(np.mean(np.abs(gaps)))
+        median_abs_gap = float(np.median(np.abs(gaps)))
+        last_gap = float(gaps.iloc[-1])
+        max_positive_gap = float(gaps.max())
+        max_negative_gap = float(gaps.min())
+
+        # Score semplice leggibile:
+        # 100 = identico alla linea BTC scalata.
+        # Ogni 1% medio di distanza toglie 2 punti.
+        simple_score = max(0, min(100, 100 - avg_abs_gap * 2))
+
+    seg_similarity = compute_similarity(btc_seg, sol_seg)
+
+    return {
+        "start_day": start_day,
+        "end_day": end_day,
+        "days_checked": compare_len,
+        "start_date": fmt_date(sol_path.index[start_day]),
+        "end_date": fmt_date(sol_path.index[end_day]),
+        "start_date_it": fmt_date_it(sol_path.index[start_day]),
+        "end_date_it": fmt_date_it(sol_path.index[end_day]),
+        "avg_abs_gap_pct": avg_abs_gap,
+        "median_abs_gap_pct": median_abs_gap,
+        "last_gap_pct": last_gap,
+        "max_positive_gap_pct": max_positive_gap,
+        "max_negative_gap_pct": max_negative_gap,
+        "simple_alignment_score": simple_score,
+        "price_similarity": seg_similarity.get("price_similarity"),
+        "total_similarity": seg_similarity.get("total_similarity"),
+        "status": alignment_status(avg_abs_gap),
+    }
+
+
+def build_split_alignment(btc_path, sol_path, sol_anchor_date, sol_current_date):
+    program_start_date = infer_program_start_date(sol_anchor_date, sol_current_date)
+    anchor = pd.to_datetime(sol_anchor_date).normalize()
+    max_day = min(len(btc_path), len(sol_path)) - 1
+
+    program_start_day = int((program_start_date - anchor).days)
+    program_start_day = max(0, min(max_day, program_start_day))
+
+    pre_end_day = program_start_day - 1
+
+    if pre_end_day < 0:
+        pre_program = compute_segment_alignment(btc_path, sol_path, 0, 0)
+        pre_program["note"] = "Il programma parte dal bottom: non esiste una parte precedente separata."
+    else:
+        pre_program = compute_segment_alignment(btc_path, sol_path, 0, pre_end_day)
+        pre_program["note"] = "Parte gia avvenuta prima del monitoraggio reale."
+
+    live_program = compute_segment_alignment(btc_path, sol_path, program_start_day, max_day)
+    live_program["note"] = "Parte monitorata davvero giorno per giorno dal programma."
+
+    all_program = compute_segment_alignment(btc_path, sol_path, 0, max_day)
+    all_program["note"] = "Media totale dal bottom a oggi."
+
+    return {
+        "program_start_date": fmt_date(program_start_date),
+        "program_start_date_it": fmt_date_it(program_start_date),
+        "program_start_day": program_start_day,
+        "pre_program": pre_program,
+        "live_program": live_program,
+        "all": all_program,
+    }
+
+
+def build_split_alignment_table(split_alignment):
+    if not split_alignment:
+        return "Dati insufficienti per separare parte pre-programma e parte monitorata."
+
+    rows = []
+
+    items = [
+        ("Prima del programma", split_alignment.get("pre_program", {})),
+        ("Da inizio programma", split_alignment.get("live_program", {})),
+        ("Totale dal bottom", split_alignment.get("all", {})),
+    ]
+
+    for label, item in items:
+        rows.append(
+            [
+                label,
+                f"{item.get('start_date_it', 'n/d')} -> {item.get('end_date_it', 'n/d')}",
+                item.get("days_checked", 0),
+                fmt_pct(item.get("simple_alignment_score")),
+                fmt_pct(item.get("avg_abs_gap_pct")),
+                fmt_pct(item.get("last_gap_pct")),
+                item.get("status", "n/d"),
+            ]
+        )
+
+    return md_table(
+        [
+            "Periodo",
+            "Date",
+            "Giorni",
+            "Aderenza prezzo",
+            "Errore medio",
+            "Errore ultimo giorno",
+            "Stato",
+        ],
+        rows,
+    )
+
+
+def build_split_alignment_block(split_alignment):
+    if not split_alignment:
+        return "Dati insufficienti per separare la parte gia vista dalla parte monitorata."
+
+    lines = []
+    lines.append("Questa sezione separa la parte gia successa prima del programma dalla parte che stiamo monitorando davvero.")
+    lines.append("")
+    lines.append(f"- **Inizio programma/scanner:** {split_alignment.get('program_start_date_it', 'n/d')}")
+    lines.append("- **Prima del programma** = backtest retroattivo: utile, ma gia conosciuto.")
+    lines.append("- **Da inizio programma** = verifica reale: serve a capire se il frattale sta reggendo dopo che lo abbiamo iniziato a seguire.")
+    lines.append("")
+    lines.append(build_split_alignment_table(split_alignment))
+    lines.append("")
+    lines.append("Nota: **Aderenza prezzo** è uno score semplice basato sulla distanza media dalla linea BTC-scalata. Non sostituisce la somiglianza totale ufficiale, ma rende chiaro se SOL è vicino, sopra o sotto il percorso BTC equivalente.")
+
+    return "\n".join(lines)
 
 
 def direct_verdict(total_similarity, price_similarity, rsi_similarity, ma_similarity, phase_gap_pct):
@@ -1085,6 +1295,13 @@ def update_tracking_log(summary_dict):
         "hard_invalid",
         "cycle_max_base_price",
         "cycle_max_beta_price",
+        "program_start_date",
+        "pre_program_alignment_score",
+        "pre_program_avg_abs_gap_pct",
+        "live_program_alignment_score",
+        "live_program_avg_abs_gap_pct",
+        "all_alignment_score",
+        "all_avg_abs_gap_pct",
     ]
 
     row = {
@@ -1108,6 +1325,13 @@ def update_tracking_log(summary_dict):
         "hard_invalid": summary_dict.get("hard_invalid"),
         "cycle_max_base_price": summary_dict.get("cycle_max_base_price"),
         "cycle_max_beta_price": summary_dict.get("cycle_max_beta_price"),
+        "program_start_date": summary_dict.get("program_start_date"),
+        "pre_program_alignment_score": summary_dict.get("pre_program_alignment_score"),
+        "pre_program_avg_abs_gap_pct": summary_dict.get("pre_program_avg_abs_gap_pct"),
+        "live_program_alignment_score": summary_dict.get("live_program_alignment_score"),
+        "live_program_avg_abs_gap_pct": summary_dict.get("live_program_avg_abs_gap_pct"),
+        "all_alignment_score": summary_dict.get("all_alignment_score"),
+        "all_avg_abs_gap_pct": summary_dict.get("all_avg_abs_gap_pct"),
     }
 
     if os.path.exists(TRACKING_LOG_PATH):
@@ -1431,7 +1655,7 @@ def generate_projection_chart(sol_path, projection_daily, key_levels, projection
             ax.scatter([sol_current_date], [sol_current_price], s=60, zorder=5)
 
             ax.annotate(
-                f"Oggi\\n{fmt_price(sol_current_price)}",
+                f"Oggi\n{fmt_price(sol_current_price)}",
                 xy=(sol_current_date, sol_current_price),
                 xytext=(10, 14),
                 textcoords="offset points",
@@ -1439,7 +1663,6 @@ def generate_projection_chart(sol_path, projection_daily, key_levels, projection
                 bbox=dict(boxstyle="round,pad=0.25", fc="white", alpha=0.85),
             )
 
-        # Etichette target solo sui punti piu utili e con offset alternato.
         label_offsets = {
             7: (10, 18),
             30: (10, -26),
@@ -1464,7 +1687,7 @@ def generate_projection_chart(sol_path, projection_daily, key_levels, projection
             dx, dy = label_offsets.get(horizon, (10, 10))
 
             ax.annotate(
-                f"{horizon}g\\n{fmt_price(price_value)}",
+                f"{horizon}g\n{fmt_price(price_value)}",
                 xy=(date_value, price_value),
                 xytext=(dx, dy),
                 textcoords="offset points",
@@ -1472,7 +1695,6 @@ def generate_projection_chart(sol_path, projection_daily, key_levels, projection
                 bbox=dict(boxstyle="round,pad=0.20", fc="white", alpha=0.80),
             )
 
-        # Livelli chiave: sul margine destro, non sopra le linee.
         level_specs = [
             ("Prima conferma", key_levels.get("confirm_1"), 16),
             ("Seconda conferma", key_levels.get("confirm_2"), 0),
@@ -1501,7 +1723,6 @@ def generate_projection_chart(sol_path, projection_daily, key_levels, projection
                 annotation_clip=False,
             )
 
-        # Piu respiro a destra per leggere bene le etichette.
         last_proj_date = pd.to_datetime(projection_daily["sol_date"]).max()
         left_date = sol_path.index.min() - pd.Timedelta(days=5)
         right_date = last_proj_date + pd.Timedelta(days=25)
@@ -1657,7 +1878,6 @@ def generate_single_cycle_chart(
             bbox=dict(boxstyle="round,pad=0.20", fc="white", alpha=0.80),
         )
 
-    # Marker annuali solo sul percorso base, per non sporcare troppo il grafico.
     if mode in ["base", "log"]:
         for year in [2027, 2028, 2029]:
             year_rows = cycle_daily[pd.to_datetime(cycle_daily["sol_date"]).dt.year == year]
@@ -1735,7 +1955,6 @@ def generate_cycle_chart(sol_path, cycle_daily, cycle):
             log_scale=True,
         )
 
-        # Mantengo anche il vecchio file combinato per compatibilita con link gia esistenti.
         legacy_ok = generate_single_cycle_chart(
             sol_path=sol_path,
             cycle_daily=cycle_daily,
@@ -1965,6 +2184,7 @@ def build_report(
     projections,
     stages,
     cycle,
+    split_alignment,
     tracking_status,
     tracking_df,
     fractal_chart_ok,
@@ -1992,6 +2212,10 @@ def build_report(
     lines.append("5. **Quanto proietta SOL se estendiamo il ciclo fino al top BTC 2025?**")
     lines.append("")
     lines.append(build_verdict_block(verdict, key_levels, phase, next_step_text))
+    lines.append("")
+    lines.append("## Somiglianza prima e dopo inizio programma")
+    lines.append("")
+    lines.append(build_split_alignment_block(split_alignment))
     lines.append("")
     lines.append(build_operational_block(operational_summary, operational_rows))
     lines.append("")
@@ -2073,6 +2297,7 @@ def build_main_report_block(
     stages,
     projections,
     cycle,
+    split_alignment,
     tracking_status,
     fractal_chart_ok,
     projection_chart_ok,
@@ -2176,6 +2401,10 @@ def build_main_report_block(
             f"- **Giorno BTC equivalente:** {btc_equiv_date.date()}",
             f"- **Prossimo step:** {next_step_text}",
             "",
+            "## Somiglianza prima e dopo inizio programma",
+            "",
+            build_split_alignment_block(split_alignment),
+            "",
             "## Lettura operativa veloce",
             "",
             operational_summary,
@@ -2231,6 +2460,7 @@ def inject_into_main_report(
     stages,
     projections,
     cycle,
+    split_alignment,
     tracking_status,
     fractal_chart_ok,
     projection_chart_ok,
@@ -2265,6 +2495,7 @@ def inject_into_main_report(
         stages=stages,
         projections=projections,
         cycle=cycle,
+        split_alignment=split_alignment,
         tracking_status=tracking_status,
         fractal_chart_ok=fractal_chart_ok,
         projection_chart_ok=projection_chart_ok,
@@ -2387,6 +2618,13 @@ def main():
     compare_len = similarity.get("compare_len") or min(len(btc_path), len(sol_path))
     beta_ratio = volatility_beta(btc_path, sol_path, compare_len)
 
+    split_alignment = build_split_alignment(
+        btc_path=btc_path,
+        sol_path=sol_path,
+        sol_anchor_date=sol_anchor_date,
+        sol_current_date=sol_current_date,
+    )
+
     projections = projection_from_btc(btc_path, sol_current_price, sol_current_date, sol_elapsed_days, beta_ratio)
     stages = build_stage_roadmap(btc_path, sol_current_price, sol_current_date, sol_elapsed_days, beta_ratio)
     key_levels = build_key_levels(sol_current_price, sol_anchor_price, projections)
@@ -2426,6 +2664,10 @@ def main():
         beta_ratio=beta_ratio,
     )
 
+    pre_program = split_alignment.get("pre_program", {})
+    live_program = split_alignment.get("live_program", {})
+    all_program = split_alignment.get("all", {})
+
     summary_dict = {
         "btc_anchor_date": str(btc_anchor_date.date()),
         "btc_anchor_price": btc_anchor_price,
@@ -2460,6 +2702,20 @@ def main():
         "hard_invalid": key_levels.get("hard_invalid"),
         "cycle_max_base_price": cycle.get("cycle_max_base_price") if cycle else None,
         "cycle_max_beta_price": cycle.get("cycle_max_beta_price") if cycle else None,
+        "program_start_date": split_alignment.get("program_start_date"),
+        "program_start_day": split_alignment.get("program_start_day"),
+        "pre_program_alignment_score": pre_program.get("simple_alignment_score"),
+        "pre_program_avg_abs_gap_pct": pre_program.get("avg_abs_gap_pct"),
+        "pre_program_last_gap_pct": pre_program.get("last_gap_pct"),
+        "pre_program_status": pre_program.get("status"),
+        "live_program_alignment_score": live_program.get("simple_alignment_score"),
+        "live_program_avg_abs_gap_pct": live_program.get("avg_abs_gap_pct"),
+        "live_program_last_gap_pct": live_program.get("last_gap_pct"),
+        "live_program_status": live_program.get("status"),
+        "all_alignment_score": all_program.get("simple_alignment_score"),
+        "all_avg_abs_gap_pct": all_program.get("avg_abs_gap_pct"),
+        "all_last_gap_pct": all_program.get("last_gap_pct"),
+        "all_status": all_program.get("status"),
     }
 
     tracking_df = update_tracking_log(summary_dict)
@@ -2504,6 +2760,7 @@ def main():
         projections=projections,
         stages=stages,
         cycle=cycle,
+        split_alignment=split_alignment,
         tracking_status=tracking_status,
         tracking_df=tracking_df,
         fractal_chart_ok=fractal_chart_ok,
@@ -2531,6 +2788,7 @@ def main():
         stages=stages,
         projections=projections,
         cycle=cycle,
+        split_alignment=split_alignment,
         tracking_status=tracking_status,
         fractal_chart_ok=fractal_chart_ok,
         projection_chart_ok=projection_chart_ok,
@@ -2549,6 +2807,9 @@ def main():
     print(f"Verdict: {verdict.get('label')}")
     print(f"Phase: {phase.get('label')}")
     print(f"Tracking: {tracking_status.get('label')}")
+    print(f"Program start: {split_alignment.get('program_start_date')}")
+    print(f"Pre-program alignment: {fmt_pct(pre_program.get('simple_alignment_score'))}")
+    print(f"Live-program alignment: {fmt_pct(live_program.get('simple_alignment_score'))}")
 
 
 if __name__ == "__main__":
