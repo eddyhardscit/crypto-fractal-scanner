@@ -1,6 +1,6 @@
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-08 22:46 UTC
+Generato: 2026-07-08 23:37 UTC
 
 Questo report controlla se SOL sta seguendo il percorso previsto dal frattale BTC 2022 vs SOL 2026.
 
@@ -16,7 +16,7 @@ Ora il controllo è diviso in tre parti:
 - Bottom SOL usato: **2026-06-06**
 - Bottom BTC 2022 equivalente: **2022-11-21**
 - Inizio programma/scanner rilevato: **2026-07-03**
-- Prezzo iniziale SOL: **77,42 $**
+- Prezzo iniziale SOL: **77,45 $**
 - Verdetto: **PARZIALMENTE SI**
 - Somiglianza: **73,94%**
 - Tracking: **FRATTALE STABILE**
@@ -28,9 +28,9 @@ Ora il controllo è diviso in tre parti:
 - Giorni controllati dal bottom: **33**
 - Giorni controllati da inizio programma/scanner: **6**
 - Errore medio assoluto dal bottom: **9,03%**
-- Errore medio assoluto ultimi 7 giorni: **22,45%**
+- Errore medio assoluto ultimi 7 giorni: **22,46%**
 - Errore medio assoluto da inizio programma/scanner: **22,55%**
-- Errore ultimo giorno: **17,01%**
+- Errore ultimo giorno: **17,05%**
 - Stato: **SOL IN ANTICIPO / SOPRA IL FRACTAL**
 
 ## Grafico completo: bottom, inizio programma e proiezione
@@ -54,18 +54,18 @@ Ora il controllo è diviso in tre parti:
 |       29 | 2026-07-05 | 2022-12-20     | 81,42 $     | 66,60 $       | 22,26%   | da inizio programma |
 |       30 | 2026-07-06 | 2022-12-21     | 81,92 $     | 66,25 $       | 23,65%   | da inizio programma |
 |       31 | 2026-07-07 | 2022-12-22     | 80,65 $     | 66,30 $       | 21,64%   | da inizio programma |
-|       32 | 2026-07-08 | 2022-12-23     | 77,42 $     | 66,17 $       | 17,01%   | da inizio programma |
+|       32 | 2026-07-08 | 2022-12-23     | 77,45 $     | 66,17 $       | 17,05%   | da inizio programma |
 
 ## Proiezione futura salvata
 
 | Orizzonte   | Data target   | Base frattale   | Min percorso   | Max percorso   | Controllato   | Prezzo reale   | Errore   | Dentro banda   |
 |:------------|:--------------|:----------------|:---------------|:---------------|:--------------|:---------------|:---------|:---------------|
-| 7g          | 2026-07-15    | 76,53 $         | 76,30 $        | 78,00 $        | no            | n/a            | n/a      | n/a            |
-| 14g         | 2026-07-22    | 78,14 $         | 76,28 $        | 78,14 $        | no            | n/a            | n/a      | n/a            |
-| 30g         | 2026-08-07    | 104,74 $        | 76,28 $        | 105,00 $       | no            | n/a            | n/a      | n/a            |
-| 60g         | 2026-09-06    | 112,65 $        | 76,28 $        | 114,46 $       | no            | n/a            | n/a      | n/a            |
-| 90g         | 2026-10-06    | 130,61 $        | 76,28 $        | 130,61 $       | no            | n/a            | n/a      | n/a            |
-| 120g        | 2026-11-05    | 128,23 $        | 76,28 $        | 140,53 $       | no            | n/a            | n/a      | n/a            |
+| 7g          | 2026-07-15    | 76,55 $         | 76,32 $        | 78,02 $        | no            | n/a            | n/a      | n/a            |
+| 14g         | 2026-07-22    | 78,16 $         | 76,30 $        | 78,16 $        | no            | n/a            | n/a      | n/a            |
+| 30g         | 2026-08-07    | 104,76 $        | 76,30 $        | 105,03 $       | no            | n/a            | n/a      | n/a            |
+| 60g         | 2026-09-06    | 112,67 $        | 76,30 $        | 114,49 $       | no            | n/a            | n/a      | n/a            |
+| 90g         | 2026-10-06    | 130,65 $        | 76,30 $        | 130,65 $       | no            | n/a            | n/a      | n/a            |
+| 120g        | 2026-11-05    | 128,27 $        | 76,30 $        | 140,57 $       | no            | n/a            | n/a      | n/a            |
 
 ## Accuratezza storica della proiezione futura
 
