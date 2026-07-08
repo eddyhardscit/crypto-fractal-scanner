@@ -1,7 +1,7 @@
 # Decisione operativa sintetica
 
-Generato: **2026-07-08 20:20:07 CEST**  
-UTC: **2026-07-08 18:20:07 UTC**
+Generato: **2026-07-08 20:38:32 CEST**  
+UTC: **2026-07-08 18:38:32 UTC**
 
 Questo report prende tutti i dati dello scanner e li trasforma in una lettura pratica.
 
@@ -15,9 +15,9 @@ Scopo:
 
 | Asset | Prezzo | Direzione | Spot | Long leva | Short leva | Max long | Max short | Rischio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 62.231 $ | LEGGERMENTE BULLISH | ACCUMULA SOLO SU PULLBACK | LONG PRUDENTE | NO SHORT | max 2x isolated | nessuna | BASSO |
-| SOL | 77,15 $ | LEGGERMENTE BEARISH | TAKE PROFIT SU SPIKE / NON INSEGUIRE | NO LONG A LEVA | NO SHORT | nessuna | nessuna | MOLTO ALTO |
-| DOGE | 0,07266 $ | BEARISH | VENDI PARZIALE / STAI FUORI | NO LONG A LEVA | SHORT SOLO DOPO SPIKE | nessuna | max 1x-2x isolated | MOLTO ALTO |
+| BTC | 62.005 $ | LEGGERMENTE BULLISH | ACCUMULA SOLO SU PULLBACK | LONG PRUDENTE | NO SHORT | max 2x isolated | nessuna | BASSO |
+| SOL | 76,75 $ | LEGGERMENTE BEARISH | TAKE PROFIT SU SPIKE / NON INSEGUIRE | NO LONG A LEVA | NO SHORT | nessuna | nessuna | MOLTO ALTO |
+| DOGE | 0,07223 $ | BEARISH | VENDI PARZIALE / STAI FUORI | NO LONG A LEVA | SHORT SOLO DOPO SPIKE | nessuna | max 1x-2x isolated | MOLTO ALTO |
 
 ## Spiegazione semplice
 
@@ -75,7 +75,7 @@ Lo short viene indicato solo se:
 
 ## Bitcoin — BTC
 
-Prezzo usato: **62.231 $**
+Prezzo usato: **62.005 $**
 
 - **Direzione:** LEGGERMENTE BULLISH
 - **Spot:** ACCUMULA SOLO SU PULLBACK
@@ -110,22 +110,22 @@ Prezzo usato: **62.231 $**
 
 | Area | Prezzo | Uso pratico |
 | --- | --- | --- |
-| Pullback -5% | 59.119 $ | zona dove valutare accumulo, non comprare a caso |
-| Target rimbalzo +10% | 68.454 $ | zona obiettivo dopo pullback |
-| Spike +10% | 68.454 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
-| Dump -5% | 59.119 $ | zona di scarico dopo spike |
-| Zona bassa storica | 56.307 $ | zona rischio; con leva bisogna rispettarla |
-| Zona alta storica | 80.157 $ | zona alta; se ci arriva, pensare a profitto |
+| Pullback -5% | 58.904 $ | zona dove valutare accumulo, non comprare a caso |
+| Target rimbalzo +10% | 68.205 $ | zona obiettivo dopo pullback |
+| Spike +10% | 68.205 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
+| Dump -5% | 58.904 $ | zona di scarico dopo spike |
+| Zona bassa storica | 56.102 $ | zona rischio; con leva bisogna rispettarla |
+| Zona alta storica | 79.865 $ | zona alta; se ci arriva, pensare a profitto |
 
 ### Piano sintetico
 
-> spot: valutare accumulo solo verso 59.119 $; long: long prudente, max 2x isolated; short: evitato; zona bassa storica/rischio: 56.307 $; zona alta storica/take profit: 80.157 $
+> spot: valutare accumulo solo verso 58.904 $; long: long prudente, max 2x isolated; short: evitato; zona bassa storica/rischio: 56.102 $; zona alta storica/take profit: 79.865 $
 
 ---
 
 ## Solana — SOL
 
-Prezzo usato: **77,15 $**
+Prezzo usato: **76,75 $**
 
 - **Direzione:** LEGGERMENTE BEARISH
 - **Spot:** TAKE PROFIT SU SPIKE / NON INSEGUIRE
@@ -160,22 +160,22 @@ Prezzo usato: **77,15 $**
 
 | Area | Prezzo | Uso pratico |
 | --- | --- | --- |
-| Pullback -5% | 73,29 $ | zona dove valutare accumulo, non comprare a caso |
-| Target rimbalzo +10% | 84,87 $ | zona obiettivo dopo pullback |
-| Spike +10% | 84,87 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
-| Dump -5% | 73,29 $ | zona di scarico dopo spike |
-| Zona bassa storica | 59,15 $ | zona rischio; con leva bisogna rispettarla |
-| Zona alta storica | 90,06 $ | zona alta; se ci arriva, pensare a profitto |
+| Pullback -5% | 72,91 $ | zona dove valutare accumulo, non comprare a caso |
+| Target rimbalzo +10% | 84,43 $ | zona obiettivo dopo pullback |
+| Spike +10% | 84,43 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
+| Dump -5% | 72,91 $ | zona di scarico dopo spike |
+| Zona bassa storica | 58,84 $ | zona rischio; con leva bisogna rispettarla |
+| Zona alta storica | 89,59 $ | zona alta; se ci arriva, pensare a profitto |
 
 ### Piano sintetico
 
-> spot: prendere profitto su spike verso 84,87 $; long: evitato; short: evitato; zona bassa storica/rischio: 59,15 $; zona alta storica/take profit: 90,06 $
+> spot: prendere profitto su spike verso 84,43 $; long: evitato; short: evitato; zona bassa storica/rischio: 58,84 $; zona alta storica/take profit: 89,59 $
 
 ---
 
 ## Dogecoin — DOGE
 
-Prezzo usato: **0,07266 $**
+Prezzo usato: **0,07223 $**
 
 - **Direzione:** BEARISH
 - **Spot:** VENDI PARZIALE / STAI FUORI
@@ -210,15 +210,15 @@ Prezzo usato: **0,07266 $**
 
 | Area | Prezzo | Uso pratico |
 | --- | --- | --- |
-| Pullback -5% | 0,06903 $ | zona dove valutare accumulo, non comprare a caso |
-| Target rimbalzo +10% | 0,07993 $ | zona obiettivo dopo pullback |
-| Spike +10% | 0,07993 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
-| Dump -5% | 0,06903 $ | zona di scarico dopo spike |
-| Zona bassa storica | 0,04534 $ | zona rischio; con leva bisogna rispettarla |
-| Zona alta storica | 0,08280 $ | zona alta; se ci arriva, pensare a profitto |
+| Pullback -5% | 0,06862 $ | zona dove valutare accumulo, non comprare a caso |
+| Target rimbalzo +10% | 0,07945 $ | zona obiettivo dopo pullback |
+| Spike +10% | 0,07945 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
+| Dump -5% | 0,06862 $ | zona di scarico dopo spike |
+| Zona bassa storica | 0,04507 $ | zona rischio; con leva bisogna rispettarla |
+| Zona alta storica | 0,08231 $ | zona alta; se ci arriva, pensare a profitto |
 
 ### Piano sintetico
 
-> spot: ridurre esposizione o stare fuori; long: evitato; short: solo dopo spike verso 0,07993 $, possibile target scarico 0,06903 $; zona bassa storica/rischio: 0,04534 $; zona alta storica/take profit: 0,08280 $
+> spot: ridurre esposizione o stare fuori; long: evitato; short: solo dopo spike verso 0,07945 $, possibile target scarico 0,06862 $; zona bassa storica/rischio: 0,04507 $; zona alta storica/take profit: 0,08231 $
 
 ---

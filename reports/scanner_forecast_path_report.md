@@ -1,6 +1,6 @@
 # Scanner forecast path / cono probabilistico
 
-Generato: 2026-07-08 18:20 UTC
+Generato: 2026-07-08 18:39 UTC
 
 Questo report trasforma lo scanner dei 40 casi simili in un grafico a percorso.
 
@@ -17,9 +17,9 @@ Serve a vedere se il prezzo reale sta camminando dentro il percorso previsto dal
 
 | Asset   | Data       | Prezzo iniziale   | Direzione scanner   | Casi positivi   | P10 30g     | P25 30g     | P50 30g     | P75 30g     | P90 30g     |
 |:--------|:-----------|:------------------|:--------------------|:----------------|:------------|:------------|:------------|:------------|:------------|
-| BTC     | 2026-07-08 | 62.230,70 $       | SALITA              | 65,00%          | 54.260,28 $ | 60.634,38 $ | 64.338,27 $ | 74.387,96 $ | 89.456,59 $ |
-| SOL     | 2026-07-08 | 77,15 $           | INCERTO             | 45,00%          | 62,40 $     | 70,01 $     | 75,57 $     | 83,21 $     | 110,90 $    |
-| DOGE    | 2026-07-08 | 0.07000 $         | DISCESA             | 20,00%          | 0.05000 $   | 0.05000 $   | 0.06000 $   | 0.07000 $   | 0.09000 $   |
+| BTC     | 2026-07-08 | 62.004,57 $       | SALITA              | 65,00%          | 54.063,12 $ | 60.414,05 $ | 64.104,48 $ | 74.117,65 $ | 89.131,53 $ |
+| SOL     | 2026-07-08 | 76,75 $           | INCERTO             | 45,00%          | 62,07 $     | 69,65 $     | 75,18 $     | 82,78 $     | 110,33 $    |
+| DOGE    | 2026-07-08 | 0.07000 $         | DISCESA             | 20,00%          | 0.04000 $   | 0.05000 $   | 0.06000 $   | 0.07000 $   | 0.09000 $   |
 
 ## Grafici
 
