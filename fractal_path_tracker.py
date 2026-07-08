@@ -404,6 +404,22 @@ def actual_price_on_or_after(df, date):
 def infer_program_start_date():
     candidates = []
 
+    def to_naive_date(value):
+        try:
+            dt = pd.to_datetime(value, errors="coerce", utc=True)
+
+            if pd.isna(dt):
+                return pd.NaT
+
+            if isinstance(dt, pd.Timestamp):
+                dt = dt.tz_convert(None)
+                return dt.normalize()
+
+            return pd.NaT
+
+        except Exception:
+            return pd.NaT
+
     known_logs = [
         REPORTS_DIR / "fractal_path_forecasts.csv",
         REPORTS_DIR / "module_signal_log.csv",
@@ -438,11 +454,21 @@ def infer_program_start_date():
             if col not in df.columns:
                 continue
 
-            dates = pd.to_datetime(df[col], errors="coerce")
-            dates = dates.dropna()
+            try:
+                dates = pd.to_datetime(df[col], errors="coerce", utc=True)
+                dates = dates.dropna()
 
-            if not dates.empty:
-                candidates.append(dates.min().normalize())
+                if dates.empty:
+                    continue
+
+                dates = dates.dt.tz_convert(None).dt.normalize()
+                dates = dates.dropna()
+
+                if not dates.empty:
+                    candidates.append(dates.min())
+
+            except Exception:
+                continue
 
     latest_text = read_text(LATEST_REPORT)
 
@@ -450,7 +476,7 @@ def infer_program_start_date():
         checks = re.findall(r"Prossimo controllo\s*\|\s*([0-9]{4}-[0-9]{2}-[0-9]{2})", latest_text)
 
         for c in checks:
-            dt = pd.to_datetime(c, errors="coerce")
+            dt = to_naive_date(c)
 
             if not pd.isna(dt):
                 candidates.append((dt - pd.Timedelta(days=30)).normalize())
@@ -458,16 +484,23 @@ def infer_program_start_date():
         checks2 = re.findall(r"Prossimo controllo[^0-9]*([0-9]{4}-[0-9]{2}-[0-9]{2})", latest_text)
 
         for c in checks2:
-            dt = pd.to_datetime(c, errors="coerce")
+            dt = to_naive_date(c)
 
             if not pd.isna(dt):
                 candidates.append((dt - pd.Timedelta(days=30)).normalize())
 
-    if not candidates:
+    clean_candidates = []
+
+    for c in candidates:
+        dt = to_naive_date(c)
+
+        if not pd.isna(dt):
+            clean_candidates.append(dt)
+
+    if not clean_candidates:
         return pd.NaT
 
-    return min(candidates)
-
+    return min(clean_candidates)
 
 def infer_bottom_date(meta):
     last_dt = pd.to_datetime(meta.get("last_candle_date", pd.NaT), errors="coerce")
