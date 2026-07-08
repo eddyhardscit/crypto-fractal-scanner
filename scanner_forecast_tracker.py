@@ -570,15 +570,18 @@ def update_checks(log_df):
             inside_wide = np.nan
             inside_mid = np.nan
 
+            inside_wide = np.nan
+            inside_mid = np.nan
+
             if not pd.isna(p10) and not pd.isna(p90):
                 lo = min(p10, p90)
                 hi = max(p10, p90)
-                inside_wide = bool(lo <= actual <= hi)
+                inside_wide = 1.0 if lo <= actual <= hi else 0.0
 
             if not pd.isna(p25) and not pd.isna(p75):
                 lo = min(p25, p75)
                 hi = max(p25, p75)
-                inside_mid = bool(lo <= actual <= hi)
+                inside_mid = 1.0 if lo <= actual <= hi else 0.0
 
             error = np.nan
 
