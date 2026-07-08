@@ -30,8 +30,16 @@ GLOBAL_END = "<!-- GLOBAL_CONFLUENCE_END -->"
 
 TARGET_TICKER = "SOL-USD"
 
+# Quando il gap EMA50/EMA200 è dentro questa fascia, non lo chiamiamo death cross netto.
+# Lo classifichiamo come "medie sovrapposte / incrocio in corso".
+CROSS_NEAR_BAND_PCT = 2.0
+
+# Limiti per evitare che un singolo asset, per esempio LTC o ETC, domini tutti gli analoghi.
+MAX_ANALOG_EVENTS_TOTAL = 30
+MAX_ANALOG_EVENTS_PER_ASSET = 3
+MIN_ANALOG_SIMILARITY = 45.0
+
 # Solo crypto. Niente stock market.
-# Il codice prova a scaricarle tutte e scarta automaticamente quelle senza storico sufficiente.
 CRYPTO_ASSETS = {
     "BTC-USD": "Bitcoin",
     "ETH-USD": "Ethereum",
@@ -75,10 +83,57 @@ CRYPTO_ASSETS = {
     "GRT6719-USD": "The Graph",
 }
 
+# Date di riferimento per calcolare l'età reale dell'asset.
+# Sono date pratiche: genesis, mainnet, lancio pubblico o prima fase trading rilevante.
+# Se una data è imperfetta, è comunque molto meglio del primo dato disponibile su Yahoo.
+ASSET_LAUNCH_DATES = {
+    "BTC-USD": "2009-01-03",
+    "ETH-USD": "2015-07-30",
+    "BNB-USD": "2017-07-25",
+    "XRP-USD": "2012-06-01",
+    "ADA-USD": "2017-09-29",
+    "SOL-USD": "2020-03-16",
+    "DOGE-USD": "2013-12-06",
+    "TRX-USD": "2017-09-13",
+    "LINK-USD": "2017-09-20",
+    "LTC-USD": "2011-10-13",
+    "BCH-USD": "2017-08-01",
+    "XLM-USD": "2014-07-31",
+    "AVAX-USD": "2020-09-21",
+    "DOT-USD": "2020-08-18",
+    "MATIC-USD": "2019-04-26",
+    "NEAR-USD": "2020-10-13",
+    "ATOM-USD": "2019-03-13",
+    "FIL-USD": "2020-10-15",
+    "ICP-USD": "2021-05-10",
+    "APT-USD": "2022-10-12",
+    "ARB-USD": "2023-03-23",
+    "OP-USD": "2022-05-31",
+    "ETC-USD": "2016-07-20",
+    "UNI7083-USD": "2020-09-17",
+    "AAVE-USD": "2020-10-02",
+    "MKR-USD": "2017-11-25",
+    "INJ-USD": "2020-10-21",
+    "RUNE-USD": "2019-07-20",
+    "FTM-USD": "2018-06-15",
+    "SAND-USD": "2020-08-14",
+    "MANA-USD": "2017-09-18",
+    "ALGO-USD": "2019-06-19",
+    "VET-USD": "2018-06-30",
+    "THETA-USD": "2018-01-17",
+    "EGLD-USD": "2020-07-30",
+    "AXS-USD": "2020-11-04",
+    "QNT-USD": "2018-08-10",
+    "STX-USD": "2019-10-25",
+    "HBAR-USD": "2019-09-16",
+    "GRT6719-USD": "2020-12-17",
+}
+
 EVENT_COLUMNS = [
     "asset",
     "name",
     "event_date",
+    "age_reference_date",
     "age_years",
     "close",
     "ema20",
@@ -129,11 +184,13 @@ HISTORY_COLUMNS = [
     "sol_rsi14",
     "sol_rsi_4w_change",
     "sol_gain_from_26w_low_pct",
+    "sol_age_reference_date",
     "sol_age_years",
     "cross_state",
     "weeks_since_death_cross",
     "historical_events",
     "analog_events",
+    "max_analog_events_per_asset",
     "analog_hit_ema200_8w_pct",
     "analog_hit_ema200_12w_pct",
     "analog_hit_ema200_16w_pct",
@@ -203,24 +260,62 @@ def safe_float(value):
         return None
 
 
+def to_naive_timestamp(value):
+    ts = pd.Timestamp(value)
+
+    if ts.tzinfo is not None:
+        try:
+            ts = ts.tz_convert(None)
+        except Exception:
+            ts = ts.tz_localize(None)
+
+    return ts.normalize()
+
+
+def get_age_reference_date(ticker, df):
+    manual = ASSET_LAUNCH_DATES.get(ticker)
+
+    if manual:
+        return to_naive_timestamp(manual)
+
+    if df is not None and not df.empty:
+        return to_naive_timestamp(df.index[0])
+
+    return None
+
+
+def years_between(start_date, end_date):
+    try:
+        start = to_naive_timestamp(start_date)
+        end = to_naive_timestamp(end_date)
+        return (end - start).days / 365.25
+    except Exception:
+        return None
+
+
 def pct_change(new, old):
     new = safe_float(new)
     old = safe_float(old)
+
     if new is None or old is None or old == 0:
         return None
+
     return (new / old - 1.0) * 100.0
 
 
 def fmt_number(value, decimals=2):
     value = safe_float(value)
+
     if value is None:
         return "n/a"
+
     formatted = f"{value:,.{decimals}f}"
     return formatted.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
 def fmt_price(value):
     value = safe_float(value)
+
     if value is None:
         return "n/a"
 
@@ -235,8 +330,10 @@ def fmt_price(value):
 
 def fmt_pct(value, decimals=2, force_sign=True):
     value = safe_float(value)
+
     if value is None:
         return "n/a"
+
     sign = "+" if force_sign and value > 0 else ""
     return f"{sign}{fmt_number(value, decimals)}%"
 
@@ -280,8 +377,10 @@ def normalize_yfinance_df(df, ticker):
             df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
 
     rename = {}
+
     for col in df.columns:
         c = str(col).lower()
+
         if c == "open":
             rename[col] = "Open"
         elif c == "high":
@@ -298,6 +397,7 @@ def normalize_yfinance_df(df, ticker):
     df = df.rename(columns=rename)
 
     required = ["Open", "High", "Low", "Close", "Volume"]
+
     for col in required:
         if col not in df.columns:
             df[col] = np.nan
@@ -361,13 +461,6 @@ def add_indicators(df):
     return df
 
 
-def years_between(start_date, end_date):
-    try:
-        return (pd.Timestamp(end_date) - pd.Timestamp(start_date)).days / 365.25
-    except Exception:
-        return None
-
-
 def find_weeks_since_death_cross(df, pos):
     if pos <= 1:
         return None
@@ -395,27 +488,38 @@ def classify_cross_state(df, pos):
     if gap is None:
         return "n/a", None
 
-    if weeks_since is not None and weeks_since <= 12:
-        return "DEATH CROSS RECENTE", weeks_since
+    # Punto importante:
+    # Se il gap è dentro ±2%, non diciamo death cross netto.
+    # Exchange diversi possono mostrare cross già fatto o ancora no.
+    if abs(gap) <= CROSS_NEAR_BAND_PCT:
+        if gap >= 0:
+            return "EMA50/EMA200 SOVRAPPOSTE / INCROCIO IMMINENTE", weeks_since
+        return "EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO", weeks_since
 
-    if gap >= 0 and gap <= 8 and ema50_slope is not None and ema50_slope < 0:
-        return "EMA50 VICINA A EMA200 / INCROCIO POSSIBILE", weeks_since
-
-    if gap < 0 and gap >= -8:
-        return "EMA50 APPENA SOTTO EMA200", weeks_since
+    if gap > CROSS_NEAR_BAND_PCT and gap <= 8 and ema50_slope is not None and ema50_slope < 0:
+        return "EMA50 SOPRA EMA200 MA IN AVVICINAMENTO", weeks_since
 
     if gap > 8:
         return "EMA50 ANCORA SOPRA EMA200", weeks_since
 
-    return "EMA50 SOTTO EMA200 DA TEMPO", weeks_since
+    if gap < -CROSS_NEAR_BAND_PCT and weeks_since is not None:
+        if weeks_since <= 4:
+            return "DEATH CROSS RECENTE / APPENA CONFERMATO", weeks_since
+        if weeks_since <= 12:
+            return "DEATH CROSS CONFERMATO DA POCO", weeks_since
+
+    if gap < -8:
+        return "EMA50 SOTTO EMA200 DA TEMPO", weeks_since
+
+    return "EMA50 SOTTO EMA200 / CROSS GIÀ AVVENUTO", weeks_since
 
 
 def get_row_setup(df, pos, ticker, name):
     row = df.iloc[pos]
 
-    first_date = df.index[0]
     event_date = df.index[pos]
-    age_years = years_between(first_date, event_date)
+    age_ref = get_age_reference_date(ticker, df)
+    age_years = years_between(age_ref, event_date)
 
     cross_state, weeks_since = classify_cross_state(df, pos)
 
@@ -423,6 +527,7 @@ def get_row_setup(df, pos, ticker, name):
         "asset": ticker,
         "name": name,
         "event_date": pd.Timestamp(event_date).strftime("%Y-%m-%d"),
+        "age_reference_date": age_ref.strftime("%Y-%m-%d") if age_ref is not None else None,
         "age_years": safe_float(age_years),
         "close": safe_float(row.get("Close")),
         "ema20": safe_float(row.get("EMA20")),
@@ -465,9 +570,12 @@ def setup_is_lifecycle_squeeze_candidate(setup):
 
     near_cross = (
         abs(ema_gap) <= 12
+        or "SOVRAPPOSTE" in cross_state
+        or "IMMINENTE" in cross_state
+        or "IN CORSO" in cross_state
         or "RECENTE" in cross_state
-        or "VICINA" in cross_state
-        or "APPENA SOTTO" in cross_state
+        or "CONFERMATO DA POCO" in cross_state
+        or "AVVICINAMENTO" in cross_state
     )
 
     if not near_cross:
@@ -516,8 +624,10 @@ def add_forward_outcomes(df, pos, setup):
 
     if target is not None:
         future = df.iloc[pos + 1 : pos + 1 + 52]
+
         for offset, (_, r) in enumerate(future.iterrows(), start=1):
             high = safe_float(r.get("High"))
+
             if high is not None and high >= target:
                 weeks_to_hit = offset
                 break
@@ -562,6 +672,7 @@ def detect_historical_events(ticker, name, df):
 
 def get_current_sol_setup():
     df = fetch_weekly_crypto(TARGET_TICKER)
+
     if df.empty:
         return None, pd.DataFrame()
 
@@ -598,7 +709,7 @@ def compute_similarity_to_sol(event, sol_setup):
         ("rsi14", 18.0, 1.0),
         ("rsi_4w_change", 10.0, 0.8),
         ("gain_from_26w_low_pct", 50.0, 1.0),
-        ("age_years", 4.0, 0.9),
+        ("age_years", 5.0, 0.9),
     ]
 
     distance = 0.0
@@ -633,11 +744,61 @@ def compute_all_similarities(events, sol_setup):
     return events
 
 
+def take_balanced_events(candidates, max_total, max_per_asset):
+    selected = []
+    counts = {}
+
+    for event in candidates:
+        asset = event.get("asset") or "UNKNOWN"
+
+        if counts.get(asset, 0) >= max_per_asset:
+            continue
+
+        selected.append(event)
+        counts[asset] = counts.get(asset, 0) + 1
+
+        if len(selected) >= max_total:
+            break
+
+    return selected
+
+
+def build_analog_set(events):
+    if not events:
+        return []
+
+    filtered = [
+        e for e in events
+        if safe_float(e.get("similarity_to_sol")) is not None
+        and safe_float(e.get("similarity_to_sol")) >= MIN_ANALOG_SIMILARITY
+    ]
+
+    candidates = filtered if len(filtered) >= 8 else events
+
+    balanced = take_balanced_events(
+        candidates,
+        max_total=MAX_ANALOG_EVENTS_TOTAL,
+        max_per_asset=MAX_ANALOG_EVENTS_PER_ASSET,
+    )
+
+    # Se il limite 3 per asset lascia troppi pochi analoghi, allarga leggermente a 5.
+    # Meglio avere un campione un po' più largo che una statistica su 4 eventi.
+    if len(balanced) < 12:
+        balanced = take_balanced_events(
+            candidates,
+            max_total=MAX_ANALOG_EVENTS_TOTAL,
+            max_per_asset=5,
+        )
+
+    return balanced
+
+
 def bool_mean(rows, key):
     values = []
 
     for row in rows:
         value = row.get(key)
+
         if value is True:
             values.append(1.0)
         elif value is False:
@@ -654,6 +815,7 @@ def median_value(rows, key):
 
     for row in rows:
         value = safe_float(row.get(key))
+
         if value is not None:
             values.append(value)
 
@@ -661,22 +823,6 @@ def median_value(rows, key):
         return None
 
     return float(np.median(values))
-
-
-def build_analog_set(events):
-    if not events:
-        return []
-
-    filtered = [
-        e for e in events
-        if safe_float(e.get("similarity_to_sol")) is not None
-        and safe_float(e.get("similarity_to_sol")) >= 45
-    ]
-
-    if len(filtered) >= 8:
-        return filtered[:30]
-
-    return events[:30]
 
 
 def compute_stats(events, analog_events):
@@ -754,18 +900,20 @@ def parse_latest_report_levels():
 
     for key, pattern in patterns.items():
         m = re.search(pattern, text, flags=re.IGNORECASE)
+
         if m:
             levels[key] = parse_price_from_text(m.group(1))
 
-    # Fallback dal blocco Global, se il frattale non fosse presente.
     if levels["first_confirmation"] is None:
         m = re.search(r"Conferme sopra\s+([0-9\.,]+)\s*/\s*([0-9\.,]+)\s*/\s*([0-9\.,]+)", text)
+
         if m:
             levels["first_confirmation"] = parse_price_from_text(m.group(1))
             levels["second_confirmation"] = parse_price_from_text(m.group(3))
 
     if levels["soft_invalidation"] is None:
         m = re.search(r"Allarmi sotto\s+([0-9\.,]+)\s*/\s*([0-9\.,]+)\s*/\s*([0-9\.,]+)", text)
+
         if m:
             levels["soft_invalidation"] = parse_price_from_text(m.group(1))
             levels["hard_invalidation"] = parse_price_from_text(m.group(3))
@@ -782,6 +930,7 @@ def add_score_component(components, score, name, value, points, reason):
             "reason": reason,
         }
     )
+
     return score + points
 
 
@@ -869,7 +1018,16 @@ def compute_lifecycle_score(sol_setup, stats, levels):
             )
 
     if ema_gap is not None:
-        if "VICINA" in cross_state or "RECENTE" in cross_state or "APPENA SOTTO" in cross_state:
+        if "SOVRAPPOSTE" in cross_state or "IMMINENTE" in cross_state or "IN CORSO" in cross_state:
+            score = add_score_component(
+                components,
+                score,
+                "EMA50/EMA200",
+                f"{cross_state} ({fmt_pct(ema_gap)})",
+                1,
+                "Le medie sono praticamente attaccate: fase compatibile con incrocio tardivo/squeeze.",
+            )
+        elif "RECENTE" in cross_state or "CONFERMATO DA POCO" in cross_state or "AVVICINAMENTO" in cross_state:
             score = add_score_component(
                 components,
                 score,
@@ -927,7 +1085,7 @@ def compute_lifecycle_score(sol_setup, stats, levels):
             )
 
     if age is not None:
-        if 3 <= age <= 7:
+        if 3 <= age <= 8:
             score = add_score_component(
                 components,
                 score,
@@ -1051,6 +1209,7 @@ def load_history():
     try:
         with open(HISTORY_CSV_PATH, "r", encoding="utf-8", newline="") as f:
             reader = csv.DictReader(f)
+
             for row in reader:
                 rows.append(dict(row))
     except Exception:
@@ -1079,6 +1238,7 @@ def update_history(row):
     rows.sort(key=lambda r: r.get("date", ""))
 
     save_history(rows)
+
     return rows
 
 
@@ -1092,6 +1252,7 @@ def make_sol_chart(sol_df, sol_setup):
         return None
 
     df = add_indicators(sol_df).dropna(subset=["EMA200", "EMA50", "Close"])
+
     if df.empty:
         return None
 
@@ -1128,6 +1289,7 @@ def make_sol_chart(sol_df, sol_setup):
             plt.close()
         except Exception:
             pass
+
         return None
 
 
@@ -1136,6 +1298,7 @@ def build_score_table(components):
 
     for c in components:
         points = c.get("points")
+
         if points is None:
             points_text = "0"
         elif points > 0:
@@ -1169,9 +1332,11 @@ def build_top_analogs_table(analog_events, limit=15):
                 event.get("asset"),
                 fmt_pct(event.get("similarity_to_sol"), force_sign=False),
                 f"{fmt_number(event.get('age_years'), 1)} anni",
+                event.get("age_reference_date"),
                 fmt_price(event.get("close")),
                 fmt_pct(event.get("price_to_ema200_pct")),
                 fmt_pct(event.get("ema50_ema200_gap_pct")),
+                event.get("cross_state"),
                 fmt_number(event.get("rsi14"), 2),
                 yes_no(event.get("hit_ema200_12w")),
                 fmt_pct(event.get("max_gain_12w_pct")),
@@ -1189,9 +1354,11 @@ def build_top_analogs_table(analog_events, limit=15):
             "Ticker",
             "Similarità",
             "Età",
+            "Ref. età",
             "Prezzo",
             "Dist. EMA200",
             "Gap EMA50/200",
+            "Stato cross",
             "RSI",
             "Hit EMA200 12w",
             "Max gain 12w",
@@ -1207,6 +1374,7 @@ def build_stats_table(stats):
         [
             ["Eventi storici trovati", stats.get("historical_events")],
             ["Analoghi usati", stats.get("analog_events")],
+            ["Limite massimo per singolo asset", MAX_ANALOG_EVENTS_PER_ASSET],
             ["Hit EMA200 entro 4 settimane", fmt_pct(stats.get("hit_ema200_4w_pct"), force_sign=False)],
             ["Hit EMA200 entro 8 settimane", fmt_pct(stats.get("hit_ema200_8w_pct"), force_sign=False)],
             ["Hit EMA200 entro 12 settimane", fmt_pct(stats.get("hit_ema200_12w_pct"), force_sign=False)],
@@ -1222,6 +1390,7 @@ def build_current_table(sol_setup, levels):
     return md_table(
         ["Voce", "Valore", "Lettura"],
         [
+            ["Fonte prezzi", "Yahoo Finance SOL-USD weekly", "Può differire da KuCoin/CoinEx/Binance per chiusura candela e storico EMA."],
             ["Prezzo SOL", fmt_price(sol_setup.get("close")), "Prezzo weekly attuale."],
             ["EMA20", fmt_price(sol_setup.get("ema20")), "Media breve."],
             ["EMA50", fmt_price(sol_setup.get("ema50")), "Media intermedia."],
@@ -1229,12 +1398,13 @@ def build_current_table(sol_setup, levels):
             ["EMA200", fmt_price(sol_setup.get("ema200")), "Target naturale del bear-market squeeze."],
             ["Distanza prezzo da EMA200", fmt_pct(sol_setup.get("price_to_ema200_pct")), "Negativa = prezzo sotto EMA200."],
             ["Upside verso EMA200", fmt_pct(sol_setup.get("upside_to_ema200_pct")), "Quanto dovrebbe salire per tornare a EMA200."],
-            ["Gap EMA50/EMA200", fmt_pct(sol_setup.get("ema50_ema200_gap_pct")), "Vicino a zero = incrocio vicino."],
+            ["Gap EMA50/EMA200", fmt_pct(sol_setup.get("ema50_ema200_gap_pct")), "Dentro ±2% = medie sovrapposte, non cross netto."],
             ["Stato incrocio", sol_setup.get("cross_state"), "Fase EMA50/EMA200."],
             ["RSI weekly", fmt_number(sol_setup.get("rsi14"), 2), "RSI basso/in recupero può aiutare il relief rally."],
             ["Cambio RSI 4w", fmt_number(sol_setup.get("rsi_4w_change"), 2), "Positivo = RSI in recupero."],
             ["Gain da minimo 26w", fmt_pct(sol_setup.get("gain_from_26w_low_pct")), "Misura se il primo spike è già partito."],
-            ["Età asset", f"{fmt_number(sol_setup.get('age_years'), 1)} anni", "Fascia giovane/matura."],
+            ["Età asset", f"{fmt_number(sol_setup.get('age_years'), 1)} anni", "Calcolata da data reale di riferimento, non dal primo dato Yahoo."],
+            ["Data riferimento età", sol_setup.get("age_reference_date"), "Genesis/mainnet/lancio pubblico o trading rilevante."],
             ["Prima conferma frattale", fmt_price(levels.get("first_confirmation")), "Livello letto dal report principale, se disponibile."],
             ["Seconda conferma frattale", fmt_price(levels.get("second_confirmation")), "Livello letto dal report principale, se disponibile."],
             ["Invalidazione soft", fmt_price(levels.get("soft_invalidation")), "Sotto qui il setup si indebolisce."],
@@ -1285,6 +1455,7 @@ def build_markdown_report(sol_setup, stats, analog_events, components, history_r
     rome_now = datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z")
 
     chart_name = None
+
     if os.path.exists(CHART_PATH):
         chart_name = os.path.basename(CHART_PATH)
 
@@ -1298,6 +1469,8 @@ def build_markdown_report(sol_setup, stats, analog_events, components, history_r
     lines.append("")
     lines.append("Idea centrale: una EMA50 che scende verso EMA200 non è rialzista di per sé. Però, se arriva tardi dopo un forte bear market e il prezzo è molto sotto EMA200 weekly, può diventare un setup da **bear-market squeeze / mean reversion rally** verso EMA200.")
     lines.append("")
+    lines.append("> Nota fonte dati: il modulo usa **Yahoo Finance SOL-USD weekly**. KuCoin, CoinEx, Binance o altri exchange possono mostrare EMA leggermente diverse. Se EMA50/EMA200 sono dentro ±2%, il modulo non considera il cross come netto: lo classifica come medie sovrapposte / incrocio in corso.")
+    lines.append("")
     lines.append("## Sintesi")
     lines.append("")
     lines.append(
@@ -1310,6 +1483,8 @@ def build_markdown_report(sol_setup, stats, analog_events, components, history_r
                 ["Peso suggerito nel Global", global_weight],
                 ["Target tecnico naturale", fmt_price(sol_setup.get("ema200"))],
                 ["Upside verso EMA200", fmt_pct(sol_setup.get("upside_to_ema200_pct"))],
+                ["Stato EMA50/EMA200", sol_setup.get("cross_state")],
+                ["Gap EMA50/EMA200", fmt_pct(sol_setup.get("ema50_ema200_gap_pct"))],
                 ["Probabilità storica hit EMA200 12w", fmt_pct(stats.get("hit_ema200_12w_pct"), force_sign=False)],
                 ["Max gain mediano 12w analoghi", fmt_pct(stats.get("median_max_gain_12w_pct"))],
                 ["Drawdown mediano 12w analoghi", fmt_pct(stats.get("median_drawdown_12w_pct"))],
@@ -1347,10 +1522,11 @@ def build_markdown_report(sol_setup, stats, analog_events, components, history_r
     lines.append("## Come leggerlo")
     lines.append("")
     lines.append("- **Prezzo molto sotto EMA200 weekly**: aumenta lo spazio per un rally di ritorno alla media.")
-    lines.append("- **EMA50 vicina a EMA200 / death cross recente**: spesso è un segnale tardivo, non necessariamente un nuovo short pulito.")
+    lines.append("- **EMA50 vicina a EMA200 / medie sovrapposte**: spesso è una fase tardiva del bear market, non necessariamente un nuovo short pulito.")
     lines.append("- **RSI basso ma in recupero**: migliora la possibilità di relief rally.")
     lines.append("- **Asset giovane-maturo**: non è più una microcoin appena nata, ma può ancora avere squeeze più forti di un asset molto maturo.")
     lines.append("- **Hit EMA200 12w**: quante volte gli analoghi storici hanno toccato EMA200 entro circa 3 mesi.")
+    lines.append("- **Limite per asset**: gli analoghi sono bilanciati per evitare che un singolo asset domini il campione.")
     lines.append("")
     lines.append("## Lettura pratica")
     lines.append("")
@@ -1384,6 +1560,7 @@ def build_main_report_block(sol_setup, stats, score, bias, action, global_weight
                     ["Bias", bias],
                     ["Azione coerente", action],
                     ["Peso suggerito Global", global_weight],
+                    ["Fonte prezzi", "Yahoo Finance SOL-USD weekly"],
                     ["Prezzo SOL", fmt_price(sol_setup.get("close"))],
                     ["EMA200 weekly target", fmt_price(sol_setup.get("ema200"))],
                     ["Upside verso EMA200", fmt_pct(sol_setup.get("upside_to_ema200_pct"))],
@@ -1391,7 +1568,9 @@ def build_main_report_block(sol_setup, stats, score, bias, action, global_weight
                     ["Gap EMA50/EMA200", fmt_pct(sol_setup.get("ema50_ema200_gap_pct"))],
                     ["Stato cross", sol_setup.get("cross_state")],
                     ["RSI weekly", fmt_number(sol_setup.get("rsi14"), 2)],
+                    ["Età SOL", f"{fmt_number(sol_setup.get('age_years'), 1)} anni"],
                     ["Analoghi storici usati", stats.get("analog_events")],
+                    ["Max analoghi per asset", MAX_ANALOG_EVENTS_PER_ASSET],
                     ["Hit EMA200 12w analoghi", fmt_pct(stats.get("hit_ema200_12w_pct"), force_sign=False)],
                     ["Max gain mediano 12w", fmt_pct(stats.get("median_max_gain_12w_pct"))],
                     ["Drawdown mediano 12w", fmt_pct(stats.get("median_drawdown_12w_pct"))],
@@ -1403,6 +1582,8 @@ def build_main_report_block(sol_setup, stats, score, bias, action, global_weight
             f"**{action}**",
             "",
             "Questo modulo confronta SOL con altre crypto in fasi simili di età, distanza da EMA200, EMA50/EMA200 e RSI. Non usa stock market.",
+            "",
+            "Nota: se EMA50/EMA200 sono dentro ±2%, il modulo parla di medie sovrapposte / incrocio in corso, perché exchange diversi possono mostrare il cross leggermente prima o dopo.",
             "",
             END_MARKER,
         ]
@@ -1460,11 +1641,13 @@ def build_history_row(sol_setup, stats, levels, score, bias, global_weight):
         "sol_rsi14": sol_setup.get("rsi14"),
         "sol_rsi_4w_change": sol_setup.get("rsi_4w_change"),
         "sol_gain_from_26w_low_pct": sol_setup.get("gain_from_26w_low_pct"),
+        "sol_age_reference_date": sol_setup.get("age_reference_date"),
         "sol_age_years": sol_setup.get("age_years"),
         "cross_state": sol_setup.get("cross_state"),
         "weeks_since_death_cross": sol_setup.get("weeks_since_death_cross"),
         "historical_events": stats.get("historical_events"),
         "analog_events": stats.get("analog_events"),
+        "max_analog_events_per_asset": MAX_ANALOG_EVENTS_PER_ASSET,
         "analog_hit_ema200_8w_pct": stats.get("hit_ema200_8w_pct"),
         "analog_hit_ema200_12w_pct": stats.get("hit_ema200_12w_pct"),
         "analog_hit_ema200_16w_pct": stats.get("hit_ema200_16w_pct"),
@@ -1516,6 +1699,10 @@ def run_scan():
 
     latest_payload = {
         "generated_at_utc": utc_str(),
+        "source": "Yahoo Finance SOL-USD weekly",
+        "cross_near_band_pct": CROSS_NEAR_BAND_PCT,
+        "max_analog_events_total": MAX_ANALOG_EVENTS_TOTAL,
+        "max_analog_events_per_asset": MAX_ANALOG_EVENTS_PER_ASSET,
         "sol_setup": sol_setup,
         "stats": stats,
         "levels": levels,
@@ -1553,6 +1740,8 @@ def run_scan():
     print(f"Wrote {LATEST_JSON_PATH}")
     print(f"Updated {MAIN_REPORT_PATH}")
     print(f"SOL lifecycle squeeze score: {score} / {bias}")
+    print(f"Cross state: {sol_setup.get('cross_state')}")
+    print(f"EMA50/EMA200 gap: {fmt_pct(sol_setup.get('ema50_ema200_gap_pct'))}")
     print(f"Target EMA200 weekly: {fmt_price(sol_setup.get('ema200'))}")
     print(f"Upside to EMA200: {fmt_pct(sol_setup.get('upside_to_ema200_pct'))}")
 
