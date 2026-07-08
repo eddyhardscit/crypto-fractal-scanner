@@ -117,10 +117,12 @@ COLUMNS = [
 def clean_text(value):
     if value is None:
         return ""
+
     value = str(value)
     value = value.replace("**", "")
     value = value.replace("\xa0", " ")
     value = value.strip()
+
     return value
 
 
@@ -132,24 +134,42 @@ def parse_number(value):
     text = text.replace("$", "")
     text = text.replace("%", "")
     text = text.replace("€", "")
-    text = text.replace("+", "")
     text = text.replace(" ", "")
-    text = re.sub(r"[^0-9,\.\-]", "", text)
 
-    if text in ["", "-", ".", ","]:
+    match = re.search(r"[-+]?\d[\d\.,]*", text)
+    if not match:
         return None
 
-    # Formato italiano: 1.234,56 -> 1234.56
-    if "," in text:
-        text = text.replace(".", "")
-        text = text.replace(",", ".")
+    number = match.group(0)
+
+    if number in ["", "-", "+", ".", ","]:
+        return None
+
+    # Formato italiano: 62.080,25 -> 62080.25
+    if "," in number:
+        number = number.replace(".", "")
+        number = number.replace(",", ".")
     else:
-        # Se ci sono più punti, li tratto come separatori migliaia.
-        if text.count(".") > 1:
-            text = text.replace(".", "")
+        # Formato con più punti: 1.234.567 -> 1234567
+        if number.count(".") > 1:
+            number = number.replace(".", "")
+
+        # Formato italiano senza decimali: 62.049 -> 62049
+        # Ma non trasformare decimali tipo 0.07236.
+        elif number.count(".") == 1:
+            left, right = number.split(".")
+
+            is_probably_thousands = (
+                len(right) == 3
+                and left not in ["", "0", "-0", "+0"]
+                and len(left.replace("-", "").replace("+", "")) <= 3
+            )
+
+            if is_probably_thousands:
+                number = left + right
 
     try:
-        return float(text)
+        return float(number)
     except Exception:
         return None
 
@@ -170,7 +190,6 @@ def fmt_price(value, decimals=2):
     try:
         if value is None or pd.isna(value):
             return "n/a"
-        value = float(value)
     except Exception:
         return "n/a"
 
@@ -222,57 +241,53 @@ def section_between(text, start_marker, end_marker=None):
 
 
 def extract_generated_info(text):
-    generated_at_utc = None
-    forecast_date = None
-
-    candidates = [
+    patterns = [
         r"Generato:\s*(\d{4}-\d{2}-\d{2})\s+([0-9:]+)\s+UTC",
         r"Generated:\s*(\d{4}-\d{2}-\d{2})\s+([0-9:]+)\s+UTC",
         r"Aggiornato il:\s*\*\*(\d{4}-\d{2}-\d{2})\s+([0-9:]+)\s+UTC\*\*",
     ]
 
-    for pattern in candidates:
+    for pattern in patterns:
         m = re.search(pattern, text)
         if m:
             forecast_date = m.group(1)
             generated_at_utc = f"{m.group(1)} {m.group(2)} UTC"
-            break
+            return forecast_date, generated_at_utc
 
-    if forecast_date is None:
-        forecast_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-
-    if generated_at_utc is None:
-        generated_at_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    forecast_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    generated_at_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
     return forecast_date, generated_at_utc
 
 
-def extract_bold_field(block, label):
-    pattern = rf"\*\*{re.escape(label)}:\*\*\s*(.+)"
-    m = re.search(pattern, block)
-    if not m:
-        return None
+def extract_label_value(block, label):
+    patterns = [
+        rf"-\s*\*\*{re.escape(label)}:\*\*\s*(.+)",
+        rf"\*\*{re.escape(label)}:\*\*\s*(.+)",
+        rf"{re.escape(label)}:\s*\*\*(.*?)\*\*",
+    ]
 
-    value = m.group(1).strip()
-    value = value.replace("- ", "").strip()
-    value = value.replace("**", "").strip()
-    return value
+    for pattern in patterns:
+        m = re.search(pattern, block)
+        if m:
+            return clean_text(m.group(1))
+
+    return None
 
 
-def extract_bullet_bold_field(block, label):
-    pattern = rf"-\s*\*\*{re.escape(label)}:\*\*\s*(.+)"
-    m = re.search(pattern, block)
-    if not m:
-        return None
+def extract_verdict(fractal_block):
+    m = re.search(r"##\s+Verdetto:\s*(.+)", fractal_block)
+    if m:
+        return clean_text(m.group(1))
 
-    value = m.group(1).strip()
-    value = value.replace("**", "").strip()
+    value = extract_label_value(fractal_block, "Verdetto")
     return value
 
 
 def extract_table_value(block, key):
     for line in block.splitlines():
         line = line.strip()
+
         if not line.startswith("|"):
             continue
 
@@ -291,7 +306,13 @@ def extract_level_value(block, key):
 def parse_alignment_table(fractal_block):
     result = {}
 
-    for line in fractal_block.splitlines():
+    alignment_block = section_between(
+        fractal_block,
+        "## Somiglianza prima e dopo inizio programma",
+        "## Lettura operativa veloce",
+    )
+
+    for line in alignment_block.splitlines():
         line = line.strip()
 
         if not line.startswith("|"):
@@ -324,7 +345,13 @@ def parse_alignment_table(fractal_block):
 
 
 def parse_projection_table(fractal_block):
-    projections = {}
+    result = {}
+
+    projection_block = section_between(
+        fractal_block,
+        "## Proiezione veloce con date SOL",
+        "## Prossimi step se SOL segue BTC 2022",
+    )
 
     horizon_map = {
         "7 giorni": "7d",
@@ -335,7 +362,7 @@ def parse_projection_table(fractal_block):
         "120 giorni": "120d",
     }
 
-    for line in fractal_block.splitlines():
+    for line in projection_block.splitlines():
         line = line.strip()
 
         if not line.startswith("|"):
@@ -353,60 +380,18 @@ def parse_projection_table(fractal_block):
 
         key = horizon_map[horizon]
 
-        # Tabella breve:
-        # | Orizzonte | Data SOL prevista | BTC fece | SOL base | Min percorso | Max percorso |
-        projections[f"proj_{key}_date"] = parts[1]
-        projections[f"proj_{key}_base"] = parse_number(parts[3])
-        projections[f"proj_{key}_min"] = parse_number(parts[4])
-        projections[f"proj_{key}_max"] = parse_number(parts[5])
+        result[f"proj_{key}_date"] = parts[1]
+        result[f"proj_{key}_base"] = parse_number(parts[3])
+        result[f"proj_{key}_min"] = parse_number(parts[4])
+        result[f"proj_{key}_max"] = parse_number(parts[5])
 
-    return projections
-
-
-def parse_last_tracker_row(path_block):
-    last = {}
-
-    rows = []
-
-    for line in path_block.splitlines():
-        line = line.strip()
-
-        if not line.startswith("|"):
-            continue
-
-        parts = [p.strip() for p in line.strip("|").split("|")]
-
-        if len(parts) < 7:
-            continue
-
-        day = parse_number(parts[0])
-        if day is None:
-            continue
-
-        # | Giorno | Data SOL | Data BTC eq. | SOL reale | BTC scalato | Errore | Fase |
-        rows.append(parts)
-
-    if not rows:
-        return last
-
-    parts = rows[-1]
-
-    last["sol_day_from_bottom"] = parse_number(parts[0])
-    last["forecast_date_from_table"] = parts[1]
-    last["btc_equiv_date"] = parts[2]
-    last["sol_price"] = parse_number(parts[3])
-    last["btc_scaled_today"] = parse_number(parts[4])
-    last["gap_pct"] = parse_number(parts[5])
-
-    return last
+    return result
 
 
 def parse_tracker_summary(path_block):
     result = {}
 
     field_map = {
-        "Bottom SOL usato": "sol_bottom_date",
-        "Bottom BTC 2022 equivalente": "btc_bottom_date",
         "Inizio programma/scanner rilevato": "program_start_date",
         "Prezzo iniziale SOL": "sol_price",
         "Verdetto": "verdict",
@@ -424,17 +409,85 @@ def parse_tracker_summary(path_block):
     }
 
     for label, key in field_map.items():
-        value = extract_bullet_bold_field(path_block, label)
+        value = extract_label_value(path_block, label)
 
         if value is None:
             continue
 
-        if key.endswith("_pct") or key.startswith("tracker_days") or key == "sol_price":
+        if (
+            key.endswith("_pct")
+            or key.startswith("tracker_days")
+            or key == "sol_price"
+            or key == "total_similarity_pct"
+        ):
             result[key] = parse_number(value)
         else:
             result[key] = clean_text(value)
 
     return result
+
+
+def parse_last_tracker_row(path_block):
+    """
+    Legge SOLO la tabella:
+    ## Ultimi giorni del confronto dal bottom
+
+    Correzione importante:
+    prima il codice leggeva tutte le tabelle dentro FRACTAL_PATH_TRACKER,
+    quindi poteva prendere per errore la tabella "Proiezione futura salvata"
+    e salvare date future tipo 2026-11-05 come se fossero letture reali.
+    """
+
+    table_block = section_between(
+        path_block,
+        "## Ultimi giorni del confronto dal bottom",
+        "## Proiezione futura salvata",
+    )
+
+    rows = []
+
+    for line in table_block.splitlines():
+        line = line.strip()
+
+        if not line.startswith("|"):
+            continue
+
+        parts = [p.strip() for p in line.strip("|").split("|")]
+
+        if len(parts) < 7:
+            continue
+
+        day = parse_number(parts[0])
+
+        if day is None:
+            continue
+
+        rows.append(parts)
+
+    if not rows:
+        return {}
+
+    parts = rows[-1]
+
+    sol_price = parse_number(parts[3])
+    btc_scaled = parse_number(parts[4])
+    shown_error = parse_number(parts[5])
+
+    signed_gap = None
+    if sol_price is not None and btc_scaled not in [None, 0]:
+        signed_gap = (sol_price / btc_scaled - 1.0) * 100.0
+    else:
+        signed_gap = shown_error
+
+    return {
+        "sol_day_from_bottom": parse_number(parts[0]),
+        "forecast_date": parts[1],
+        "btc_equiv_date": parts[2],
+        "sol_price": sol_price,
+        "btc_scaled_today": btc_scaled,
+        "gap_pct": signed_gap,
+        "tracker_last_error_pct": shown_error,
+    }
 
 
 def parse_fractal_report(latest_report):
@@ -447,26 +500,26 @@ def parse_fractal_report(latest_report):
         return None
 
     row = {col: None for col in COLUMNS}
+
     row["forecast_date"] = forecast_date
     row["generated_at_utc"] = generated_at_utc
 
-    row["sol_last_candle"] = extract_bullet_bold_field(fractal_block, "Ultima candela SOL usata")
-    row["verdict"] = extract_bold_field(fractal_block, "Verdetto")
-    row["phase"] = extract_bullet_bold_field(fractal_block, "Fase attuale")
-    row["total_similarity_pct"] = parse_number(extract_bullet_bold_field(fractal_block, "Somiglianza totale"))
-    row["reliability"] = extract_bullet_bold_field(fractal_block, "Affidabilita")
-    row["phase_risk"] = extract_bullet_bold_field(fractal_block, "Rischio fase")
-    row["trend_tracking"] = extract_bullet_bold_field(fractal_block, "Trend tracking")
-    row["sol_day_from_bottom"] = parse_number(extract_bullet_bold_field(fractal_block, "SOL e al giorno"))
-    row["btc_equiv_date"] = extract_bullet_bold_field(fractal_block, "Giorno BTC equivalente")
-    row["next_step_text"] = extract_bullet_bold_field(fractal_block, "Prossimo step")
+    row["sol_last_candle"] = extract_label_value(fractal_block, "Ultima candela SOL usata")
+    row["verdict"] = extract_verdict(fractal_block)
+    row["phase"] = extract_label_value(fractal_block, "Fase attuale")
+    row["total_similarity_pct"] = parse_number(extract_label_value(fractal_block, "Somiglianza totale"))
+    row["reliability"] = extract_label_value(fractal_block, "Affidabilita")
+    row["phase_risk"] = extract_label_value(fractal_block, "Rischio fase")
+    row["trend_tracking"] = extract_label_value(fractal_block, "Trend tracking")
+    row["sol_day_from_bottom"] = parse_number(extract_label_value(fractal_block, "SOL e al giorno"))
+    row["btc_equiv_date"] = extract_label_value(fractal_block, "Giorno BTC equivalente")
+    row["next_step_text"] = extract_label_value(fractal_block, "Prossimo step")
 
     program_start = re.search(r"\*\*Inizio programma/scanner:\*\*\s*(.+)", fractal_block)
     if program_start:
         row["program_start_date"] = clean_text(program_start.group(1))
 
-    alignment = parse_alignment_table(fractal_block)
-    row.update(alignment)
+    row.update(parse_alignment_table(fractal_block))
 
     row["first_confirmation"] = extract_level_value(fractal_block, "Prima conferma")
     row["second_confirmation"] = extract_level_value(fractal_block, "Seconda conferma")
@@ -475,31 +528,23 @@ def parse_fractal_report(latest_report):
 
     row["target_cycle_base_from_bottom"] = extract_level_value(fractal_block, "Target ciclo base dal bottom")
     row["target_cycle_base_from_today"] = extract_level_value(fractal_block, "Target ciclo base da oggi")
+    row["max_path_base"] = parse_number(extract_table_value(fractal_block, "Massimo percorso base"))
+    row["max_path_beta"] = parse_number(extract_table_value(fractal_block, "Massimo percorso beta"))
 
-    max_base = extract_table_value(fractal_block, "Massimo percorso base")
-    max_beta = extract_table_value(fractal_block, "Massimo percorso beta")
-
-    row["max_path_base"] = parse_number(max_base)
-    row["max_path_beta"] = parse_number(max_beta)
-
-    projections = parse_projection_table(fractal_block)
-    row.update(projections)
+    row.update(parse_projection_table(fractal_block))
 
     if path_block:
-        tracker = parse_tracker_summary(path_block)
-        row.update({k: v for k, v in tracker.items() if k in row})
+        tracker_summary = parse_tracker_summary(path_block)
+
+        for key, value in tracker_summary.items():
+            if key in row and value is not None:
+                row[key] = value
 
         last_tracker = parse_last_tracker_row(path_block)
 
-        for key in ["sol_price", "btc_scaled_today", "gap_pct", "sol_day_from_bottom", "btc_equiv_date"]:
-            if last_tracker.get(key) is not None:
-                row[key] = last_tracker.get(key)
-
-        if last_tracker.get("forecast_date_from_table"):
-            row["forecast_date"] = last_tracker["forecast_date_from_table"]
-
-    if row["sol_price"] is None:
-        row["sol_price"] = parse_number(extract_table_value(fractal_block, "Prezzo SOL attuale"))
+        for key, value in last_tracker.items():
+            if key in row and value is not None:
+                row[key] = value
 
     if row["total_similarity_pct"] is None:
         row["total_similarity_pct"] = parse_number(row.get("total_price_adherence_pct"))
@@ -529,6 +574,18 @@ def update_history(row):
     if row is None:
         return df
 
+    new_date = pd.to_datetime(row.get("forecast_date"), errors="coerce")
+
+    # Pulisce eventuali righe create dal vecchio bug:
+    # per esempio 2026-11-05 presa dalla proiezione 120g.
+    if not pd.isna(new_date) and not df.empty:
+        old_dates = pd.to_datetime(df["forecast_date"], errors="coerce")
+        df = df[old_dates.isna() | (old_dates <= new_date)]
+
+    # Tiene una sola riga per giorno.
+    forecast_date = str(row.get("forecast_date"))
+    df = df[df["forecast_date"].astype(str) != forecast_date]
+
     new_df = pd.DataFrame([row])
 
     for col in COLUMNS:
@@ -536,11 +593,6 @@ def update_history(row):
             new_df[col] = None
 
     new_df = new_df[COLUMNS]
-
-    forecast_date = str(row.get("forecast_date"))
-
-    # Tiene una sola riga per giorno: se rilanci il workflow, aggiorna quella del giorno.
-    df = df[df["forecast_date"].astype(str) != forecast_date]
 
     df = pd.concat([df, new_df], ignore_index=True)
 
@@ -576,7 +628,7 @@ def build_latest_summary_table(row):
     return md_table(
         ["Voce", "Valore"],
         [
-            ["Data", row.get("forecast_date", "n/a")],
+            ["Data lettura", row.get("forecast_date", "n/a")],
             ["Prezzo SOL", fmt_price(row.get("sol_price"))],
             ["BTC scalato", fmt_price(row.get("btc_scaled_today"))],
             ["Gap SOL vs BTC-scalato", fmt_pct(row.get("gap_pct"))],
@@ -723,73 +775,82 @@ def build_markdown_report(df):
     lines.append("")
     lines.append("## Storico compatto giorno per giorno")
     lines.append("")
-    lines.append(
-        md_table(
-            [
-                "Data",
-                "SOL",
-                "BTC scalato",
-                "Gap",
-                "Somiglianza",
-                "Fase",
-                "Tracking",
-                "Errore live medio",
-                "Errore ultimo",
-                "Base 30g",
-                "Base 60g",
-                "Soft invalid.",
-                "Conferma 1",
-                "Target ciclo oggi",
-            ],
-            build_history_rows(df),
+
+    if df.empty:
+        lines.append("Nessun dato salvato.")
+    else:
+        lines.append(
+            md_table(
+                [
+                    "Data",
+                    "SOL",
+                    "BTC scalato",
+                    "Gap",
+                    "Somiglianza",
+                    "Fase",
+                    "Tracking",
+                    "Errore live medio",
+                    "Errore ultimo",
+                    "Base 30g",
+                    "Base 60g",
+                    "Soft invalid.",
+                    "Conferma 1",
+                    "Target ciclo oggi",
+                ],
+                build_history_rows(df),
+            )
         )
-        if not df.empty
-        else "Nessun dato salvato."
-    )
+
     lines.append("")
     lines.append("## Aderenza prima e dopo inizio programma")
     lines.append("")
-    lines.append(
-        md_table(
-            [
-                "Data",
-                "Aderenza pre",
-                "Errore pre",
-                "Stato pre",
-                "Aderenza live",
-                "Errore live",
-                "Stato live",
-                "Aderenza totale",
-                "Errore totale",
-                "Stato totale",
-            ],
-            build_alignment_history_rows(df),
+
+    if df.empty:
+        lines.append("Nessun dato salvato.")
+    else:
+        lines.append(
+            md_table(
+                [
+                    "Data",
+                    "Aderenza pre",
+                    "Errore pre",
+                    "Stato pre",
+                    "Aderenza live",
+                    "Errore live",
+                    "Stato live",
+                    "Aderenza totale",
+                    "Errore totale",
+                    "Stato totale",
+                ],
+                build_alignment_history_rows(df),
+            )
         )
-        if not df.empty
-        else "Nessun dato salvato."
-    )
+
     lines.append("")
     lines.append("## Storico proiezioni frattali")
     lines.append("")
-    lines.append(
-        md_table(
-            [
-                "Data",
-                "Base 7g",
-                "Base 14g",
-                "Base 30g",
-                "Base 60g",
-                "Base 90g",
-                "Base 120g",
-                "Min 30g",
-                "Max 30g",
-                "Target ciclo oggi",
-            ],
-            build_projection_history_rows(df),
+
+    if df.empty:
+        lines.append("Nessun dato salvato.")
+    else:
+        lines.append(
+            md_table(
+                [
+                    "Data",
+                    "Base 7g",
+                    "Base 14g",
+                    "Base 30g",
+                    "Base 60g",
+                    "Base 90g",
+                    "Base 120g",
+                    "Min 30g",
+                    "Max 30g",
+                    "Target ciclo oggi",
+                ],
+                build_projection_history_rows(df),
+            )
         )
-        if not df.empty
-        else "Nessun dato salvato."
-    )
+
     lines.append("")
     lines.append("## Come leggerlo")
     lines.append("")
@@ -860,10 +921,8 @@ def inject_into_main_report(df):
     block = build_main_report_block(df).strip()
 
     # Lo metto dopo il Fractal Path Tracker, così resta vicino al frattale SOL/BTC.
-    insert_after = PATH_TRACKER_END
-
-    if insert_after in text:
-        pos = text.find(insert_after) + len(insert_after)
+    if PATH_TRACKER_END in text:
+        pos = text.find(PATH_TRACKER_END) + len(PATH_TRACKER_END)
         new_text = text[:pos].rstrip() + "\n\n" + block + "\n\n" + text[pos:].lstrip()
     elif BTC_SOL_END in text:
         pos = text.find(BTC_SOL_END) + len(BTC_SOL_END)
