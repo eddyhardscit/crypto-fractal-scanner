@@ -42,6 +42,8 @@ ASSETS = {
 PERCENTILES = [10, 25, 50, 75, 90]
 FORECAST_DAYS = 30
 
+NUMBER_PATTERN = r"([0-9]{1,3}(?:\.[0-9]{3})*(?:,[0-9]+)?|[0-9]+(?:[.,][0-9]+)?)"
+
 
 def utc_now():
     return datetime.now(timezone.utc)
@@ -130,7 +132,7 @@ def fmt_price(asset, x):
         return f"{x:.5f} $"
 
     if x >= 1000:
-        return f"{x:,.0f} $".replace(",", ".")
+        return f"{x:,.2f} $".replace(",", "X").replace(".", ",").replace("X", ".")
 
     return f"{x:.2f} $".replace(".", ",")
 
@@ -167,6 +169,30 @@ def clean_text(s):
     s = re.sub(r"\s+", " ", s)
 
     return s.strip()
+
+
+def first_price(text):
+    if not text:
+        return np.nan
+
+    m = re.search(NUMBER_PATTERN + r"\s*\$", str(text))
+
+    if not m:
+        return np.nan
+
+    return parse_number(m.group(1))
+
+
+def first_pct(text):
+    if not text:
+        return np.nan
+
+    m = re.search(r"([+\-]?[0-9]+(?:[.,][0-9]+)?)\s*%", str(text))
+
+    if not m:
+        return np.nan
+
+    return parse_pct(m.group(1))
 
 
 def normalize_ohlcv(df):
@@ -327,10 +353,10 @@ def parse_current_price(block):
         clean = clean_text(line)
 
         if "Prezzo attuale" in clean:
-            m = re.search(r"([0-9]+(?:[\.,][0-9]+)?)\s*\$", clean)
+            price = first_price(clean)
 
-            if m:
-                return parse_number(m.group(1))
+            if not pd.isna(price):
+                return price
 
     return np.nan
 
@@ -349,16 +375,16 @@ def parse_direction_stats(block):
                 direction = clean.split(":", 1)[-1].strip()
 
         if "probabilità storica di salita" in low or "casi positivi" in low:
-            m = re.search(r"([+\-]?[0-9]+(?:[\.,][0-9]+)?)\s*%", clean)
+            pct = first_pct(clean)
 
-            if m:
-                positive = parse_pct(m.group(1))
+            if not pd.isna(pct):
+                positive = pct
 
         if "probabilità storica di discesa" in low or "casi negativi" in low:
-            m = re.search(r"([+\-]?[0-9]+(?:[\.,][0-9]+)?)\s*%", clean)
+            pct = first_pct(clean)
 
-            if m:
-                negative = parse_pct(m.group(1))
+            if not pd.isna(pct):
+                negative = pct
 
     return direction, positive, negative
 
@@ -385,7 +411,7 @@ def parse_return_percentiles(block):
         clean = clean_text(line)
 
         m = re.search(
-            r"Percentile\s+([0-9]+)%\s*:\s*([+\-]?[0-9]+(?:[\.,][0-9]+)?)\s*%\s*→\s*([0-9]+(?:[\.,][0-9]+)?)",
+            rf"Percentile\s+([0-9]+)%\s*:\s*([+\-]?[0-9]+(?:[.,][0-9]+)?)\s*%\s*→\s*{NUMBER_PATTERN}\s*\$",
             clean,
             flags=re.IGNORECASE,
         )
@@ -432,8 +458,6 @@ def parse_scanner_forecast_from_latest():
         direction, positive, negative = parse_direction_stats(block)
         percentiles = parse_return_percentiles(block)
 
-        p50_price = percentiles.get(50, {}).get("price", np.nan)
-
         meta.append({
             "forecast_date": forecast_date,
             "created_at_utc": created_at,
@@ -465,7 +489,7 @@ def parse_scanner_forecast_from_latest():
                 "direction": direction,
                 "positive_rate": positive,
                 "negative_rate": negative,
-                "checked": False,
+                "checked": 0.0,
                 "actual_price": np.nan,
                 "inside_p10_p90": np.nan,
                 "inside_p25_p75": np.nan,
@@ -543,9 +567,9 @@ def update_checks(log_df):
         for idx in idxs:
             row = log_df.loc[idx]
 
-            checked = str(row.get("checked", "False")).lower() == "true"
+            checked = safe_float(row.get("checked", 0.0))
 
-            if checked:
+            if not pd.isna(checked) and checked >= 1:
                 continue
 
             target_date = pd.to_datetime(row.get("target_date", ""), errors="coerce")
@@ -585,7 +609,7 @@ def update_checks(log_df):
             if not pd.isna(p50) and p50 != 0:
                 error = (actual / p50 - 1) * 100
 
-            log_df.at[idx, "checked"] = True
+            log_df.at[idx, "checked"] = 1.0
             log_df.at[idx, "actual_price"] = actual
             log_df.at[idx, "inside_p10_p90"] = inside_wide
             log_df.at[idx, "inside_p25_p75"] = inside_mid
@@ -620,7 +644,7 @@ def summarize_accuracy(log_df):
     if log_df.empty:
         return pd.DataFrame()
 
-    checked = log_df[log_df["checked"].astype(str).str.lower() == "true"].copy()
+    checked = log_df[pd.to_numeric(log_df["checked"], errors="coerce").fillna(0) >= 1].copy()
 
     for asset in ASSETS.keys():
         d_asset = checked[checked["asset"].astype(str) == asset].copy()
@@ -635,14 +659,11 @@ def summarize_accuracy(log_df):
                 avg_abs_error = np.nan
                 avg_error = np.nan
             else:
-                wide = d["inside_p10_p90"].astype(str).str.lower()
-                mid = d["inside_p25_p75"].astype(str).str.lower()
+                wide_values = pd.to_numeric(d["inside_p10_p90"], errors="coerce").dropna()
+                mid_values = pd.to_numeric(d["inside_p25_p75"], errors="coerce").dropna()
 
-                wide_known = wide[wide.isin(["true", "false", "1", "0"])]
-                mid_known = mid[mid.isin(["true", "false", "1", "0"])]
-
-                wide_rate = wide_known.isin(["true", "1"]).mean() * 100 if len(wide_known) else np.nan
-                mid_rate = mid_known.isin(["true", "1"]).mean() * 100 if len(mid_known) else np.nan
+                wide_rate = wide_values.mean() * 100 if len(wide_values) else np.nan
+                mid_rate = mid_values.mean() * 100 if len(mid_values) else np.nan
 
                 errors = pd.to_numeric(d["error_vs_p50_pct"], errors="coerce")
                 avg_abs_error = errors.abs().mean()
