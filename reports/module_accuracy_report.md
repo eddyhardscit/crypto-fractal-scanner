@@ -1,6 +1,6 @@
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-08 09:40 UTC
+Generato: 2026-07-08 10:50 UTC
 
 Questo report salva ogni giorno i segnali dei moduli e controlla, dopo vari orizzonti, quali moduli stanno davvero aiutando.
 
@@ -20,9 +20,9 @@ Segnali totali salvati: **3**.
 
 | Data       | Asset   | Prezzo   |   Global |   Scanner |   Market |   Tecnico |   Frattale | Azione                                             |
 |:-----------|:--------|:---------|---------:|----------:|---------:|----------:|-----------:|:---------------------------------------------------|
-| 2026-07-08 | BTC     | 62031,11 |       +4 |        +2 |       +3 |        -2 |          0 | ACCUMULA SU PULLBACK / NO SHORT                    |
-| 2026-07-08 | DOGE    | 0,07137  |       -9 |        -3 |       -3 |        -3 |          0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
-| 2026-07-08 | SOL     | 77,21    |       +5 |        -1 |       +2 |        +1 |         +2 | HOLD / TRANCHE PICCOLE, NO LEVA                    |
+| 2026-07-08 | BTC     | 62116,18 |       +4 |        +2 |       +3 |        -2 |          0 | ACCUMULA SU PULLBACK / NO SHORT                    |
+| 2026-07-08 | DOGE    | 0,07159  |       -9 |        -3 |       -3 |        -3 |          0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
+| 2026-07-08 | SOL     | 77,28    |       +5 |        -1 |       +2 |        +1 |         +2 | HOLD / TRANCHE PICCOLE, NO LEVA                    |
 
 ## Stato controlli
 

@@ -1,39 +1,73 @@
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-08 09:40 UTC
+Generato: 2026-07-08 10:50 UTC
 
 Questo report controlla se SOL sta seguendo il percorso previsto dal frattale BTC 2022 vs SOL 2026.
 
-Misura tre cose:
+Ora il controllo è diviso in tre parti:
 
-- il percorso previsto dal frattale
-- il prezzo reale di SOL
-- l'errore tra previsione frattale e prezzo reale
+- confronto dal bottom: BTC 2022 scalato contro SOL reale
+- tratto da inizio programma/scanner: verifica se il tracking recente sta reggendo
+- proiezione futura: percorso atteso da oggi in avanti
 
 ## Stato ultimo frattale salvato
 
 - Data previsione: **2026-07-08**
-- Prezzo iniziale SOL: **77,21 $**
+- Bottom SOL usato: **2026-06-06**
+- Bottom BTC 2022 equivalente: **2022-11-21**
+- Inizio programma/scanner rilevato: **2026-07-03**
+- Prezzo iniziale SOL: **77,24 $**
 - Verdetto: **PARZIALMENTE SI**
-- Somiglianza: **73,97%**
+- Somiglianza: **73,96%**
 - Tracking: **FRATTALE STABILE**
 - Fase: **FASE ANTICIPATA**
 - Rischio fase: **MEDIO / ALTO**
 
-## Grafico percorso previsto vs realtà
+## Confronto dal bottom a oggi
+
+- Giorni controllati dal bottom: **33**
+- Giorni controllati da inizio programma/scanner: **6**
+- Errore medio assoluto dal bottom: **9,02%**
+- Errore medio assoluto ultimi 7 giorni: **22,41%**
+- Errore medio assoluto da inizio programma/scanner: **22,50%**
+- Errore ultimo giorno: **16,73%**
+- Stato: **SOL IN ANTICIPO / SOPRA IL FRACTAL**
+
+## Grafico completo: bottom, inizio programma e proiezione
 
 ![Tracking percorso frattale](btc_2022_vs_sol_2026_path_tracking_chart.png)
 
-## Ultima proiezione salvata
+## Grafico backtest dal bottom
 
-| Orizzonte   | Data target   | Base frattale   | Min percorso   | Max percorso   | Controllato   | Prezzo reale   | Errore   |   Dentro banda |
-|:------------|:--------------|:----------------|:---------------|:---------------|:--------------|:---------------|:---------|---------------:|
-| 7g          | 2026-07-15    | n/a             | n/a            | n/a            | no            | n/a            | n/a      |            nan |
-| 14g         | 2026-07-22    | n/a             | n/a            | n/a            | no            | n/a            | n/a      |            nan |
-| 30g         | 2026-08-07    | n/a             | n/a            | n/a            | no            | n/a            | n/a      |            nan |
-| 60g         | 2026-09-06    | n/a             | n/a            | n/a            | no            | n/a            | n/a      |            nan |
+![Backtest dal bottom](btc_2022_vs_sol_2026_bottom_backtest_chart.png)
 
-## Accuratezza storica del frattale
+## Ultimi giorni del confronto dal bottom
+
+|   Giorno | Data SOL   | Data BTC eq.   | SOL reale   | BTC scalato   | Errore   | Fase                |
+|---------:|:-----------|:---------------|:------------|:--------------|:---------|:--------------------|
+|       23 | 2026-06-29 | 2022-12-14     | 74,95 $     | 70,18 $       | 6,79%    | prima programma     |
+|       24 | 2026-06-30 | 2022-12-15     | 73,52 $     | 68,40 $       | 7,48%    | prima programma     |
+|       25 | 2026-07-01 | 2022-12-16     | 77,38 $     | 65,58 $       | 18,00%   | prima programma     |
+|       26 | 2026-07-02 | 2022-12-17     | 80,64 $     | 66,16 $       | 21,89%   | prima programma     |
+|       27 | 2026-07-03 | 2022-12-18     | 82,28 $     | 66,01 $       | 24,64%   | da inizio programma |
+|       28 | 2026-07-04 | 2022-12-19     | 81,65 $     | 64,76 $       | 26,08%   | da inizio programma |
+|       29 | 2026-07-05 | 2022-12-20     | 81,42 $     | 66,60 $       | 22,26%   | da inizio programma |
+|       30 | 2026-07-06 | 2022-12-21     | 81,92 $     | 66,25 $       | 23,65%   | da inizio programma |
+|       31 | 2026-07-07 | 2022-12-22     | 80,65 $     | 66,30 $       | 21,64%   | da inizio programma |
+|       32 | 2026-07-08 | 2022-12-23     | 77,24 $     | 66,17 $       | 16,73%   | da inizio programma |
+
+## Proiezione futura salvata
+
+| Orizzonte   | Data target   | Base frattale   | Min percorso   | Max percorso   | Controllato   | Prezzo reale   | Errore   | Dentro banda   |
+|:------------|:--------------|:----------------|:---------------|:---------------|:--------------|:---------------|:---------|:---------------|
+| 7g          | 2026-07-15    | 76,35 $         | 76,12 $        | 77,80 $        | no            | n/a            | n/a      | n/a            |
+| 14g         | 2026-07-22    | 77,95 $         | 76,09 $        | 77,95 $        | no            | n/a            | n/a      | n/a            |
+| 30g         | 2026-08-07    | 104,48 $        | 76,09 $        | 104,74 $       | no            | n/a            | n/a      | n/a            |
+| 60g         | 2026-09-06    | 112,37 $        | 76,09 $        | 114,18 $       | no            | n/a            | n/a      | n/a            |
+| 90g         | 2026-10-06    | 130,29 $        | 76,09 $        | 130,29 $       | no            | n/a            | n/a      | n/a            |
+| 120g        | 2026-11-05    | 127,92 $        | 76,09 $        | 140,19 $       | no            | n/a            | n/a      | n/a            |
+
+## Accuratezza storica della proiezione futura
 
 | Orizzonte   |   Controlli | Dentro banda   | Errore medio assoluto   | Errore medio   |
 |:------------|------------:|:---------------|:------------------------|:---------------|
@@ -46,8 +80,11 @@ Misura tre cose:
 
 ## Come leggerlo
 
-- Se SOL resta tra Min percorso e Max percorso, il frattale è ancora coerente.
-- Se SOL è vicino alla linea Base, il timing del frattale è buono.
-- Se SOL sale molto prima della Base prevista, il frattale è rialzista ma accelerato.
-- Se SOL scende sotto la banda e rompe le invalidazioni, il frattale si indebolisce o si rompe.
+- BTC 2022 scalato su SOL è il percorso che SOL dovrebbe seguire se il frattale resta valido.
+- SOL reale mostra cosa ha fatto davvero dal bottom.
+- La linea 'inizio programma/scanner' separa il backtest retroattivo dalla parte che stiamo monitorando davvero giorno per giorno.
+- Se SOL resta vicino a BTC scalato, il frattale è in linea.
+- Se SOL sta sopra BTC scalato, il frattale è in anticipo o più forte.
+- Se SOL sta sotto BTC scalato, il frattale è in ritardo o più debole.
+- La proiezione futura va letta insieme alle conferme e invalidazioni del report frattale principale.
 

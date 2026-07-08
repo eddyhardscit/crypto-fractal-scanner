@@ -1,6 +1,6 @@
 # Sintesi finale di confluenza
 
-Generato: 2026-07-08 09:40 UTC
+Generato: 2026-07-08 10:50 UTC
 
 Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.
 
@@ -21,7 +21,7 @@ Moduli letti:
 | Asset   |   Punteggio | Confluenza             | Bias                 | Affidabilità   | Azione coerente                                    | Conferme                                                                                       | Invalidazioni                                |
 |:--------|------------:|:-----------------------|:---------------------|:---------------|:---------------------------------------------------|:-----------------------------------------------------------------------------------------------|:---------------------------------------------|
 | BTC     |          +4 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA          | ACCUMULA SU PULLBACK / NO SHORT                    | Sopra 65.544 migliora; sopra la neckline tecnica successiva il recupero diventa più credibile. | Sotto 57.748 il quadro tecnico peggiora.     |
-| SOL     |          +5 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA          | HOLD / TRANCHE PICCOLE, NO LEVA                    | Conferme sopra 83,81 / 104,71 / 114,15.                                                        | Allarmi sotto 73,36 / 64,42 / 62,19.         |
+| SOL     |          +5 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA          | HOLD / TRANCHE PICCOLE, NO LEVA                    | Conferme sopra 83,81 / 104,74 / 114,18.                                                        | Allarmi sotto 73,38 / 64,42 / 62,19.         |
 | DOGE    |          -9 | NEGATIVA               | Ribassista           | MEDIA / ALTA   | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | Sopra 0.07923 migliora, ma resta asset debole finché scanner e struttura non girano.           | Sotto 0.06961 il rischio ribassista aumenta. |
 
 ## Punteggi per modulo
@@ -47,7 +47,7 @@ BTC è l'asset messo meglio nel breve. La struttura macro non è ancora pienamen
 Dettaglio moduli:
 
 - Scanner 30g: **+2** — Casi positivi 65,00%, return centrale 30g 3,39%.
-- Scanner path / cono: **0** — Scanner path non ancora disponibile.
+- Scanner path / cono: **0** — Raccolta dati. Controlli disponibili 0. Servono almeno 5 controlli prima di pesare il cono previsionale.
 - Market regime: **+3** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 15, positivi 30g 80,00%, return p50 22,02%.
 - Tecnico: **-2** — Score tecnico -3/12, verdetto debole, trend trend ribassista, struttura struttura ribassista con massimi e minimi decrescenti, divergenza divergenza rialzista RSI, Wyckoff possibile accumulazione.
 - Frattale SOL/BTC: **0** — Non applicabile a questo asset.
@@ -73,18 +73,18 @@ SOL ha una confluenza costruttiva, ma va ancora trattato come setup anticipato. 
 Dettaglio moduli:
 
 - Scanner 30g: **-1** — Casi positivi 45,00%, return centrale 30g -2,05%.
-- Scanner path / cono: **0** — Scanner path non ancora disponibile.
+- Scanner path / cono: **0** — Raccolta dati. Controlli disponibili 0. Servono almeno 5 controlli prima di pesare il cono previsionale.
 - Market regime: **+2** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 21, positivi 30g 61,90%, return p50 0,89%.
 - Tecnico: **+1** — Score tecnico 1/12, verdetto neutrale / misto, trend trend misto, struttura volatilità in espansione, divergenza nessuna, Wyckoff range / fase non chiara.
-- Frattale SOL/BTC: **+2** — Verdetto PARZIALMENTE SI, somiglianza 73,97%, tracking FRATTALE STABILE, fase FASE ANTICIPATA, rischio MEDIO / ALTO.
+- Frattale SOL/BTC: **+2** — Verdetto PARZIALMENTE SI, somiglianza 73,96%, tracking FRATTALE STABILE, fase FASE ANTICIPATA, rischio MEDIO / ALTO.
 - Fractal path tracker: **0** — Raccolta dati. Controlli disponibili 0. Servono almeno 5 controlli prima di pesare il percorso frattale.
 - RSI top-cycle: **+1** — Rischio top-cycle RSI: BASSO.
 - Futures/liquidazioni: **0** — Lettura futures Rischio sotto, forza 2/5.
 - Cambiamento giornaliero: **0** — SOL: nessun cambiamento forte rispetto a ieri.
 
-Conferme: Conferme sopra 83,81 / 104,71 / 114,15.
+Conferme: Conferme sopra 83,81 / 104,74 / 114,18.
 
-Invalidazioni: Allarmi sotto 73,36 / 64,42 / 62,19.
+Invalidazioni: Allarmi sotto 73,38 / 64,42 / 62,19.
 
 ### DOGE
 
@@ -99,7 +99,7 @@ DOGE resta l'asset più debole. Anche se può fare rimbalzi o spike, la confluen
 Dettaglio moduli:
 
 - Scanner 30g: **-3** — Casi positivi 20,00%, return centrale 30g -18,45%.
-- Scanner path / cono: **0** — Scanner path non ancora disponibile.
+- Scanner path / cono: **0** — Raccolta dati. Controlli disponibili 0. Servono almeno 5 controlli prima di pesare il cono previsionale.
 - Market regime: **-3** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 31, positivi 30g 16,13%, return p50 -23,40%.
 - Tecnico: **-3** — Score tecnico -10/12, verdetto ribassista tecnico, trend trend ribassista, struttura struttura ribassista con massimi e minimi decrescenti, divergenza divergenza ribassista nascosta RSI, Wyckoff possibile accumulazione.
 - Frattale SOL/BTC: **0** — Non applicabile a questo asset.
