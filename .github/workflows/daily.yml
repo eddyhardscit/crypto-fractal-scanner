@@ -27,6 +27,7 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install tabulate
+          pip install matplotlib
 
       - name: Run scanner
         run: python scanner.py
@@ -49,6 +50,9 @@ jobs:
       - name: Run BTC 2022 vs SOL 2026 fractal report
         run: python btc_2022_vs_sol_2026_report.py
 
+      - name: Run fractal path tracker
+        run: python fractal_path_tracker.py
+
       - name: Run RSI top-cycle report
         run: python rsi_top_cycle_report.py
 
@@ -63,6 +67,9 @@ jobs:
 
       - name: Run module signal tracker
         run: python module_signal_tracker.py
+
+      - name: Run scanner forecast tracker
+        run: python scanner_forecast_tracker.py
 
       - name: Commit reports
         run: |
