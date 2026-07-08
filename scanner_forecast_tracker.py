@@ -570,9 +570,6 @@ def update_checks(log_df):
             inside_wide = np.nan
             inside_mid = np.nan
 
-            inside_wide = np.nan
-            inside_mid = np.nan
-
             if not pd.isna(p10) and not pd.isna(p90):
                 lo = min(p10, p90)
                 hi = max(p10, p90)
