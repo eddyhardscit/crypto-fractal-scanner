@@ -1,7 +1,7 @@
 # Frattale mirato: BTC novembre 2022 vs SOL giugno 2026
 
-Generato: **2026-07-09 17:57:47 CEST**  
-UTC: **2026-07-09 15:57:47 UTC**
+Generato: **2026-07-09 18:12:42 CEST**  
+UTC: **2026-07-09 16:12:42 UTC**
 
 Ultima candela SOL usata: **9 luglio 2026**
 
@@ -27,7 +27,7 @@ Questo report risponde a cinque domande:
 
 **Rischio fase:** MEDIO / ALTO
 
-**Prossimo step:** Prossimo step previsto dal frattale: **Laterale / movimento non forte.** Zona bassa stimata: **76,08 $** intorno al **16 luglio 2026**. Zona alta stimata: **77,95 $** intorno al **23 luglio 2026**. Fine step: circa **77,95 $** entro il **23 luglio 2026**.
+**Prossimo step:** Prossimo step previsto dal frattale: **Laterale / movimento non forte.** Zona bassa stimata: **76,14 $** intorno al **16 luglio 2026**. Zona alta stimata: **78,01 $** intorno al **23 luglio 2026**. Fine step: circa **78,01 $** entro il **23 luglio 2026**.
 
 **Cosa fare con questa informazione:** Le proiezioni sono utili, ma vanno confermate con i prossimi livelli.
 
@@ -44,12 +44,12 @@ Questo report risponde a cinque domande:
 
 | Livello | Prezzo | Significato |
 | --- | --- | --- |
-| Prima conferma | 105,44 $ | Se SOL rompe questa zona, il frattale BTC 2022 migliora. |
-| Seconda conferma | 114,16 $ | Se rompe anche questa, lo scenario rialzista diventa piu credibile. |
-| Invalidazione soft | 73,59 $ | Se perde questa zona, il frattale si indebolisce. |
+| Prima conferma | 105,53 $ | Se SOL rompe questa zona, il frattale BTC 2022 migliora. |
+| Seconda conferma | 114,24 $ | Se rompe anche questa, lo scenario rialzista diventa piu credibile. |
+| Invalidazione soft | 73,64 $ | Se perde questa zona, il frattale si indebolisce. |
 | Invalidazione forte | 62,19 $ | Se perde il bottom usato, il paragone con BTC 2022 e quasi rotto. |
 
-La prima zona bassa prevista nei prossimi 30 giorni va letta come area di attenzione. Per una lettura piu pratica, considero invalidazione soft solo sotto un drawdown reale di circa 5% dal prezzo attuale (73,59 $). Se SOL perde anche il bottom usato come ancoraggio, il frattale BTC 2022 e praticamente invalidato.
+La prima zona bassa prevista nei prossimi 30 giorni va letta come area di attenzione. Per una lettura piu pratica, considero invalidazione soft solo sotto un drawdown reale di circa 5% dal prezzo attuale (73,64 $). Se SOL perde anche il bottom usato come ancoraggio, il frattale BTC 2022 e praticamente invalidato.
 
 ## Somiglianza prima e dopo inizio programma
 
@@ -62,8 +62,8 @@ Questa sezione separa la parte gia successa prima del programma dalla parte che 
 | Periodo | Date | Giorni | Aderenza prezzo | Errore medio | Errore ultimo giorno | Stato |
 | --- | --- | --- | --- | --- | --- | --- |
 | Prima del programma | 6 giugno 2026 -> 2 luglio 2026 | 27 | +87,95% | +6,02% | +21,89% | ABBASTANZA ALLINEATO |
-| Da inizio programma | 3 luglio 2026 -> 9 luglio 2026 | 7 | +56,41% | +21,79% | +16,71% | STACCATO / MOLTO IN ANTICIPO |
-| Totale dal bottom | 6 giugno 2026 -> 9 luglio 2026 | 34 | +81,46% | +9,27% | +16,71% | ABBASTANZA ALLINEATO |
+| Da inizio programma | 3 luglio 2026 -> 9 luglio 2026 | 7 | +56,39% | +21,81% | +16,80% | STACCATO / MOLTO IN ANTICIPO |
+| Totale dal bottom | 6 giugno 2026 -> 9 luglio 2026 | 34 | +81,45% | +9,27% | +16,80% | ABBASTANZA ALLINEATO |
 
 Nota: **Aderenza prezzo** è uno score semplice basato sulla distanza media dalla linea BTC-scalata. Non sostituisce la somiglianza totale ufficiale, ma rende chiaro se SOL è vicino, sopra o sotto il percorso BTC equivalente.
 
@@ -74,10 +74,10 @@ Fase anticipata: ingresso migliore come prezzo, ma certezza ancora bassa. Ha sen
 | Voce | Risposta | Perche |
 | --- | --- | --- |
 | Spot anticipato | SI, ma a tranche | La zona e ancora prima della conferma piena. |
-| Aggiunta su conferma | SI | Aggiunta sensata se rompe e tiene 105,44 $. |
-| Seconda conferma | 114,16 $ | Sopra questa zona il frattale diventa molto piu credibile. |
+| Aggiunta su conferma | SI | Aggiunta sensata se rompe e tiene 105,53 $. |
+| Seconda conferma | 114,24 $ | Sopra questa zona il frattale diventa molto piu credibile. |
 | Rischio inseguimento | BASSO / MEDIO | Non sei ancora troppo in ritardo, ma serve invalidazione chiara. |
-| Invalidazione soft | 73,59 $ | Sotto questa zona il frattale si indebolisce. |
+| Invalidazione soft | 73,64 $ | Sotto questa zona il frattale si indebolisce. |
 | Invalidazione forte | 62,19 $ | Sotto questa zona il frattale e quasi rotto. |
 
 ## Tracking giornaliero del frattale
@@ -91,7 +91,7 @@ La somiglianza totale e quasi stabile: variazione -0,13% rispetto alla rilevazio
 | 2026-07-06 | 80,07 $ | +75,02% | FASE ANTICIPATA | PARZIALMENTE SI |
 | 2026-07-07 | 80,96 $ | +74,10% | FASE ANTICIPATA | PARZIALMENTE SI |
 | 2026-07-08 | 77,45 $ | +73,94% | FASE ANTICIPATA | PARZIALMENTE SI |
-| 2026-07-09 | 77,46 $ | +73,81% | FASE ANTICIPATA | PARZIALMENTE SI |
+| 2026-07-09 | 77,52 $ | +73,81% | FASE ANTICIPATA | PARZIALMENTE SI |
 
 ## Grafici
 
@@ -142,10 +142,10 @@ Questa sezione estende il frattale oltre i 365 giorni e cerca automaticamente il
 | Moltiplicatore BTC bottom -> top | 7,90x | Quanto BTC ha fatto dal bottom 2022 al top 2025. |
 | Data SOL equivalente del top | 21 aprile 2029 | Quando cadrebbe il top se SOL seguisse gli stessi tempi. |
 | Target ciclo base dal bottom SOL | 491,43 $ | Proiezione pulita bottom-to-top. |
-| Target ciclo beta dal bottom SOL | 2.086 $ | Scenario aggressivo, amplificato dalla volatilita SOL. |
-| Target ciclo base da oggi | 573,57 $ | Proiezione da prezzo attuale al top equivalente. |
+| Target ciclo beta dal bottom SOL | 2.084 $ | Scenario aggressivo, amplificato dalla volatilita SOL. |
+| Target ciclo base da oggi | 574,01 $ | Proiezione da prezzo attuale al top equivalente. |
 | Target ciclo beta da oggi | 2.326 $ | Scenario molto aggressivo da prezzo attuale. |
-| Massimo percorso base | 573,57 $ (21 aprile 2029) | Massimo base lungo tutto il percorso fino al top. |
+| Massimo percorso base | 574,01 $ (21 aprile 2029) | Massimo base lungo tutto il percorso fino al top. |
 | Massimo percorso beta | 2.326 $ (21 aprile 2029) | Massimo aggressivo lungo tutto il percorso. |
 
 ## Prossimi step se il frattale resta valido
@@ -154,12 +154,12 @@ Questa e la parte piu pratica: non dice solo il target finale, ma il percorso a 
 
 | Step | Date SOL previste | Periodo | BTC data equiv. | BTC fine step | SOL fine base | SOL fine beta | Zona bassa + data | Zona alta + data | Lettura |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Step 1 - prossime 2 settimane | 9 luglio 2026 -> 23 luglio 2026 | 0-14 giorni | 2023-01-07 | +0,64% | 77,95 $ | 78,30 $ | 76,08 $ (16 luglio 2026) | 77,95 $ (23 luglio 2026) | Laterale / movimento non forte. |
-| Step 2 - primo mese | 24 luglio 2026 -> 8 agosto 2026 | 15-30 giorni | 2023-01-23 | +36,13% | 105,44 $ | 130,83 $ | 78,58 $ (24 luglio 2026) | 105,44 $ (8 agosto 2026) | Spinta rialzista abbastanza pulita. |
-| Step 3 - secondo mese | 9 agosto 2026 -> 7 settembre 2026 | 31-60 giorni | 2023-02-22 | +43,57% | 111,21 $ | 143,22 $ | 99,54 $ (26 agosto 2026) | 114,16 $ (5 settembre 2026) | Spinta rialzista abbastanza pulita. |
-| Step 4 - terzo mese | 8 settembre 2026 -> 7 ottobre 2026 | 61-90 giorni | 2023-03-24 | +63,19% | 126,40 $ | 178,03 $ | 92,81 $ (23 settembre 2026) | 130,27 $ (6 ottobre 2026) | Spinta rialzista abbastanza pulita. |
-| Step 5 - quarto mese | 8 ottobre 2026 -> 6 novembre 2026 | 91-120 giorni | 2023-04-23 | +63,77% | 126,86 $ | 179,11 $ | 124,78 $ (10 ottobre 2026) | 140,16 $ (28 ottobre 2026) | Spinta rialzista abbastanza pulita. |
-| Step 6 - estensione 6 mesi | 7 novembre 2026 -> 5 gennaio 2027 | 121-180 giorni | 2023-06-22 | +77,54% | 137,53 $ | 205,46 $ | 115,51 $ (28 dicembre 2026) | 138,05 $ (4 gennaio 2027) | Spinta rialzista abbastanza pulita. |
+| Step 1 - prossime 2 settimane | 9 luglio 2026 -> 23 luglio 2026 | 0-14 giorni | 2023-01-07 | +0,64% | 78,01 $ | 78,36 $ | 76,14 $ (16 luglio 2026) | 78,01 $ (23 luglio 2026) | Laterale / movimento non forte. |
+| Step 2 - primo mese | 24 luglio 2026 -> 8 agosto 2026 | 15-30 giorni | 2023-01-23 | +36,13% | 105,53 $ | 130,91 $ | 78,64 $ (24 luglio 2026) | 105,53 $ (8 agosto 2026) | Spinta rialzista abbastanza pulita. |
+| Step 3 - secondo mese | 9 agosto 2026 -> 7 settembre 2026 | 31-60 giorni | 2023-02-22 | +43,57% | 111,30 $ | 143,31 $ | 99,62 $ (26 agosto 2026) | 114,24 $ (5 settembre 2026) | Spinta rialzista abbastanza pulita. |
+| Step 4 - terzo mese | 8 settembre 2026 -> 7 ottobre 2026 | 61-90 giorni | 2023-03-24 | +63,19% | 126,50 $ | 178,13 $ | 92,89 $ (23 settembre 2026) | 130,37 $ (6 ottobre 2026) | Spinta rialzista abbastanza pulita. |
+| Step 5 - quarto mese | 8 ottobre 2026 -> 6 novembre 2026 | 91-120 giorni | 2023-04-23 | +63,77% | 126,95 $ | 179,22 $ | 124,88 $ (10 ottobre 2026) | 140,27 $ (28 ottobre 2026) | Spinta rialzista abbastanza pulita. |
+| Step 6 - estensione 6 mesi | 7 novembre 2026 -> 5 gennaio 2027 | 121-180 giorni | 2023-06-22 | +77,54% | 137,63 $ | 205,57 $ | 115,60 $ (28 dicembre 2026) | 138,16 $ (4 gennaio 2027) | Spinta rialzista abbastanza pulita. |
 
 ## Proiezione standard a giorni fissi
 
@@ -172,14 +172,14 @@ Questa e la parte piu pratica: non dice solo il target finale, ma il percorso a 
 
 | Orizzonte | Data SOL prevista | Data BTC equivalente | BTC fece | SOL base | SOL beta | Min percorso | Min % | Max percorso | Max % |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 7 giorni | 16 luglio 2026 | 2022-12-31 | -1,78% | 76,08 $ | 75,13 $ | 76,08 $ | -1,78% | 77,79 $ | +0,43% |
-| 14 giorni | 23 luglio 2026 | 2023-01-07 | +0,64% | 77,95 $ | 78,30 $ | 76,08 $ | -1,78% | 77,95 $ | +0,64% |
-| 30 giorni | 8 agosto 2026 | 2023-01-23 | +36,13% | 105,44 $ | 130,83 $ | 76,08 $ | -1,78% | 105,44 $ | +36,13% |
-| 60 giorni | 7 settembre 2026 | 2023-02-22 | +43,57% | 111,21 $ | 143,22 $ | 76,08 $ | -1,78% | 114,16 $ | +47,37% |
-| 90 giorni | 7 ottobre 2026 | 2023-03-24 | +63,19% | 126,40 $ | 178,03 $ | 76,08 $ | -1,78% | 130,27 $ | +68,18% |
-| 120 giorni | 6 novembre 2026 | 2023-04-23 | +63,77% | 126,86 $ | 179,11 $ | 76,08 $ | -1,78% | 140,16 $ | +80,95% |
-| 180 giorni | 5 gennaio 2027 | 2023-06-22 | +77,54% | 137,53 $ | 205,46 $ | 76,08 $ | -1,78% | 140,16 $ | +80,95% |
-| 365 giorni | 9 luglio 2027 | 2023-12-24 | +155,32% | 197,77 $ | 380,94 $ | 76,08 $ | -1,78% | 203,06 $ | +162,15% |
+| 7 giorni | 16 luglio 2026 | 2022-12-31 | -1,78% | 76,14 $ | 75,19 $ | 76,14 $ | -1,78% | 77,85 $ | +0,43% |
+| 14 giorni | 23 luglio 2026 | 2023-01-07 | +0,64% | 78,01 $ | 78,36 $ | 76,14 $ | -1,78% | 78,01 $ | +0,64% |
+| 30 giorni | 8 agosto 2026 | 2023-01-23 | +36,13% | 105,53 $ | 130,91 $ | 76,14 $ | -1,78% | 105,53 $ | +36,13% |
+| 60 giorni | 7 settembre 2026 | 2023-02-22 | +43,57% | 111,30 $ | 143,31 $ | 76,14 $ | -1,78% | 114,24 $ | +47,37% |
+| 90 giorni | 7 ottobre 2026 | 2023-03-24 | +63,19% | 126,50 $ | 178,13 $ | 76,14 $ | -1,78% | 130,37 $ | +68,18% |
+| 120 giorni | 6 novembre 2026 | 2023-04-23 | +63,77% | 126,95 $ | 179,22 $ | 76,14 $ | -1,78% | 140,27 $ | +80,95% |
+| 180 giorni | 5 gennaio 2027 | 2023-06-22 | +77,54% | 137,63 $ | 205,57 $ | 76,14 $ | -1,78% | 140,27 $ | +80,95% |
+| 365 giorni | 9 luglio 2027 | 2023-12-24 | +155,32% | 197,93 $ | 381,09 $ | 76,14 $ | -1,78% | 203,22 $ | +162,15% |
 
 ## Dati base
 
@@ -188,16 +188,16 @@ Questa e la parte piu pratica: non dice solo il target finale, ma il percorso a 
 | BTC bottom usato | 2022-11-21 | 15.787 $ |
 | SOL bottom usato | 2026-06-06 | 62,19 $ |
 | Ultima data SOL usata | 9 luglio 2026 | - |
-| Prezzo SOL attuale | - | 77,46 $ |
+| Prezzo SOL attuale | - | 77,52 $ |
 | Giorni SOL dal bottom | - | 33 |
 | Data BTC equivalente | 2022-12-24 | - |
 | BTC normalizzato al giorno equivalente | - | 106,72 |
-| SOL normalizzato oggi | - | 124,55 |
-| Gap SOL vs BTC equivalente | - | +16,71% |
+| SOL normalizzato oggi | - | 124,65 |
+| Gap SOL vs BTC equivalente | - | +16,80% |
 | Lettura fase | - | SOL e piu forte / piu avanti del BTC equivalente. |
 | Giorni confrontati | - | 34 |
-| Somiglianza prezzo | - | +67,82% |
-| Somiglianza RSI | - | +82,87% |
+| Somiglianza prezzo | - | +67,81% |
+| Somiglianza RSI | - | +82,86% |
 | Somiglianza medie | - | +82,69% |
 | Somiglianza totale | - | +73,81% |
 | Qualita frattale | - | MEDIA |
