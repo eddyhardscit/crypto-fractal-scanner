@@ -1,6 +1,6 @@
 # Calibrazione pesi Global Confluence
 
-Generato: **2026-07-09 18:31 UTC**
+Generato: **2026-07-09 23:10 UTC**
 
 Questo report prepara la calibrazione futura dei pesi del Global Confluence.
 
@@ -77,7 +77,7 @@ Questa tabella mostra gli score attuali. La calibrazione qui sotto non li modifi
 | DOGE    | Futures      | 0,00            |
 | DOGE    | Scanner      | -3,00           |
 | DOGE    | Scanner path | 0,00            |
-| DOGE    | Totale       | -9,00           |
+| DOGE    | Totale       | -10,00          |
 
 ## Lettura operativa
 
