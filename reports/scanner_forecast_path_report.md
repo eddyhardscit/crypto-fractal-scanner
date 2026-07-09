@@ -1,6 +1,6 @@
 # Scanner forecast path / cono probabilistico
 
-Generato: 2026-07-08 23:37 UTC
+Generato: 2026-07-09 00:36 UTC
 
 Questo report trasforma lo scanner dei 40 casi simili in un grafico a percorso.
 
@@ -17,9 +17,9 @@ Serve a vedere se il prezzo reale sta camminando dentro il percorso previsto dal
 
 | Asset   | Data       | Prezzo iniziale   | Direzione scanner   | Casi positivi   | P10 30g     | P25 30g     | P50 30g     | P75 30g     | P90 30g     |
 |:--------|:-----------|:------------------|:--------------------|:----------------|:------------|:------------|:------------|:------------|:------------|
-| BTC     | 2026-07-08 | 62.166,29 $       | SALITA              | 65,00%          | 54.204,12 $ | 60.571,62 $ | 64.271,68 $ | 74.310,97 $ | 89.364,00 $ |
-| SOL     | 2026-07-08 | 77,44 $           | INCERTO             | 45,00%          | 62,63 $     | 70,28 $     | 75,85 $     | 83,53 $     | 111,32 $    |
-| DOGE    | 2026-07-08 | 0.07000 $         | DISCESA             | 20,00%          | 0.04000 $   | 0.05000 $   | 0.06000 $   | 0.07000 $   | 0.09000 $   |
+| BTC     | 2026-07-09 | 62.181,83 $       | SALITA              | 65,00%          | 54.217,67 $ | 60.586,76 $ | 64.287,74 $ | 74.329,54 $ | 89.386,33 $ |
+| SOL     | 2026-07-09 | 77,63 $           | INCERTO             | 45,00%          | 62,79 $     | 70,45 $     | 76,04 $     | 83,73 $     | 111,59 $    |
+| DOGE    | 2026-07-09 | 0.07000 $         | DISCESA             | 17,50%          | 0.05000 $   | 0.05000 $   | 0.06000 $   | 0.07000 $   | 0.09000 $   |
 
 ## Grafici
 
@@ -39,17 +39,17 @@ Serve a vedere se il prezzo reale sta camminando dentro il percorso previsto dal
 
 | Asset   | Giorno   |   Controlli | Dentro p10-p90   | Dentro p25-p75   | Errore medio abs vs p50   | Errore medio vs p50   |
 |:--------|:---------|------------:|:-----------------|:-----------------|:--------------------------|:----------------------|
-| BTC     | 1g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
+| BTC     | 1g       |           1 | 100,00%          | 100,00%          | 0,18%                     | -0,18%                |
 | BTC     | 3g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | BTC     | 7g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | BTC     | 14g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | BTC     | 30g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| SOL     | 1g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
+| SOL     | 1g       |           1 | 100,00%          | 100,00%          | 0,21%                     | 0,21%                 |
 | SOL     | 3g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | SOL     | 7g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | SOL     | 14g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | SOL     | 30g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| DOGE    | 1g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
+| DOGE    | 1g       |           1 | 0,00%            | 0,00%            | 3,55%                     | 3,55%                 |
 | DOGE    | 3g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | DOGE    | 7g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | DOGE    | 14g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
