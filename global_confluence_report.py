@@ -9,6 +9,8 @@ LATEST_REPORT_PATH = REPORTS_DIR / "latest_report.md"
 REPORT_PATH = REPORTS_DIR / "global_confluence_report.md"
 METRICS_CSV_PATH = REPORTS_DIR / "global_confluence_metrics.csv"
 
+CLASSIC_TECH_METRICS_PATH = REPORTS_DIR / "classic_technical_confirmation_metrics.csv"
+
 START_MARKER = "<!-- GLOBAL_CONFLUENCE_START -->"
 END_MARKER = "<!-- GLOBAL_CONFLUENCE_END -->"
 
@@ -135,6 +137,13 @@ def parse_number(value):
         return None
 
 
+def parse_int(value, default=0):
+    n = parse_number(value)
+    if n is None:
+        return default
+    return int(n)
+
+
 def clean_cell(value: str) -> str:
     if value is None:
         return ""
@@ -240,11 +249,6 @@ def extract_section_after(text: str, start_pattern: str, end_pattern: str = r"\n
 
 
 def extract_heading_block(text: str, heading_regex: str) -> str:
-    """
-    Estrae solo il blocco sotto un titolo Markdown specifico.
-    Serve a evitare che i parser leggano numeri da tabelle sbagliate
-    come prezzi, date o anni.
-    """
     match = re.search(heading_regex, text, flags=re.IGNORECASE)
     if not match:
         return ""
@@ -297,6 +301,17 @@ def component_template(score=0, detail="n/a", data=None):
         "detail": detail,
         "data": data or {},
     }
+
+
+def read_csv_rows(path: Path):
+    if not path.exists():
+        return []
+
+    try:
+        with path.open("r", encoding="utf-8", newline="") as f:
+            return list(csv.DictReader(f))
+    except Exception:
+        return []
 
 
 def parse_scanner_component(text: str, asset: str):
@@ -599,6 +614,136 @@ def parse_technical_component(block: str, asset: str):
             "support": support,
             "resistance": resistance,
             "price": price,
+        },
+    )
+
+
+def parse_classic_technical_component(block: str, asset: str):
+    """
+    Nuovo modulo:
+    Classic technical confirmation.
+
+    Importante: pesa poco nel Global, perché si sovrappone in parte al vecchio
+    Technical Structure. Lo usiamo come filtro di conferma classica, non come
+    motore principale.
+    """
+
+    rows = read_csv_rows(CLASSIC_TECH_METRICS_PATH)
+
+    data = {}
+
+    for row in rows:
+        row_asset = clean_cell(row.get("asset")).upper()
+        if row_asset == asset:
+            data = row
+            break
+
+    raw_score = None
+    verdict = None
+    action = None
+    risk = None
+    stage = None
+    structure = None
+    wyckoff = None
+    price_confirmation_score = None
+    support = None
+    resistance = None
+
+    if data:
+        raw_score = parse_number(data.get("score"))
+        verdict = clean_cell(data.get("verdict"))
+        action = clean_cell(data.get("action"))
+        risk = clean_cell(data.get("risk"))
+        stage = clean_cell(data.get("stage"))
+        structure = clean_cell(data.get("structure"))
+        wyckoff = clean_cell(data.get("wyckoff_phase"))
+        price_confirmation_score = parse_number(data.get("price_confirmation_score"))
+        support = parse_number(data.get("support"))
+        resistance = parse_number(data.get("resistance"))
+
+    if raw_score is None and block:
+        asset_section = extract_section_after(
+            block,
+            rf"###\s+{asset}\b",
+            r"\n###\s+|\n##\s+",
+        )
+
+        m = re.search(r"Score classico:\s*\*\*([+\-]?\d+)", asset_section, flags=re.IGNORECASE)
+        if m:
+            raw_score = parse_number(m.group(1))
+
+        m = re.search(r"Verdetto:\s*\*\*([^*]+)\*\*", asset_section, flags=re.IGNORECASE)
+        if m:
+            verdict = clean_cell(m.group(1))
+
+        m = re.search(r"Azione coerente:\s*\*\*([^*]+)\*\*", asset_section, flags=re.IGNORECASE)
+        if m:
+            action = clean_cell(m.group(1))
+
+        m = re.search(r"Rischio:\s*\*\*([^*]+)\*\*", asset_section, flags=re.IGNORECASE)
+        if m:
+            risk = clean_cell(m.group(1))
+
+        m = re.search(r"Stage weekly:\s*\*\*([^*]+)\*\*", asset_section, flags=re.IGNORECASE)
+        if m:
+            stage = clean_cell(m.group(1))
+
+        m = re.search(r"Struttura:\s*\*\*[^*]+\*\*\s*—\s*([^\n]+)", asset_section, flags=re.IGNORECASE)
+        if m:
+            structure = clean_cell(m.group(1))
+
+        m = re.search(r"Wyckoff:\s*\*\*[^*]+\*\*\s*—\s*([^.\n]+)", asset_section, flags=re.IGNORECASE)
+        if m:
+            wyckoff = clean_cell(m.group(1))
+
+    if raw_score is None:
+        return component_template(
+            0,
+            "Modulo Classic Technical non disponibile o non ancora eseguito.",
+            {},
+        )
+
+    raw_score = int(raw_score)
+
+    score = 0
+
+    verdict_u = (verdict or "").upper()
+
+    if raw_score >= 8 or "CONFERMATO RIALZISTA" in verdict_u:
+        score = 1
+    elif raw_score >= 5:
+        score = 1
+    elif raw_score <= -8 or "CONFERMATO RIBASSISTA" in verdict_u:
+        score = -1
+    elif raw_score <= -5:
+        score = -1
+    else:
+        score = 0
+
+    detail = (
+        f"Score classico {raw_score}/12, "
+        f"verdetto {verdict or 'n/a'}, "
+        f"stage {stage or 'n/a'}, "
+        f"struttura {structure or 'n/a'}, "
+        f"Wyckoff {wyckoff or 'n/a'}, "
+        f"rischio {risk or 'n/a'}. "
+        "Peso Global limitato a ±1 perché è un filtro di conferma."
+    )
+
+    return component_template(
+        score,
+        detail,
+        {
+            "classic_raw_score": raw_score,
+            "classic_verdict": verdict,
+            "classic_action": action,
+            "classic_risk": risk,
+            "classic_stage": stage,
+            "classic_structure": structure,
+            "classic_wyckoff": wyckoff,
+            "classic_price_confirmation_score": price_confirmation_score,
+            "classic_support": support,
+            "classic_resistance": resistance,
         },
     )
 
@@ -906,6 +1051,7 @@ def build_components(source_text: str):
     scanner_forecast_block = extract_marker_block(source_text, "SCANNER_FORECAST_TRACKER")
     market_block = extract_marker_block(source_text, "MARKET_REGIME_MATCH")
     technical_block = extract_marker_block(source_text, "TECHNICAL_STRUCTURE")
+    classic_technical_block = extract_marker_block(source_text, "CLASSIC_TECHNICAL_CONFIRMATION")
     sol_fractal_block = extract_marker_block(source_text, "BTC_SOL_FRACTAL")
     fractal_path_block = extract_marker_block(source_text, "FRACTAL_PATH_TRACKER")
     rsi_block = extract_marker_block(source_text, "RSI_TOP_CYCLE")
@@ -921,6 +1067,7 @@ def build_components(source_text: str):
             "Scanner path": parse_scanner_path_component(scanner_forecast_block, asset),
             "Market regime": parse_market_component(market_block, asset),
             "Tecnico": parse_technical_component(technical_block, asset),
+            "Classic technical": parse_classic_technical_component(classic_technical_block, asset),
             "Frattale SOL": (
                 parse_sol_fractal_component(sol_fractal_block)
                 if asset == "SOL"
@@ -1099,6 +1246,11 @@ def build_invalidations(asset: str, components: dict) -> str:
 
 def asset_commentary(asset: str, score: int) -> str:
     if asset == "BTC":
+        if score >= 7:
+            return (
+                "BTC ha una confluenza positiva forte. Resta comunque necessario evitare leva eccessiva: "
+                "la conferma deve arrivare da prezzo e resistenze, non solo dallo score."
+            )
         if score >= 3:
             return (
                 "BTC è l'asset messo meglio nel breve. La struttura macro non è ancora "
@@ -1116,6 +1268,11 @@ def asset_commentary(asset: str, score: int) -> str:
         )
 
     if asset == "SOL":
+        if score >= 7:
+            return (
+                "SOL ha una confluenza molto interessante, ma resta più rischiosa di BTC. "
+                "Le conferme tecniche e frattali devono comunque reggere prima di usare leva."
+            )
         if score >= 3:
             return (
                 "SOL ha una confluenza costruttiva, ma va ancora trattato come setup anticipato. "
@@ -1158,6 +1315,7 @@ def build_report(components: dict):
         "Scanner path",
         "Market regime",
         "Tecnico",
+        "Classic technical",
         "Frattale SOL",
         "Fractal path",
         "RSI top-cycle",
@@ -1200,6 +1358,7 @@ def build_report(components: dict):
                 fmt_signed_int(components[asset]["Scanner path"]["score"]),
                 fmt_signed_int(components[asset]["Market regime"]["score"]),
                 fmt_signed_int(components[asset]["Tecnico"]["score"]),
+                fmt_signed_int(components[asset]["Classic technical"]["score"]),
                 fmt_signed_int(components[asset]["Frattale SOL"]["score"]),
                 fmt_signed_int(components[asset]["Fractal path"]["score"]),
                 fmt_signed_int(components[asset]["RSI top-cycle"]["score"]),
@@ -1223,7 +1382,8 @@ def build_report(components: dict):
     lines.append("- Scanner frattale/statistico a 30 giorni")
     lines.append("- Scanner path / cono previsionale")
     lines.append("- Market regime match")
-    lines.append("- Struttura tecnica classica")
+    lines.append("- Struttura tecnica classica precedente")
+    lines.append("- Classic technical confirmation, nuovo filtro tecnico completo")
     lines.append("- Frattale BTC 2022 vs SOL 2026, solo per SOL")
     lines.append("- Fractal path tracker, solo per SOL")
     lines.append("- RSI top-cycle, soprattutto per SOL")
@@ -1234,6 +1394,11 @@ def build_report(components: dict):
     lines.append(
         "Nota importante: **Lifecycle EMA200 viene letto e mostrato, ma ora vale sempre 0 punti nel Global Confluence**. "
         "Serve come contesto, non come conferma operativa."
+    )
+    lines.append("")
+    lines.append(
+        "Nota nuovo modulo: **Classic technical confirmation pesa massimo ±1** perché è un filtro di conferma "
+        "e in parte si sovrappone alla struttura tecnica già esistente."
     )
     lines.append("")
     lines.append("## Sintesi operativa")
@@ -1264,6 +1429,7 @@ def build_report(components: dict):
                 "Scanner path",
                 "Market regime",
                 "Tecnico",
+                "Classic tech",
                 "Frattale SOL",
                 "Fractal path",
                 "RSI top-cycle",
@@ -1328,8 +1494,8 @@ def build_report(components: dict):
     )
     lines.append("")
     lines.append(
-        "Nota tecnica: Scanner path e Fractal path leggono i controlli solo dalle rispettive tabelle di accuratezza, "
-        "così non confondono prezzi, date o anni con il numero di controlli."
+        "Nota Classic technical: il nuovo modulo è utile per capire se il setup è confermato davvero, "
+        "ma il suo peso resta prudente per evitare doppio conteggio con il modulo tecnico già presente."
     )
 
     return "\n".join(lines).rstrip() + "\n", results
@@ -1364,6 +1530,17 @@ def write_metrics_csv(components: dict, results: dict) -> None:
         "technical_verdict",
         "technical_support",
         "technical_resistance",
+        "classic_technical_score_component",
+        "classic_technical_raw_score",
+        "classic_technical_verdict",
+        "classic_technical_action",
+        "classic_technical_risk",
+        "classic_technical_stage",
+        "classic_technical_structure",
+        "classic_technical_wyckoff",
+        "classic_technical_price_confirmation_score",
+        "classic_technical_support",
+        "classic_technical_resistance",
         "sol_fractal_score",
         "sol_fractal_verdict",
         "sol_fractal_similarity",
@@ -1420,6 +1597,17 @@ def write_metrics_csv(components: dict, results: dict) -> None:
             "technical_verdict": c["Tecnico"]["data"].get("verdict"),
             "technical_support": c["Tecnico"]["data"].get("support"),
             "technical_resistance": c["Tecnico"]["data"].get("resistance"),
+            "classic_technical_score_component": c["Classic technical"]["score"],
+            "classic_technical_raw_score": c["Classic technical"]["data"].get("classic_raw_score"),
+            "classic_technical_verdict": c["Classic technical"]["data"].get("classic_verdict"),
+            "classic_technical_action": c["Classic technical"]["data"].get("classic_action"),
+            "classic_technical_risk": c["Classic technical"]["data"].get("classic_risk"),
+            "classic_technical_stage": c["Classic technical"]["data"].get("classic_stage"),
+            "classic_technical_structure": c["Classic technical"]["data"].get("classic_structure"),
+            "classic_technical_wyckoff": c["Classic technical"]["data"].get("classic_wyckoff"),
+            "classic_technical_price_confirmation_score": c["Classic technical"]["data"].get("classic_price_confirmation_score"),
+            "classic_technical_support": c["Classic technical"]["data"].get("classic_support"),
+            "classic_technical_resistance": c["Classic technical"]["data"].get("classic_resistance"),
             "sol_fractal_score": c["Frattale SOL"]["score"],
             "sol_fractal_verdict": c["Frattale SOL"]["data"].get("verdict"),
             "sol_fractal_similarity": c["Frattale SOL"]["data"].get("similarity"),
