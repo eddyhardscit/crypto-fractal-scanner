@@ -1,6 +1,6 @@
 # Calibrazione pesi Global Confluence
 
-Generato: **2026-07-09 17:20 UTC**
+Generato: **2026-07-09 17:56 UTC**
 
 Questo report prepara la calibrazione futura dei pesi del Global Confluence.
 
@@ -62,31 +62,31 @@ Questa tabella mostra gli score attuali. La calibrazione qui sotto non li modifi
 |:--------|:--------------|:----------------|
 | BTC     | Daily change  | +1,00           |
 | BTC     | Fractal path  | 0,00            |
-| BTC     | Frattale SOL  | 0,00            |
 | BTC     | Futures       | 0,00            |
-| BTC     | Lifecycle EMA | 0,00            |
 | BTC     | Market regime | +3,00           |
 | BTC     | RSI top-cycle | 0,00            |
-| BTC     | Scanner       | +3,00           |
+| BTC     | Scanner       | +1,00           |
 | BTC     | Scanner path  | 0,00            |
+| BTC     | Tecnico       | -2,00           |
+| BTC     | Totale        | +3,00           |
 | SOL     | Daily change  | 0,00            |
 | SOL     | Fractal path  | 0,00            |
-| SOL     | Frattale SOL  | +2,00           |
 | SOL     | Futures       | 0,00            |
-| SOL     | Lifecycle EMA | +1,00           |
 | SOL     | Market regime | +2,00           |
 | SOL     | RSI top-cycle | +1,00           |
 | SOL     | Scanner       | -1,00           |
 | SOL     | Scanner path  | 0,00            |
+| SOL     | Tecnico       | +1,00           |
+| SOL     | Totale        | +4,00           |
 | DOGE    | Daily change  | 0,00            |
 | DOGE    | Fractal path  | 0,00            |
-| DOGE    | Frattale SOL  | 0,00            |
 | DOGE    | Futures       | 0,00            |
-| DOGE    | Lifecycle EMA | 0,00            |
 | DOGE    | Market regime | -3,00           |
 | DOGE    | RSI top-cycle | 0,00            |
 | DOGE    | Scanner       | -3,00           |
 | DOGE    | Scanner path  | 0,00            |
+| DOGE    | Tecnico       | -3,00           |
+| DOGE    | Totale        | -9,00           |
 
 ## Lettura operativa
 

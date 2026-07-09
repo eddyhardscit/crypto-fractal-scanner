@@ -1,6 +1,7 @@
+<!-- GLOBAL_CONFLUENCE_START -->
 # Sintesi finale di confluenza
 
-Generato: 2026-07-09 17:20 UTC
+Generato: 2026-07-09 17:56 UTC
 
 Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.
 
@@ -17,20 +18,22 @@ Moduli letti:
 - Futures / liquidazioni
 - Cambiamento giornaliero
 
+Nota importante: **Lifecycle EMA200 viene letto e mostrato, ma ora vale sempre 0 punti nel Global Confluence**. Serve come contesto, non come conferma operativa.
+
 ## Sintesi operativa
 
-| Asset   |   Punteggio | Confluenza             | Bias                 | Affidabilità   | Azione coerente                                    | Conferme                                                                                       | Invalidazioni                                |
-|:--------|------------:|:-----------------------|:---------------------|:---------------|:---------------------------------------------------|:-----------------------------------------------------------------------------------------------|:---------------------------------------------|
-| BTC     |          +5 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA          | ACCUMULA SU PULLBACK / NO SHORT                    | Sopra 65.544 migliora; sopra la neckline tecnica successiva il recupero diventa più credibile. | Sotto 57.748 il quadro tecnico peggiora.     |
-| SOL     |          +6 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA          | HOLD / TRANCHE PICCOLE, NO LEVA                    | Conferme sopra 83,81 / 106,08 / 114,85.                                                        | Allarmi sotto 74,03 / 64,42 / 62,19.         |
-| DOGE    |          -9 | NEGATIVA               | Ribassista           | MEDIA / ALTA   | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | Sopra 0.07923 migliora, ma resta asset debole finché scanner e struttura non girano.           | Sotto 0.06961 il rischio ribassista aumenta. |
+| Asset   |   Punteggio | Confluenza             | Bias                 | Affidabilità   | Azione coerente                                    | Conferme                                                                                      | Invalidazioni                                |
+|:--------|------------:|:-----------------------|:---------------------|:---------------|:---------------------------------------------------|:----------------------------------------------------------------------------------------------|:---------------------------------------------|
+| BTC     |           3 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA          | ACCUMULA SU PULLBACK / NO SHORT                    | Sopra 65,54 migliora; sopra la neckline tecnica successiva il recupero diventa più credibile. | Sotto 57,75 il quadro tecnico peggiora.      |
+| SOL     |           4 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA          | HOLD / TRANCHE PICCOLE, NO LEVA                    | Conferme sopra 83,81 / 106,17 / 114,94.                                                       | Allarmi sotto 74,09 / 64,42 / 62,19.         |
+| DOGE    |          -9 | NEGATIVA               | Ribassista           | MEDIA / ALTA   | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | Sopra 0.07923 migliora, ma resta asset debole finché scanner e struttura non girano.          | Sotto 0.06961 il rischio ribassista aumenta. |
 
 ## Punteggi per modulo
 
 | Asset   |   Scanner |   Scanner path |   Market regime |   Tecnico |   Frattale SOL |   Fractal path |   RSI top-cycle |   Lifecycle EMA |   Futures |   Daily change |   Totale |
 |:--------|----------:|---------------:|----------------:|----------:|---------------:|---------------:|----------------:|----------------:|----------:|---------------:|---------:|
-| BTC     |        +3 |              0 |              +3 |        -2 |              0 |              0 |               0 |               0 |         0 |             +1 |       +5 |
-| SOL     |        -1 |              0 |              +2 |        +1 |             +2 |              0 |              +1 |              +1 |         0 |              0 |       +6 |
+| BTC     |        +1 |              0 |              +3 |        -2 |              0 |              0 |               0 |               0 |         0 |             +1 |       +3 |
+| SOL     |        -1 |              0 |              +2 |        +1 |             +1 |              0 |              +1 |               0 |         0 |              0 |       +4 |
 | DOGE    |        -3 |              0 |              -3 |        -3 |              0 |              0 |               0 |               0 |         0 |              0 |       -9 |
 
 ## Lettura asset per asset
@@ -39,7 +42,7 @@ Moduli letti:
 
 - Confluenza: **MODERATAMENTE POSITIVA**
 - Bias: **Costruttivo prudente**
-- Punteggio finale: **+5**
+- Punteggio finale: **+3**
 - Affidabilità: **MEDIA**
 - Azione coerente: **ACCUMULA SU PULLBACK / NO SHORT**
 
@@ -47,47 +50,47 @@ BTC è l'asset messo meglio nel breve. La struttura macro non è ancora pienamen
 
 Dettaglio moduli:
 
-- Scanner 30g: **+3** — Casi positivi 70,00%, return centrale 30g 6,89%.
-- Scanner path / cono: **0** — Raccolta dati. Controlli disponibili 1. Servono almeno 5 controlli prima di pesare il cono previsionale.
-- Market regime: **+3** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 16, positivi 30g 93,75%, return p50 23,86%.
-- Tecnico: **-2** — Score tecnico -3/12, verdetto debole, trend trend ribassista, struttura struttura ribassista con massimi e minimi decrescenti, divergenza divergenza rialzista RSI, Wyckoff possibile accumulazione.
-- Frattale SOL/BTC: **0** — Non applicabile a questo asset.
-- Fractal path tracker: **0** — Non applicabile a questo asset.
+- Scanner: **+1** — Casi positivi 70.00%, return centrale 30g n/a. Direzione scanner: n/a.
+- Scanner path: **0** — Raccolta dati. Controlli disponibili 1. Servono almeno 5 controlli prima di pesare il cono previsionale.
+- Market regime: **+3** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 16, positivi 30g 93,75%, return p50 +23,86%.
+- Tecnico: **-2** — Score tecnico -3/12, verdetto debole, trend trend ribassista, struttura struttura ribassista con massimi e minimi decrescenti, divergenza divergenza rialzista rsi, Wyckoff possibile accumulazione.
+- Frattale SOL: **0** — Non applicabile a questo asset.
+- Fractal path: **0** — Non applicabile a questo asset.
 - RSI top-cycle: **0** — Non applicabile a questo asset.
-- Lifecycle EMA200: **0** — Non applicabile a questo asset.
-- Futures/liquidazioni: **0** — Lettura futures Rischio sotto, forza 5/5.
-- Cambiamento giornaliero: **+1** — BTC: cambiamento importante in miglioramento rispetto a ieri.
+- Lifecycle EMA: **0** — Non applicabile a questo asset.
+- Futures: **0** — Lettura futures Rischio sotto, forza 5/5.
+- Daily change: **+1** — BTC: cambiamento medio in miglioramento rispetto a ieri.
 
-Conferme: Sopra 65.544 migliora; sopra la neckline tecnica successiva il recupero diventa più credibile.
+Conferme: Sopra 65,54 migliora; sopra la neckline tecnica successiva il recupero diventa più credibile.
 
-Invalidazioni: Sotto 57.748 il quadro tecnico peggiora.
+Invalidazioni: Sotto 57,75 il quadro tecnico peggiora.
 
 ### SOL
 
 - Confluenza: **MODERATAMENTE POSITIVA**
 - Bias: **Costruttivo prudente**
-- Punteggio finale: **+6**
+- Punteggio finale: **+4**
 - Affidabilità: **MEDIA**
 - Azione coerente: **HOLD / TRANCHE PICCOLE, NO LEVA**
 
-SOL ha una confluenza costruttiva, ma va ancora trattato come setup anticipato. La conferma vera arriva solo sopra le resistenze tecniche, frattali e verso la zona EMA200 weekly. Il modulo lifecycle/EMA200 aggiunge una lettura positiva da squeeze, ma non sostituisce le conferme di prezzo.
+SOL ha una confluenza costruttiva, ma va ancora trattato come setup anticipato. La conferma vera arriva solo sopra le resistenze tecniche e frattali. Il modulo lifecycle/EMA200 resta utile come contesto, ma non viene più usato per aumentare il punteggio Global.
 
 Dettaglio moduli:
 
-- Scanner 30g: **-1** — Casi positivi 42,50%, return centrale 30g -1,54%.
-- Scanner path / cono: **0** — Raccolta dati. Controlli disponibili 1. Servono almeno 5 controlli prima di pesare il cono previsionale.
-- Market regime: **+2** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 19, positivi 30g 63,16%, return p50 0,92%.
+- Scanner: **-1** — Casi positivi 42.50%, return centrale 30g n/a. Direzione scanner: n/a.
+- Scanner path: **0** — Raccolta dati. Controlli disponibili 1. Servono almeno 5 controlli prima di pesare il cono previsionale.
+- Market regime: **+2** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 19, positivi 30g 63,16%, return p50 +0,92%.
 - Tecnico: **+1** — Score tecnico 1/12, verdetto neutrale / misto, trend trend misto, struttura volatilità in espansione, divergenza nessuna, Wyckoff range / fase non chiara.
-- Frattale SOL/BTC: **+2** — Verdetto PARZIALMENTE SI, somiglianza 73,77%, tracking FRATTALE STABILE, fase FASE ANTICIPATA, rischio MEDIO / ALTO.
-- Fractal path tracker: **0** — Raccolta dati. Controlli disponibili 0. Servono almeno 5 controlli prima di pesare il percorso frattale.
+- Frattale SOL: **+1** — Verdetto PARZIALMENTE SI, somiglianza n/a, tracking FRATTALE STABILE, fase FASE ANTICIPATA, rischio MEDIO / ALTO.
+- Fractal path: **0** — Tracking operativo, ma nessuna milestone settimanale ancora verificata. Il modulo non pesa finché non maturano abbastanza controlli.
 - RSI top-cycle: **+1** — Rischio top-cycle RSI: BASSO.
-- Lifecycle EMA200: **+1** — Lifecycle score 5, peso Global +1, bias SQUEEZE SETUP FORTE, EMA200 113,51 $, upside EMA200 45,81%, stato EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO, hit EMA200 12w 36,67%, trend STABILE / DA CONFERMARE.
-- Futures/liquidazioni: **0** — Lettura futures Misto, forza 1/5.
-- Cambiamento giornaliero: **0** — SOL: nessun cambiamento forte rispetto a ieri.
+- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 5, bias SQUEEZE SETUP FORTE, EMA200 113,51 $, upside EMA200 +45,51%, gap EMA50/EMA200 -1,21%, hit EMA200 12w +23,33%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
+- Futures: **0** — Lettura futures Misto, forza 1/5.
+- Daily change: **0** — SOL: nessun cambiamento forte in miglioramento rispetto a ieri.
 
-Conferme: Conferme sopra 83,81 / 106,08 / 114,85.
+Conferme: Conferme sopra 83,81 / 106,17 / 114,94.
 
-Invalidazioni: Allarmi sotto 74,03 / 64,42 / 62,19.
+Invalidazioni: Allarmi sotto 74,09 / 64,42 / 62,19.
 
 ### DOGE
 
@@ -101,20 +104,21 @@ DOGE resta l'asset più debole. Anche se può fare rimbalzi o spike, la confluen
 
 Dettaglio moduli:
 
-- Scanner 30g: **-3** — Casi positivi 12,50%, return centrale 30g -20,25%.
-- Scanner path / cono: **0** — Raccolta dati. Controlli disponibili 1. Servono almeno 5 controlli prima di pesare il cono previsionale.
+- Scanner: **-3** — Casi positivi 12.50%, return centrale 30g n/a. Direzione scanner: n/a.
+- Scanner path: **0** — Raccolta dati. Controlli disponibili 1. Servono almeno 5 controlli prima di pesare il cono previsionale.
 - Market regime: **-3** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 30, positivi 30g 6,67%, return p50 -27,25%.
-- Tecnico: **-3** — Score tecnico -10/12, verdetto ribassista tecnico, trend trend ribassista, struttura struttura ribassista con massimi e minimi decrescenti, divergenza divergenza ribassista nascosta RSI, Wyckoff possibile accumulazione.
-- Frattale SOL/BTC: **0** — Non applicabile a questo asset.
-- Fractal path tracker: **0** — Non applicabile a questo asset.
+- Tecnico: **-3** — Score tecnico -10/12, verdetto ribassista tecnico, trend trend ribassista, struttura struttura ribassista con massimi e minimi decrescenti, divergenza divergenza ribassista nascosta rsi, Wyckoff possibile accumulazione.
+- Frattale SOL: **0** — Non applicabile a questo asset.
+- Fractal path: **0** — Non applicabile a questo asset.
 - RSI top-cycle: **0** — Non applicabile a questo asset.
-- Lifecycle EMA200: **0** — Non applicabile a questo asset.
-- Futures/liquidazioni: **0** — Lettura futures Misto, forza 1/5.
-- Cambiamento giornaliero: **0** — DOGE: nessun cambiamento forte rispetto a ieri.
+- Lifecycle EMA: **0** — Non applicabile a questo asset.
+- Futures: **0** — Lettura futures Misto, forza 1/5.
+- Daily change: **0** — DOGE: nessun cambiamento forte in peggioramento rispetto a ieri.
 
 Conferme: Sopra 0.07923 migliora, ma resta asset debole finché scanner e struttura non girano.
 
 Invalidazioni: Sotto 0.06961 il rischio ribassista aumenta.
+
 
 ## Come leggere il punteggio
 
@@ -127,5 +131,5 @@ Invalidazioni: Sotto 0.06961 il rischio ribassista aumenta.
 Nota: Scanner path e Fractal path sono già integrati, ma finché hanno pochi controlli restano quasi sempre a punteggio 0.
 Servono almeno 5 controlli prima di influire leggermente, e 30+ controlli prima di pesare davvero.
 
-Nota lifecycle EMA200: il modulo Major alt lifecycle squeeze pesa al massimo +1 / -1 nel Global, perché è un filtro di contesto e non una conferma diretta di prezzo.
-
+Nota lifecycle EMA200: il modulo Major alt lifecycle squeeze resta nel report, ma pesa **0** nel Global perché EMA50/EMA200 e target EMA200 sono contesto, non conferme dirette di prezzo.
+<!-- GLOBAL_CONFLUENCE_END -->
