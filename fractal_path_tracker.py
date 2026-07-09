@@ -1,5 +1,4 @@
 import json
-import math
 import os
 import re
 from datetime import datetime, timezone
@@ -74,6 +73,13 @@ def write_text(path, text):
         f.write(text)
 
 
+def pick_existing_path(candidates):
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+    return None
+
+
 def load_json_if_exists(path):
     if not path or not os.path.exists(path):
         return {}
@@ -82,31 +88,6 @@ def load_json_if_exists(path):
             return json.load(f)
     except Exception:
         return {}
-
-
-def pick_existing_path(candidates):
-    for path in candidates:
-        if os.path.exists(path):
-            return path
-    return None
-
-
-def normalize_key(s):
-    s = str(s).strip().lower()
-    s = s.replace("%", "pct")
-    s = s.replace("/", "_")
-    s = s.replace("-", "_")
-    s = s.replace(".", "")
-    s = s.replace(" ", "_")
-    s = re.sub(r"[^a-z0-9_àèéìòù]", "", s)
-    s = re.sub(r"_+", "_", s)
-    return s.strip("_")
-
-
-def normalize_columns(df):
-    df = df.copy()
-    df.columns = [str(c).strip() for c in df.columns]
-    return df
 
 
 def safe_float(v, default=np.nan):
@@ -175,6 +156,36 @@ def fmt_pct(v, decimals=2, signed=False):
     return f"{v:.{decimals}f}%".replace(".", ",")
 
 
+def clean_markdown(text):
+    if not text:
+        return ""
+
+    text = text.replace("\r\n", "\n")
+    text = text.replace("\r", "\n")
+    text = text.replace("**", "")
+    text = text.replace("*", "")
+    text = text.replace("`", "")
+    text = text.replace("–", "-")
+    text = text.replace("—", "-")
+    return text
+
+
+def extract_first(pattern, text, flags=re.IGNORECASE | re.MULTILINE):
+    if not text:
+        return None
+
+    m = re.search(pattern, text, flags)
+
+    if not m:
+        return None
+
+    value = m.group(1).strip()
+    value = value.replace("|", "").strip()
+    value = re.sub(r"\s+", " ", value)
+
+    return value
+
+
 def parse_italian_date(value):
     if value is None:
         return pd.NaT
@@ -212,6 +223,7 @@ def parse_date(value):
                 return value.normalize()
 
     italian = parse_italian_date(value)
+
     if pd.notna(italian):
         return italian
 
@@ -366,77 +378,79 @@ def get_close_on_or_after(prices, date):
     return safe_float(d.iloc[0]["Close"])
 
 
-def extract_first(pattern, text, flags=re.IGNORECASE | re.DOTALL):
-    m = re.search(pattern, text, flags)
-    if not m:
-        return None
-    return m.group(1).strip()
-
-
 def parse_report_metadata_from_markdown():
-    text = read_text(BTC_SOL_REPORT_PATH)
+    # Legge entrambi: report separato e latest_report.
+    # Così, se un campo manca in uno dei due, lo recupera dall'altro.
+    raw_report = read_text(BTC_SOL_REPORT_PATH)
+    raw_latest = read_text(MAIN_REPORT_PATH)
 
-    if not text:
-        text = read_text(MAIN_REPORT_PATH)
+    text = clean_markdown(raw_report + "\n\n" + raw_latest)
 
     metadata = {}
 
-    forecast_raw = extract_first(
-        r"Ultima candela SOL usata:\s*\*\*([^*]+)\*\*",
-        text,
+    forecast_raw = (
+        extract_first(r"Ultima candela SOL usata:\s*([^\n]+)", text)
+        or extract_first(r"Data previsione:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})", text)
     )
 
-    sol_day_raw = extract_first(
-        r"SOL\s+(?:e|è)\s+al giorno:\s*([0-9]+)",
-        text,
+    sol_day_raw = (
+        extract_first(r"SOL\s+(?:e|è)\s+al giorno:\s*([0-9]+)", text)
+        or extract_first(r"SOL\s+al giorno:\s*([0-9]+)", text)
+        or extract_first(r"Giorno SOL:\s*([0-9]+)", text)
     )
 
-    btc_eq_raw = extract_first(
-        r"Giorno BTC equivalente:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})",
-        text,
+    btc_eq_raw = (
+        extract_first(r"Giorno BTC equivalente:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})", text)
+        or extract_first(r"Giorno BTC equivalente oggi:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})", text)
     )
 
-    program_raw = extract_first(
-        r"Inizio programma/scanner:\s*([^\n]+)",
-        text,
+    program_raw = extract_first(r"Inizio programma/scanner:\s*([^\n]+)", text)
+
+    verdict = (
+        extract_first(r"##\s*Verdetto:\s*([^\n]+)", text)
+        or extract_first(r"Verdetto:\s*([^\n]+)", text)
     )
 
-    phase = extract_first(
-        r"\*\*Fase attuale:\*\*\s*([^\n]+)",
-        text,
+    phase = (
+        extract_first(r"Fase attuale:\s*([^\n]+)", text)
+        or extract_first(r"Fase:\s*([^\n]+)", text)
     )
 
-    similarity_raw = extract_first(
-        r"\*\*Somiglianza totale:\*\*\s*([^\n]+)",
-        text,
+    similarity_raw = (
+        extract_first(r"Somiglianza totale:\s*([+\-]?[0-9]+(?:[,.][0-9]+)?)\s*%?", text)
+        or extract_first(r"Somiglianza:\s*([+\-]?[0-9]+(?:[,.][0-9]+)?)\s*%?", text)
     )
 
-    risk_phase = extract_first(
-        r"\*\*Rischio fase:\*\*\s*([^\n]+)",
-        text,
+    tracking = (
+        extract_first(r"Trend tracking:\s*([^\n]+)", text)
+        or extract_first(r"Tracking:\s*([^\n]+)", text)
     )
 
-    tracking = extract_first(
-        r"\*\*Trend tracking:\*\*\s*([^\n]+)",
-        text,
+    risk_phase = (
+        extract_first(r"Rischio fase:\s*([^\n]+)", text)
+        or extract_first(r"Rischio:\s*([^\n]+)", text)
     )
 
-    verdict = extract_first(
-        r"##\s*Verdetto:\s*([^\n]+)",
-        text,
-    )
-
+    # Pulizia valori eventualmente presi da righe troppo lunghe.
     if verdict:
-        verdict = verdict.replace("*", "").strip()
+        verdict = verdict.split("-")[0].strip()
+        verdict = verdict.replace("#", "").strip()
+
+    if phase:
+        phase = phase.split("-")[0].strip()
+
+    if tracking:
+        tracking = tracking.split("-")[0].strip()
+
+    if risk_phase:
+        risk_phase = risk_phase.split("-")[0].strip()
 
     forecast_date = parse_date(forecast_raw)
     btc_eq_date = parse_date(btc_eq_raw)
     program_start_date = parse_date(program_raw)
 
-    sol_day = None
     try:
-        if sol_day_raw is not None:
-            sol_day = int(sol_day_raw)
+        sol_day = int(sol_day_raw) if sol_day_raw is not None else None
     except Exception:
         sol_day = None
 
@@ -484,9 +498,21 @@ def enrich_metadata_with_json(metadata):
     def maybe_set_date(key, candidates):
         if pd.notna(metadata.get(key, pd.NaT)):
             return
+
         for c in candidates:
             if c in latest_json and latest_json[c] is not None:
                 metadata[key] = parse_date(latest_json[c])
+                return
+
+    def maybe_set_value(key, candidates):
+        current = metadata.get(key, "n/a")
+
+        if current not in [None, "", "n/a"] and not (isinstance(current, float) and pd.isna(current)):
+            return
+
+        for c in candidates:
+            if c in latest_json and latest_json[c] is not None:
+                metadata[key] = latest_json[c]
                 return
 
     maybe_set_date("forecast_date", ["forecast_date", "data_previsione", "date", "last_date"])
@@ -494,22 +520,16 @@ def enrich_metadata_with_json(metadata):
     maybe_set_date("btc_bottom_date", ["btc_bottom_date", "bottom_btc_date", "bottom_date_btc"])
     maybe_set_date("program_start_date", ["program_start_date", "scanner_start_date", "start_program_date"])
 
-    if metadata.get("verdict", "n/a") == "n/a":
-        metadata["verdict"] = latest_json.get("verdict", latest_json.get("verdetto", "n/a"))
-
-    if metadata.get("phase", "n/a") == "n/a":
-        metadata["phase"] = latest_json.get("phase", latest_json.get("fase", "n/a"))
-
-    if metadata.get("tracking", "n/a") == "n/a":
-        metadata["tracking"] = latest_json.get("tracking_status", latest_json.get("tracking", "n/a"))
-
-    if metadata.get("phase_risk", "n/a") == "n/a":
-        metadata["phase_risk"] = latest_json.get("phase_risk", latest_json.get("rischio_fase", "n/a"))
+    maybe_set_value("verdict", ["verdict", "verdetto"])
+    maybe_set_value("phase", ["phase", "fase"])
+    maybe_set_value("tracking", ["tracking_status", "tracking", "trend_tracking"])
+    maybe_set_value("phase_risk", ["phase_risk", "rischio_fase", "risk_phase"])
 
     if pd.isna(safe_float(metadata.get("similarity", np.nan))):
-        metadata["similarity"] = safe_float(
-            latest_json.get("similarity_total", latest_json.get("somiglianza_totale", latest_json.get("similarity")))
-        )
+        for c in ["similarity_total", "somiglianza_totale", "similarity"]:
+            if c in latest_json and latest_json[c] is not None:
+                metadata["similarity"] = safe_float(latest_json[c])
+                break
 
     return metadata
 
@@ -1145,6 +1165,7 @@ def build_gap_summary(gap_df):
             "last_gap": np.nan,
             "ma7": np.nan,
             "prev_ma7": np.nan,
+            "recent_change": np.nan,
             "gap_state": "n/a",
             "gap_trend": "n/a",
         }
@@ -1152,26 +1173,54 @@ def build_gap_summary(gap_df):
     last_gap = safe_float(gap_df["gap_pct"].iloc[-1])
     ma7 = safe_float(gap_df["gap_pct"].tail(7).mean())
 
+    if len(gap_df) >= 4:
+        recent_reference_gap = safe_float(gap_df["gap_pct"].iloc[-4])
+    elif len(gap_df) >= 2:
+        recent_reference_gap = safe_float(gap_df["gap_pct"].iloc[0])
+    else:
+        recent_reference_gap = last_gap
+
+    recent_change = last_gap - recent_reference_gap
+
     if len(gap_df) >= 14:
         prev_ma7 = safe_float(gap_df["gap_pct"].tail(14).head(7).mean())
     else:
-        prev_ma7 = safe_float(gap_df["gap_pct"].head(max(len(gap_df) - 7, 1)).mean())
+        prev_ma7 = np.nan
 
     gap_state = classify_gap(last_gap)
 
-    if pd.isna(ma7) or pd.isna(prev_ma7):
+    if pd.isna(last_gap) or pd.isna(recent_change):
         gap_trend = "n/a"
-    elif ma7 > prev_ma7 + 1:
-        gap_trend = "SOL si sta rafforzando rispetto al frattale"
-    elif ma7 < prev_ma7 - 1:
-        gap_trend = "SOL si sta indebolendo rispetto al frattale"
+
+    elif last_gap > 5:
+        if recent_change <= -2:
+            gap_trend = "SOL resta sopra il frattale, ma sta perdendo anticipo e si sta riavvicinando al percorso BTC scalato"
+        elif recent_change >= 2:
+            gap_trend = "SOL è sopra il frattale e sta aumentando l'anticipo rispetto al percorso BTC scalato"
+        else:
+            gap_trend = "SOL resta sopra il frattale con anticipo abbastanza stabile"
+
+    elif last_gap < -5:
+        if recent_change >= 2:
+            gap_trend = "SOL resta sotto il frattale, ma sta recuperando e si sta riavvicinando al percorso BTC scalato"
+        elif recent_change <= -2:
+            gap_trend = "SOL è sotto il frattale e si sta allontanando verso il basso dal percorso BTC scalato"
+        else:
+            gap_trend = "SOL resta sotto il frattale con ritardo abbastanza stabile"
+
     else:
-        gap_trend = "Gap abbastanza stabile"
+        if recent_change >= 2:
+            gap_trend = "SOL è quasi in linea con il frattale e sta migliorando rispetto al percorso BTC scalato"
+        elif recent_change <= -2:
+            gap_trend = "SOL è quasi in linea con il frattale ma sta perdendo forza rispetto al percorso BTC scalato"
+        else:
+            gap_trend = "SOL è quasi in linea con il percorso BTC scalato"
 
     return {
         "last_gap": last_gap,
         "ma7": ma7,
         "prev_ma7": prev_ma7,
+        "recent_change": recent_change,
         "gap_state": gap_state,
         "gap_trend": gap_trend,
     }
@@ -1263,6 +1312,7 @@ Ora il controllo è diviso in quattro parti:
 
 - Ultimo gap: **{fmt_pct(gap_summary["last_gap"], signed=True)}**
 - Media mobile 7g gap: **{fmt_pct(gap_summary["ma7"], signed=True)}**
+- Variazione recente gap: **{fmt_pct(gap_summary["recent_change"], signed=True)}**
 - Stato gap: **{gap_summary["gap_state"]}**
 - Trend gap: **{gap_summary["gap_trend"]}**
 
@@ -1270,8 +1320,8 @@ Come leggerlo:
 
 - **Sopra 0%** = SOL è sopra il percorso BTC scalato.
 - **Sotto 0%** = SOL è sotto il percorso BTC scalato.
-- Se il gap sale, SOL si sta rafforzando rispetto al frattale.
-- Se il gap scende, SOL si sta indebolendo rispetto al frattale.
+- Se il gap sale, SOL si sta allontanando sopra il frattale.
+- Se il gap scende mentre resta positivo, SOL resta più forte del frattale ma sta perdendo anticipo.
 - Questo è il grafico più leggibile per capire subito se SOL si sta orientando sopra o sotto il frattale.
 
 ## Ultimi giorni del confronto dal bottom
@@ -1332,7 +1382,7 @@ def main():
     if df.empty:
         raise RuntimeError(
             "Fractal Path Tracker: impossibile costruire il tracking completo. "
-            "Controlla btc_2022_vs_sol_2026_report.md e il download prezzi da Yahoo Finance."
+            "Controlla btc_2022_vs_sol_2026_report.md, latest_report.md e il download prezzi da Yahoo Finance."
         )
 
     daily_projection = build_daily_fractal_projection(df, metadata)
@@ -1364,6 +1414,9 @@ def main():
     print(f"Grafico gap 60d salvato in: {GAP_60D_CHART_PATH}")
     print(f"CSV proiezione giornaliera salvato in: {FUTURE_DAILY_PROJECTION_CSV}")
     print(f"CSV log proiezioni salvato in: {PROJECTION_LOG_CSV}")
+    print(f"Verdetto letto: {metadata.get('verdict', 'n/a')}")
+    print(f"Somiglianza letta: {metadata.get('similarity', 'n/a')}")
+    print(f"Tracking letto: {metadata.get('tracking', 'n/a')}")
 
 
 if __name__ == "__main__":
