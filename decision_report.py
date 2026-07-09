@@ -12,6 +12,7 @@ MAIN_REPORT_PATH = "reports/latest_report.md"
 PREDICTION_LOG_PATH = "reports/prediction_log.csv"
 SEQUENCE_CSV_PATH = "reports/bounce_after_drawdown_metrics.csv"
 LIQUIDATION_CSV_PATH = "reports/liquidation_metrics.csv"
+GLOBAL_CONFLUENCE_CSV_PATH = "reports/global_confluence_metrics.csv"
 
 DECISION_REPORT_PATH = "reports/decision_report.md"
 DECISION_CSV_PATH = "reports/decision_metrics.csv"
@@ -104,6 +105,20 @@ def fmt_price(value):
         return f"{fmt_number(value, 2)} $"
 
     return f"{fmt_number(value, 5)} $"
+
+
+def fmt_score(value):
+    value = safe_float(value)
+
+    if value is None:
+        return "n/d"
+
+    value = int(round(value))
+
+    if value > 0:
+        return f"+{value}"
+
+    return str(value)
 
 
 def md_table(headers, rows):
@@ -408,6 +423,84 @@ def load_futures_stats(asset):
     return result
 
 
+def load_global_confluence(asset):
+    df = read_csv_safe(GLOBAL_CONFLUENCE_CSV_PATH)
+
+    result = {
+        "found": False,
+        "confluence_score": None,
+        "confluence": "",
+        "bias": "",
+        "action": "",
+        "reliability": "",
+        "scanner_score": None,
+        "market_regime_score": None,
+        "technical_score_component": None,
+        "fractal_score": None,
+        "rsi_top_cycle_score": None,
+        "lifecycle_squeeze_score": None,
+        "lifecycle_raw_score": None,
+        "lifecycle_suggested_weight": None,
+        "lifecycle_bias": "",
+        "lifecycle_action": "",
+        "lifecycle_trend": "",
+        "lifecycle_ema200_target": None,
+        "lifecycle_upside_ema200": None,
+        "lifecycle_distance_ema200": None,
+        "lifecycle_ema_gap": None,
+        "lifecycle_cross_status": "",
+        "lifecycle_hit_ema200_12w": None,
+        "confirmation": "",
+        "invalidation": "",
+    }
+
+    if df.empty:
+        return result
+
+    short = asset_short(asset)
+
+    if "asset" not in df.columns:
+        return result
+
+    rows = df[df["asset"].astype(str).str.upper() == short.upper()].copy()
+
+    if rows.empty:
+        return result
+
+    row = rows.iloc[-1]
+
+    result["found"] = True
+    result["confluence_score"] = safe_float(row.get("confluence_score"))
+    result["confluence"] = str(row.get("confluence", ""))
+    result["bias"] = str(row.get("bias", ""))
+    result["action"] = str(row.get("action", ""))
+    result["reliability"] = str(row.get("reliability", ""))
+
+    result["scanner_score"] = safe_float(row.get("scanner_score"))
+    result["market_regime_score"] = safe_float(row.get("market_regime_score"))
+    result["technical_score_component"] = safe_float(row.get("technical_score_component"))
+    result["fractal_score"] = safe_float(row.get("fractal_score"))
+    result["rsi_top_cycle_score"] = safe_float(row.get("rsi_top_cycle_score"))
+    result["lifecycle_squeeze_score"] = safe_float(row.get("lifecycle_squeeze_score"))
+
+    result["lifecycle_raw_score"] = safe_float(row.get("lifecycle_raw_score"))
+    result["lifecycle_suggested_weight"] = safe_float(row.get("lifecycle_suggested_weight"))
+    result["lifecycle_bias"] = str(row.get("lifecycle_bias", ""))
+    result["lifecycle_action"] = str(row.get("lifecycle_action", ""))
+    result["lifecycle_trend"] = str(row.get("lifecycle_trend", ""))
+    result["lifecycle_ema200_target"] = safe_float(row.get("lifecycle_ema200_target"))
+    result["lifecycle_upside_ema200"] = safe_float(row.get("lifecycle_upside_ema200"))
+    result["lifecycle_distance_ema200"] = safe_float(row.get("lifecycle_distance_ema200"))
+    result["lifecycle_ema_gap"] = safe_float(row.get("lifecycle_ema_gap"))
+    result["lifecycle_cross_status"] = str(row.get("lifecycle_cross_status", ""))
+    result["lifecycle_hit_ema200_12w"] = safe_float(row.get("lifecycle_hit_ema200_12w"))
+
+    result["confirmation"] = str(row.get("confirmation", ""))
+    result["invalidation"] = str(row.get("invalidation", ""))
+
+    return result
+
+
 def price_from_pct(current_price, pct):
     current_price = safe_float(current_price)
     pct = safe_float(pct)
@@ -442,6 +535,7 @@ def build_decision(asset):
     )
 
     futures = load_futures_stats(asset)
+    global_ctx = load_global_confluence(asset)
 
     current_price = stats.get("current_price")
     positive_rate = safe_float(stats.get("positive_rate_30d"))
@@ -457,12 +551,17 @@ def build_decision(asset):
     long_short = safe_float(futures.get("long_short_ratio"))
     oi_change = safe_float(futures.get("open_interest_change_pct"))
 
+    global_score = safe_float(global_ctx.get("confluence_score"))
+    lifecycle_score = safe_float(global_ctx.get("lifecycle_squeeze_score"))
+    lifecycle_ema200_target = safe_float(global_ctx.get("lifecycle_ema200_target"))
+    lifecycle_upside_ema200 = safe_float(global_ctx.get("lifecycle_upside_ema200"))
+
     score = 0.0
     risk_score = 0.0
     reasons = []
     risk_reasons = []
 
-    # Direzione frattale.
+    # Direzione scanner frattale/statistico grezzo.
     if positive_rate is not None:
         if positive_rate >= 70:
             score = add_score(score, 2.5, reasons, f"molti casi storici chiudevano positivi ({fmt_pct(positive_rate)})")
@@ -512,6 +611,38 @@ def build_decision(asset):
             score = add_score(score, -0.5, reasons, f"dump dopo spike da monitorare ({fmt_pct(dump_rate)})")
         elif dump_rate <= 25:
             score = add_score(score, 0.3, reasons, f"dump dopo spike poco frequente ({fmt_pct(dump_rate)})")
+
+    # Global Confluence: pesa come filtro finale, non come sostituto dello scanner.
+    if global_score is not None:
+        if global_score >= 7:
+            score = add_score(score, 1.2, reasons, f"Global Confluence forte ({fmt_score(global_score)})")
+        elif global_score >= 5:
+            score = add_score(score, 1.1, reasons, f"Global Confluence costruttivo ({fmt_score(global_score)})")
+        elif global_score >= 3:
+            score = add_score(score, 0.3, reasons, f"Global Confluence moderatamente positivo ({fmt_score(global_score)})")
+        elif global_score <= -7:
+            score = add_score(score, -1.4, reasons, f"Global Confluence molto negativo ({fmt_score(global_score)})")
+        elif global_score <= -4:
+            score = add_score(score, -1.1, reasons, f"Global Confluence negativo ({fmt_score(global_score)})")
+        elif global_score <= -1:
+            score = add_score(score, -0.5, reasons, f"Global Confluence fragile ({fmt_score(global_score)})")
+
+    # Lifecycle EMA200: solo SOL. Aiuta il bias spot, ma non autorizza leva da solo.
+    if asset_short(asset) == "SOL" and lifecycle_score is not None:
+        if lifecycle_score > 0:
+            score = add_score(
+                score,
+                0.7,
+                reasons,
+                f"Lifecycle EMA200 positivo: possibile squeeze verso EMA200 ({fmt_score(lifecycle_score)})",
+            )
+        elif lifecycle_score < 0:
+            score = add_score(
+                score,
+                -0.7,
+                reasons,
+                f"Lifecycle EMA200 negativo ({fmt_score(lifecycle_score)})",
+            )
 
     # Futures.
     if funding is not None:
@@ -583,6 +714,18 @@ def build_decision(asset):
     else:
         direction = "NEUTRALE / INCERTO"
 
+    # Override prudente per SOL:
+    # se Global e Lifecycle sono costruttivi, non deve apparire bearish solo perché lo scanner 30g è debole.
+    if (
+        asset_short(asset) == "SOL"
+        and direction in ["NEUTRALE / INCERTO", "LEGGERMENTE BEARISH"]
+        and global_score is not None
+        and global_score >= 5
+        and lifecycle_score is not None
+        and lifecycle_score > 0
+    ):
+        direction = "NEUTRALE / COSTRUTTIVO"
+
     # Spot.
     if direction == "BULLISH":
         if risk_label in ["BASSO", "MEDIO"]:
@@ -591,6 +734,8 @@ def build_decision(asset):
             spot_action = "ACCUMULA SOLO SU PULLBACK"
     elif direction == "LEGGERMENTE BULLISH":
         spot_action = "ACCUMULA SOLO SU PULLBACK"
+    elif direction == "NEUTRALE / COSTRUTTIVO":
+        spot_action = "HOLD / TRANCHE PICCOLE, NO LEVA"
     elif direction == "BEARISH":
         spot_action = "VENDI PARZIALE / STAI FUORI"
     elif direction == "LEGGERMENTE BEARISH":
@@ -616,9 +761,13 @@ def build_decision(asset):
         long_action = "NO LONG A LEVA"
         max_long_leverage = "nessuna"
 
+    # SOL: anche se è costruttivo, il modulo EMA200 da solo non autorizza leva.
+    if asset_short(asset) == "SOL" and direction == "NEUTRALE / COSTRUTTIVO":
+        long_action = "NO LONG A LEVA"
+        max_long_leverage = "nessuna"
+
     # Short a leva.
     # Nota: NO LONG non significa automaticamente SHORT.
-    # Lo short viene favorito solo se il quadro è bearish o se lo spike viene spesso scaricato.
     short_action = "NO SHORT"
     max_short_leverage = "nessuna"
 
@@ -635,7 +784,7 @@ def build_decision(asset):
         short_action = "SHORT SOLO DOPO SPIKE"
         max_short_leverage = "max 1x-2x isolated"
 
-    if score >= 1.3:
+    if score >= 1.3 or direction == "NEUTRALE / COSTRUTTIVO":
         short_action = "NO SHORT"
         max_short_leverage = "nessuna"
 
@@ -654,6 +803,8 @@ def build_decision(asset):
             plan_parts.append(f"spot: valutare accumulo solo verso {fmt_price(pullback_zone)}")
         else:
             plan_parts.append("spot: accumulo solo su prezzo migliore")
+    elif spot_action == "HOLD / TRANCHE PICCOLE, NO LEVA":
+        plan_parts.append("spot: hold o tranche piccole, senza inseguire e senza leva")
     elif "TAKE PROFIT" in spot_action:
         if spike_zone is not None:
             plan_parts.append(f"spot: prendere profitto su spike verso {fmt_price(spike_zone)}")
@@ -679,6 +830,9 @@ def build_decision(asset):
             plan_parts.append(f"short: {short_action.lower()}")
     else:
         plan_parts.append("short: evitato")
+
+    if lifecycle_ema200_target is not None and asset_short(asset) == "SOL":
+        plan_parts.append(f"EMA200 weekly / target squeeze: {fmt_price(lifecycle_ema200_target)}")
 
     if zona_bassa_storica_price is not None:
         plan_parts.append(f"zona bassa storica/rischio: {fmt_price(zona_bassa_storica_price)}")
@@ -722,10 +876,29 @@ def build_decision(asset):
         "dump_target": dump_target,
         "zona_bassa_storica_price": zona_bassa_storica_price,
         "zona_alta_storica_price": zona_alta_storica_price,
-        "main_reasons": "; ".join(reasons[:7]),
+        "main_reasons": "; ".join(reasons[:9]),
         "risk_reasons": "; ".join(risk_reasons[:6]),
         "plan": "; ".join(plan_parts),
         "futures_note": futures.get("futures_note"),
+
+        "global_confluence_score": global_score,
+        "global_confluence": global_ctx.get("confluence"),
+        "global_bias": global_ctx.get("bias"),
+        "global_action": global_ctx.get("action"),
+        "global_reliability": global_ctx.get("reliability"),
+        "lifecycle_squeeze_score": lifecycle_score,
+        "lifecycle_raw_score": global_ctx.get("lifecycle_raw_score"),
+        "lifecycle_bias": global_ctx.get("lifecycle_bias"),
+        "lifecycle_action": global_ctx.get("lifecycle_action"),
+        "lifecycle_trend": global_ctx.get("lifecycle_trend"),
+        "lifecycle_ema200_target": lifecycle_ema200_target,
+        "lifecycle_upside_ema200": lifecycle_upside_ema200,
+        "lifecycle_distance_ema200": global_ctx.get("lifecycle_distance_ema200"),
+        "lifecycle_ema_gap": global_ctx.get("lifecycle_ema_gap"),
+        "lifecycle_cross_status": global_ctx.get("lifecycle_cross_status"),
+        "lifecycle_hit_ema200_12w": global_ctx.get("lifecycle_hit_ema200_12w"),
+        "confirmation": global_ctx.get("confirmation"),
+        "invalidation": global_ctx.get("invalidation"),
     }
 
     return decision
@@ -800,9 +973,21 @@ def build_simple_explanation():
             "",
             "> se fai leva, la liquidazione non dovrebbe stare vicino a quella zona.",
             "",
+            "### Global Confluence e Lifecycle EMA200",
+            "",
+            "Il Decision Report ora legge anche il Global Confluence.",
+            "",
+            "Per SOL legge anche il modulo **Major alt lifecycle squeeze / EMA200 weekly**.",
+            "",
+            "Questo serve a evitare che lo scanner 30 giorni, da solo, faccia sembrare SOL più bearish di quanto sia nella lettura globale.",
+            "",
+            "Nota importante:",
+            "",
+            "> il Lifecycle EMA200 migliora il bias spot, ma non autorizza leva da solo.",
+            "",
             "### Long e short",
             "",
-            "Il report ora separa le due cose:",
+            "Il report separa le due cose:",
             "",
             "- **Long leva**: comprare con leva sperando che salga.",
             "- **Short leva**: vendere con leva sperando che scenda.",
@@ -846,6 +1031,53 @@ def build_simple_verdict(d):
     lines.append("")
     lines.append(f"- {d['risk_reasons']}")
     lines.append("")
+
+    if d.get("global_confluence_score") is not None:
+        lines.append("### Lettura Global Confluence")
+        lines.append("")
+        lines.append(
+            md_table(
+                [
+                    "Dato",
+                    "Valore",
+                    "Traduzione",
+                ],
+                [
+                    [
+                        "Global score",
+                        fmt_score(d["global_confluence_score"]),
+                        d.get("global_confluence") or "n/d",
+                    ],
+                    [
+                        "Bias globale",
+                        d.get("global_bias") or "n/d",
+                        "lettura finale del report di confluenza",
+                    ],
+                    [
+                        "Azione globale",
+                        d.get("global_action") or "n/d",
+                        "azione coerente nel Global Confluence",
+                    ],
+                    [
+                        "Lifecycle EMA",
+                        fmt_score(d.get("lifecycle_squeeze_score")),
+                        d.get("lifecycle_bias") or "n/d",
+                    ],
+                    [
+                        "EMA200 weekly",
+                        fmt_price(d.get("lifecycle_ema200_target")),
+                        "target tecnico naturale del modulo squeeze",
+                    ],
+                    [
+                        "Upside EMA200",
+                        fmt_pct(d.get("lifecycle_upside_ema200")),
+                        "spazio teorico verso EMA200",
+                    ],
+                ],
+            )
+        )
+        lines.append("")
+
     lines.append("### Numeri semplici")
     lines.append("")
     lines.append(
@@ -940,10 +1172,23 @@ def build_simple_verdict(d):
                     fmt_price(d["zona_alta_storica_price"]),
                     "zona alta; se ci arriva, pensare a profitto",
                 ],
+                [
+                    "EMA200 weekly SOL",
+                    fmt_price(d.get("lifecycle_ema200_target")),
+                    "target tecnico del modulo lifecycle squeeze, solo se applicabile",
+                ],
             ],
         )
     )
     lines.append("")
+
+    if d.get("confirmation") or d.get("invalidation"):
+        lines.append("### Conferme e invalidazioni")
+        lines.append("")
+        lines.append(f"- Conferme: {d.get('confirmation') or 'n/d'}")
+        lines.append(f"- Invalidazioni: {d.get('invalidation') or 'n/d'}")
+        lines.append("")
+
     lines.append("### Piano sintetico")
     lines.append("")
     lines.append(f"> {d['plan']}")
@@ -971,7 +1216,8 @@ def build_decision_report(decisions):
     lines.append("")
     lines.append("- capire se conviene spot, long, short o aspettare;")
     lines.append("- separare long e short, invece di mettere tutto dentro una sola voce;")
-    lines.append("- usare parole semplici per zone alte, zone basse e rischio leva.")
+    lines.append("- usare parole semplici per zone alte, zone basse e rischio leva;")
+    lines.append("- leggere anche Global Confluence e Lifecycle EMA200, così il report decisionale non resta scollegato dalla sintesi principale.")
     lines.append("")
     lines.append("## Dashboard veloce")
     lines.append("")
@@ -1008,10 +1254,18 @@ def build_main_report_block(decisions):
     quick_lines = []
 
     for d in decisions:
+        extra = ""
+
+        if d["asset_short"] == "SOL" and d.get("lifecycle_squeeze_score") is not None:
+            extra = (
+                f" Lifecycle EMA = **{fmt_score(d.get('lifecycle_squeeze_score'))}**, "
+                f"EMA200 = **{fmt_price(d.get('lifecycle_ema200_target'))}**."
+            )
+
         quick_lines.append(
             f"- **{d['asset_short']}**: spot = **{d['spot_action']}**, "
             f"long = **{d['long_action']}**, short = **{d['short_action']}**, "
-            f"rischio = **{d['risk_label']}**."
+            f"rischio = **{d['risk_label']}**.{extra}"
         )
 
     return "\n".join(
@@ -1022,7 +1276,7 @@ def build_main_report_block(decisions):
             "",
             "Report separato completo: [decision_report.md](decision_report.md)",
             "",
-            "Sintesi automatica dello scanner: spot, long, short e rischio.",
+            "Sintesi automatica dello scanner: spot, long, short e rischio. Ora include anche Global Confluence e Lifecycle EMA200 per SOL.",
             "",
             md_table(
                 [
@@ -1046,6 +1300,7 @@ def build_main_report_block(decisions):
             "",
             "- **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.",
             "- **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.",
+            "- **Lifecycle EMA200** = per SOL aggiunge contesto da squeeze verso EMA200 weekly, ma non autorizza leva da solo.",
             "- **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.",
             "",
             "<!-- DECISION_REPORT_END -->",
