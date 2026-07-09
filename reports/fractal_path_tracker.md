@@ -1,7 +1,7 @@
 <!-- FRACTAL_PATH_TRACKER_START -->
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-09 16:12 UTC
+Generato: 2026-07-09 17:19 UTC
 
 Questo report controlla se SOL sta seguendo il percorso previsto dal frattale BTC 2022 vs SOL 2026.
 
@@ -10,6 +10,7 @@ Ora il controllo è diviso in quattro parti:
 - confronto dal bottom: BTC 2022 scalato contro SOL reale
 - tratto da inizio programma/scanner: verifica se il tracking recente sta reggendo
 - proiezione futura giornaliera: BTC 2022 viene scalato giorno per giorno su SOL
+- controllo settimanale: ogni previsione viene verificata a 7, 14, 21, 28 giorni e così via fino a 126 giorni
 - grafico gap: differenza leggibile tra SOL reale e BTC scalato
 
 ## Stato ultimo frattale salvato
@@ -19,9 +20,9 @@ Ora il controllo è diviso in quattro parti:
 - Bottom BTC 2022 equivalente: **2022-11-21**
 - Giorno BTC equivalente oggi: **2022-12-24**
 - Inizio programma/scanner rilevato: **2026-07-03**
-- Prezzo SOL corrente: **77,51 $**
+- Prezzo SOL corrente: **77,92 $**
 - Verdetto: **PARZIALMENTE SI**
-- Somiglianza: **+73,81%**
+- Somiglianza: **+73,77%**
 - Tracking: **FRATTALE STABILE**
 - Fase: **FASE ANTICIPATA**
 - Rischio fase: **MEDIO / ALTO**
@@ -30,10 +31,10 @@ Ora il controllo è diviso in quattro parti:
 
 - Giorni controllati dal bottom: **34**
 - Giorni controllati da inizio programma/scanner: **7**
-- Errore medio assoluto dal bottom: **9,27%**
-- Errore medio assoluto ultimi 7 giorni: **21,80%**
-- Errore medio assoluto da inizio programma/scanner: **21,80%**
-- Errore ultimo giorno: **+16,79%**
+- Errore medio assoluto dal bottom: **9,29%**
+- Errore medio assoluto ultimi 7 giorni: **21,89%**
+- Errore medio assoluto da inizio programma/scanner: **21,89%**
+- Errore ultimo giorno: **+17,41%**
 - Stato: **DEVIAZIONE MODERATA**
 
 ## Grafico completo: bottom, inizio programma e proiezione giornaliera
@@ -50,9 +51,9 @@ Ora il controllo è diviso in quattro parti:
 
 ### Lettura rapida gap
 
-- Ultimo gap: **+16,79%**
-- Media mobile 7g gap: **+21,80%**
-- Variazione recente gap: **-6,86%**
+- Ultimo gap: **+17,41%**
+- Media mobile 7g gap: **+21,89%**
+- Variazione recente gap: **-6,24%**
 - Stato gap: **SOPRA FRATTALE / MOLTO IN ANTICIPO**
 - Trend gap: **SOL resta sopra il frattale, ma sta perdendo anticipo e si sta riavvicinando al percorso BTC scalato**
 
@@ -77,20 +78,32 @@ Come leggerlo:
 |       30 | 2026-07-06 | 2022-12-21     | 81,92 $     | 66,25 $       | +23,65%  | da inizio programma |
 |       31 | 2026-07-07 | 2022-12-22     | 80,65 $     | 66,30 $       | +21,64%  | da inizio programma |
 |       32 | 2026-07-08 | 2022-12-23     | 77,79 $     | 66,17 $       | +17,56%  | da inizio programma |
-|       33 | 2026-07-09 | 2022-12-24     | 77,51 $     | 66,37 $       | +16,79%  | da inizio programma |
+|       33 | 2026-07-09 | 2022-12-24     | 77,92 $     | 66,37 $       | +17,41%  | da inizio programma |
 
 ## Proiezione futura salvata
 
 | Orizzonte   | Data target   | Base frattale   | Min percorso   | Max percorso   | Controllato   | Prezzo reale   | Errore   | Dentro banda   |
 |:------------|:--------------|:----------------|:---------------|:---------------|:--------------|:---------------|:---------|:---------------|
-| 7g          | 2026-07-16    | 76,13 $         | 76,13 $        | 77,84 $        | no            | n/a            | n/a      | n/a            |
-| 14g         | 2026-07-23    | 78,00 $         | 76,13 $        | 78,00 $        | no            | n/a            | n/a      | n/a            |
-| 30g         | 2026-08-08    | 105,51 $        | 76,13 $        | 105,51 $       | no            | n/a            | n/a      | n/a            |
-| 60g         | 2026-09-07    | 111,28 $        | 76,13 $        | 114,23 $       | no            | n/a            | n/a      | n/a            |
-| 90g         | 2026-10-07    | 126,49 $        | 76,13 $        | 130,35 $       | no            | n/a            | n/a      | n/a            |
-| 120g        | 2026-11-06    | 126,94 $        | 76,13 $        | 140,25 $       | no            | n/a            | n/a      | n/a            |
+| 7g          | 2026-07-16    | 76,53 $         | 76,53 $        | 78,25 $        | no            | n/a            | n/a      | n/a            |
+| 14g         | 2026-07-23    | 78,42 $         | 76,53 $        | 78,42 $        | no            | n/a            | n/a      | n/a            |
+| 21g         | 2026-07-30    | 97,01 $         | 76,53 $        | 97,01 $        | no            | n/a            | n/a      | n/a            |
+| 28g         | 2026-08-06    | 105,35 $        | 76,53 $        | 105,35 $       | no            | n/a            | n/a      | n/a            |
+| 35g         | 2026-08-13    | 106,52 $        | 76,53 $        | 106,92 $       | no            | n/a            | n/a      | n/a            |
+| 42g         | 2026-08-20    | 107,91 $        | 76,53 $        | 109,96 $       | no            | n/a            | n/a      | n/a            |
+| 49g         | 2026-08-27    | 101,15 $        | 76,53 $        | 109,96 $       | no            | n/a            | n/a      | n/a            |
+| 56g         | 2026-09-03    | 113,96 $        | 76,53 $        | 113,96 $       | no            | n/a            | n/a      | n/a            |
+| 63g         | 2026-09-10    | 107,18 $        | 76,53 $        | 114,83 $       | no            | n/a            | n/a      | n/a            |
+| 70g         | 2026-09-17    | 103,38 $        | 76,53 $        | 114,83 $       | no            | n/a            | n/a      | n/a            |
+| 77g         | 2026-09-24    | 95,42 $         | 76,53 $        | 114,83 $       | no            | n/a            | n/a      | n/a            |
+| 84g         | 2026-10-01    | 124,72 $        | 76,53 $        | 126,83 $       | no            | n/a            | n/a      | n/a            |
+| 91g         | 2026-10-08    | 127,16 $        | 76,53 $        | 131,04 $       | no            | n/a            | n/a      | n/a            |
+| 98g         | 2026-10-15    | 131,40 $        | 76,53 $        | 131,71 $       | no            | n/a            | n/a      | n/a            |
+| 105g        | 2026-10-22    | 129,26 $        | 76,53 $        | 131,71 $       | no            | n/a            | n/a      | n/a            |
+| 112g        | 2026-10-29    | 140,22 $        | 76,53 $        | 140,99 $       | no            | n/a            | n/a      | n/a            |
+| 119g        | 2026-11-05    | 128,65 $        | 76,53 $        | 140,99 $       | no            | n/a            | n/a      | n/a            |
+| 126g        | 2026-11-12    | 135,27 $        | 76,53 $        | 140,99 $       | no            | n/a            | n/a      | n/a            |
 
-Nota: la tabella sopra mostra solo le milestone principali. Il grafico invece usa la proiezione giornaliera del frattale BTC scalato su SOL.
+Nota: la tabella sopra mostra le milestone settimanali principali. Il grafico invece usa la proiezione giornaliera del frattale BTC scalato su SOL.
 
 ## Accuratezza storica della proiezione futura
 
@@ -98,10 +111,22 @@ Nota: la tabella sopra mostra solo le milestone principali. Il grafico invece us
 |:------------|------------:|:---------------|:------------------------|:---------------|
 | 7g          |           0 | n/a            | n/a                     | n/a            |
 | 14g         |           0 | n/a            | n/a                     | n/a            |
-| 30g         |           0 | n/a            | n/a                     | n/a            |
-| 60g         |           0 | n/a            | n/a                     | n/a            |
-| 90g         |           0 | n/a            | n/a                     | n/a            |
-| 120g        |           0 | n/a            | n/a                     | n/a            |
+| 21g         |           0 | n/a            | n/a                     | n/a            |
+| 28g         |           0 | n/a            | n/a                     | n/a            |
+| 35g         |           0 | n/a            | n/a                     | n/a            |
+| 42g         |           0 | n/a            | n/a                     | n/a            |
+| 49g         |           0 | n/a            | n/a                     | n/a            |
+| 56g         |           0 | n/a            | n/a                     | n/a            |
+| 63g         |           0 | n/a            | n/a                     | n/a            |
+| 70g         |           0 | n/a            | n/a                     | n/a            |
+| 77g         |           0 | n/a            | n/a                     | n/a            |
+| 84g         |           0 | n/a            | n/a                     | n/a            |
+| 91g         |           0 | n/a            | n/a                     | n/a            |
+| 98g         |           0 | n/a            | n/a                     | n/a            |
+| 105g        |           0 | n/a            | n/a                     | n/a            |
+| 112g        |           0 | n/a            | n/a                     | n/a            |
+| 119g        |           0 | n/a            | n/a                     | n/a            |
+| 126g        |           0 | n/a            | n/a                     | n/a            |
 
 ## Come leggerlo
 
@@ -112,5 +137,6 @@ Nota: la tabella sopra mostra solo le milestone principali. Il grafico invece us
 - Se SOL sta sopra BTC scalato, il frattale è in anticipo o più forte.
 - Se SOL sta sotto BTC scalato, il frattale è in ritardo o più debole.
 - Il grafico gap ultimi 60 giorni serve proprio per vedere meglio questa differenza.
+- Le milestone settimanali servono a controllare il percorso passo passo.
 - La proiezione futura va letta insieme alle conferme e invalidazioni del report frattale principale.
 <!-- FRACTAL_PATH_TRACKER_END -->
