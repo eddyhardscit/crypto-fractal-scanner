@@ -1,7 +1,7 @@
 # Storico frattale SOL/BTC
 
-Generato: **2026-07-09 03:48:07 CEST**  
-UTC: **2026-07-09 01:48:07 UTC**
+Generato: **2026-07-09 04:32:40 CEST**  
+UTC: **2026-07-09 02:32:40 UTC**
 
 Questo file salva giorno per giorno la lettura del frattale **BTC novembre 2022 vs SOL giugno 2026**.
 
@@ -22,40 +22,40 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | Voce | Valore |
 | --- | --- |
 | Data lettura | 2026-07-09 |
-| Prezzo SOL | 77,57 $ |
+| Prezzo SOL | 77,58 $ |
 | BTC scalato | 70,55 $ |
-| Gap SOL vs BTC-scalato | +9,95% |
+| Gap SOL vs BTC-scalato | +9,96% |
 | Somiglianza totale | +73,93% |
 | Fase | FASE ANTICIPATA |
 | Tracking | FRATTALE STABILE |
-| Errore medio da inizio programma | +22,58% |
-| Errore ultimo giorno | +9,95% |
-| Conferma 1 | 105,18 $ |
-| Conferma 2 | 114,65 $ |
-| Invalidazione soft | 73,68 $ |
+| Errore medio da inizio programma | +22,59% |
+| Errore ultimo giorno | +9,96% |
+| Conferma 1 | 105,20 $ |
+| Conferma 2 | 114,68 $ |
+| Invalidazione soft | 73,70 $ |
 | Invalidazione forte | 62,19 $ |
-| Target ciclo base da oggi | 576,05 $ |
+| Target ciclo base da oggi | 576,19 $ |
 
 ## Storico compatto giorno per giorno
 
 | Data | SOL | BTC scalato | Gap | Somiglianza | Fase | Tracking | Errore live medio | Errore ultimo | Base 30g | Base 60g | Soft invalid. | Conferma 1 | Target ciclo oggi |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-07-08 | 77,45 $ | 66,17 $ | +17,05% | +73,94% | FASE ANTICIPATA | FRATTALE STABILE | +22,55% | +17,05% | 104,76 $ | 112,67 $ | 73,58 $ | 105,03 $ | 575,23 $ |
-| 2026-07-09 | 77,57 $ | 70,55 $ | +9,95% | +73,93% | FASE ANTICIPATA | FRATTALE STABILE | +22,58% | +9,95% | 104,91 $ | 112,83 $ | 73,68 $ | 105,18 $ | 576,05 $ |
+| 2026-07-09 | 77,58 $ | 70,55 $ | +9,96% | +73,93% | FASE ANTICIPATA | FRATTALE STABILE | +22,59% | +9,96% | 104,94 $ | 112,86 $ | 73,70 $ | 105,20 $ | 576,19 $ |
 
 ## Aderenza prima e dopo inizio programma
 
 | Data | Aderenza pre | Errore pre | Stato pre | Aderenza live | Errore live | Stato live | Aderenza totale | Errore totale | Stato totale |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-07-08 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +54,89% | +22,55% | STACCATO / MOLTO IN ANTICIPO | +81,94% | +9,03% | ABBASTANZA ALLINEATO |
-| 2026-07-09 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +54,84% | +22,58% | STACCATO / MOLTO IN ANTICIPO | +81,93% | +9,03% | ABBASTANZA ALLINEATO |
+| 2026-07-09 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +54,83% | +22,59% | STACCATO / MOLTO IN ANTICIPO | +81,93% | +9,04% | ABBASTANZA ALLINEATO |
 
 ## Storico proiezioni frattali
 
 | Data | Base 7g | Base 14g | Base 30g | Base 60g | Base 90g | Base 120g | Min 30g | Max 30g | Target ciclo oggi |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-07-08 | 76,55 $ | 78,16 $ | 104,76 $ | 112,67 $ | 130,65 $ | 128,27 $ | 76,30 $ | 105,03 $ | 575,23 $ |
-| 2026-07-09 | 76,66 $ | 78,28 $ | 104,91 $ | 112,83 $ | 130,83 $ | 128,45 $ | 76,41 $ | 105,18 $ | 576,05 $ |
+| 2026-07-09 | 76,68 $ | 78,30 $ | 104,94 $ | 112,86 $ | 130,87 $ | 128,48 $ | 76,43 $ | 105,20 $ | 576,19 $ |
 
 ## Come leggerlo
 

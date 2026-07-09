@@ -1,6 +1,6 @@
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-09 01:47 UTC
+Generato: 2026-07-09 02:31 UTC
 
 Questo report controlla se SOL sta seguendo il percorso previsto dal frattale BTC 2022 vs SOL 2026.
 
@@ -17,7 +17,7 @@ Ora il controllo è diviso in tre parti:
 - Bottom SOL usato: **2026-06-07**
 - Bottom BTC 2022 equivalente: **2022-11-21**
 - Inizio programma/scanner rilevato: **2026-07-03**
-- Prezzo iniziale SOL: **77,57 $**
+- Prezzo iniziale SOL: **77,58 $**
 - Verdetto: **PARZIALMENTE SI**
 - Somiglianza: **73,93%**
 - Tracking: **FRATTALE STABILE**
@@ -29,9 +29,9 @@ Ora il controllo è diviso in tre parti:
 - Giorni controllati dal bottom: **33**
 - Giorni controllati da inizio programma/scanner: **7**
 - Errore medio assoluto dal bottom: **5,72%**
-- Errore medio assoluto ultimi 7 giorni: **14,25%**
-- Errore medio assoluto da inizio programma/scanner: **14,25%**
-- Errore ultimo giorno: **9,95%**
+- Errore medio assoluto ultimi 7 giorni: **14,26%**
+- Errore medio assoluto da inizio programma/scanner: **14,26%**
+- Errore ultimo giorno: **9,96%**
 - Stato: **DEVIAZIONE MODERATA**
 
 ## Grafico completo: bottom, inizio programma e proiezione giornaliera
@@ -54,19 +54,19 @@ Ora il controllo è diviso in tre parti:
 |       28 | 2026-07-05 | 2022-12-19     | 81,42 $     | 69,05 $       | 17,92%   | da inizio programma |
 |       29 | 2026-07-06 | 2022-12-20     | 81,92 $     | 71,01 $       | 15,36%   | da inizio programma |
 |       30 | 2026-07-07 | 2022-12-21     | 80,65 $     | 70,64 $       | 14,17%   | da inizio programma |
-|       31 | 2026-07-08 | 2022-12-22     | 77,57 $     | 70,69 $       | 9,73%    | da inizio programma |
-|       32 | 2026-07-09 | 2022-12-23     | 77,57 $     | 70,55 $       | 9,95%    | da inizio programma |
+|       31 | 2026-07-08 | 2022-12-22     | 77,58 $     | 70,69 $       | 9,74%    | da inizio programma |
+|       32 | 2026-07-09 | 2022-12-23     | 77,58 $     | 70,55 $       | 9,96%    | da inizio programma |
 
 ## Proiezione futura salvata
 
 | Orizzonte   | Data target   | Base frattale   | Min percorso   | Max percorso   | Controllato   | Prezzo reale   | Errore   | Dentro banda   |
 |:------------|:--------------|:----------------|:---------------|:---------------|:--------------|:---------------|:---------|:---------------|
-| 7g          | 2026-07-16    | 76,66 $         | 76,43 $        | 78,13 $        | no            | n/a            | n/a      | n/a            |
-| 14g         | 2026-07-23    | 78,28 $         | 76,41 $        | 78,28 $        | no            | n/a            | n/a      | n/a            |
-| 30g         | 2026-08-08    | 104,91 $        | 76,41 $        | 105,18 $       | no            | n/a            | n/a      | n/a            |
-| 60g         | 2026-09-07    | 112,83 $        | 76,41 $        | 114,65 $       | no            | n/a            | n/a      | n/a            |
-| 90g         | 2026-10-07    | 130,83 $        | 76,41 $        | 130,83 $       | no            | n/a            | n/a      | n/a            |
-| 120g        | 2026-11-06    | 128,45 $        | 76,41 $        | 140,77 $       | no            | n/a            | n/a      | n/a            |
+| 7g          | 2026-07-16    | 76,68 $         | 76,45 $        | 78,15 $        | no            | n/a            | n/a      | n/a            |
+| 14g         | 2026-07-23    | 78,30 $         | 76,43 $        | 78,30 $        | no            | n/a            | n/a      | n/a            |
+| 30g         | 2026-08-08    | 104,94 $        | 76,43 $        | 105,20 $       | no            | n/a            | n/a      | n/a            |
+| 60g         | 2026-09-07    | 112,86 $        | 76,43 $        | 114,68 $       | no            | n/a            | n/a      | n/a            |
+| 90g         | 2026-10-07    | 130,87 $        | 76,43 $        | 130,87 $       | no            | n/a            | n/a      | n/a            |
+| 120g        | 2026-11-06    | 128,48 $        | 76,43 $        | 140,80 $       | no            | n/a            | n/a      | n/a            |
 
 Nota: la tabella sopra mostra solo le milestone principali. Il grafico invece usa la proiezione giornaliera del frattale BTC scalato su SOL.
 

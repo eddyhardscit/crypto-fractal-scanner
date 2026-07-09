@@ -1,0 +1,79 @@
+asset,module,horizon_days,checked,direction_accuracy_pct,avg_return_pct,avg_drawdown_pct,avg_max_gain_pct,calibration_stage,reliability,suggested_weight_delta,suggestion,can_apply_to_global,note
+BTC,Global confluence,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Market regime,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Scanner,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Tecnico,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Global confluence,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Market regime,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Scanner,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Tecnico,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Global confluence,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Market regime,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Scanner,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Tecnico,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Global confluence,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Market regime,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Scanner,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Tecnico,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Global confluence,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Market regime,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Scanner,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Tecnico,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Global confluence,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Market regime,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Scanner,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+BTC,Tecnico,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Global confluence,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Market regime,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Scanner,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Tecnico,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Global confluence,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Market regime,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Scanner,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Tecnico,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Global confluence,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Market regime,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Scanner,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Tecnico,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Global confluence,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Market regime,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Scanner,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Tecnico,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Global confluence,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Market regime,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Scanner,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Tecnico,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Global confluence,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Market regime,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Scanner,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+DOGE,Tecnico,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Frattale SOL,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Global confluence,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Market regime,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Scanner,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Tecnico,1,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Frattale SOL,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Global confluence,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Market regime,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Scanner,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Tecnico,3,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Frattale SOL,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Global confluence,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Market regime,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Scanner,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Tecnico,7,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Frattale SOL,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Global confluence,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Market regime,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Scanner,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Tecnico,14,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Frattale SOL,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Global confluence,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Market regime,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Scanner,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Tecnico,30,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Frattale SOL,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Global confluence,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Market regime,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Scanner,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
+SOL,Tecnico,60,0,,,,,RACCOLTA DATI,INSUFFICIENTE,0.0,nessun suggerimento,False,troppi pochi controlli: non modificare i pesi
