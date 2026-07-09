@@ -1,25 +1,22 @@
 import csv
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import yfinance as yf
-from tabulate import tabulate
 
 
 REPORTS_DIR = Path("reports")
-
 LATEST_REPORT_PATH = REPORTS_DIR / "latest_report.md"
 
 REPORT_PATH = REPORTS_DIR / "module_signal_tracker_report.md"
-REPORT_ALIAS_PATH = REPORTS_DIR / "module_signal_tracker.md"
-
-GLOBAL_CONFLUENCE_METRICS_PATH = REPORTS_DIR / "global_confluence_metrics.csv"
-
+SHORT_REPORT_PATH = REPORTS_DIR / "module_signal_tracker.md"
 HISTORY_CSV_PATH = REPORTS_DIR / "module_signal_tracker_history.csv"
 METRICS_CSV_PATH = REPORTS_DIR / "module_signal_tracker_metrics.csv"
+
+GLOBAL_METRICS_CSV_PATH = REPORTS_DIR / "global_confluence_metrics.csv"
 
 START_MARKER = "<!-- MODULE_ACCURACY_START -->"
 END_MARKER = "<!-- MODULE_ACCURACY_END -->"
@@ -32,23 +29,81 @@ TICKERS = {
     "DOGE": "DOGE-USD",
 }
 
-HORIZONS = [1, 3, 7, 14, 30, 60]
+# Controlli giornalieri più ravvicinati.
+# 1/2/3g = feedback rapido
+# 5/7/10g = feedback settimanale
+# 14/21g = swing
+# 30/45/60g = calibrazione più seria
+HORIZONS = [1, 2, 3, 5, 7, 10, 14, 21, 30, 45, 60]
 
 MODULES = [
-    ("Global confluence", "global_score"),
-    ("Scanner", "scanner_score"),
-    ("Market regime", "market_score"),
-    ("Tecnico", "technical_score_component"),
-    ("Frattale SOL", "sol_fractal_score"),
+    {
+        "key": "global",
+        "label": "Global confluence",
+        "score_col": "global_score",
+    },
+    {
+        "key": "scanner",
+        "label": "Scanner",
+        "score_col": "scanner_score",
+    },
+    {
+        "key": "market",
+        "label": "Market regime",
+        "score_col": "market_score",
+    },
+    {
+        "key": "technical",
+        "label": "Tecnico",
+        "score_col": "technical_score_component",
+    },
+    {
+        "key": "classic_technical",
+        "label": "Classic technical",
+        "score_col": "classic_technical_score_component",
+    },
+    {
+        "key": "sol_fractal",
+        "label": "Frattale SOL",
+        "score_col": "sol_fractal_score",
+    },
+]
+
+BASE_HISTORY_COLUMNS = [
+    "signal_date",
+    "asset",
+    "ticker",
+    "price",
+    "action",
+    "confluence",
+    "bias",
+    "reliability",
+    "global_score",
+    "scanner_score",
+    "market_score",
+    "technical_score_component",
+    "classic_technical_score_component",
+    "sol_fractal_score",
+    "classic_technical_raw_score",
+    "classic_technical_verdict",
+    "classic_technical_risk",
+    "classic_technical_stage",
+    "classic_technical_structure",
+    "classic_technical_wyckoff",
+    "sol_fractal_verdict",
+    "sol_fractal_similarity",
+    "sol_fractal_tracking",
+    "created_utc",
+    "updated_utc",
 ]
 
 
-def now_utc():
-    return datetime.now(timezone.utc)
+def now_utc_iso() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def now_utc_str():
-    return now_utc().strftime("%Y-%m-%d %H:%M UTC")
+def now_utc_str() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
 
 def read_text(path: Path) -> str:
@@ -62,912 +117,1032 @@ def write_text(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
-def clean_cell(value) -> str:
-    if value is None:
-        return ""
+def replace_or_insert_block(text: str, block: str) -> str:
+    full_block = f"{START_MARKER}\n{block.rstrip()}\n{END_MARKER}"
 
-    s = str(value).strip()
-    s = s.replace("**", "")
-    s = s.replace("`", "")
-    s = s.replace("\xa0", " ")
-    s = re.sub(r"\s+", " ", s)
-    return s.strip()
+    if START_MARKER in text and END_MARKER in text:
+        pattern = re.compile(
+            re.escape(START_MARKER) + r".*?" + re.escape(END_MARKER),
+            flags=re.DOTALL,
+        )
+        return pattern.sub(full_block, text)
+
+    global_weight_start = "<!-- GLOBAL_WEIGHT_CALIBRATION_START -->"
+    if global_weight_start in text:
+        return text.replace(global_weight_start, full_block + "\n\n" + global_weight_start, 1)
+
+    decision_end = "<!-- DECISION_REPORT_END -->"
+    if decision_end in text:
+        return text.replace(decision_end, decision_end + "\n\n" + full_block, 1)
+
+    return text.rstrip() + "\n\n" + full_block + "\n"
 
 
-def parse_number(value, default=np.nan):
-    if value is None:
-        return default
-
-    s = str(value).strip()
-
-    if not s or s.lower() in {"n/a", "nan", "none", "null", "-"}:
-        return default
-
-    match = re.search(r"[-+]?\d[\d\s.,]*", s)
-
-    if not match:
-        return default
-
-    token = match.group(0).replace(" ", "")
-
-    if "," in token:
-        token = token.replace(".", "").replace(",", ".")
-    elif "." in token:
-        parts = token.split(".")
-        if (
-            len(parts) == 2
-            and len(parts[1]) == 3
-            and len(parts[0]) <= 3
-            and parts[0] != "0"
-        ):
-            token = parts[0] + parts[1]
-
+def safe_float(value, default=np.nan):
     try:
-        return float(token)
+        if value is None:
+            return default
+        if isinstance(value, str):
+            s = value.strip()
+            if not s or s.lower() in {"nan", "none", "n/a", "null"}:
+                return default
+            s = s.replace("%", "").replace("$", "").replace(" ", "")
+            if "," in s:
+                s = s.replace(".", "").replace(",", ".")
+            return float(s)
+        if pd.isna(value):
+            return default
+        return float(value)
     except Exception:
         return default
 
 
-def parse_int(value, default=0):
-    v = parse_number(value, default=np.nan)
-
+def safe_int(value, default=0) -> int:
+    v = safe_float(value, np.nan)
     if pd.isna(v):
         return default
-
-    try:
-        return int(v)
-    except Exception:
-        return default
+    return int(v)
 
 
-def parse_bool_nullable(value):
+def safe_str(value, default="") -> str:
     if value is None:
-        return np.nan
-
-    if isinstance(value, bool):
-        return value
-
-    if isinstance(value, (int, float)) and not pd.isna(value):
-        if int(value) == 1:
-            return True
-        if int(value) == 0:
-            return False
-
-    s = str(value).strip().lower()
-
-    if s in {"true", "1", "yes", "si", "sì", "checked"}:
-        return True
-
-    if s in {"false", "0", "no", "unchecked", "n/a", "nan", "none", ""}:
-        return False
-
-    return np.nan
-
-
-def fmt_score(value):
+        return default
     try:
-        value = int(value)
+        if pd.isna(value):
+            return default
     except Exception:
-        value = 0
-
-    if value > 0:
-        return f"+{value}"
-
+        pass
     return str(value)
 
 
-def fmt_pct(value, decimals=2, signed=False):
+def parse_bool(value) -> bool:
+    if isinstance(value, bool):
+        return value
+    s = safe_str(value).strip().lower()
+    return s in {"true", "1", "yes", "y", "si", "sì"}
+
+
+def fmt_signed_int(value) -> str:
+    if value is None or pd.isna(value):
+        return "0"
+    v = int(value)
+    if v > 0:
+        return f"+{v}"
+    return str(v)
+
+
+def fmt_pct(value, decimals: int = 2) -> str:
     if value is None or pd.isna(value):
         return "n/a"
-
-    sign = "+" if signed and value > 0 else ""
-    return f"{sign}{value:.{decimals}f}%".replace(".", ",")
+    return f"{float(value):+.{decimals}f}%".replace(".", ",")
 
 
-def fmt_price(asset: str, value):
+def fmt_pct_plain(value, decimals: int = 2) -> str:
+    if value is None or pd.isna(value):
+        return "n/a"
+    return f"{float(value):.{decimals}f}%".replace(".", ",")
+
+
+def fmt_price(asset: str, value) -> str:
     if value is None or pd.isna(value):
         return "n/a"
 
     v = float(value)
 
+    if asset == "BTC":
+        return f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
     if asset == "DOGE":
         return f"{v:.5f}"
 
-    s = f"{v:,.2f}"
-    return s.replace(",", "X").replace(".", ",").replace("X", ".")
+    return f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
-def parse_date(value):
-    if value is None or pd.isna(value):
-        return pd.NaT
-
-    try:
-        ts = pd.to_datetime(value, errors="coerce")
-
-        if pd.isna(ts):
-            return pd.NaT
-
-        if getattr(ts, "tzinfo", None) is not None:
-            try:
-                ts = ts.tz_convert(None)
-            except Exception:
-                ts = ts.tz_localize(None)
-
-        return pd.Timestamp(ts).normalize()
-
-    except Exception:
-        return pd.NaT
+def md_table(headers, rows) -> str:
+    out = []
+    out.append("| " + " | ".join(headers) + " |")
+    out.append("| " + " | ".join(["---"] * len(headers)) + " |")
+    for row in rows:
+        out.append("| " + " | ".join(str(x) for x in row) + " |")
+    return "\n".join(out)
 
 
-def normalize_ohlcv(df):
+def horizon_columns(h: int):
+    suffix = f"{h}d"
+    return [
+        f"target_date_{suffix}",
+        f"checked_{suffix}",
+        f"actual_date_{suffix}",
+        f"actual_price_{suffix}",
+        f"return_{suffix}",
+        f"drawdown_{suffix}",
+        f"max_gain_{suffix}",
+    ]
+
+
+def all_history_columns():
+    cols = list(BASE_HISTORY_COLUMNS)
+    for h in HORIZONS:
+        cols.extend(horizon_columns(h))
+    return cols
+
+
+def ensure_history_columns(df: pd.DataFrame) -> pd.DataFrame:
+    out = df.copy()
+
+    for col in BASE_HISTORY_COLUMNS:
+        if col not in out.columns:
+            out[col] = ""
+
+    for h in HORIZONS:
+        suffix = f"{h}d"
+
+        text_cols = [
+            f"target_date_{suffix}",
+            f"actual_date_{suffix}",
+        ]
+        bool_cols = [
+            f"checked_{suffix}",
+        ]
+        num_cols = [
+            f"actual_price_{suffix}",
+            f"return_{suffix}",
+            f"drawdown_{suffix}",
+            f"max_gain_{suffix}",
+        ]
+
+        for col in text_cols:
+            if col not in out.columns:
+                out[col] = ""
+            out[col] = out[col].astype("object")
+
+        for col in bool_cols:
+            if col not in out.columns:
+                out[col] = False
+            out[col] = out[col].map(parse_bool).astype(bool)
+
+        for col in num_cols:
+            if col not in out.columns:
+                out[col] = np.nan
+            out[col] = pd.to_numeric(out[col], errors="coerce")
+
+    numeric_base_cols = [
+        "price",
+        "global_score",
+        "scanner_score",
+        "market_score",
+        "technical_score_component",
+        "classic_technical_score_component",
+        "sol_fractal_score",
+        "classic_technical_raw_score",
+        "sol_fractal_similarity",
+    ]
+
+    for col in numeric_base_cols:
+        if col not in out.columns:
+            out[col] = np.nan
+        out[col] = pd.to_numeric(out[col], errors="coerce")
+
+    for col in [
+        "signal_date",
+        "asset",
+        "ticker",
+        "action",
+        "created_utc",
+        "updated_utc",
+    ]:
+        if col not in out.columns:
+            out[col] = ""
+        out[col] = out[col].astype("object")
+
+    return out[all_history_columns()]
+
+
+def normalize_yfinance_df(df: pd.DataFrame) -> pd.DataFrame:
     if df is None or df.empty:
         return pd.DataFrame()
 
     out = df.copy()
 
     if isinstance(out.columns, pd.MultiIndex):
-        fields = ["Open", "High", "Low", "Close", "Adj Close", "Volume"]
+        out.columns = [c[0] for c in out.columns]
 
-        level0 = list(out.columns.get_level_values(0))
-        level1 = list(out.columns.get_level_values(1))
+    rename = {}
+    for c in out.columns:
+        cl = str(c).strip().lower()
+        if cl == "open":
+            rename[c] = "Open"
+        elif cl == "high":
+            rename[c] = "High"
+        elif cl == "low":
+            rename[c] = "Low"
+        elif cl == "close":
+            rename[c] = "Close"
+        elif cl == "adj close":
+            rename[c] = "Adj Close"
+        elif cl == "volume":
+            rename[c] = "Volume"
 
-        if any(field in level0 for field in fields):
-            tmp = {}
+    out = out.rename(columns=rename)
 
-            for field in fields:
-                if field in level0:
-                    part = out.xs(field, axis=1, level=0)
-                    tmp[field] = part.iloc[:, 0]
-
-            out = pd.DataFrame(tmp)
-
-        elif any(field in level1 for field in fields):
-            tmp = {}
-
-            for field in fields:
-                if field in level1:
-                    part = out.xs(field, axis=1, level=1)
-                    tmp[field] = part.iloc[:, 0]
-
-            out = pd.DataFrame(tmp)
-
-    if "Close" not in out.columns:
-        return pd.DataFrame()
-
-    for col in ["Open", "High", "Low"]:
+    required = ["Open", "High", "Low", "Close"]
+    for col in required:
         if col not in out.columns:
-            out[col] = out["Close"]
+            return pd.DataFrame()
 
     if "Volume" not in out.columns:
-        out["Volume"] = np.nan
+        out["Volume"] = 0
 
     out = out[["Open", "High", "Low", "Close", "Volume"]].copy()
-    out.index = pd.to_datetime(out.index, errors="coerce")
+    out = out.dropna(subset=["Open", "High", "Low", "Close"])
 
-    try:
-        out.index = out.index.tz_convert(None)
-    except Exception:
-        try:
-            out.index = out.index.tz_localize(None)
-        except Exception:
-            pass
-
-    out.index = out.index.normalize()
-    out = out[~out.index.duplicated(keep="last")]
+    out.index = pd.to_datetime(out.index).tz_localize(None)
     out = out.sort_index()
-    out = out.dropna(subset=["Close"])
 
     return out
 
 
-def download_prices(ticker: str):
-    try:
-        raw = yf.download(
-            ticker,
-            period="max",
-            interval="1d",
-            progress=False,
-            auto_adjust=False,
-            actions=False,
-            threads=False,
-        )
-        return normalize_ohlcv(raw)
+def download_price_data():
+    data = {}
 
-    except Exception as e:
-        print(f"Download fallito per {ticker}: {e}")
-        return pd.DataFrame()
+    for asset, ticker in TICKERS.items():
+        try:
+            df = yf.download(
+                ticker,
+                period="900d",
+                interval="1d",
+                auto_adjust=False,
+                progress=False,
+                threads=False,
+            )
+            data[asset] = normalize_yfinance_df(df)
+        except Exception:
+            data[asset] = pd.DataFrame()
 
-
-def close_on_or_after(df: pd.DataFrame, date):
-    if df is None or df.empty:
-        return np.nan, pd.NaT
-
-    date = parse_date(date)
-
-    if pd.isna(date):
-        return np.nan, pd.NaT
-
-    sliced = df[df.index >= date].copy()
-
-    if sliced.empty:
-        return np.nan, pd.NaT
-
-    actual_date = pd.Timestamp(sliced.index[0]).normalize()
-    actual_price = parse_number(sliced.iloc[0]["Close"])
-
-    return actual_price, actual_date
+    return data
 
 
-def period_stats(df: pd.DataFrame, start_date, end_date, start_price):
-    if df is None or df.empty or pd.isna(start_price) or start_price == 0:
-        return np.nan, np.nan
-
-    start_date = parse_date(start_date)
-    end_date = parse_date(end_date)
-
-    if pd.isna(start_date) or pd.isna(end_date):
-        return np.nan, np.nan
-
-    sliced = df[(df.index >= start_date) & (df.index <= end_date)].copy()
-
-    if sliced.empty:
-        return np.nan, np.nan
-
-    max_high = parse_number(sliced["High"].max())
-    min_low = parse_number(sliced["Low"].min())
-
-    max_gain = (max_high / start_price - 1) * 100 if not pd.isna(max_high) else np.nan
-    drawdown = (min_low / start_price - 1) * 100 if not pd.isna(min_low) else np.nan
-
-    return drawdown, max_gain
-
-
-def read_csv_dicts(path: Path):
-    if not path.exists():
+def read_global_metrics_rows():
+    if not GLOBAL_METRICS_CSV_PATH.exists():
         return []
 
     try:
-        with path.open("r", encoding="utf-8", newline="") as f:
-            return list(csv.DictReader(f))
+        with GLOBAL_METRICS_CSV_PATH.open("r", newline="", encoding="utf-8") as f:
+            rows = list(csv.DictReader(f))
     except Exception:
         return []
 
-
-def read_global_metrics():
-    rows = read_csv_dicts(GLOBAL_CONFLUENCE_METRICS_PATH)
-
-    if not rows:
-        raise RuntimeError(
-            "module_signal_tracker.py: global_confluence_metrics.csv non trovato o vuoto. "
-            "Esegui prima global_confluence_report.py."
-        )
-
-    out = {}
+    latest_by_asset = {}
 
     for row in rows:
-        asset = clean_cell(row.get("asset") or row.get("Asset")).upper()
+        asset = safe_str(row.get("asset")).upper().strip()
+        if asset in ASSETS:
+            latest_by_asset[asset] = row
 
+    return [latest_by_asset[a] for a in ASSETS if a in latest_by_asset]
+
+
+def load_history() -> pd.DataFrame:
+    if not HISTORY_CSV_PATH.exists():
+        return ensure_history_columns(pd.DataFrame())
+
+    try:
+        df = pd.read_csv(HISTORY_CSV_PATH, dtype=str)
+    except Exception:
+        return ensure_history_columns(pd.DataFrame())
+
+    return ensure_history_columns(df)
+
+
+def build_signal_rows(global_rows, price_data):
+    created = now_utc_iso()
+    out_rows = []
+
+    for row in global_rows:
+        asset = safe_str(row.get("asset")).upper().strip()
         if asset not in ASSETS:
             continue
 
-        out[asset] = {
+        ticker = TICKERS[asset]
+        df = price_data.get(asset, pd.DataFrame())
+
+        if df is not None and not df.empty:
+            signal_date = df.index[-1].strftime("%Y-%m-%d")
+            price = float(df["Close"].iloc[-1])
+        else:
+            generated = safe_str(row.get("generated_utc"))
+            try:
+                signal_date = pd.to_datetime(generated).date().isoformat()
+            except Exception:
+                signal_date = datetime.now(timezone.utc).date().isoformat()
+            price = np.nan
+
+        signal = {
+            "signal_date": signal_date,
             "asset": asset,
-            "global_score": parse_int(
-                row.get("global_score")
-                or row.get("score")
-                or row.get("total_score")
-                or row.get("Punteggio"),
-                0,
-            ),
-            "scanner_score": parse_int(row.get("scanner_score"), 0),
-            "market_score": parse_int(row.get("market_score"), 0),
-            "technical_score_component": parse_int(
-                row.get("technical_score_component")
-                or row.get("technical_score")
-                or row.get("Tecnico"),
-                0,
-            ),
-            "sol_fractal_score": parse_int(
-                row.get("sol_fractal_score")
-                or row.get("fractal_score")
-                or row.get("Frattale"),
-                0,
-            ),
-            "fractal_path_score": parse_int(row.get("fractal_path_score"), 0),
-            "rsi_score": parse_int(row.get("rsi_score"), 0),
-            "lifecycle_score_component": parse_int(row.get("lifecycle_score_component"), 0),
-            "futures_score": parse_int(row.get("futures_score"), 0),
-            "daily_change_score": parse_int(row.get("daily_change_score"), 0),
-            "action": clean_cell(row.get("action") or row.get("Azione coerente")),
-            "confluence": clean_cell(row.get("confluence") or row.get("Confluenza")),
-            "bias": clean_cell(row.get("bias") or row.get("Bias")),
+            "ticker": ticker,
+            "price": price,
+            "action": safe_str(row.get("action")),
+            "confluence": safe_str(row.get("confluence")),
+            "bias": safe_str(row.get("bias")),
+            "reliability": safe_str(row.get("reliability")),
+            "global_score": safe_int(row.get("global_score", row.get("score")), 0),
+            "scanner_score": safe_int(row.get("scanner_score"), 0),
+            "market_score": safe_int(row.get("market_score"), 0),
+            "technical_score_component": safe_int(row.get("technical_score_component"), 0),
+            "classic_technical_score_component": safe_int(row.get("classic_technical_score_component"), 0),
+            "sol_fractal_score": safe_int(row.get("sol_fractal_score"), 0),
+            "classic_technical_raw_score": safe_float(row.get("classic_technical_raw_score")),
+            "classic_technical_verdict": safe_str(row.get("classic_technical_verdict")),
+            "classic_technical_risk": safe_str(row.get("classic_technical_risk")),
+            "classic_technical_stage": safe_str(row.get("classic_technical_stage")),
+            "classic_technical_structure": safe_str(row.get("classic_technical_structure")),
+            "classic_technical_wyckoff": safe_str(row.get("classic_technical_wyckoff")),
+            "sol_fractal_verdict": safe_str(row.get("sol_fractal_verdict")),
+            "sol_fractal_similarity": safe_float(row.get("sol_fractal_similarity")),
+            "sol_fractal_tracking": safe_str(row.get("sol_fractal_tracking")),
+            "created_utc": created,
+            "updated_utc": created,
         }
 
-    missing = [asset for asset in ASSETS if asset not in out]
+        for h in HORIZONS:
+            target = pd.to_datetime(signal_date).date() + timedelta(days=h)
+            signal[f"target_date_{h}d"] = target.isoformat()
+            signal[f"checked_{h}d"] = False
+            signal[f"actual_date_{h}d"] = ""
+            signal[f"actual_price_{h}d"] = np.nan
+            signal[f"return_{h}d"] = np.nan
+            signal[f"drawdown_{h}d"] = np.nan
+            signal[f"max_gain_{h}d"] = np.nan
 
-    if missing:
-        raise RuntimeError(
-            "module_signal_tracker.py: asset mancanti in global_confluence_metrics.csv: "
-            + ", ".join(missing)
-        )
+        out_rows.append(signal)
 
-    return out
-
-
-def normalize_history_columns(df: pd.DataFrame):
-    if df is None or df.empty:
-        return pd.DataFrame()
-
-    out = df.copy()
-
-    rename_map = {
-        "date": "signal_date",
-        "Data": "signal_date",
-        "Asset": "asset",
-        "Prezzo": "price",
-        "Global": "global_score",
-        "global": "global_score",
-        "Scanner": "scanner_score",
-        "Market": "market_score",
-        "Tecnico": "technical_score_component",
-        "technical_score": "technical_score_component",
-        "Frattale": "sol_fractal_score",
-        "fractal_score": "sol_fractal_score",
-        "Azione": "action",
-    }
-
-    for old, new in rename_map.items():
-        if old in out.columns and new not in out.columns:
-            out = out.rename(columns={old: new})
-
-    required = [
-        "signal_date",
-        "asset",
-        "ticker",
-        "price",
-        "global_score",
-        "scanner_score",
-        "market_score",
-        "technical_score_component",
-        "sol_fractal_score",
-        "fractal_path_score",
-        "rsi_score",
-        "lifecycle_score_component",
-        "futures_score",
-        "daily_change_score",
-        "action",
-        "confluence",
-        "bias",
-    ]
-
-    for col in required:
-        if col not in out.columns:
-            out[col] = np.nan
-
-    out["asset"] = out["asset"].astype(str).str.upper().str.strip()
-
-    out["signal_date"] = pd.to_datetime(out["signal_date"], errors="coerce")
-    out["signal_date"] = out["signal_date"].dt.strftime("%Y-%m-%d")
-
-    for col in [
-        "price",
-        "global_score",
-        "scanner_score",
-        "market_score",
-        "technical_score_component",
-        "sol_fractal_score",
-        "fractal_path_score",
-        "rsi_score",
-        "lifecycle_score_component",
-        "futures_score",
-        "daily_change_score",
-    ]:
-        out[col] = out[col].map(lambda x: parse_number(x, np.nan))
-
-    for col in [
-        "global_score",
-        "scanner_score",
-        "market_score",
-        "technical_score_component",
-        "sol_fractal_score",
-        "fractal_path_score",
-        "rsi_score",
-        "lifecycle_score_component",
-        "futures_score",
-        "daily_change_score",
-    ]:
-        out[col] = out[col].fillna(0).astype(int)
-
-    return out
+    return out_rows
 
 
-def load_history():
-    if not HISTORY_CSV_PATH.exists():
-        return pd.DataFrame()
+def upsert_today_signals(history: pd.DataFrame, new_rows) -> pd.DataFrame:
+    hist = ensure_history_columns(history)
 
-    try:
-        df = pd.read_csv(HISTORY_CSV_PATH)
-    except Exception:
-        return pd.DataFrame()
+    if not new_rows:
+        return hist
 
-    return normalize_history_columns(df)
+    new_df = ensure_history_columns(pd.DataFrame(new_rows))
 
+    for _, row in new_df.iterrows():
+        signal_date = safe_str(row["signal_date"])
+        asset = safe_str(row["asset"])
 
-def build_today_signals(global_metrics, prices_by_asset):
-    rows = []
+        mask = (hist["signal_date"].astype(str) == signal_date) & (hist["asset"].astype(str) == asset)
 
-    for asset in ASSETS:
-        df = prices_by_asset.get(asset, pd.DataFrame())
+        if mask.any():
+            idx = hist.index[mask][0]
 
-        if df.empty:
-            price = np.nan
-            signal_date = pd.Timestamp(now_utc().date())
+            preserve_cols = []
+            for h in HORIZONS:
+                preserve_cols.extend(horizon_columns(h))
+
+            created_old = hist.at[idx, "created_utc"]
+
+            for col in BASE_HISTORY_COLUMNS:
+                hist.at[idx, col] = row[col]
+
+            hist.at[idx, "created_utc"] = created_old if safe_str(created_old) else row["created_utc"]
+            hist.at[idx, "updated_utc"] = now_utc_iso()
+
+            for col in preserve_cols:
+                if col.startswith("target_date_") and not safe_str(hist.at[idx, col]):
+                    hist.at[idx, col] = row[col]
         else:
-            signal_date = pd.Timestamp(df.index[-1]).normalize()
-            price = parse_number(df.iloc[-1]["Close"])
+            hist = pd.concat([hist, pd.DataFrame([row])], ignore_index=True)
 
-        g = global_metrics[asset]
+    hist = ensure_history_columns(hist)
+    hist = hist.sort_values(["signal_date", "asset"]).reset_index(drop=True)
 
-        rows.append(
-            {
-                "signal_date": signal_date.strftime("%Y-%m-%d"),
-                "asset": asset,
-                "ticker": TICKERS[asset],
-                "price": price,
-                "global_score": int(g["global_score"]),
-                "scanner_score": int(g["scanner_score"]),
-                "market_score": int(g["market_score"]),
-                "technical_score_component": int(g["technical_score_component"]),
-                "sol_fractal_score": int(g["sol_fractal_score"]),
-                "fractal_path_score": int(g["fractal_path_score"]),
-                "rsi_score": int(g["rsi_score"]),
-                "lifecycle_score_component": int(g["lifecycle_score_component"]),
-                "futures_score": int(g["futures_score"]),
-                "daily_change_score": int(g["daily_change_score"]),
-                "action": g.get("action", ""),
-                "confluence": g.get("confluence", ""),
-                "bias": g.get("bias", ""),
-                "created_at_utc": now_utc().isoformat(),
-            }
-        )
-
-    return pd.DataFrame(rows)
+    return hist
 
 
-def append_today_signals(history: pd.DataFrame, today_signals: pd.DataFrame):
-    history = normalize_history_columns(history)
-    today_signals = normalize_history_columns(today_signals)
+def get_first_index_on_or_after(df: pd.DataFrame, target_date):
+    if df.empty:
+        return None
 
-    if history.empty:
-        return today_signals.copy()
+    target_ts = pd.Timestamp(target_date)
 
-    key_today = set(
-        zip(
-            today_signals["signal_date"].astype(str),
-            today_signals["asset"].astype(str),
-        )
-    )
+    candidates = df.index[df.index >= target_ts]
+    if len(candidates) == 0:
+        return None
 
-    keep_mask = []
-
-    for _, row in history.iterrows():
-        key = (str(row.get("signal_date")), str(row.get("asset")))
-        keep_mask.append(key not in key_today)
-
-    history = history[keep_mask].copy()
-
-    combined = pd.concat([history, today_signals], ignore_index=True)
-    combined = combined.sort_values(["signal_date", "asset"]).reset_index(drop=True)
-
-    return combined
+    return candidates[0]
 
 
-def ensure_horizon_columns(out: pd.DataFrame):
-    """
-    Fix importante:
-    Pandas/GitHub Actions può creare target_date_1d e actual_date_1d come float64
-    se inizializzati con np.nan. Poi quando scriviamo '2026-07-10' esplode.
+def update_checks(history: pd.DataFrame, price_data) -> pd.DataFrame:
+    out = ensure_history_columns(history)
 
-    Quindi:
-    - colonne data = object/string
-    - colonne checked = bool
-    - colonne numeriche = float
-    """
-
-    for h in HORIZONS:
-        date_cols = [
-            f"target_date_{h}d",
-            f"actual_date_{h}d",
-        ]
-
-        numeric_cols = [
-            f"actual_price_{h}d",
-            f"return_pct_{h}d",
-            f"drawdown_pct_{h}d",
-            f"max_gain_pct_{h}d",
-        ]
-
-        checked_col = f"checked_{h}d"
-
-        for col in date_cols:
-            if col not in out.columns:
-                out[col] = ""
-            out[col] = out[col].astype("object")
-
-        for col in numeric_cols:
-            if col not in out.columns:
-                out[col] = np.nan
-            out[col] = pd.to_numeric(out[col], errors="coerce")
-
-        if checked_col not in out.columns:
-            out[checked_col] = False
-        out[checked_col] = out[checked_col].map(parse_bool_nullable).fillna(False).astype(bool)
-
-    return out
-
-
-def update_checks(history: pd.DataFrame, prices_by_asset):
-    if history is None or history.empty:
-        return pd.DataFrame()
-
-    out = history.copy()
-    out = ensure_horizon_columns(out)
+    if out.empty:
+        return out
 
     for idx, row in out.iterrows():
-        asset = str(row.get("asset")).upper()
-        df = prices_by_asset.get(asset, pd.DataFrame())
-
-        if df.empty:
+        asset = safe_str(row["asset"]).upper()
+        if asset not in ASSETS:
             continue
 
-        signal_date = parse_date(row.get("signal_date"))
-        price = parse_number(row.get("price"), np.nan)
-
-        if pd.isna(signal_date) or pd.isna(price) or price == 0:
+        df = price_data.get(asset, pd.DataFrame())
+        if df is None or df.empty:
             continue
 
-        latest_available = pd.Timestamp(df.index[-1]).normalize()
+        signal_date_str = safe_str(row["signal_date"])
+        try:
+            signal_date = pd.to_datetime(signal_date_str).date()
+        except Exception:
+            continue
+
+        signal_price = safe_float(row["price"])
+        if pd.isna(signal_price) or signal_price <= 0:
+            continue
+
+        last_available_date = df.index[-1].date()
 
         for h in HORIZONS:
-            checked_col = f"checked_{h}d"
+            suffix = f"{h}d"
 
-            checked = parse_bool_nullable(out.at[idx, checked_col])
+            checked_col = f"checked_{suffix}"
+            target_col = f"target_date_{suffix}"
+            actual_date_col = f"actual_date_{suffix}"
+            actual_price_col = f"actual_price_{suffix}"
+            return_col = f"return_{suffix}"
+            drawdown_col = f"drawdown_{suffix}"
+            max_gain_col = f"max_gain_{suffix}"
 
-            if checked is True:
+            target_date = signal_date + timedelta(days=h)
+            out.at[idx, target_col] = target_date.isoformat()
+
+            if parse_bool(out.at[idx, checked_col]):
                 continue
 
-            target_date = signal_date + pd.Timedelta(days=h)
-
-            # Ora questa colonna è object, quindi la stringa non rompe più Pandas.
-            out.at[idx, f"target_date_{h}d"] = target_date.strftime("%Y-%m-%d")
-
-            if target_date > latest_available:
-                out.at[idx, checked_col] = False
+            if target_date > last_available_date:
                 continue
 
-            actual_price, actual_date = close_on_or_after(df, target_date)
-
-            if pd.isna(actual_price) or pd.isna(actual_date):
-                out.at[idx, checked_col] = False
+            actual_idx = get_first_index_on_or_after(df, target_date)
+            if actual_idx is None:
                 continue
 
-            return_pct = (actual_price / price - 1) * 100
-            drawdown_pct, max_gain_pct = period_stats(df, signal_date, actual_date, price)
+            actual_price = float(df.loc[actual_idx, "Close"])
 
-            out.at[idx, f"actual_date_{h}d"] = actual_date.strftime("%Y-%m-%d")
-            out.at[idx, f"actual_price_{h}d"] = actual_price
-            out.at[idx, f"return_pct_{h}d"] = return_pct
-            out.at[idx, f"drawdown_pct_{h}d"] = drawdown_pct
-            out.at[idx, f"max_gain_pct_{h}d"] = max_gain_pct
+            start_ts = pd.Timestamp(signal_date)
+            end_ts = pd.Timestamp(actual_idx)
+
+            window = df[(df.index > start_ts) & (df.index <= end_ts)].copy()
+
+            if window.empty:
+                min_low = actual_price
+                max_high = actual_price
+            else:
+                min_low = float(window["Low"].min())
+                max_high = float(window["High"].max())
+
+            ret = (actual_price / signal_price - 1) * 100
+            drawdown = (min_low / signal_price - 1) * 100
+            max_gain = (max_high / signal_price - 1) * 100
+
             out.at[idx, checked_col] = True
+            out.at[idx, actual_date_col] = pd.Timestamp(actual_idx).strftime("%Y-%m-%d")
+            out.at[idx, actual_price_col] = actual_price
+            out.at[idx, return_col] = ret
+            out.at[idx, drawdown_col] = drawdown
+            out.at[idx, max_gain_col] = max_gain
+            out.at[idx, "updated_utc"] = now_utc_iso()
 
-    out = out.sort_values(["signal_date", "asset"]).reset_index(drop=True)
-    out = ensure_horizon_columns(out)
-
-    return out
-
-
-def directional_correct(signal_score, return_pct):
-    signal_score = parse_number(signal_score, 0)
-    return_pct = parse_number(return_pct, np.nan)
-
-    if pd.isna(return_pct):
-        return np.nan
-
-    if signal_score > 0:
-        return bool(return_pct > 0)
-
-    if signal_score < 0:
-        return bool(return_pct < 0)
-
-    return np.nan
+    return ensure_history_columns(out)
 
 
-def module_status(count):
-    count = int(count)
+def direction_correct(score, actual_return) -> bool:
+    if pd.isna(score) or pd.isna(actual_return):
+        return False
 
-    if count < 30:
-        return "RACCOLTA DATI"
+    score = float(score)
+    actual_return = float(actual_return)
 
-    if count < 60:
-        return "OSSERVAZIONE 30+"
+    if score > 0 and actual_return > 0:
+        return True
 
-    if count < 100:
-        return "CALIBRAZIONE UTILE"
+    if score < 0 and actual_return < 0:
+        return True
 
-    return "PESO VALUTABILE"
+    return False
 
 
-def build_latest_signals_table(history: pd.DataFrame):
-    if history is None or history.empty:
-        return pd.DataFrame()
+def metric_status(controls: int) -> str:
+    if controls >= 100:
+        return "MATURO"
+    if controls >= 60:
+        return "UTILE"
+    if controls >= 30:
+        return "PRIMA CALIBRAZIONE"
+    if controls > 0:
+        return "FEEDBACK RAPIDO"
+    return "RACCOLTA DATI"
 
-    data = history.copy()
-    data["signal_dt"] = pd.to_datetime(data["signal_date"], errors="coerce")
-    data = data.sort_values(["signal_dt", "asset"]).tail(12).copy()
 
+def horizon_family(h: int) -> str:
+    if h <= 3:
+        return "BREVE"
+    if h <= 10:
+        return "SETTIMANALE"
+    if h <= 21:
+        return "SWING"
+    return "MEDIO"
+
+
+def build_metrics(history: pd.DataFrame) -> pd.DataFrame:
     rows = []
+    generated = now_utc_iso()
 
-    for _, row in data.iterrows():
-        asset = row["asset"]
-
-        rows.append(
-            {
-                "Data": row["signal_date"],
-                "Asset": asset,
-                "Prezzo": fmt_price(asset, row["price"]),
-                "Global": fmt_score(row["global_score"]),
-                "Scanner": fmt_score(row["scanner_score"]),
-                "Market": fmt_score(row["market_score"]),
-                "Tecnico": fmt_score(row["technical_score_component"]),
-                "Frattale": fmt_score(row["sol_fractal_score"]),
-                "Azione": clean_cell(row["action"]),
-            }
-        )
-
-    return pd.DataFrame(rows)
-
-
-def build_check_status_table(history: pd.DataFrame):
-    rows = []
+    hist = ensure_history_columns(history)
 
     for asset in ASSETS:
-        d = history[history["asset"] == asset].copy()
-
-        row = {
-            "Asset": asset,
-            "Segnali salvati": len(d),
-        }
+        asset_df = hist[hist["asset"].astype(str).str.upper() == asset].copy()
 
         for h in HORIZONS:
-            checked_col = f"checked_{h}d"
+            suffix = f"{h}d"
+            checked_col = f"checked_{suffix}"
+            return_col = f"return_{suffix}"
+            drawdown_col = f"drawdown_{suffix}"
+            max_gain_col = f"max_gain_{suffix}"
 
-            if checked_col not in d.columns:
-                count = 0
-            else:
-                checked_mask = d[checked_col].map(parse_bool_nullable).fillna(False).astype(bool)
-                count = int(checked_mask.sum())
+            checked_df = asset_df[asset_df[checked_col].map(parse_bool)].copy()
 
-            row[f"{h}g controllati"] = count
+            for module in MODULES:
+                score_col = module["score_col"]
+                module_df = checked_df.copy()
 
-        rows.append(row)
+                if score_col not in module_df.columns:
+                    module_df[score_col] = 0
 
-    return pd.DataFrame(rows)
+                module_df[score_col] = pd.to_numeric(module_df[score_col], errors="coerce").fillna(0)
+                module_df[return_col] = pd.to_numeric(module_df[return_col], errors="coerce")
+                module_df[drawdown_col] = pd.to_numeric(module_df[drawdown_col], errors="coerce")
+                module_df[max_gain_col] = pd.to_numeric(module_df[max_gain_col], errors="coerce")
 
+                active_df = module_df[module_df[score_col] != 0].copy()
 
-def build_accuracy_table(history: pd.DataFrame):
-    rows = []
+                controls = int(len(active_df))
 
-    for asset in ASSETS:
-        asset_df = history[history["asset"] == asset].copy()
-
-        for h in HORIZONS:
-            checked_col = f"checked_{h}d"
-            return_col = f"return_pct_{h}d"
-            drawdown_col = f"drawdown_pct_{h}d"
-            max_gain_col = f"max_gain_pct_{h}d"
-
-            if checked_col not in asset_df.columns:
-                checked = pd.DataFrame()
-            else:
-                checked_mask = asset_df[checked_col].map(parse_bool_nullable).fillna(False).astype(bool)
-                checked = asset_df[checked_mask].copy()
-
-            for module_name, module_col in MODULES:
-                if module_col not in checked.columns or return_col not in checked.columns:
-                    module_checked = pd.DataFrame()
-                else:
-                    module_checked = checked[
-                        checked[module_col].map(lambda x: parse_number(x, 0) != 0)
-                    ].copy()
-
-                if module_checked.empty:
-                    rows.append(
-                        {
-                            "Asset": asset,
-                            "Orizzonte": f"{h}g",
-                            "Modulo": module_name,
-                            "Controlli": 0,
-                            "Accuratezza direzione": "n/a",
-                            "Return medio": "n/a",
-                            "Drawdown medio": "n/a",
-                            "Max gain medio": "n/a",
-                            "Stato": "RACCOLTA DATI",
-                        }
+                if controls > 0:
+                    correct = int(
+                        active_df.apply(
+                            lambda r: direction_correct(r[score_col], r[return_col]),
+                            axis=1,
+                        ).sum()
                     )
-                    continue
+                    accuracy = correct / controls * 100
+                    avg_return = float(active_df[return_col].mean())
+                    avg_drawdown = float(active_df[drawdown_col].mean())
+                    avg_max_gain = float(active_df[max_gain_col].mean())
 
-                correct_values = []
-
-                for _, r in module_checked.iterrows():
-                    correct = directional_correct(r.get(module_col), r.get(return_col))
-                    if not pd.isna(correct):
-                        correct_values.append(bool(correct))
-
-                if correct_values:
-                    accuracy = sum(correct_values) / len(correct_values) * 100
-                    accuracy_text = fmt_pct(accuracy, signed=False)
+                    signed_outcome = active_df.apply(
+                        lambda r: float(r[return_col]) if float(r[score_col]) > 0 else -float(r[return_col]),
+                        axis=1,
+                    )
+                    avg_direction_adjusted_return = float(signed_outcome.mean())
                 else:
-                    accuracy_text = "n/a"
-
-                returns = pd.to_numeric(module_checked[return_col], errors="coerce")
-                drawdowns = pd.to_numeric(module_checked[drawdown_col], errors="coerce")
-                max_gains = pd.to_numeric(module_checked[max_gain_col], errors="coerce")
-
-                count = int(len(correct_values))
+                    correct = 0
+                    accuracy = np.nan
+                    avg_return = np.nan
+                    avg_drawdown = np.nan
+                    avg_max_gain = np.nan
+                    avg_direction_adjusted_return = np.nan
 
                 rows.append(
                     {
-                        "Asset": asset,
-                        "Orizzonte": f"{h}g",
-                        "Modulo": module_name,
-                        "Controlli": count,
-                        "Accuratezza direzione": accuracy_text,
-                        "Return medio": fmt_pct(returns.mean(), signed=True),
-                        "Drawdown medio": fmt_pct(drawdowns.mean(), signed=True),
-                        "Max gain medio": fmt_pct(max_gains.mean(), signed=True),
-                        "Stato": module_status(count),
+                        "generated_utc": generated,
+                        "asset": asset,
+                        "horizon_days": h,
+                        "horizon": f"{h}g",
+                        "horizon_family": horizon_family(h),
+                        "module_key": module["key"],
+                        "module": module["label"],
+                        "controls": controls,
+                        "correct": correct,
+                        "accuracy_direction_pct": accuracy,
+                        "avg_return_pct": avg_return,
+                        "avg_direction_adjusted_return_pct": avg_direction_adjusted_return,
+                        "avg_drawdown_pct": avg_drawdown,
+                        "avg_max_gain_pct": avg_max_gain,
+                        "status": metric_status(controls),
                     }
                 )
 
     return pd.DataFrame(rows)
 
 
-def df_to_markdown(df: pd.DataFrame):
-    if df is None or df.empty:
-        return "_Nessun dato disponibile._"
+def compact_latest_signals(history: pd.DataFrame, n: int = 12):
+    if history.empty:
+        return []
 
-    return tabulate(df, headers="keys", tablefmt="pipe", showindex=False)
+    hist = history.copy()
+    hist["signal_date_sort"] = pd.to_datetime(hist["signal_date"], errors="coerce")
+    hist = hist.sort_values(["signal_date_sort", "asset"], ascending=[False, True]).head(n)
+
+    rows = []
+
+    for _, r in hist.iterrows():
+        asset = safe_str(r["asset"])
+        rows.append(
+            [
+                safe_str(r["signal_date"]),
+                asset,
+                fmt_price(asset, safe_float(r["price"])),
+                fmt_signed_int(safe_int(r["global_score"])),
+                fmt_signed_int(safe_int(r["scanner_score"])),
+                fmt_signed_int(safe_int(r["market_score"])),
+                fmt_signed_int(safe_int(r["technical_score_component"])),
+                fmt_signed_int(safe_int(r["classic_technical_score_component"])),
+                fmt_signed_int(safe_int(r["sol_fractal_score"])),
+                safe_str(r["action"]),
+            ]
+        )
+
+    return rows
 
 
-def build_report(history: pd.DataFrame):
+def status_rows(history: pd.DataFrame):
+    rows = []
+
+    for asset in ASSETS:
+        asset_df = history[history["asset"].astype(str).str.upper() == asset].copy()
+        row = [asset, str(len(asset_df))]
+
+        for h in HORIZONS:
+            checked_col = f"checked_{h}d"
+            checked = int(asset_df[checked_col].map(parse_bool).sum()) if checked_col in asset_df.columns else 0
+            row.append(str(checked))
+
+        rows.append(row)
+
+    return rows
+
+
+def global_horizon_rows(metrics: pd.DataFrame):
+    rows = []
+
+    if metrics.empty:
+        return rows
+
+    global_metrics = metrics[metrics["module_key"] == "global"].copy()
+
+    for asset in ASSETS:
+        for h in HORIZONS:
+            m = global_metrics[
+                (global_metrics["asset"] == asset)
+                & (global_metrics["horizon_days"] == h)
+            ]
+
+            if m.empty:
+                continue
+
+            r = m.iloc[0]
+            rows.append(
+                [
+                    asset,
+                    f"{h}g",
+                    str(int(r["controls"])),
+                    fmt_pct_plain(r["accuracy_direction_pct"]),
+                    fmt_pct(r["avg_return_pct"]),
+                    fmt_pct(r["avg_direction_adjusted_return_pct"]),
+                    r["status"],
+                ]
+            )
+
+    return rows
+
+
+def module_rows_with_controls(metrics: pd.DataFrame, max_rows: int = 160):
+    if metrics.empty:
+        return []
+
+    m = metrics.copy()
+    m["controls"] = pd.to_numeric(m["controls"], errors="coerce").fillna(0).astype(int)
+    m = m[m["controls"] > 0].copy()
+
+    if m.empty:
+        return []
+
+    order = {h: i for i, h in enumerate(HORIZONS)}
+    module_order = {module["key"]: i for i, module in enumerate(MODULES)}
+
+    m["h_order"] = m["horizon_days"].map(order).fillna(999)
+    m["module_order"] = m["module_key"].map(module_order).fillna(999)
+
+    m = m.sort_values(["asset", "h_order", "module_order"]).head(max_rows)
+
+    rows = []
+
+    for _, r in m.iterrows():
+        rows.append(
+            [
+                r["asset"],
+                r["horizon"],
+                r["module"],
+                str(int(r["controls"])),
+                fmt_pct_plain(r["accuracy_direction_pct"]),
+                fmt_pct(r["avg_return_pct"]),
+                fmt_pct(r["avg_direction_adjusted_return_pct"]),
+                fmt_pct(r["avg_drawdown_pct"]),
+                fmt_pct(r["avg_max_gain_pct"]),
+                r["status"],
+            ]
+        )
+
+    return rows
+
+
+def next_pending_checks(history: pd.DataFrame):
+    rows = []
+    today = datetime.now(timezone.utc).date()
+
+    for asset in ASSETS:
+        asset_df = history[history["asset"].astype(str).str.upper() == asset].copy()
+        if asset_df.empty:
+            continue
+
+        candidates = []
+
+        for _, r in asset_df.iterrows():
+            signal_date = safe_str(r["signal_date"])
+            try:
+                sd = pd.to_datetime(signal_date).date()
+            except Exception:
+                continue
+
+            for h in HORIZONS:
+                checked = parse_bool(r.get(f"checked_{h}d", False))
+                if checked:
+                    continue
+
+                target = sd + timedelta(days=h)
+                days_left = (target - today).days
+                if days_left >= 0:
+                    candidates.append((target, h, signal_date, days_left))
+
+        if not candidates:
+            continue
+
+        candidates.sort(key=lambda x: x[0])
+        target, h, signal_date, days_left = candidates[0]
+
+        if days_left == 0:
+            left = "oggi / appena dati disponibili"
+        elif days_left == 1:
+            left = "domani"
+        else:
+            left = f"tra {days_left} giorni"
+
+        rows.append(
+            [
+                asset,
+                signal_date,
+                f"{h}g",
+                target.isoformat(),
+                left,
+            ]
+        )
+
+    return rows
+
+
+def build_report(history: pd.DataFrame, metrics: pd.DataFrame) -> str:
     generated = now_utc_str()
 
-    latest_table = build_latest_signals_table(history)
-    check_status_table = build_check_status_table(history)
-    accuracy_table = build_accuracy_table(history)
+    latest_rows = compact_latest_signals(history)
+    stat_rows = status_rows(history)
+    global_rows = global_horizon_rows(metrics)
+    module_rows = module_rows_with_controls(metrics)
+    pending_rows = next_pending_checks(history)
 
-    signal_count = len(history) if history is not None else 0
+    lines = []
 
-    report = f"""{START_MARKER}
-# Accuratezza moduli / autocalibrazione allargata
+    lines.append("# Accuratezza moduli / autocalibrazione allargata")
+    lines.append("")
+    lines.append(f"Generato: {generated}")
+    lines.append("")
+    lines.append(
+        "Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno "
+        "quali orizzonti sono maturati."
+    )
+    lines.append("")
+    lines.append("La calibrazione ora controlla questi orizzonti:")
+    lines.append("")
+    lines.append("- **1g / 2g / 3g** = feedback rapidissimo")
+    lines.append("- **5g / 7g / 10g** = feedback settimanale")
+    lines.append("- **14g / 21g** = feedback swing")
+    lines.append("- **30g / 45g / 60g** = feedback più serio")
+    lines.append("")
+    lines.append("Moduli controllati:")
+    lines.append("")
+    lines.append("- Global Confluence")
+    lines.append("- Scanner grezzo")
+    lines.append("- Market regime")
+    lines.append("- Struttura tecnica")
+    lines.append("- Classic technical confirmation")
+    lines.append("- Frattale SOL/BTC, solo per SOL")
+    lines.append("")
+    lines.append(
+        "Nota: i controlli vengono aggiornati **ogni giorno**, ma i pesi del Global non devono "
+        "cambiare automaticamente sotto 30 controlli. Prima si osserva, poi si calibra."
+    )
+    lines.append("")
+    lines.append(f"Segnali totali salvati: **{len(history)}**.")
+    lines.append("")
 
-Generato: {generated}
+    lines.append("## Ultimi segnali salvati")
+    lines.append("")
 
-Questo report salva ogni giorno i segnali dei moduli e controlla, dopo vari orizzonti, quali moduli stanno davvero aiutando.
-
-Moduli controllati:
-
-- Global Confluence
-- Scanner grezzo
-- Market regime
-- Struttura tecnica
-- Frattale SOL/BTC, solo per SOL
-
-Orizzonti controllati: 1, 3, 7, 14, 30 e 60 giorni.
-
-Segnali totali salvati: **{signal_count}**.
-
-## Ultimi segnali salvati
-
-{df_to_markdown(latest_table)}
-
-## Stato controlli
-
-{df_to_markdown(check_status_table)}
-
-## Accuratezza direzionale per modulo
-
-{df_to_markdown(accuracy_table)}
-
-## Come leggerlo
-
-- Prima di 30 controlli per asset/modulo, è solo raccolta dati.
-- Dopo 30 controlli, il modulo può iniziare a dare una calibrazione leggera.
-- Dopo 60 controlli, la lettura diventa più utile.
-- Dopo 100+ controlli, i pesi dei moduli possono essere regolati con più fiducia.
-
-Questo report non cambia ancora automaticamente i pesi del Global Confluence. Serve prima a capire quali moduli funzionano davvero.
-
-Nota tecnica: questo file ora legge i punteggi reali da **global_confluence_metrics.csv** e forza le colonne data come testo. Quindi non deve più dare errore `Invalid value '2026-07-10' for dtype 'float64'`.
-{END_MARKER}
-"""
-
-    return report
-
-
-def replace_block_in_latest(latest_text: str, block_text: str):
-    if START_MARKER in latest_text and END_MARKER in latest_text:
-        pattern = re.compile(
-            re.escape(START_MARKER) + r".*?" + re.escape(END_MARKER),
-            flags=re.DOTALL,
+    if latest_rows:
+        lines.append(
+            md_table(
+                [
+                    "Data",
+                    "Asset",
+                    "Prezzo",
+                    "Global",
+                    "Scanner",
+                    "Market",
+                    "Tecnico",
+                    "Classic",
+                    "Frattale",
+                    "Azione",
+                ],
+                latest_rows,
+            )
         )
-        return pattern.sub(block_text.rstrip(), latest_text)
+    else:
+        lines.append("Nessun segnale salvato.")
 
-    insert_after = "<!-- CALIBRATION_READABLE_END -->"
+    lines.append("")
+    lines.append("## Stato controlli per orizzonte")
+    lines.append("")
+    lines.append(
+        md_table(
+            ["Asset", "Segnali salvati"] + [f"{h}g" for h in HORIZONS],
+            stat_rows,
+        )
+    )
 
-    if insert_after in latest_text:
-        idx = latest_text.index(insert_after) + len(insert_after)
-        return latest_text[:idx] + "\n\n" + block_text.rstrip() + "\n" + latest_text[idx:]
+    lines.append("")
+    lines.append("## Prossimi controlli in arrivo")
+    lines.append("")
 
-    return latest_text.rstrip() + "\n\n" + block_text.rstrip() + "\n"
+    if pending_rows:
+        lines.append(
+            md_table(
+                ["Asset", "Segnale", "Orizzonte", "Data target", "Quando"],
+                pending_rows,
+            )
+        )
+    else:
+        lines.append("Non ci sono controlli pendenti.")
+
+    lines.append("")
+    lines.append("## Lettura rapida Global Confluence")
+    lines.append("")
+
+    if global_rows:
+        lines.append(
+            md_table(
+                [
+                    "Asset",
+                    "Orizzonte",
+                    "Controlli",
+                    "Accuratezza direzione",
+                    "Return medio",
+                    "Return corretto direzione",
+                    "Stato",
+                ],
+                global_rows,
+            )
+        )
+    else:
+        lines.append("Nessun controllo Global ancora maturato.")
+
+    lines.append("")
+    lines.append("## Accuratezza direzionale per modulo")
+    lines.append("")
+
+    if module_rows:
+        lines.append(
+            md_table(
+                [
+                    "Asset",
+                    "Orizzonte",
+                    "Modulo",
+                    "Controlli",
+                    "Accuratezza direzione",
+                    "Return medio",
+                    "Return corretto direzione",
+                    "Drawdown medio",
+                    "Max gain medio",
+                    "Stato",
+                ],
+                module_rows,
+            )
+        )
+    else:
+        lines.append(
+            "Nessun controllo modulo ancora maturato. Dal primo giorno utile compariranno "
+            "i controlli 1g, poi 2g, 3g, 5g e così via."
+        )
+
+    lines.append("")
+    lines.append("## Come leggerlo")
+    lines.append("")
+    lines.append("- **Controlli** = segnali non neutrali già verificati su quell'orizzonte.")
+    lines.append("- **Accuratezza direzione** = quante volte un segnale positivo ha avuto return positivo o un segnale negativo ha avuto return negativo.")
+    lines.append("- **Return medio** = rendimento reale medio dell'asset su quell'orizzonte.")
+    lines.append("- **Return corretto direzione** = return visto dal lato del modulo: se il modulo era ribassista, un calo conta positivo.")
+    lines.append("- **Drawdown medio** = peggior discesa media durante l'orizzonte.")
+    lines.append("- **Max gain medio** = massimo rialzo medio durante l'orizzonte.")
+    lines.append("")
+    lines.append("Regole operative:")
+    lines.append("")
+    lines.append("- Sotto **30 controlli**: solo osservazione, nessuna modifica ai pesi.")
+    lines.append("- Da **30 controlli**: possibile calibrazione leggera.")
+    lines.append("- Da **60 controlli**: lettura più utile.")
+    lines.append("- Da **100+ controlli**: possibile revisione più seria dei pesi.")
+    lines.append("")
+    lines.append(
+        "Questo report non cambia ancora automaticamente i pesi del Global Confluence. "
+        "Serve prima a capire quali moduli funzionano davvero sui vari orizzonti."
+    )
+    lines.append("")
+    lines.append(
+        "Nota tecnica: le colonne data sono forzate come testo, quindi non deve più apparire "
+        "l'errore `Invalid value 'YYYY-MM-DD' for dtype 'float64'`."
+    )
+
+    return "\n".join(lines).rstrip() + "\n"
 
 
-def write_metrics(accuracy_df: pd.DataFrame):
-    if accuracy_df is None or accuracy_df.empty:
-        return
-
+def save_metrics(metrics: pd.DataFrame) -> None:
     METRICS_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
-    accuracy_df.to_csv(METRICS_CSV_PATH, index=False)
+
+    if metrics.empty:
+        metrics = pd.DataFrame(
+            columns=[
+                "generated_utc",
+                "asset",
+                "horizon_days",
+                "horizon",
+                "horizon_family",
+                "module_key",
+                "module",
+                "controls",
+                "correct",
+                "accuracy_direction_pct",
+                "avg_return_pct",
+                "avg_direction_adjusted_return_pct",
+                "avg_drawdown_pct",
+                "avg_max_gain_pct",
+                "status",
+            ]
+        )
+
+    metrics.to_csv(METRICS_CSV_PATH, index=False)
 
 
 def main():
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    global_metrics = read_global_metrics()
+    global_rows = read_global_metrics_rows()
+    price_data = download_price_data()
 
-    prices_by_asset = {}
+    history = load_history()
 
-    for asset in ASSETS:
-        prices_by_asset[asset] = download_prices(TICKERS[asset])
+    new_rows = build_signal_rows(global_rows, price_data)
+    history = upsert_today_signals(history, new_rows)
+    history = update_checks(history, price_data)
+    history = ensure_history_columns(history)
 
-    old_history = load_history()
-    today_signals = build_today_signals(global_metrics, prices_by_asset)
-
-    history = append_today_signals(old_history, today_signals)
-    history = update_checks(history, prices_by_asset)
-
+    HISTORY_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
     history.to_csv(HISTORY_CSV_PATH, index=False)
 
-    accuracy_df = build_accuracy_table(history)
-    write_metrics(accuracy_df)
+    metrics = build_metrics(history)
+    save_metrics(metrics)
 
-    report_text = build_report(history)
+    report_md = build_report(history, metrics)
 
-    write_text(REPORT_PATH, report_text)
-    write_text(REPORT_ALIAS_PATH, report_text)
+    write_text(REPORT_PATH, report_md)
+    write_text(SHORT_REPORT_PATH, report_md)
 
     latest_text = read_text(LATEST_REPORT_PATH)
-    latest_updated = replace_block_in_latest(latest_text, report_text)
-    write_text(LATEST_REPORT_PATH, latest_updated)
+    if latest_text:
+        updated = replace_or_insert_block(latest_text, report_md)
+        write_text(LATEST_REPORT_PATH, updated)
+    else:
+        write_text(LATEST_REPORT_PATH, f"{START_MARKER}\n{report_md}{END_MARKER}\n")
 
-    print(f"Module Signal Tracker scritto in: {REPORT_PATH}")
-    print(f"Alias scritto in: {REPORT_ALIAS_PATH}")
-    print(f"History CSV scritto in: {HISTORY_CSV_PATH}")
-    print(f"Metrics CSV scritto in: {METRICS_CSV_PATH}")
-    print(f"Latest report aggiornato: {LATEST_REPORT_PATH}")
-
-    latest = today_signals.sort_values("asset")
-
-    for _, row in latest.iterrows():
-        print(
-            f"{row['asset']}: "
-            f"Global {fmt_score(row['global_score'])} | "
-            f"Scanner {fmt_score(row['scanner_score'])} | "
-            f"Market {fmt_score(row['market_score'])} | "
-            f"Tecnico {fmt_score(row['technical_score_component'])} | "
-            f"Frattale {fmt_score(row['sol_fractal_score'])}"
-        )
+    print(f"Module signal tracker report scritto in: {REPORT_PATH}")
+    print(f"Module signal tracker short report scritto in: {SHORT_REPORT_PATH}")
+    print(f"History scritto in: {HISTORY_CSV_PATH}")
+    print(f"Metrics scritto in: {METRICS_CSV_PATH}")
 
 
 if __name__ == "__main__":
