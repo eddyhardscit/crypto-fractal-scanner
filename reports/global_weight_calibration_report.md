@@ -1,6 +1,6 @@
 # Calibrazione pesi Global Confluence
 
-Generato: **2026-07-09 17:56 UTC**
+Generato: **2026-07-09 18:21 UTC**
 
 Questo report prepara la calibrazione futura dei pesi del Global Confluence.
 
@@ -58,35 +58,26 @@ Fonte dati letta: **module_accuracy_metrics.csv**
 
 Questa tabella mostra gli score attuali. La calibrazione qui sotto non li modifica ancora.
 
-| Asset   | Modulo        | Score attuale   |
-|:--------|:--------------|:----------------|
-| BTC     | Daily change  | +1,00           |
-| BTC     | Fractal path  | 0,00            |
-| BTC     | Futures       | 0,00            |
-| BTC     | Market regime | +3,00           |
-| BTC     | RSI top-cycle | 0,00            |
-| BTC     | Scanner       | +1,00           |
-| BTC     | Scanner path  | 0,00            |
-| BTC     | Tecnico       | -2,00           |
-| BTC     | Totale        | +3,00           |
-| SOL     | Daily change  | 0,00            |
-| SOL     | Fractal path  | 0,00            |
-| SOL     | Futures       | 0,00            |
-| SOL     | Market regime | +2,00           |
-| SOL     | RSI top-cycle | +1,00           |
-| SOL     | Scanner       | -1,00           |
-| SOL     | Scanner path  | 0,00            |
-| SOL     | Tecnico       | +1,00           |
-| SOL     | Totale        | +4,00           |
-| DOGE    | Daily change  | 0,00            |
-| DOGE    | Fractal path  | 0,00            |
-| DOGE    | Futures       | 0,00            |
-| DOGE    | Market regime | -3,00           |
-| DOGE    | RSI top-cycle | 0,00            |
-| DOGE    | Scanner       | -3,00           |
-| DOGE    | Scanner path  | 0,00            |
-| DOGE    | Tecnico       | -3,00           |
-| DOGE    | Totale        | -9,00           |
+| Asset   | Modulo       | Score attuale   |
+|:--------|:-------------|:----------------|
+| BTC     | Daily change | +1,00           |
+| BTC     | Fractal path | 0,00            |
+| BTC     | Futures      | 0,00            |
+| BTC     | Scanner      | +3,00           |
+| BTC     | Scanner path | 0,00            |
+| BTC     | Totale       | +6,00           |
+| SOL     | Daily change | 0,00            |
+| SOL     | Fractal path | 0,00            |
+| SOL     | Futures      | 0,00            |
+| SOL     | Scanner      | -1,00           |
+| SOL     | Scanner path | 0,00            |
+| SOL     | Totale       | +4,00           |
+| DOGE    | Daily change | 0,00            |
+| DOGE    | Fractal path | 0,00            |
+| DOGE    | Futures      | 0,00            |
+| DOGE    | Scanner      | -3,00           |
+| DOGE    | Scanner path | 0,00            |
+| DOGE    | Totale       | -9,00           |
 
 ## Lettura operativa
 
