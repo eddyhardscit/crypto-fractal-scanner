@@ -26,8 +26,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install tabulate
-          pip install matplotlib
+          pip install tabulate matplotlib yfinance pandas numpy
 
       - name: Run scanner
         run: python scanner.py
@@ -58,6 +57,12 @@ jobs:
 
       - name: Run technical structure report
         run: python technical_structure_report.py
+
+      - name: Run classic technical confirmation report
+        run: python classic_technical_confirmation_report.py
+
+      - name: Run classic technical visual report
+        run: python classic_technical_visual_report.py
 
       - name: Run scanner forecast tracker
         run: python scanner_forecast_tracker.py
