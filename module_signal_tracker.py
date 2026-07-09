@@ -131,6 +131,98 @@ def read_text(path):
         return ""
 
 
+def parse_bool_nullable(value):
+    """
+    Converte valori vecchi del CSV in booleano nullable Pandas.
+    Serve per evitare errori tipo:
+    TypeError: Invalid value 'False' for dtype 'float64'
+    """
+    try:
+        if pd.isna(value):
+            return pd.NA
+    except Exception:
+        pass
+
+    if isinstance(value, bool):
+        return value
+
+    if isinstance(value, (int, float, np.integer, np.floating)):
+        if pd.isna(value):
+            return pd.NA
+        if float(value) == 1.0:
+            return True
+        if float(value) == 0.0:
+            return False
+        return pd.NA
+
+    s = str(value).strip().lower()
+
+    if s in ["true", "1", "1.0", "yes", "y", "si", "sì"]:
+        return True
+
+    if s in ["false", "0", "0.0", "no", "n"]:
+        return False
+
+    if s in ["", "nan", "none", "null", "<na>", "na", "n/a"]:
+        return pd.NA
+
+    return pd.NA
+
+
+def ensure_bool_column(df, col):
+    """
+    Garantisce che una colonna sia di tipo boolean nullable.
+    Così può contenere True, False e valori vuoti.
+    """
+    if col not in df.columns:
+        df[col] = pd.Series(pd.NA, index=df.index, dtype="boolean")
+    else:
+        df[col] = df[col].map(parse_bool_nullable).astype("boolean")
+
+    return df
+
+
+def ensure_numeric_column(df, col):
+    if col not in df.columns:
+        df[col] = np.nan
+    else:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    return df
+
+
+def normalize_signal_log_schema(log_df):
+    """
+    Normalizza il CSV storico dopo il caricamento.
+    GitHub Actions usa una versione di Pandas più rigida:
+    se una colonna era vuota, può leggerla come float64.
+    Poi quando il codice prova a scriverci False, Pandas blocca tutto.
+
+    Questa funzione forza:
+    - checked_* a boolean nullable
+    - direction_correct_* a boolean nullable
+    - prezzi/return/drawdown/max_gain a numerico
+    """
+    if log_df is None or log_df.empty:
+        return log_df
+
+    for h in HORIZONS:
+        log_df = ensure_bool_column(log_df, f"checked_{h}d")
+
+        log_df = ensure_numeric_column(log_df, f"end_price_{h}d")
+        log_df = ensure_numeric_column(log_df, f"return_{h}d")
+        log_df = ensure_numeric_column(log_df, f"drawdown_{h}d")
+        log_df = ensure_numeric_column(log_df, f"max_gain_{h}d")
+
+        log_df = ensure_bool_column(log_df, f"direction_correct_global_{h}d")
+        log_df = ensure_bool_column(log_df, f"direction_correct_scanner_{h}d")
+        log_df = ensure_bool_column(log_df, f"direction_correct_market_{h}d")
+        log_df = ensure_bool_column(log_df, f"direction_correct_technical_{h}d")
+        log_df = ensure_bool_column(log_df, f"direction_correct_fractal_{h}d")
+
+    return log_df
+
+
 def normalize_ohlcv(df):
     if df is None or df.empty:
         return pd.DataFrame()
@@ -462,11 +554,11 @@ def build_today_rows():
             row[f"drawdown_{h}d"] = np.nan
             row[f"max_gain_{h}d"] = np.nan
 
-            row[f"direction_correct_global_{h}d"] = np.nan
-            row[f"direction_correct_scanner_{h}d"] = np.nan
-            row[f"direction_correct_market_{h}d"] = np.nan
-            row[f"direction_correct_technical_{h}d"] = np.nan
-            row[f"direction_correct_fractal_{h}d"] = np.nan
+            row[f"direction_correct_global_{h}d"] = pd.NA
+            row[f"direction_correct_scanner_{h}d"] = pd.NA
+            row[f"direction_correct_market_{h}d"] = pd.NA
+            row[f"direction_correct_technical_{h}d"] = pd.NA
+            row[f"direction_correct_fractal_{h}d"] = pd.NA
 
         rows.append(row)
 
@@ -475,11 +567,15 @@ def build_today_rows():
 
 def append_today_log():
     today_rows = build_today_rows()
+    today_rows = normalize_signal_log_schema(today_rows)
 
     if SIGNAL_LOG.exists():
         old = load_csv(SIGNAL_LOG)
     else:
         old = pd.DataFrame()
+
+    if not old.empty:
+        old = normalize_signal_log_schema(old)
 
     if not old.empty and "prediction_date" in old.columns and "asset" in old.columns:
         old = old[
@@ -493,6 +589,7 @@ def append_today_log():
     else:
         combined = today_rows
 
+    combined = normalize_signal_log_schema(combined)
     combined.to_csv(SIGNAL_LOG, index=False)
 
     return combined
@@ -568,7 +665,7 @@ def direction_correct(score, real_return):
     direction = sign_from_score(score)
 
     if direction == 0 or pd.isna(real_return):
-        return np.nan
+        return pd.NA
 
     if direction > 0:
         return bool(real_return > 0)
@@ -579,6 +676,8 @@ def direction_correct(score, real_return):
 def update_checks(log_df):
     if log_df.empty:
         return log_df
+
+    log_df = normalize_signal_log_schema(log_df)
 
     today = pd.to_datetime(today_str())
 
@@ -599,7 +698,7 @@ def update_checks(log_df):
         for h in HORIZONS:
             checked_col = f"checked_{h}d"
 
-            already_checked = str(row.get(checked_col, "False")).lower() == "true"
+            already_checked = parse_bool_nullable(row.get(checked_col, False)) is True
 
             if already_checked:
                 continue
@@ -643,6 +742,7 @@ def update_checks(log_df):
                 outcome["return"],
             )
 
+    log_df = normalize_signal_log_schema(log_df)
     log_df.to_csv(SIGNAL_LOG, index=False)
 
     return log_df
@@ -662,6 +762,8 @@ def summarize_accuracy(log_df):
     if log_df.empty:
         return pd.DataFrame()
 
+    log_df = normalize_signal_log_schema(log_df)
+
     for asset in ASSETS:
         asset_df = log_df[log_df["asset"].astype(str) == asset].copy()
 
@@ -671,7 +773,7 @@ def summarize_accuracy(log_df):
             if checked_col not in asset_df.columns:
                 continue
 
-            checked = asset_df[asset_df[checked_col].astype(str).str.lower() == "true"].copy()
+            checked = asset_df[asset_df[checked_col].map(parse_bool_nullable) == True].copy()
 
             for module_name, score_col, correct_prefix in modules:
                 if score_col not in checked.columns:
@@ -700,7 +802,7 @@ def summarize_accuracy(log_df):
                     avg_drawdown = np.nan
                     avg_max_gain = np.nan
                 else:
-                    correct_bool = c[correct_col].astype(str).str.lower().isin(["true", "1", "1.0"])
+                    correct_bool = c[correct_col].map(parse_bool_nullable) == True
                     accuracy = correct_bool.mean() * 100
                     avg_return = pd.to_numeric(c[f"return_{horizon}d"], errors="coerce").mean()
                     avg_drawdown = pd.to_numeric(c[f"drawdown_{horizon}d"], errors="coerce").mean()
@@ -759,6 +861,8 @@ def render_report(log_df, metrics):
         lines.append("_Nessun segnale salvato._")
         return "\n".join(lines) + "\n"
 
+    log_df = normalize_signal_log_schema(log_df)
+
     total_signals = len(log_df)
     lines.append(f"Segnali totali salvati: **{total_signals}**.")
     lines.append("")
@@ -806,7 +910,7 @@ def render_report(log_df, metrics):
             checked_col = f"checked_{h}d"
 
             if checked_col in d.columns:
-                checked = d[d[checked_col].astype(str).str.lower() == "true"]
+                checked = d[d[checked_col].map(parse_bool_nullable) == True]
                 row[f"{h}g controllati"] = len(checked)
             else:
                 row[f"{h}g controllati"] = 0
