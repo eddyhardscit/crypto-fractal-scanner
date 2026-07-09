@@ -1,873 +1,1434 @@
-import os
+import csv
 import re
 from datetime import datetime, timezone
-
-import numpy as np
-import pandas as pd
-from tabulate import tabulate
+from pathlib import Path
 
 
-REPORT_DIR = "reports"
-MAIN_REPORT_PATH = os.path.join(REPORT_DIR, "latest_report.md")
-REPORT_PATH = os.path.join(REPORT_DIR, "global_confluence_report.md")
-CSV_PATH = os.path.join(REPORT_DIR, "global_confluence_metrics.csv")
+REPORTS_DIR = Path("reports")
+LATEST_REPORT_PATH = REPORTS_DIR / "latest_report.md"
+REPORT_PATH = REPORTS_DIR / "global_confluence_report.md"
+METRICS_CSV_PATH = REPORTS_DIR / "global_confluence_metrics.csv"
 
 START_MARKER = "<!-- GLOBAL_CONFLUENCE_START -->"
 END_MARKER = "<!-- GLOBAL_CONFLUENCE_END -->"
 
 ASSETS = ["BTC", "SOL", "DOGE"]
 
-SECTION_MARKERS = {
-    "daily_change": ("<!-- DAILY_CHANGE_START -->", "<!-- DAILY_CHANGE_END -->"),
-    "scanner_forecast": ("<!-- SCANNER_FORECAST_TRACKER_START -->", "<!-- SCANNER_FORECAST_TRACKER_END -->"),
-    "btc_sol_fractal": ("<!-- BTC_SOL_FRACTAL_START -->", "<!-- BTC_SOL_FRACTAL_END -->"),
-    "rsi_top_cycle": ("<!-- RSI_TOP_CYCLE_START -->", "<!-- RSI_TOP_CYCLE_END -->"),
-    "lifecycle": ("<!-- MAJOR_ALT_LIFECYCLE_SQUEEZE_START -->", "<!-- MAJOR_ALT_LIFECYCLE_SQUEEZE_END -->"),
-    "liquidations": ("<!-- LIQUIDATION_SUMMARY_START -->", "<!-- LIQUIDATION_SUMMARY_END -->"),
-    "fractal_path": ("<!-- FRACTAL_PATH_TRACKER_START -->", "<!-- FRACTAL_PATH_TRACKER_END -->"),
-    "market_regime": ("<!-- MARKET_REGIME_MATCH_START -->", "<!-- MARKET_REGIME_MATCH_END -->"),
-    "technical": ("<!-- TECHNICAL_STRUCTURE_START -->", "<!-- TECHNICAL_STRUCTURE_END -->"),
+ASSET_NAMES = {
+    "BTC": "Bitcoin",
+    "SOL": "Solana",
+    "DOGE": "Dogecoin",
 }
 
+ASSET_TICKERS = {
+    "BTC": "BTC-USD",
+    "SOL": "SOL-USD",
+    "DOGE": "DOGE-USD",
+}
 
-def now_utc():
-    return datetime.now(timezone.utc)
+SOURCE_EXCLUDE_MARKERS = [
+    "DECISION_REPORT",
+    "GLOBAL_CONFLUENCE",
+    "MODULE_ACCURACY",
+    "GLOBAL_WEIGHT_CALIBRATION",
+    "RISK_CALIBRATION",
+    "SOL_BTC_FRACTAL_HISTORY",
+]
 
 
-def read_text(path):
-    if not os.path.exists(path):
+def read_text(path: Path) -> str:
+    if not path.exists():
         return ""
-    with open(path, "r", encoding="utf-8") as f:
-        return f.read()
+    return path.read_text(encoding="utf-8")
 
 
-def write_text(path, text):
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(text)
+def write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
 
 
-def safe_float(v, default=np.nan):
-    try:
-        if v is None:
-            return default
-
-        if isinstance(v, str):
-            s = v.strip()
-
-            if not s or s.lower() in ["nan", "none", "null", "n/a", "na"]:
-                return default
-
-            s = s.replace("%", "")
-            s = s.replace("$", "")
-            s = s.replace("€", "")
-            s = s.replace("+", "")
-            s = s.replace("−", "-")
-            s = s.replace(" ", "")
-
-            if "," in s and "." in s:
-                s = s.replace(".", "").replace(",", ".")
-            elif "," in s:
-                s = s.replace(",", ".")
-
-            s = re.sub(r"[^0-9.\-]", "", s)
-
-            if not s or s in ["-", ".", "-."]:
-                return default
-
-            return float(s)
-
-        if pd.isna(v):
-            return default
-
-        return float(v)
-
-    except Exception:
-        return default
+def now_utc_str() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
 
-def fmt_pct(v, decimals=2, signed=False):
-    v = safe_float(v)
+def remove_marker_block(text: str, marker_name: str) -> str:
+    start = f"<!-- {marker_name}_START -->"
+    end = f"<!-- {marker_name}_END -->"
 
-    if pd.isna(v):
-        return "n/a"
-
-    sign = "+" if signed and v > 0 else ""
-    return f"{sign}{v:.{decimals}f}%".replace(".", ",")
-
-
-def fmt_score(v):
-    try:
-        v = int(v)
-    except Exception:
-        return "0"
-
-    if v > 0:
-        return f"+{v}"
-
-    return str(v)
+    pattern = re.compile(
+        re.escape(start) + r".*?" + re.escape(end),
+        flags=re.DOTALL,
+    )
+    return pattern.sub("", text)
 
 
-def fmt_price_level(v, decimals=2):
-    v = safe_float(v)
-
-    if pd.isna(v):
-        return "n/a"
-
-    if abs(v) >= 1000:
-        s = f"{v:,.0f}".replace(",", ".")
-        return s
-
-    if abs(v) >= 1:
-        return f"{v:.2f}".replace(".", ",")
-
-    return f"{v:.5f}"
+def clean_source_text(text: str) -> str:
+    out = text
+    for marker in SOURCE_EXCLUDE_MARKERS:
+        out = remove_marker_block(out, marker)
+    return out
 
 
-def section(text, name):
-    start, end = SECTION_MARKERS[name]
+def extract_marker_block(text: str, marker_name: str) -> str:
+    start = f"<!-- {marker_name}_START -->"
+    end = f"<!-- {marker_name}_END -->"
 
-    if start in text and end in text:
-        s = text.index(start)
-        e = text.index(end) + len(end)
-        return text[s:e]
-
-    return ""
-
-
-def clean_cell(cell):
-    cell = str(cell).strip()
-    cell = cell.replace("**", "")
-    cell = cell.replace("`", "")
-    cell = cell.replace("<br>", " ")
-    cell = re.sub(r"\s+", " ", cell)
-    return cell.strip()
+    pattern = re.compile(
+        re.escape(start) + r"(.*?)" + re.escape(end),
+        flags=re.DOTALL,
+    )
+    match = pattern.search(text)
+    if not match:
+        return ""
+    return match.group(1).strip()
 
 
-def parse_markdown_table_rows(text):
-    rows = []
+def replace_block(text: str, block: str) -> str:
+    full_block = f"{START_MARKER}\n{block.rstrip()}\n{END_MARKER}"
 
-    for line in text.splitlines():
-        if "|" not in line:
-            continue
+    if START_MARKER in text and END_MARKER in text:
+        pattern = re.compile(
+            re.escape(START_MARKER) + r".*?" + re.escape(END_MARKER),
+            flags=re.DOTALL,
+        )
+        return pattern.sub(full_block, text)
 
-        stripped = line.strip()
+    decision_end = "<!-- DECISION_REPORT_END -->"
+    if decision_end in text:
+        return text.replace(decision_end, decision_end + "\n\n" + full_block, 1)
 
-        if not stripped.startswith("|") and "|" not in stripped:
-            continue
-
-        cells = [clean_cell(c) for c in stripped.strip("|").split("|")]
-
-        if len(cells) < 2:
-            continue
-
-        joined = "".join(cells).replace(":", "").replace("-", "").strip()
-        if not joined:
-            continue
-
-        # Salta righe separatore tipo | --- | --- |
-        if all(re.fullmatch(r":?-{2,}:?", c.replace(" ", "")) for c in cells if c):
-            continue
-
-        rows.append(cells)
-
-    return rows
+    return full_block + "\n\n" + text
 
 
-def find_table_row(text, first_cell):
-    target = first_cell.strip().upper()
-
-    for cells in parse_markdown_table_rows(text):
-        if not cells:
-            continue
-
-        if clean_cell(cells[0]).upper() == target:
-            return cells
-
-    return None
-
-
-def find_row_containing(text, contains):
-    contains = contains.upper()
-
-    for cells in parse_markdown_table_rows(text):
-        if cells and contains in clean_cell(cells[0]).upper():
-            return cells
-
-    return None
-
-
-def extract_first(pattern, text, flags=re.IGNORECASE | re.MULTILINE):
-    m = re.search(pattern, text, flags)
-
-    if not m:
+def parse_number(value):
+    if value is None:
         return None
 
-    return clean_cell(m.group(1))
+    s = str(value)
+    s = s.replace("\xa0", " ").strip()
+
+    if not s or s.lower() in {"n/a", "nan", "none", "-"}:
+        return None
+
+    match = re.search(r"[-+]?\d[\d\s.,]*", s)
+    if not match:
+        return None
+
+    token = match.group(0).replace(" ", "")
+
+    if "," in token:
+        token = token.replace(".", "")
+        token = token.replace(",", ".")
+    elif "." in token:
+        parts = token.split(".")
+        if (
+            len(parts) == 2
+            and len(parts[1]) == 3
+            and parts[0] != "0"
+            and len(parts[0]) <= 3
+        ):
+            token = parts[0] + parts[1]
+
+    try:
+        return float(token)
+    except ValueError:
+        return None
 
 
-def component_scanner(asset, full_text):
-    asset_title = {
-        "BTC": "Bitcoin",
-        "SOL": "Solana",
-        "DOGE": "Dogecoin",
-    }[asset]
-
-    pattern = rf"# {asset_title} — mappa semplice.*?(?=\n---|\n# Come leggere|\n# Approfondimento|\Z)"
-    m = re.search(pattern, full_text, re.IGNORECASE | re.DOTALL)
-
-    block = m.group(0) if m else full_text
-
-    positive_raw = extract_first(r"Probabilità storica di salita:\s*\*?\*?([+\-]?[0-9]+[,.]?[0-9]*)%?", block)
-    direction = extract_first(r"Direzione più probabile a 30 giorni:\s*\*?\*?([A-ZÀ-Ú /]+)", block)
-    p50_return = extract_first(r"Return normale fra 30 giorni:\s*\*?\*?[^()]*$begin:math:text$\(\[\+\\\-\]\?\[0\-9\]\+\[\,\.\]\?\[0\-9\]\*\)\%$end:math:text$", block)
-
-    positive = safe_float(positive_raw)
-    p50 = safe_float(p50_return)
-
-    if pd.isna(positive):
-        return 0, "Dati scanner non trovati."
-
-    if positive >= 65 and p50 > 0:
-        score = 3
-    elif positive >= 55 and p50 > 0:
-        score = 2
-    elif positive >= 50:
-        score = 1
-    elif positive >= 40:
-        score = -1
-    elif positive >= 25:
-        score = -2
-    else:
-        score = -3
-
-    direction_text = direction if direction else "n/a"
-
-    return score, f"Casi positivi {positive:.2f}%, return centrale 30g {fmt_pct(p50, signed=True)}. Direzione scanner: {direction_text}."
+def clean_cell(value: str) -> str:
+    if value is None:
+        return ""
+    s = str(value).strip()
+    s = s.replace("**", "")
+    s = s.replace("`", "")
+    return s.strip()
 
 
-def component_scanner_path(asset, full_text):
-    sec = section(full_text, "scanner_forecast")
-    row = find_table_row(sec, asset)
+def split_md_row(line: str):
+    line = line.strip()
+    if not line.startswith("|") or not line.endswith("|"):
+        return None
 
-    if not row:
-        return 0, "Scanner path non disponibile."
+    cells = [clean_cell(c) for c in line.strip("|").split("|")]
 
-    # Tabella accuratezza percorso:
-    # Asset | Giorno | Controlli | Dentro p10-p90 | Dentro p25-p75 | ...
-    rows = parse_markdown_table_rows(sec)
-    controls = 0
+    if not cells:
+        return None
 
-    for cells in rows:
-        if len(cells) >= 3 and cells[0].upper() == asset and cells[1].lower() == "1g":
-            controls = int(safe_float(cells[2], 0))
-            break
+    if all(set(c.replace(":", "").strip()) <= {"-"} for c in cells if c.strip()):
+        return None
 
-    if controls < 5:
-        return 0, f"Raccolta dati. Controlli disponibili {controls}. Servono almeno 5 controlli prima di pesare il cono previsionale."
-
-    return 0, f"Scanner path attivo con {controls} controlli, ma peso ancora neutro."
+    return cells
 
 
-def component_market_regime(asset, full_text):
-    sec = section(full_text, "market_regime")
-    target = f"{asset}-USD"
-
-    rows = parse_markdown_table_rows(sec)
-
-    chosen = None
-
-    for cells in rows:
-        if len(cells) >= 6 and cells[0].upper() == target and cells[1] == "SAME_BTC_AND_ASSET_REGIME":
-            chosen = cells
-            break
-
-    if not chosen:
-        return 0, "Market regime non disponibile."
-
-    matches = int(safe_float(chosen[2], 0))
-    positive_30d = safe_float(chosen[3])
-    p50 = safe_float(chosen[4])
-
-    if matches < 5:
-        return 0, f"Gruppo SAME_BTC_AND_ASSET_REGIME con pochi match ({matches}), non pesato."
-
-    if positive_30d >= 80 and p50 > 5:
-        score = 3
-    elif positive_30d >= 60:
-        score = 2
-    elif positive_30d >= 52:
-        score = 1
-    elif positive_30d <= 20:
-        score = -3
-    elif positive_30d <= 40:
-        score = -2
-    else:
-        score = 0
-
-    return score, f"Gruppo SAME_BTC_AND_ASSET_REGIME, match {matches}, positivi 30g {fmt_pct(positive_30d)}, return p50 {fmt_pct(p50, signed=True)}."
+def fmt_signed_int(value) -> str:
+    if value is None:
+        return "0"
+    value = int(value)
+    if value > 0:
+        return f"+{value}"
+    return str(value)
 
 
-def component_technical(asset, full_text):
-    sec = section(full_text, "technical")
-    row = find_table_row(sec, asset)
-
-    if not row or len(row) < 10:
-        return 0, "Struttura tecnica non disponibile."
-
-    raw_score = int(safe_float(row[2], 0))
-    verdict = row[3].lower()
-    trend = row[4].lower()
-    structure = row[6].lower()
-    divergence = row[7].lower()
-    wyckoff = row[8].lower()
-
-    if raw_score >= 7:
-        score = 3
-    elif raw_score >= 3:
-        score = 2
-    elif raw_score >= 1:
-        score = 1
-    elif raw_score >= -2:
-        score = 0
-    elif raw_score >= -6:
-        score = -2
-    else:
-        score = -3
-
-    return score, f"Score tecnico {raw_score}/12, verdetto {verdict}, trend {trend}, struttura {structure}, divergenza {divergence}, Wyckoff {wyckoff}."
+def fmt_pct(value, decimals: int = 2) -> str:
+    if value is None:
+        return "n/a"
+    s = f"{value:+.{decimals}f}%"
+    return s.replace(".", ",")
 
 
-def component_sol_fractal(asset, full_text):
-    if asset != "SOL":
-        return 0, "Non applicabile a questo asset."
-
-    sec = section(full_text, "btc_sol_fractal")
-
-    verdict = extract_first(r"##\s*Verdetto:\s*([^\n]+)", sec) or "n/a"
-    similarity = safe_float(extract_first(r"Somiglianza totale:\s*\+?([0-9]+[,.]?[0-9]*)", sec))
-    tracking = extract_first(r"Trend tracking:\s*([^\n]+)", sec) or "n/a"
-    phase = extract_first(r"Fase attuale:\s*([^\n]+)", sec) or "n/a"
-    risk = extract_first(r"Rischio fase:\s*([^\n]+)", sec) or "n/a"
-
-    verdict_u = verdict.upper()
-    tracking_u = tracking.upper()
-
-    if "SI FORTE" in verdict_u or ("PARZIALMENTE" in verdict_u and similarity >= 75):
-        score = 3
-    elif "PARZIALMENTE" in verdict_u and similarity >= 70:
-        score = 2
-    elif "PARZIALMENTE" in verdict_u:
-        score = 1
-    elif "NO" in verdict_u or "ROTTO" in tracking_u:
-        score = -2
-    else:
-        score = 0
-
-    return score, f"Verdetto {verdict}, somiglianza {fmt_pct(similarity, signed=True)}, tracking {tracking}, fase {phase}, rischio {risk}."
+def fmt_pct_plain(value, decimals: int = 2) -> str:
+    if value is None:
+        return "n/a"
+    s = f"{value:.{decimals}f}%"
+    return s.replace(".", ",")
 
 
-def component_fractal_path(asset, full_text):
-    if asset != "SOL":
-        return 0, "Non applicabile a questo asset."
+def fmt_price(asset: str, value) -> str:
+    if value is None:
+        return "n/a"
 
-    sec = section(full_text, "fractal_path")
+    v = float(value)
 
-    rows = parse_markdown_table_rows(sec)
+    if asset == "BTC":
+        s = f"{v:,.0f}"
+        s = s.replace(",", ".")
+        return s
 
-    controls_total = 0
+    if asset == "DOGE":
+        return f"{v:.5f}"
 
-    for cells in rows:
-        if len(cells) >= 2:
-            first = cells[0].lower()
-            if re.fullmatch(r"\d+g", first):
-                controls_total += int(safe_float(cells[1], 0))
-
-    if controls_total < 5:
-        return 0, "Tracking operativo, ma nessuna milestone settimanale ancora verificata. Il modulo non pesa finché non maturano abbastanza controlli."
-
-    return 0, f"Tracking operativo con {controls_total} controlli verificati. Peso ancora neutro finché non ci sono almeno 30+ controlli."
+    s = f"{v:,.2f}"
+    s = s.replace(",", "X").replace(".", ",").replace("X", ".")
+    return s
 
 
-def component_rsi_top_cycle(asset, full_text):
-    if asset != "SOL":
-        return 0, "Non applicabile a questo asset."
+def fmt_money(asset: str, value) -> str:
+    if value is None:
+        return "n/a"
 
-    sec = section(full_text, "rsi_top_cycle")
+    if asset == "DOGE":
+        return f"{fmt_price(asset, value)} $"
 
-    risk = extract_first(r"Rischio top-cycle RSI\s*\|\s*([^|]+)\|", sec)
-    if not risk:
-        risk = extract_first(r"Rischio top-cycle RSI.*?\|\s*([A-ZÀ-Ú /]+)\s*\|", sec)
-
-    if not risk:
-        risk = extract_first(r"Rischio top-cycle RSI.*?([A-ZÀ-Ú /]+)", sec) or "n/a"
-
-    risk_u = risk.upper()
-
-    if "BASSO" in risk_u:
-        return 1, "Rischio top-cycle RSI: BASSO."
-
-    if "ALTO" in risk_u:
-        return -2, f"Rischio top-cycle RSI: {risk}."
-
-    return 0, f"Rischio top-cycle RSI: {risk}."
+    return f"{fmt_price(asset, value)} $"
 
 
-def component_lifecycle(asset, full_text):
-    if asset != "SOL":
-        return 0, "Non applicabile a questo asset."
+def md_table(headers, rows) -> str:
+    out = []
+    out.append("| " + " | ".join(headers) + " |")
+    out.append("| " + " | ".join(["---"] * len(headers)) + " |")
 
-    sec = section(full_text, "lifecycle")
+    for row in rows:
+        out.append("| " + " | ".join(str(x) for x in row) + " |")
 
-    lifecycle_score = safe_float(extract_first(r"Lifecycle squeeze score\s*\|\s*([0-9]+)", sec), 0)
-    bias = extract_first(r"Bias\s*\|\s*([^|]+)", sec) or "n/a"
-    action = extract_first(r"Azione coerente\s*\|\s*([^|]+)", sec) or "n/a"
-    ema200 = extract_first(r"EMA200 weekly target\s*\|\s*([^|]+)", sec) or "n/a"
-    upside = extract_first(r"Upside verso EMA200\s*\|\s*([^|]+)", sec) or "n/a"
-    gap = extract_first(r"Gap EMA50/EMA200\s*\|\s*([^|]+)", sec) or "n/a"
-    hit = extract_first(r"Hit EMA200 12w analoghi\s*\|\s*([^|]+)", sec) or "n/a"
-    trend = extract_first(r"Trend squeeze\s*\|\s*([^|]+)", sec) or "n/a"
+    return "\n".join(out)
 
-    # Scelta definitiva:
-    # Lifecycle / EMA200 resta come contesto, ma NON pesa nel Global Confluence.
+
+def extract_section_after(text: str, start_pattern: str, end_pattern: str = r"\n#{1,3}\s+"):
+    match = re.search(start_pattern, text, flags=re.IGNORECASE)
+    if not match:
+        return ""
+
+    start = match.start()
+    rest = text[start + 1 :]
+
+    end_match = re.search(end_pattern, rest, flags=re.IGNORECASE)
+    if not end_match:
+        return text[start:]
+
+    end = start + 1 + end_match.start()
+    return text[start:end]
+
+
+def extract_quick_asset_section(text: str, asset: str) -> str:
+    name = ASSET_NAMES[asset]
+
+    anchor = text.find("# Lettura velocissima")
+    if anchor < 0:
+        anchor = 0
+
+    sub = text[anchor:]
+
+    pattern = rf"##\s+{re.escape(name)}\b"
+    match = re.search(pattern, sub, flags=re.IGNORECASE)
+    if not match:
+        return ""
+
+    start = match.start()
+    rest = sub[start + 1 :]
+
+    end_match = re.search(r"\n##\s+", rest)
+    if not end_match:
+        return sub[start:]
+
+    end = start + 1 + end_match.start()
+    return sub[start:end]
+
+
+def extract_detailed_asset_section(text: str, asset: str) -> str:
+    name = ASSET_NAMES[asset]
+    pattern = rf"#\s+Approfondimento tecnico\s+—\s+{re.escape(name)}"
+    return extract_section_after(text, pattern, r"\n---\n|\n#\s+Approfondimento tecnico|\n<!--")
+
+
+def component_template(score=0, detail="n/a", data=None):
+    return {
+        "score": int(score),
+        "detail": detail,
+        "data": data or {},
+    }
+
+
+def parse_scanner_component(text: str, asset: str):
+    quick = extract_quick_asset_section(text, asset)
+    detailed = extract_detailed_asset_section(text, asset)
+    source = quick + "\n" + detailed
+
+    direction = None
+    positive_rate = None
+    negative_rate = None
+    return_p50 = None
+    price = None
+
+    m = re.search(
+        r"Direzione più probabile a 30 giorni:\s*\*\*([^*]+)\*\*",
+        source,
+        flags=re.IGNORECASE,
+    )
+    if m:
+        direction = clean_cell(m.group(1)).upper()
+
+    m = re.search(
+        r"Casi positivi.*?:\s*\*\*([+\-]?\d[\d.,]*)%",
+        source,
+        flags=re.IGNORECASE,
+    )
+    if m:
+        positive_rate = parse_number(m.group(1))
+
+    m = re.search(
+        r"Casi negativi.*?:\s*\*\*([+\-]?\d[\d.,]*)%",
+        source,
+        flags=re.IGNORECASE,
+    )
+    if m:
+        negative_rate = parse_number(m.group(1))
+
+    m = re.search(
+        r"Return normale fra 30 giorni:\s*\*\*.*?\*\*\s*$begin:math:text$\(\[\+\\\-\]\?\\d\[\\d\.\,\]\*\)\%$end:math:text$",
+        source,
+        flags=re.IGNORECASE,
+    )
+    if m:
+        return_p50 = parse_number(m.group(1))
+
+    if return_p50 is None:
+        m = re.search(
+            r"Rendimento centrale dopo 30 giorni:\s*\*\*([+\-]?\d[\d.,]*)%",
+            source,
+            flags=re.IGNORECASE,
+        )
+        if m:
+            return_p50 = parse_number(m.group(1))
+
+    m = re.search(
+        r"Prezzo attuale:\s*\*\*([^\n*]+)\*\*",
+        source,
+        flags=re.IGNORECASE,
+    )
+    if m:
+        price = parse_number(m.group(1))
+
     score = 0
 
+    if positive_rate is not None and return_p50 is not None:
+        if positive_rate >= 65 and return_p50 > 0:
+            score = 3
+        elif positive_rate >= 58 and return_p50 >= 0:
+            score = 2
+        elif positive_rate >= 52 and return_p50 >= 0:
+            score = 1
+        elif positive_rate <= 20 and return_p50 < 0:
+            score = -3
+        elif positive_rate <= 35 and return_p50 < 0:
+            score = -2
+        elif positive_rate < 48 and return_p50 < 0:
+            score = -1
+        else:
+            score = 0
+    elif positive_rate is not None:
+        if positive_rate >= 65:
+            score = 1
+        elif positive_rate <= 20:
+            score = -3
+        elif positive_rate <= 35:
+            score = -2
+        elif positive_rate < 48:
+            score = -1
+
     detail = (
-        f"Contesto non pesato nel Global. Lifecycle score {int(lifecycle_score)}, "
-        f"bias {bias}, EMA200 {ema200}, upside EMA200 {upside}, "
-        f"gap EMA50/EMA200 {gap}, hit EMA200 12w {hit}, trend {trend}. "
-        f"Peso Global forzato a 0."
+        f"Casi positivi {fmt_pct_plain(positive_rate)}, "
+        f"return centrale 30g {fmt_pct(return_p50)}. "
+        f"Direzione scanner: {direction or 'n/a'}."
     )
 
-    return score, detail
+    return component_template(
+        score=score,
+        detail=detail,
+        data={
+            "direction": direction,
+            "positive_rate": positive_rate,
+            "negative_rate": negative_rate,
+            "return_p50": return_p50,
+            "price": price,
+        },
+    )
 
 
-def component_futures(asset, full_text):
-    sec = section(full_text, "liquidations")
-    row = find_table_row(sec, asset)
+def parse_scanner_path_component(block: str, asset: str):
+    max_controls = 0
 
-    if not row or len(row) < 6:
-        return 0, "Futures non disponibili."
+    for line in block.splitlines():
+        cells = split_md_row(line)
+        if not cells or len(cells) < 3:
+            continue
 
-    reading = row[5] if len(row) > 5 else "n/a"
-    strength = row[6] if len(row) > 6 else "n/a"
+        if cells[0].upper() != asset:
+            continue
 
-    return 0, f"Lettura futures {reading}, forza {strength}."
+        controls = parse_number(cells[2])
+        if controls is not None:
+            max_controls = max(max_controls, int(controls))
+
+    if max_controls < 5:
+        detail = (
+            f"Raccolta dati. Controlli disponibili {max_controls}. "
+            "Servono almeno 5 controlli prima di pesare il cono previsionale."
+        )
+        return component_template(0, detail, {"controls": max_controls})
+
+    detail = (
+        f"Controlli disponibili {max_controls}. "
+        "Il cono previsionale inizia a essere valutabile, ma resta secondario."
+    )
+    return component_template(0, detail, {"controls": max_controls})
 
 
-def component_daily_change(asset, full_text):
-    sec = section(full_text, "daily_change")
-    row = find_table_row(sec, asset)
+def parse_market_component(block: str, asset: str):
+    ticker = ASSET_TICKERS[asset]
 
-    if not row or len(row) < 4:
-        return 0, "Cambiamento giornaliero non disponibile."
+    matches = None
+    positive_30d = None
+    return_p50 = None
 
-    change = row[1]
-    tone = row[2]
+    for line in block.splitlines():
+        cells = split_md_row(line)
+        if not cells or len(cells) < 6:
+            continue
 
-    change_u = change.upper()
-    tone_u = tone.upper()
+        if cells[0] == ticker and cells[1] == "SAME_BTC_AND_ASSET_REGIME":
+            matches = parse_number(cells[2])
+            positive_30d = parse_number(cells[3])
+            return_p50 = parse_number(cells[4])
+            break
 
-    if "NESSUN" in change_u:
-        score = 0
-    elif "MIGLIOR" in tone_u:
+    score = 0
+
+    if matches is not None and matches >= 5 and positive_30d is not None and return_p50 is not None:
+        if positive_30d >= 85 and return_p50 > 0:
+            score = 3
+        elif positive_30d >= 60 and return_p50 >= 0:
+            score = 2
+        elif positive_30d >= 55 and return_p50 >= 0:
+            score = 1
+        elif positive_30d <= 20 and return_p50 < 0:
+            score = -3
+        elif positive_30d <= 35 and return_p50 < 0:
+            score = -2
+        elif positive_30d < 45 and return_p50 < 0:
+            score = -1
+
+    detail = (
+        f"Gruppo SAME_BTC_AND_ASSET_REGIME, match {int(matches) if matches is not None else 'n/a'}, "
+        f"positivi 30g {fmt_pct_plain(positive_30d)}, return p50 {fmt_pct(return_p50)}."
+    )
+
+    return component_template(
+        score,
+        detail,
+        {
+            "matches": matches,
+            "positive_30d": positive_30d,
+            "return_p50": return_p50,
+        },
+    )
+
+
+def parse_technical_component(block: str, asset: str):
+    tech_score = None
+    verdict = None
+    trend = None
+    structure = None
+    divergence = None
+    wyckoff = None
+    support = None
+    resistance = None
+    price = None
+
+    for line in block.splitlines():
+        cells = split_md_row(line)
+        if not cells or len(cells) < 10:
+            continue
+
+        if cells[0].upper() != asset:
+            continue
+
+        price = parse_number(cells[1])
+        tech_score = parse_number(cells[2])
+        verdict = clean_cell(cells[3])
+        trend = clean_cell(cells[4])
+        structure = clean_cell(cells[6])
+        divergence = clean_cell(cells[7])
+        wyckoff = clean_cell(cells[8])
+        support = parse_number(cells[9])
+        resistance = parse_number(cells[10]) if len(cells) > 10 else None
+        break
+
+    if tech_score is None:
+        detail_section = extract_section_after(
+            block,
+            rf"###\s+{asset}\b",
+            r"\n###\s+|\n##\s+",
+        )
+
+        m = re.search(r"Punteggio tecnico:\s*\*\*([+\-]?\d+)", detail_section, flags=re.IGNORECASE)
+        if m:
+            tech_score = parse_number(m.group(1))
+
+        m = re.search(r"Verdetto:\s*\*\*([^*]+)\*\*", detail_section, flags=re.IGNORECASE)
+        if m:
+            verdict = clean_cell(m.group(1))
+
+        m = re.search(r"Trend:\s*\*\*([^*]+)\*\*", detail_section, flags=re.IGNORECASE)
+        if m:
+            trend = clean_cell(m.group(1))
+
+        m = re.search(r"Struttura:\s*\*\*([^*]+)\*\*", detail_section, flags=re.IGNORECASE)
+        if m:
+            structure = clean_cell(m.group(1))
+
+        m = re.search(r"Divergenza:\s*\*\*([^*]+)\*\*", detail_section, flags=re.IGNORECASE)
+        if m:
+            divergence = clean_cell(m.group(1))
+
+        m = re.search(r"Fase Wyckoff candidata:\s*\*\*([^*]+)\*\*", detail_section, flags=re.IGNORECASE)
+        if m:
+            wyckoff = clean_cell(m.group(1))
+
+        m = re.search(r"Supporto più vicino:\s*\*\*([^*]+)\*\*", detail_section, flags=re.IGNORECASE)
+        if m:
+            support = parse_number(m.group(1))
+
+        m = re.search(r"Resistenza più vicina:\s*\*\*([^*]+)\*\*", detail_section, flags=re.IGNORECASE)
+        if m:
+            resistance = parse_number(m.group(1))
+
+    score = 0
+
+    if tech_score is not None:
+        if tech_score >= 7:
+            score = 3
+        elif tech_score >= 3:
+            score = 2
+        elif tech_score >= 1:
+            score = 1
+        elif tech_score <= -7:
+            score = -3
+        elif tech_score <= -3:
+            score = -2
+        elif tech_score <= -1:
+            score = -1
+
+    detail = (
+        f"Score tecnico {int(tech_score) if tech_score is not None else 'n/a'}/12, "
+        f"verdetto {(verdict or 'n/a').lower()}, "
+        f"trend {(trend or 'n/a').lower()}, "
+        f"struttura {(structure or 'n/a').lower()}, "
+        f"divergenza {(divergence or 'n/a').lower()}, "
+        f"Wyckoff {(wyckoff or 'n/a').lower()}."
+    )
+
+    return component_template(
+        score,
+        detail,
+        {
+            "technical_score": tech_score,
+            "verdict": verdict,
+            "trend": trend,
+            "structure": structure,
+            "divergence": divergence,
+            "wyckoff": wyckoff,
+            "support": support,
+            "resistance": resistance,
+            "price": price,
+        },
+    )
+
+
+def parse_sol_fractal_component(block: str):
+    if not block:
+        return component_template(0, "Frattale SOL/BTC non disponibile.")
+
+    verdict = None
+    phase = None
+    similarity = None
+    reliability = None
+    risk = None
+    tracking = None
+
+    m = re.search(r"##\s+Verdetto:\s*([^\n]+)", block, flags=re.IGNORECASE)
+    if m:
+        verdict = clean_cell(m.group(1)).upper()
+
+    m = re.search(r"Fase attuale:\*\*\s*([^-\n*]+)", block, flags=re.IGNORECASE)
+    if m:
+        phase = clean_cell(m.group(1)).upper()
+
+    m = re.search(r"Somiglianza totale:\*\*\s*([+\-]?\d[\d.,]*)%", block, flags=re.IGNORECASE)
+    if m:
+        similarity = parse_number(m.group(1))
+
+    m = re.search(r"Affidabilita:\*\*\s*([^\n*]+)", block, flags=re.IGNORECASE)
+    if m:
+        reliability = clean_cell(m.group(1)).upper()
+
+    m = re.search(r"Rischio fase:\*\*\s*([^\n*]+)", block, flags=re.IGNORECASE)
+    if m:
+        risk = clean_cell(m.group(1)).upper()
+
+    m = re.search(r"Trend tracking:\*\*\s*([^\n*]+)", block, flags=re.IGNORECASE)
+    if m:
+        tracking = clean_cell(m.group(1)).upper()
+
+    first_confirmation = None
+    second_confirmation = None
+    soft_invalidation = None
+    strong_invalidation = None
+
+    for line in block.splitlines():
+        cells = split_md_row(line)
+        if not cells or len(cells) < 2:
+            continue
+
+        label = cells[0].lower()
+
+        if "prima conferma" in label:
+            first_confirmation = parse_number(cells[1])
+        elif "seconda conferma" in label:
+            second_confirmation = parse_number(cells[1])
+        elif "invalidazione soft" in label:
+            soft_invalidation = parse_number(cells[1])
+        elif "invalidazione forte" in label:
+            strong_invalidation = parse_number(cells[1])
+
+    score = 0
+
+    verdict_u = verdict or ""
+    tracking_u = tracking or ""
+    risk_u = risk or ""
+
+    if "ROTTO" in verdict_u or "NO" == verdict_u:
+        score = -2
+    elif "PARZIALMENTE" in verdict_u:
+        if similarity is not None and similarity >= 78 and "STABILE" in tracking_u and "ALTO" not in risk_u:
+            score = 2
+        elif similarity is not None and similarity >= 70 and "STABILE" in tracking_u:
+            score = 1
+        elif similarity is not None and similarity >= 65:
+            score = 0
+    elif "SI" in verdict_u:
+        if similarity is not None and similarity >= 80:
+            score = 3
+        elif similarity is not None and similarity >= 72:
+            score = 2
+        else:
+            score = 1
+
+    detail = (
+        f"Verdetto {verdict or 'n/a'}, "
+        f"somiglianza {fmt_pct(similarity)}, "
+        f"tracking {tracking or 'n/a'}, "
+        f"fase {phase or 'n/a'}, "
+        f"rischio {risk or 'n/a'}."
+    )
+
+    return component_template(
+        score,
+        detail,
+        {
+            "verdict": verdict,
+            "similarity": similarity,
+            "tracking": tracking,
+            "phase": phase,
+            "risk": risk,
+            "reliability": reliability,
+            "first_confirmation": first_confirmation,
+            "second_confirmation": second_confirmation,
+            "soft_invalidation": soft_invalidation,
+            "strong_invalidation": strong_invalidation,
+        },
+    )
+
+
+def parse_fractal_path_component(block: str):
+    if not block:
+        return component_template(0, "Fractal path tracker non disponibile.")
+
+    max_controls = 0
+
+    for line in block.splitlines():
+        cells = split_md_row(line)
+        if not cells or len(cells) < 2:
+            continue
+
+        first = cells[0].lower()
+        if re.fullmatch(r"\d+g", first):
+            controls = parse_number(cells[1])
+            if controls is not None:
+                max_controls = max(max_controls, int(controls))
+
+    if max_controls <= 0:
+        detail = (
+            "Tracking operativo, ma nessuna milestone settimanale ancora verificata. "
+            "Il modulo non pesa finché non maturano abbastanza controlli."
+        )
+        return component_template(0, detail, {"controls": max_controls})
+
+    if max_controls < 5:
+        detail = (
+            f"Raccolta dati. Controlli disponibili {max_controls}. "
+            "Servono almeno 5 controlli prima di pesare il percorso frattale."
+        )
+        return component_template(0, detail, {"controls": max_controls})
+
+    detail = (
+        f"Controlli disponibili {max_controls}. "
+        "Il percorso frattale inizia a essere valutabile, ma resta secondario."
+    )
+    return component_template(0, detail, {"controls": max_controls})
+
+
+def parse_rsi_component(block: str, asset: str):
+    if asset != "SOL":
+        return component_template(0, "Non applicabile a questo asset.")
+
+    risk = None
+
+    for line in block.splitlines():
+        cells = split_md_row(line)
+        if not cells or len(cells) < 2:
+            continue
+
+        if "Rischio top-cycle RSI" in cells[0]:
+            risk = clean_cell(cells[1]).upper()
+            break
+
+    score = 0
+    if risk == "BASSO":
         score = 1
-    elif "PEGGIOR" in tone_u:
+    elif risk == "MEDIO":
         score = -1
-    else:
-        score = 0
+    elif risk == "ALTO":
+        score = -2
 
-    return score, f"{asset}: {change.lower()} in {tone.lower()} rispetto a ieri."
+    return component_template(
+        score,
+        f"Rischio top-cycle RSI: {risk or 'n/a'}.",
+        {"risk": risk},
+    )
 
 
-def confluence_label(score):
+def parse_lifecycle_component(block: str, asset: str):
+    if asset != "SOL":
+        return component_template(0, "Non applicabile a questo asset.")
+
+    values = {}
+
+    for line in block.splitlines():
+        cells = split_md_row(line)
+        if not cells or len(cells) < 2:
+            continue
+
+        key = clean_cell(cells[0])
+        value = clean_cell(cells[1])
+        values[key] = value
+
+    lifecycle_score = parse_number(values.get("Lifecycle squeeze score"))
+    bias = values.get("Bias")
+    ema200 = parse_number(values.get("EMA200 weekly target"))
+    upside = parse_number(values.get("Upside verso EMA200"))
+    gap = parse_number(values.get("Gap EMA50/EMA200"))
+    hit = parse_number(values.get("Hit EMA200 12w analoghi"))
+    trend = values.get("Trend squeeze")
+
+    detail = (
+        "Contesto non pesato nel Global. "
+        f"Lifecycle score {int(lifecycle_score) if lifecycle_score is not None else 'n/a'}, "
+        f"bias {bias or 'n/a'}, "
+        f"EMA200 {fmt_money('SOL', ema200)}, "
+        f"upside EMA200 {fmt_pct(upside)}, "
+        f"gap EMA50/EMA200 {fmt_pct(gap)}, "
+        f"hit EMA200 12w {fmt_pct(hit)}, "
+        f"trend {trend or 'n/a'}. "
+        "Peso Global forzato a 0."
+    )
+
+    return component_template(
+        0,
+        detail,
+        {
+            "lifecycle_score": lifecycle_score,
+            "bias": bias,
+            "ema200": ema200,
+            "upside": upside,
+            "gap": gap,
+            "hit_ema200_12w": hit,
+            "trend": trend,
+            "forced_weight": 0,
+        },
+    )
+
+
+def parse_futures_component(block: str, asset: str):
+    reading = None
+    strength = None
+
+    for line in block.splitlines():
+        cells = split_md_row(line)
+        if not cells or len(cells) < 6:
+            continue
+
+        if cells[0].upper() != asset:
+            continue
+
+        reading = clean_cell(cells[5])
+        strength = clean_cell(cells[6]) if len(cells) > 6 else None
+        break
+
+    detail = f"Lettura futures {reading or 'n/a'}, forza {strength or 'n/a'}."
+
+    return component_template(
+        0,
+        detail,
+        {
+            "reading": reading,
+            "strength": strength,
+        },
+    )
+
+
+def parse_daily_change_component(block: str, asset: str):
+    change = None
+    tone = None
+    today_verdict = None
+
+    for line in block.splitlines():
+        cells = split_md_row(line)
+        if not cells or len(cells) < 5:
+            continue
+
+        if cells[0].upper() != asset:
+            continue
+
+        change = clean_cell(cells[1]).upper()
+        tone = clean_cell(cells[2]).lower()
+        today_verdict = clean_cell(cells[3]).upper()
+        break
+
+    score = 0
+
+    if change and "NESSUN" not in change:
+        if "miglioramento" in (tone or ""):
+            score = 1
+        elif "peggioramento" in (tone or ""):
+            score = -1
+
+    detail = (
+        f"{asset}: "
+        f"{(change or 'nessun dato').lower()} "
+        f"in {tone or 'n/a'} rispetto a ieri."
+    )
+
+    return component_template(
+        score,
+        detail,
+        {
+            "change": change,
+            "tone": tone,
+            "today_verdict": today_verdict,
+        },
+    )
+
+
+def build_components(source_text: str):
+    scanner_forecast_block = extract_marker_block(source_text, "SCANNER_FORECAST_TRACKER")
+    market_block = extract_marker_block(source_text, "MARKET_REGIME_MATCH")
+    technical_block = extract_marker_block(source_text, "TECHNICAL_STRUCTURE")
+    sol_fractal_block = extract_marker_block(source_text, "BTC_SOL_FRACTAL")
+    fractal_path_block = extract_marker_block(source_text, "FRACTAL_PATH_TRACKER")
+    rsi_block = extract_marker_block(source_text, "RSI_TOP_CYCLE")
+    lifecycle_block = extract_marker_block(source_text, "MAJOR_ALT_LIFECYCLE_SQUEEZE")
+    futures_block = extract_marker_block(source_text, "LIQUIDATION_SUMMARY")
+    daily_block = extract_marker_block(source_text, "DAILY_CHANGE")
+
+    components = {}
+
+    for asset in ASSETS:
+        components[asset] = {
+            "Scanner": parse_scanner_component(source_text, asset),
+            "Scanner path": parse_scanner_path_component(scanner_forecast_block, asset),
+            "Market regime": parse_market_component(market_block, asset),
+            "Tecnico": parse_technical_component(technical_block, asset),
+            "Frattale SOL": (
+                parse_sol_fractal_component(sol_fractal_block)
+                if asset == "SOL"
+                else component_template(0, "Non applicabile a questo asset.")
+            ),
+            "Fractal path": (
+                parse_fractal_path_component(fractal_path_block)
+                if asset == "SOL"
+                else component_template(0, "Non applicabile a questo asset.")
+            ),
+            "RSI top-cycle": parse_rsi_component(rsi_block, asset),
+            "Lifecycle EMA": parse_lifecycle_component(lifecycle_block, asset),
+            "Futures": parse_futures_component(futures_block, asset),
+            "Daily change": parse_daily_change_component(daily_block, asset),
+        }
+
+    return components
+
+
+def total_score(asset_components: dict) -> int:
+    return int(sum(c["score"] for c in asset_components.values()))
+
+
+def confluence_label(score: int) -> str:
     if score >= 7:
         return "POSITIVA FORTE"
     if score >= 3:
         return "MODERATAMENTE POSITIVA"
     if score >= 0:
-        return "PARZIALE / MISTA"
+        return "MISTA / PARZIALE"
     if score >= -3:
         return "DEBOLE / FRAGILE"
     return "NEGATIVA"
 
 
-def bias_label(score):
+def bias_label(score: int) -> str:
     if score >= 7:
         return "Rialzista"
     if score >= 3:
         return "Costruttivo prudente"
     if score >= 0:
-        return "Misto / da confermare"
+        return "Neutrale / misto"
     if score >= -3:
-        return "Debole"
+        return "Fragile"
     return "Ribassista"
 
 
-def reliability_label(score):
-    if abs(score) >= 8:
+def reliability_label(score: int) -> str:
+    abs_score = abs(score)
+
+    if abs_score >= 7:
         return "MEDIA / ALTA"
-    if abs(score) >= 3:
+    if abs_score >= 3:
         return "MEDIA"
-    return "BASSA / MEDIA"
+    return "BASSA / RACCOLTA DATI"
 
 
-def coherent_action(asset, score):
+def coherent_action(asset: str, score: int) -> str:
     if asset == "BTC":
+        if score >= 7:
+            return "ACCUMULA / LONG PRUDENTE SOLO SU CONFERMA"
         if score >= 3:
             return "ACCUMULA SU PULLBACK / NO SHORT"
         if score >= 0:
-            return "HOLD / NO LEVA"
-        return "RIDUCI RISCHIO / NO LONG A LEVA"
+            return "HOLD / ATTESA CONFERME"
+        if score >= -3:
+            return "NON INSEGUIRE / RIDUCI RISCHIO"
+        return "STAI FUORI / SHORT SOLO DOPO ROTTURA"
 
     if asset == "SOL":
         if score >= 7:
-            return "HOLD / ACCUMULA SOLO SU CONFERME, LEVA PRUDENTE"
+            return "HOLD / ACCUMULO A TRANCHE, NO LEVA AGGRESSIVA"
         if score >= 3:
             return "HOLD / TRANCHE PICCOLE, NO LEVA"
         if score >= 0:
-            return "HOLD LEGGERO / ASPETTA CONFERME"
-        return "STAI FUORI / NO LEVA"
+            return "HOLD LEGGERO / ATTESA CONFERME"
+        if score >= -3:
+            return "TAKE PROFIT SU SPIKE / NON INSEGUIRE"
+        return "STAI FUORI / VENDI PARZIALE"
 
     if asset == "DOGE":
-        if score <= -4:
-            return "STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE"
-        if score < 0:
-            return "STAI FUORI / NO LONG"
-        return "SOLO TRADING VELOCE, NO ACCUMULO"
+        if score >= 3:
+            return "SOLO TRANCHE PICCOLE / NO LEVA"
+        if score >= 0:
+            return "STAI ALLA FINESTRA"
+        if score >= -3:
+            return "EVITA LONG / SOLO RIMBALZI VELOCI"
+        return "STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE"
 
     return "n/a"
 
 
-def parse_technical_support_resistance(asset, full_text):
-    sec = section(full_text, "technical")
-    row = find_table_row(sec, asset)
+def build_confirmations(asset: str, components: dict) -> str:
+    technical = components[asset]["Tecnico"]["data"]
+    sol_fractal = components[asset]["Frattale SOL"]["data"]
 
-    if not row or len(row) < 11:
-        return np.nan, np.nan
+    resistance = technical.get("resistance")
+    support = technical.get("support")
 
-    support = safe_float(row[-2])
-    resistance = safe_float(row[-1])
-
-    return support, resistance
-
-
-def parse_fractal_level(sec, label):
-    rows = parse_markdown_table_rows(sec)
-
-    for cells in rows:
-        if len(cells) >= 2 and label.lower() in cells[0].lower():
-            return safe_float(cells[1])
-
-    return np.nan
-
-
-def confirmations_invalidations(asset, full_text):
     if asset == "BTC":
-        support, resistance = parse_technical_support_resistance(asset, full_text)
-        return (
-            f"Sopra {fmt_price_level(resistance)} migliora; sopra la neckline tecnica successiva il recupero diventa più credibile.",
-            f"Sotto {fmt_price_level(support)} il quadro tecnico peggiora.",
-        )
+        if resistance is not None:
+            return (
+                f"Sopra {fmt_price(asset, resistance)} migliora; "
+                "sopra la neckline tecnica successiva il recupero diventa più credibile."
+            )
+        return "Serve recupero delle resistenze tecniche principali."
+
+    if asset == "SOL":
+        levels = []
+
+        if resistance is not None:
+            levels.append(fmt_price(asset, resistance))
+
+        first_confirmation = sol_fractal.get("first_confirmation")
+        second_confirmation = sol_fractal.get("second_confirmation")
+
+        if first_confirmation is not None:
+            levels.append(fmt_price(asset, first_confirmation))
+
+        if second_confirmation is not None:
+            levels.append(fmt_price(asset, second_confirmation))
+
+        if levels:
+            return "Conferme sopra " + " / ".join(levels) + "."
+
+        return "Serve recupero delle resistenze tecniche e frattali."
 
     if asset == "DOGE":
-        support, resistance = parse_technical_support_resistance(asset, full_text)
+        if resistance is not None:
+            return (
+                f"Sopra {fmt_price(asset, resistance)} migliora, "
+                "ma resta asset debole finché scanner e struttura non girano."
+            )
+        return "Serve recupero delle resistenze tecniche principali."
+
+    return "n/a"
+
+
+def build_invalidations(asset: str, components: dict) -> str:
+    technical = components[asset]["Tecnico"]["data"]
+    sol_fractal = components[asset]["Frattale SOL"]["data"]
+
+    support = technical.get("support")
+
+    if asset == "BTC":
+        if support is not None:
+            return f"Sotto {fmt_price(asset, support)} il quadro tecnico peggiora."
+        return "Sotto i supporti tecnici principali il quadro peggiora."
+
+    if asset == "SOL":
+        levels = []
+
+        soft_invalidation = sol_fractal.get("soft_invalidation")
+        strong_invalidation = sol_fractal.get("strong_invalidation")
+
+        if soft_invalidation is not None:
+            levels.append(fmt_price(asset, soft_invalidation))
+
+        if support is not None:
+            levels.append(fmt_price(asset, support))
+
+        if strong_invalidation is not None:
+            levels.append(fmt_price(asset, strong_invalidation))
+
+        if levels:
+            return "Allarmi sotto " + " / ".join(levels) + "."
+
+        return "Sotto supporti tecnici e invalidazioni frattali il setup peggiora."
+
+    if asset == "DOGE":
+        if support is not None:
+            return f"Sotto {fmt_price(asset, support)} il rischio ribassista aumenta."
+        return "Sotto i supporti tecnici principali il rischio aumenta."
+
+    return "n/a"
+
+
+def asset_commentary(asset: str, score: int) -> str:
+    if asset == "BTC":
+        if score >= 3:
+            return (
+                "BTC è l'asset messo meglio nel breve. La struttura macro non è ancora "
+                "pienamente rialzista, ma scanner, regime e segnali interni sono abbastanza "
+                "coerenti per un recupero prudente."
+            )
+        if score >= 0:
+            return (
+                "BTC è in fase mista. Non è abbastanza debole da autorizzare short semplici, "
+                "ma non ha ancora una conferma piena."
+            )
         return (
-            f"Sopra {fmt_price_level(resistance)} migliora, ma resta asset debole finché scanner e struttura non girano.",
-            f"Sotto {fmt_price_level(support)} il rischio ribassista aumenta.",
+            "BTC si è indebolito. In questo caso conta più proteggere il rischio che inseguire "
+            "un recupero non confermato."
         )
 
     if asset == "SOL":
-        tech_support, tech_resistance = parse_technical_support_resistance(asset, full_text)
-        sec = section(full_text, "btc_sol_fractal")
-
-        first_conf = parse_fractal_level(sec, "Prima conferma")
-        second_conf = parse_fractal_level(sec, "Seconda conferma")
-        soft_inv = parse_fractal_level(sec, "Invalidazione soft")
-        strong_inv = parse_fractal_level(sec, "Invalidazione forte")
-
-        confirmations = [
-            fmt_price_level(tech_resistance),
-            fmt_price_level(first_conf),
-            fmt_price_level(second_conf),
-        ]
-
-        invalidations = [
-            fmt_price_level(soft_inv),
-            fmt_price_level(tech_support),
-            fmt_price_level(strong_inv),
-        ]
-
+        if score >= 3:
+            return (
+                "SOL ha una confluenza costruttiva, ma va ancora trattato come setup anticipato. "
+                "La conferma vera arriva solo sopra le resistenze tecniche e frattali. "
+                "Il modulo lifecycle/EMA200 resta utile come contesto, ma non viene più usato "
+                "per aumentare il punteggio Global."
+            )
+        if score >= 0:
+            return (
+                "SOL è ancora in zona mista. Il frattale resta vivo, ma serve conferma di prezzo. "
+                "Meglio evitare leva e ragionare solo a tranche piccole."
+            )
         return (
-            "Conferme sopra " + " / ".join(confirmations) + ".",
-            "Allarmi sotto " + " / ".join(invalidations) + ".",
-        )
-
-    return "n/a", "n/a"
-
-
-def asset_intro(asset):
-    if asset == "BTC":
-        return (
-            "BTC è l'asset messo meglio nel breve. La struttura macro non è ancora pienamente rialzista, "
-            "ma scanner, regime e segnali tecnici interni sono abbastanza coerenti per un recupero prudente."
-        )
-
-    if asset == "SOL":
-        return (
-            "SOL ha una confluenza costruttiva, ma va ancora trattato come setup anticipato. "
-            "La conferma vera arriva solo sopra le resistenze tecniche e frattali. "
-            "Il modulo lifecycle/EMA200 resta utile come contesto, ma non viene più usato per aumentare il punteggio Global."
+            "SOL è fragile nel breve. Il frattale da solo non basta: se non recupera le conferme, "
+            "il rischio è di inseguire uno spike scaricato."
         )
 
     if asset == "DOGE":
+        if score <= -4:
+            return (
+                "DOGE resta l'asset più debole. Anche se può fare rimbalzi o spike, "
+                "la confluenza generale resta negativa rispetto a BTC e SOL."
+            )
         return (
-            "DOGE resta l'asset più debole. Anche se può fare rimbalzi o spike, "
-            "la confluenza generale resta negativa rispetto a BTC e SOL."
+            "DOGE non ha ancora una confluenza pulita. Serve conferma tecnica prima di trattarlo "
+            "come asset forte."
         )
 
     return ""
 
 
-def compute_asset(asset, full_text):
-    components = {}
-
-    components["Scanner"] = component_scanner(asset, full_text)
-    components["Scanner path"] = component_scanner_path(asset, full_text)
-    components["Market regime"] = component_market_regime(asset, full_text)
-    components["Tecnico"] = component_technical(asset, full_text)
-    components["Frattale SOL"] = component_sol_fractal(asset, full_text)
-    components["Fractal path"] = component_fractal_path(asset, full_text)
-    components["RSI top-cycle"] = component_rsi_top_cycle(asset, full_text)
-    components["Lifecycle EMA"] = component_lifecycle(asset, full_text)
-    components["Futures"] = component_futures(asset, full_text)
-    components["Daily change"] = component_daily_change(asset, full_text)
-
-    total = int(sum(v[0] for v in components.values()))
-
-    confirmations, invalidations = confirmations_invalidations(asset, full_text)
-
-    return {
-        "asset": asset,
-        "components": components,
-        "total": total,
-        "confluence": confluence_label(total),
-        "bias": bias_label(total),
-        "reliability": reliability_label(total),
-        "action": coherent_action(asset, total),
-        "confirmations": confirmations,
-        "invalidations": invalidations,
-    }
-
-
-def df_to_markdown(df):
-    if df is None or df.empty:
-        return "_Nessun dato disponibile._"
-
-    return tabulate(df, headers="keys", tablefmt="pipe", showindex=False)
-
-
-def build_report(results):
-    generated = now_utc().strftime("%Y-%m-%d %H:%M UTC")
+def build_report(components: dict):
+    generated = now_utc_str()
 
     summary_rows = []
     score_rows = []
-    detail_sections = []
 
-    for res in results:
-        asset = res["asset"]
-        c = res["components"]
+    component_order = [
+        "Scanner",
+        "Scanner path",
+        "Market regime",
+        "Tecnico",
+        "Frattale SOL",
+        "Fractal path",
+        "RSI top-cycle",
+        "Lifecycle EMA",
+        "Futures",
+        "Daily change",
+    ]
 
-        summary_rows.append({
-            "Asset": asset,
-            "Punteggio": res["total"],
-            "Confluenza": res["confluence"],
-            "Bias": res["bias"],
-            "Affidabilità": res["reliability"],
-            "Azione coerente": res["action"],
-            "Conferme": res["confirmations"],
-            "Invalidazioni": res["invalidations"],
-        })
+    results = {}
 
-        score_rows.append({
-            "Asset": asset,
-            "Scanner": fmt_score(c["Scanner"][0]),
-            "Scanner path": fmt_score(c["Scanner path"][0]),
-            "Market regime": fmt_score(c["Market regime"][0]),
-            "Tecnico": fmt_score(c["Tecnico"][0]),
-            "Frattale SOL": fmt_score(c["Frattale SOL"][0]),
-            "Fractal path": fmt_score(c["Fractal path"][0]),
-            "RSI top-cycle": fmt_score(c["RSI top-cycle"][0]),
-            "Lifecycle EMA": fmt_score(c["Lifecycle EMA"][0]),
-            "Futures": fmt_score(c["Futures"][0]),
-            "Daily change": fmt_score(c["Daily change"][0]),
-            "Totale": fmt_score(res["total"]),
-        })
+    for asset in ASSETS:
+        score = total_score(components[asset])
+        results[asset] = {
+            "score": score,
+            "confluence": confluence_label(score),
+            "bias": bias_label(score),
+            "reliability": reliability_label(score),
+            "action": coherent_action(asset, score),
+            "confirmations": build_confirmations(asset, components),
+            "invalidations": build_invalidations(asset, components),
+        }
 
-        detail_lines = []
+        summary_rows.append(
+            [
+                asset,
+                fmt_signed_int(score),
+                results[asset]["confluence"],
+                results[asset]["bias"],
+                results[asset]["reliability"],
+                results[asset]["action"],
+                results[asset]["confirmations"],
+                results[asset]["invalidations"],
+            ]
+        )
 
-        detail_lines.append(f"### {asset}\n")
-        detail_lines.append(f"- Confluenza: **{res['confluence']}**")
-        detail_lines.append(f"- Bias: **{res['bias']}**")
-        detail_lines.append(f"- Punteggio finale: **{fmt_score(res['total'])}**")
-        detail_lines.append(f"- Affidabilità: **{res['reliability']}**")
-        detail_lines.append(f"- Azione coerente: **{res['action']}**\n")
-        detail_lines.append(asset_intro(asset) + "\n")
-        detail_lines.append("Dettaglio moduli:\n")
+        score_rows.append(
+            [
+                asset,
+                fmt_signed_int(components[asset]["Scanner"]["score"]),
+                fmt_signed_int(components[asset]["Scanner path"]["score"]),
+                fmt_signed_int(components[asset]["Market regime"]["score"]),
+                fmt_signed_int(components[asset]["Tecnico"]["score"]),
+                fmt_signed_int(components[asset]["Frattale SOL"]["score"]),
+                fmt_signed_int(components[asset]["Fractal path"]["score"]),
+                fmt_signed_int(components[asset]["RSI top-cycle"]["score"]),
+                fmt_signed_int(components[asset]["Lifecycle EMA"]["score"]),
+                fmt_signed_int(components[asset]["Futures"]["score"]),
+                fmt_signed_int(components[asset]["Daily change"]["score"]),
+                fmt_signed_int(score),
+            ]
+        )
 
-        for name, (score, desc) in c.items():
-            detail_lines.append(f"- {name}: **{fmt_score(score)}** — {desc}")
+    lines = []
 
-        detail_lines.append("")
-        detail_lines.append(f"Conferme: {res['confirmations']}")
-        detail_lines.append("")
-        detail_lines.append(f"Invalidazioni: {res['invalidations']}")
-        detail_lines.append("")
+    lines.append("# Sintesi finale di confluenza")
+    lines.append("")
+    lines.append(f"Generato: {generated}")
+    lines.append("")
+    lines.append("Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.")
+    lines.append("")
+    lines.append("Moduli letti:")
+    lines.append("")
+    lines.append("- Scanner frattale/statistico a 30 giorni")
+    lines.append("- Scanner path / cono previsionale")
+    lines.append("- Market regime match")
+    lines.append("- Struttura tecnica classica")
+    lines.append("- Frattale BTC 2022 vs SOL 2026, solo per SOL")
+    lines.append("- Fractal path tracker, solo per SOL")
+    lines.append("- RSI top-cycle, soprattutto per SOL")
+    lines.append("- Major alt lifecycle squeeze / EMA200 weekly, solo per SOL")
+    lines.append("- Futures / liquidazioni")
+    lines.append("- Cambiamento giornaliero")
+    lines.append("")
+    lines.append(
+        "Nota importante: **Lifecycle EMA200 viene letto e mostrato, ma ora vale sempre 0 punti nel Global Confluence**. "
+        "Serve come contesto, non come conferma operativa."
+    )
+    lines.append("")
+    lines.append("## Sintesi operativa")
+    lines.append("")
+    lines.append(
+        md_table(
+            [
+                "Asset",
+                "Punteggio",
+                "Confluenza",
+                "Bias",
+                "Affidabilità",
+                "Azione coerente",
+                "Conferme",
+                "Invalidazioni",
+            ],
+            summary_rows,
+        )
+    )
+    lines.append("")
+    lines.append("## Punteggi per modulo")
+    lines.append("")
+    lines.append(
+        md_table(
+            [
+                "Asset",
+                "Scanner",
+                "Scanner path",
+                "Market regime",
+                "Tecnico",
+                "Frattale SOL",
+                "Fractal path",
+                "RSI top-cycle",
+                "Lifecycle EMA",
+                "Futures",
+                "Daily change",
+                "Totale",
+            ],
+            score_rows,
+        )
+    )
+    lines.append("")
+    lines.append("## Lettura asset per asset")
 
-        detail_sections.append("\n".join(detail_lines))
+    for asset in ASSETS:
+        r = results[asset]
+        lines.append("")
+        lines.append(f"### {asset}")
+        lines.append("")
+        lines.append(f"- Confluenza: **{r['confluence']}**")
+        lines.append(f"- Bias: **{r['bias']}**")
+        lines.append(f"- Punteggio finale: **{fmt_signed_int(r['score'])}**")
+        lines.append(f"- Affidabilità: **{r['reliability']}**")
+        lines.append(f"- Azione coerente: **{r['action']}**")
+        lines.append("")
+        lines.append(asset_commentary(asset, r["score"]))
+        lines.append("")
+        lines.append("Dettaglio moduli:")
+        lines.append("")
 
-    summary_df = pd.DataFrame(summary_rows)
-    score_df = pd.DataFrame(score_rows)
+        for component_name in component_order:
+            comp = components[asset][component_name]
+            lines.append(
+                f"- {component_name}: **{fmt_signed_int(comp['score'])}** — {comp['detail']}"
+            )
 
-    report = f"""{START_MARKER}
-# Sintesi finale di confluenza
+        lines.append("")
+        lines.append(f"Conferme: {r['confirmations']}")
+        lines.append("")
+        lines.append(f"Invalidazioni: {r['invalidations']}")
 
-Generato: {generated}
+    lines.append("")
+    lines.append("")
+    lines.append("## Come leggere il punteggio")
+    lines.append("")
+    lines.append("- +7 o più: confluenza positiva forte.")
+    lines.append("- Da +3 a +6: confluenza moderatamente positiva.")
+    lines.append("- Da 0 a +2: confluenza parziale o mista.")
+    lines.append("- Da -1 a -3: confluenza debole o fragile.")
+    lines.append("- -4 o meno: confluenza negativa.")
+    lines.append("")
+    lines.append(
+        "Nota: Scanner path e Fractal path sono già integrati, ma finché hanno pochi controlli restano quasi sempre a punteggio 0."
+    )
+    lines.append(
+        "Servono almeno 5 controlli prima di influire leggermente, e 30+ controlli prima di pesare davvero."
+    )
+    lines.append("")
+    lines.append(
+        "Nota lifecycle EMA200: il modulo Major alt lifecycle squeeze resta nel report, ma pesa **0** nel Global "
+        "perché EMA50/EMA200 e target EMA200 sono contesto, non conferme dirette di prezzo."
+    )
 
-Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.
-
-Moduli letti:
-
-- Scanner frattale/statistico a 30 giorni
-- Scanner path / cono previsionale
-- Market regime match
-- Struttura tecnica classica
-- Frattale BTC 2022 vs SOL 2026, solo per SOL
-- Fractal path tracker, solo per SOL
-- RSI top-cycle, soprattutto per SOL
-- Major alt lifecycle squeeze / EMA200 weekly, solo per SOL
-- Futures / liquidazioni
-- Cambiamento giornaliero
-
-Nota importante: **Lifecycle EMA200 viene letto e mostrato, ma ora vale sempre 0 punti nel Global Confluence**. Serve come contesto, non come conferma operativa.
-
-## Sintesi operativa
-
-{df_to_markdown(summary_df)}
-
-## Punteggi per modulo
-
-{df_to_markdown(score_df)}
-
-## Lettura asset per asset
-
-{chr(10).join(detail_sections)}
-
-## Come leggere il punteggio
-
-- +7 o più: confluenza positiva forte.
-- Da +3 a +6: confluenza moderatamente positiva.
-- Da 0 a +2: confluenza parziale o mista.
-- Da -1 a -3: confluenza debole o fragile.
-- -4 o meno: confluenza negativa.
-
-Nota: Scanner path e Fractal path sono già integrati, ma finché hanno pochi controlli restano quasi sempre a punteggio 0.
-Servono almeno 5 controlli prima di influire leggermente, e 30+ controlli prima di pesare davvero.
-
-Nota lifecycle EMA200: il modulo Major alt lifecycle squeeze resta nel report, ma pesa **0** nel Global perché EMA50/EMA200 e target EMA200 sono contesto, non conferme dirette di prezzo.
-{END_MARKER}
-"""
-    return report, summary_df, score_df
+    return "\n".join(lines).rstrip() + "\n", results
 
 
-def save_metrics(results):
+def write_metrics_csv(components: dict, results: dict) -> None:
+    METRICS_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    fieldnames = [
+        "generated_utc",
+        "asset",
+        "score",
+        "global_score",
+        "confluence",
+        "bias",
+        "reliability",
+        "action",
+        "confirmations",
+        "invalidations",
+        "scanner_score",
+        "scanner_direction",
+        "scanner_positive_rate",
+        "scanner_return_p50",
+        "scanner_path_score",
+        "market_score",
+        "market_matches",
+        "market_positive_30d",
+        "market_return_p50",
+        "technical_score_component",
+        "technical_raw_score",
+        "technical_verdict",
+        "technical_support",
+        "technical_resistance",
+        "sol_fractal_score",
+        "sol_fractal_verdict",
+        "sol_fractal_similarity",
+        "sol_fractal_tracking",
+        "sol_fractal_phase",
+        "sol_fractal_risk",
+        "fractal_path_score",
+        "rsi_score",
+        "rsi_risk",
+        "lifecycle_score_component",
+        "lifecycle_raw_score",
+        "lifecycle_bias",
+        "lifecycle_ema200",
+        "lifecycle_upside",
+        "futures_score",
+        "futures_reading",
+        "daily_change_score",
+        "daily_change",
+        "daily_tone",
+    ]
+
+    generated = datetime.now(timezone.utc).isoformat()
+
     rows = []
 
-    for res in results:
-        c = res["components"]
+    for asset in ASSETS:
+        c = components[asset]
+        r = results[asset]
 
         row = {
-            "asset": res["asset"],
-            "Asset": res["asset"],
-            "total_score": res["total"],
-            "Punteggio": res["total"],
-            "confluence": res["confluence"],
-            "Confluenza": res["confluence"],
-            "bias": res["bias"],
-            "Bias": res["bias"],
-            "reliability": res["reliability"],
-            "Affidabilità": res["reliability"],
-            "action": res["action"],
-            "Azione coerente": res["action"],
-            "confirmations": res["confirmations"],
-            "Conferme": res["confirmations"],
-            "invalidations": res["invalidations"],
-            "Invalidazioni": res["invalidations"],
-            "scanner_score": c["Scanner"][0],
-            "scanner_path_score": c["Scanner path"][0],
-            "market_regime_score": c["Market regime"][0],
-            "technical_score": c["Tecnico"][0],
-            "sol_fractal_score": c["Frattale SOL"][0],
-            "fractal_path_score": c["Fractal path"][0],
-            "rsi_top_cycle_score": c["RSI top-cycle"][0],
-            "lifecycle_ema_score": c["Lifecycle EMA"][0],
-            "Lifecycle EMA": c["Lifecycle EMA"][0],
-            "futures_score": c["Futures"][0],
-            "daily_change_score": c["Daily change"][0],
+            "generated_utc": generated,
+            "asset": asset,
+            "score": r["score"],
+            "global_score": r["score"],
+            "confluence": r["confluence"],
+            "bias": r["bias"],
+            "reliability": r["reliability"],
+            "action": r["action"],
+            "confirmations": r["confirmations"],
+            "invalidations": r["invalidations"],
+            "scanner_score": c["Scanner"]["score"],
+            "scanner_direction": c["Scanner"]["data"].get("direction"),
+            "scanner_positive_rate": c["Scanner"]["data"].get("positive_rate"),
+            "scanner_return_p50": c["Scanner"]["data"].get("return_p50"),
+            "scanner_path_score": c["Scanner path"]["score"],
+            "market_score": c["Market regime"]["score"],
+            "market_matches": c["Market regime"]["data"].get("matches"),
+            "market_positive_30d": c["Market regime"]["data"].get("positive_30d"),
+            "market_return_p50": c["Market regime"]["data"].get("return_p50"),
+            "technical_score_component": c["Tecnico"]["score"],
+            "technical_raw_score": c["Tecnico"]["data"].get("technical_score"),
+            "technical_verdict": c["Tecnico"]["data"].get("verdict"),
+            "technical_support": c["Tecnico"]["data"].get("support"),
+            "technical_resistance": c["Tecnico"]["data"].get("resistance"),
+            "sol_fractal_score": c["Frattale SOL"]["score"],
+            "sol_fractal_verdict": c["Frattale SOL"]["data"].get("verdict"),
+            "sol_fractal_similarity": c["Frattale SOL"]["data"].get("similarity"),
+            "sol_fractal_tracking": c["Frattale SOL"]["data"].get("tracking"),
+            "sol_fractal_phase": c["Frattale SOL"]["data"].get("phase"),
+            "sol_fractal_risk": c["Frattale SOL"]["data"].get("risk"),
+            "fractal_path_score": c["Fractal path"]["score"],
+            "rsi_score": c["RSI top-cycle"]["score"],
+            "rsi_risk": c["RSI top-cycle"]["data"].get("risk"),
+            "lifecycle_score_component": c["Lifecycle EMA"]["score"],
+            "lifecycle_raw_score": c["Lifecycle EMA"]["data"].get("lifecycle_score"),
+            "lifecycle_bias": c["Lifecycle EMA"]["data"].get("bias"),
+            "lifecycle_ema200": c["Lifecycle EMA"]["data"].get("ema200"),
+            "lifecycle_upside": c["Lifecycle EMA"]["data"].get("upside"),
+            "futures_score": c["Futures"]["score"],
+            "futures_reading": c["Futures"]["data"].get("reading"),
+            "daily_change_score": c["Daily change"]["score"],
+            "daily_change": c["Daily change"]["data"].get("change"),
+            "daily_tone": c["Daily change"]["data"].get("tone"),
         }
 
         rows.append(row)
 
-    df = pd.DataFrame(rows)
-    df.to_csv(CSV_PATH, index=False)
-
-
-def replace_section_in_latest_report(section_text):
-    if not os.path.exists(MAIN_REPORT_PATH):
-        write_text(MAIN_REPORT_PATH, section_text)
-        return
-
-    content = read_text(MAIN_REPORT_PATH)
-
-    if START_MARKER in content and END_MARKER in content:
-        start_idx = content.index(START_MARKER)
-        end_idx = content.index(END_MARKER) + len(END_MARKER)
-        new_content = content[:start_idx] + section_text + content[end_idx:]
-    else:
-        if content.startswith("<!-- DECISION_REPORT_START -->"):
-            decision_end = "<!-- DECISION_REPORT_END -->"
-            if decision_end in content:
-                idx = content.index(decision_end) + len(decision_end)
-                new_content = content[:idx] + "\n\n" + section_text + "\n" + content[idx:]
-            else:
-                new_content = section_text + "\n\n" + content
-        else:
-            new_content = section_text + "\n\n" + content
-
-    write_text(MAIN_REPORT_PATH, new_content)
+    with METRICS_CSV_PATH.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 def main():
-    os.makedirs(REPORT_DIR, exist_ok=True)
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    full_text = read_text(MAIN_REPORT_PATH)
+    latest_text = read_text(LATEST_REPORT_PATH)
+    source_text = clean_source_text(latest_text)
 
-    if not full_text:
-        raise RuntimeError("latest_report.md non trovato o vuoto.")
+    components = build_components(source_text)
+    report_md, results = build_report(components)
 
-    results = [compute_asset(asset, full_text) for asset in ASSETS]
+    write_text(REPORT_PATH, report_md)
+    write_metrics_csv(components, results)
 
-    report_text, _, _ = build_report(results)
+    if latest_text:
+        updated_latest = replace_block(latest_text, report_md)
+        write_text(LATEST_REPORT_PATH, updated_latest)
+    else:
+        write_text(LATEST_REPORT_PATH, f"{START_MARKER}\n{report_md}{END_MARKER}\n")
 
-    write_text(REPORT_PATH, report_text)
-    replace_section_in_latest_report(report_text)
-    save_metrics(results)
-
-    print(f"Report scritto in: {REPORT_PATH}")
-    print(f"Latest report aggiornato: {MAIN_REPORT_PATH}")
-    print(f"CSV scritto in: {CSV_PATH}")
-
-    for res in results:
-        print(f"{res['asset']}: {fmt_score(res['total'])} | Lifecycle EMA nel Global = {res['components']['Lifecycle EMA'][0]}")
+    print(f"Global Confluence report scritto in: {REPORT_PATH}")
+    print(f"Metriche Global Confluence scritte in: {METRICS_CSV_PATH}")
 
 
 if __name__ == "__main__":
