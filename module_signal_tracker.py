@@ -43,13 +43,6 @@ MODULES = [
 ]
 
 
-LEGACY_HISTORY_CANDIDATES = [
-    REPORTS_DIR / "module_signal_tracker_history.csv",
-    REPORTS_DIR / "module_signal_tracker_signals.csv",
-    REPORTS_DIR / "module_signal_tracker.csv",
-]
-
-
 def now_utc():
     return datetime.now(timezone.utc)
 
@@ -177,10 +170,6 @@ def fmt_price(asset: str, value):
 
     v = float(value)
 
-    if asset == "BTC":
-        s = f"{v:,.2f}"
-        return s.replace(",", "X").replace(".", ",").replace("X", ".")
-
     if asset == "DOGE":
         return f"{v:.5f}"
 
@@ -194,13 +183,18 @@ def parse_date(value):
 
     try:
         ts = pd.to_datetime(value, errors="coerce")
+
         if pd.isna(ts):
             return pd.NaT
 
         if getattr(ts, "tzinfo", None) is not None:
-            ts = ts.tz_convert(None)
+            try:
+                ts = ts.tz_convert(None)
+            except Exception:
+                ts = ts.tz_localize(None)
 
         return pd.Timestamp(ts).normalize()
+
     except Exception:
         return pd.NaT
 
@@ -278,6 +272,7 @@ def download_prices(ticker: str):
             threads=False,
         )
         return normalize_ohlcv(raw)
+
     except Exception as e:
         print(f"Download fallito per {ticker}: {e}")
         return pd.DataFrame()
@@ -299,26 +294,6 @@ def close_on_or_after(df: pd.DataFrame, date):
 
     actual_date = pd.Timestamp(sliced.index[0]).normalize()
     actual_price = parse_number(sliced.iloc[0]["Close"])
-
-    return actual_price, actual_date
-
-
-def close_on_or_before(df: pd.DataFrame, date):
-    if df is None or df.empty:
-        return np.nan, pd.NaT
-
-    date = parse_date(date)
-
-    if pd.isna(date):
-        return np.nan, pd.NaT
-
-    sliced = df[df.index <= date].copy()
-
-    if sliced.empty:
-        return np.nan, pd.NaT
-
-    actual_date = pd.Timestamp(sliced.index[-1]).normalize()
-    actual_price = parse_number(sliced.iloc[-1]["Close"])
 
     return actual_price, actual_date
 
@@ -386,9 +361,18 @@ def read_global_metrics():
             ),
             "scanner_score": parse_int(row.get("scanner_score"), 0),
             "market_score": parse_int(row.get("market_score"), 0),
-            "technical_score_component": parse_int(row.get("technical_score_component"), 0),
-            "technical_raw_score": parse_number(row.get("technical_raw_score"), np.nan),
-            "sol_fractal_score": parse_int(row.get("sol_fractal_score"), 0),
+            "technical_score_component": parse_int(
+                row.get("technical_score_component")
+                or row.get("technical_score")
+                or row.get("Tecnico"),
+                0,
+            ),
+            "sol_fractal_score": parse_int(
+                row.get("sol_fractal_score")
+                or row.get("fractal_score")
+                or row.get("Frattale"),
+                0,
+            ),
             "fractal_path_score": parse_int(row.get("fractal_path_score"), 0),
             "rsi_score": parse_int(row.get("rsi_score"), 0),
             "lifecycle_score_component": parse_int(row.get("lifecycle_score_component"), 0),
@@ -408,14 +392,6 @@ def read_global_metrics():
         )
 
     return out
-
-
-def choose_history_path():
-    for path in LEGACY_HISTORY_CANDIDATES:
-        if path.exists():
-            return path
-
-    return HISTORY_CSV_PATH
 
 
 def normalize_history_columns(df: pd.DataFrame):
@@ -470,8 +446,8 @@ def normalize_history_columns(df: pd.DataFrame):
 
     out["asset"] = out["asset"].astype(str).str.upper().str.strip()
 
-    if "signal_date" in out.columns:
-        out["signal_date"] = pd.to_datetime(out["signal_date"], errors="coerce").dt.strftime("%Y-%m-%d")
+    out["signal_date"] = pd.to_datetime(out["signal_date"], errors="coerce")
+    out["signal_date"] = out["signal_date"].dt.strftime("%Y-%m-%d")
 
     for col in [
         "price",
@@ -506,13 +482,11 @@ def normalize_history_columns(df: pd.DataFrame):
 
 
 def load_history():
-    path = choose_history_path()
-
-    if not path.exists():
+    if not HISTORY_CSV_PATH.exists():
         return pd.DataFrame()
 
     try:
-        df = pd.read_csv(path)
+        df = pd.read_csv(HISTORY_CSV_PATH)
     except Exception:
         return pd.DataFrame()
 
@@ -544,7 +518,6 @@ def build_today_signals(global_metrics, prices_by_asset):
                 "scanner_score": int(g["scanner_score"]),
                 "market_score": int(g["market_score"]),
                 "technical_score_component": int(g["technical_score_component"]),
-                "technical_raw_score": g.get("technical_raw_score", np.nan),
                 "sol_fractal_score": int(g["sol_fractal_score"]),
                 "fractal_path_score": int(g["fractal_path_score"]),
                 "rsi_score": int(g["rsi_score"]),
@@ -589,24 +562,56 @@ def append_today_signals(history: pd.DataFrame, today_signals: pd.DataFrame):
     return combined
 
 
+def ensure_horizon_columns(out: pd.DataFrame):
+    """
+    Fix importante:
+    Pandas/GitHub Actions può creare target_date_1d e actual_date_1d come float64
+    se inizializzati con np.nan. Poi quando scriviamo '2026-07-10' esplode.
+
+    Quindi:
+    - colonne data = object/string
+    - colonne checked = bool
+    - colonne numeriche = float
+    """
+
+    for h in HORIZONS:
+        date_cols = [
+            f"target_date_{h}d",
+            f"actual_date_{h}d",
+        ]
+
+        numeric_cols = [
+            f"actual_price_{h}d",
+            f"return_pct_{h}d",
+            f"drawdown_pct_{h}d",
+            f"max_gain_pct_{h}d",
+        ]
+
+        checked_col = f"checked_{h}d"
+
+        for col in date_cols:
+            if col not in out.columns:
+                out[col] = ""
+            out[col] = out[col].astype("object")
+
+        for col in numeric_cols:
+            if col not in out.columns:
+                out[col] = np.nan
+            out[col] = pd.to_numeric(out[col], errors="coerce")
+
+        if checked_col not in out.columns:
+            out[checked_col] = False
+        out[checked_col] = out[checked_col].map(parse_bool_nullable).fillna(False).astype(bool)
+
+    return out
+
+
 def update_checks(history: pd.DataFrame, prices_by_asset):
     if history is None or history.empty:
         return pd.DataFrame()
 
     out = history.copy()
-
-    for h in HORIZONS:
-        for col in [
-            f"target_date_{h}d",
-            f"actual_date_{h}d",
-            f"actual_price_{h}d",
-            f"return_pct_{h}d",
-            f"drawdown_pct_{h}d",
-            f"max_gain_pct_{h}d",
-            f"checked_{h}d",
-        ]:
-            if col not in out.columns:
-                out[col] = np.nan
+    out = ensure_horizon_columns(out)
 
     for idx, row in out.iterrows():
         asset = str(row.get("asset")).upper()
@@ -625,12 +630,15 @@ def update_checks(history: pd.DataFrame, prices_by_asset):
 
         for h in HORIZONS:
             checked_col = f"checked_{h}d"
-            checked = parse_bool_nullable(row.get(checked_col))
+
+            checked = parse_bool_nullable(out.at[idx, checked_col])
 
             if checked is True:
                 continue
 
             target_date = signal_date + pd.Timedelta(days=h)
+
+            # Ora questa colonna è object, quindi la stringa non rompe più Pandas.
             out.at[idx, f"target_date_{h}d"] = target_date.strftime("%Y-%m-%d")
 
             if target_date > latest_available:
@@ -654,6 +662,7 @@ def update_checks(history: pd.DataFrame, prices_by_asset):
             out.at[idx, checked_col] = True
 
     out = out.sort_values(["signal_date", "asset"]).reset_index(drop=True)
+    out = ensure_horizon_columns(out)
 
     return out
 
@@ -692,18 +701,6 @@ def module_status(count):
 def build_latest_signals_table(history: pd.DataFrame):
     if history is None or history.empty:
         return pd.DataFrame()
-
-    cols = [
-        "signal_date",
-        "asset",
-        "price",
-        "global_score",
-        "scanner_score",
-        "market_score",
-        "technical_score_component",
-        "sol_fractal_score",
-        "action",
-    ]
 
     data = history.copy()
     data["signal_dt"] = pd.to_datetime(data["signal_date"], errors="coerce")
@@ -760,25 +757,6 @@ def build_check_status_table(history: pd.DataFrame):
 
 def build_accuracy_table(history: pd.DataFrame):
     rows = []
-
-    if history is None or history.empty:
-        for asset in ASSETS:
-            for h in HORIZONS:
-                for module_name, _ in MODULES:
-                    rows.append(
-                        {
-                            "Asset": asset,
-                            "Orizzonte": f"{h}g",
-                            "Modulo": module_name,
-                            "Controlli": 0,
-                            "Accuratezza direzione": "n/a",
-                            "Return medio": "n/a",
-                            "Drawdown medio": "n/a",
-                            "Max gain medio": "n/a",
-                            "Stato": "RACCOLTA DATI",
-                        }
-                    )
-        return pd.DataFrame(rows)
 
     for asset in ASSETS:
         asset_df = history[history["asset"] == asset].copy()
@@ -911,7 +889,7 @@ Segnali totali salvati: **{signal_count}**.
 
 Questo report non cambia ancora automaticamente i pesi del Global Confluence. Serve prima a capire quali moduli funzionano davvero.
 
-Nota tecnica: questo file ora legge i punteggi reali da **global_confluence_metrics.csv**, quindi Global, Tecnico e Frattale non dovrebbero più apparire tutti a zero se nel Global Confluence hanno valori diversi da zero.
+Nota tecnica: questo file ora legge i punteggi reali da **global_confluence_metrics.csv** e forza le colonne data come testo. Quindi non deve più dare errore `Invalid value '2026-07-10' for dtype 'float64'`.
 {END_MARKER}
 """
 
@@ -955,6 +933,7 @@ def main():
 
     old_history = load_history()
     today_signals = build_today_signals(global_metrics, prices_by_asset)
+
     history = append_today_signals(old_history, today_signals)
     history = update_checks(history, prices_by_asset)
 
