@@ -18,6 +18,8 @@ MARKET_REGIME_SUMMARY = REPORTS_DIR / "market_regime_match_summary.csv"
 SCANNER_PATH_METRICS = REPORTS_DIR / "scanner_forecast_path_accuracy_metrics.csv"
 FRACTAL_PATH_METRICS = REPORTS_DIR / "fractal_path_accuracy_metrics.csv"
 
+MAJOR_ALT_LIFECYCLE_REPORT = REPORTS_DIR / "major_alt_lifecycle_squeeze_report.md"
+
 START_MARKER = "<!-- GLOBAL_CONFLUENCE_START -->"
 END_MARKER = "<!-- GLOBAL_CONFLUENCE_END -->"
 
@@ -435,26 +437,6 @@ def extract_positive_negative_and_return(block):
 
     if pd.isna(return_30d):
         m = re.search(
-            r"Return normale fra 30 giorni:.*?$begin:math:text$\(\[\+\\\-0\-9\,\.\]\+\)\\s\*\%$end:math:text$",
-            block,
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-
-        if m:
-            return_30d = parse_pct(m.group(1))
-
-    if pd.isna(return_30d):
-        m = re.search(
-            r"##\s*1\.\s*Return 30d.*?Scenario normale:.*?$begin:math:text$\(\[\+\\\-0\-9\,\.\]\+\)\\s\*\%$end:math:text$",
-            block,
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-
-        if m:
-            return_30d = parse_pct(m.group(1))
-
-    if pd.isna(return_30d):
-        m = re.search(
             r"Percentile 50%.*?([+\-0-9,.]+)\s*%\s*→",
             block,
             flags=re.IGNORECASE | re.DOTALL,
@@ -835,6 +817,165 @@ def component_rsi_top_cycle(asset, latest_text):
         "score": score,
         "summary": summary,
         "risk": risk,
+    }
+
+
+def component_lifecycle_squeeze(asset, latest_text):
+    if asset != "SOL":
+        return {
+            "score": 0,
+            "summary": "Non applicabile a questo asset.",
+            "found": False,
+            "raw_score": np.nan,
+            "suggested_weight": 0,
+            "bias": "",
+            "action": "",
+            "trend": "",
+            "trend_score": np.nan,
+            "ema200_target": np.nan,
+            "upside_ema200": np.nan,
+            "distance_ema200": np.nan,
+            "ema_gap": np.nan,
+            "cross_status": "",
+            "hit_ema200_12w": np.nan,
+            "max_gain_median_12w": np.nan,
+            "drawdown_median_12w": np.nan,
+        }
+
+    section = extract_between(
+        latest_text,
+        "<!-- MAJOR_ALT_LIFECYCLE_SQUEEZE_START -->",
+        "<!-- MAJOR_ALT_LIFECYCLE_SQUEEZE_END -->",
+    )
+
+    if not section:
+        section = read_text(MAJOR_ALT_LIFECYCLE_REPORT)
+
+    if not section:
+        return {
+            "score": 0,
+            "summary": "Major alt lifecycle squeeze / EMA200 non trovato.",
+            "found": False,
+            "raw_score": np.nan,
+            "suggested_weight": 0,
+            "bias": "",
+            "action": "",
+            "trend": "",
+            "trend_score": np.nan,
+            "ema200_target": np.nan,
+            "upside_ema200": np.nan,
+            "distance_ema200": np.nan,
+            "ema_gap": np.nan,
+            "cross_status": "",
+            "hit_ema200_12w": np.nan,
+            "max_gain_median_12w": np.nan,
+            "drawdown_median_12w": np.nan,
+        }
+
+    raw_score = parse_number(markdown_line_value(section, "Lifecycle squeeze score"))
+    bias = markdown_line_value(section, "Bias")
+    action = markdown_line_value(section, "Azione coerente")
+
+    suggested_weight = parse_number(markdown_line_value(section, "Peso suggerito Global"))
+
+    if pd.isna(suggested_weight):
+        suggested_weight = parse_number(markdown_line_value(section, "Peso suggerito nel Global"))
+
+    trend = markdown_line_value(section, "Trend squeeze")
+    trend_score = parse_number(markdown_line_value(section, "Trend squeeze score"))
+
+    ema200_target = first_price_from_text(markdown_line_value(section, "EMA200 weekly target"))
+
+    if pd.isna(ema200_target):
+        ema200_target = first_price_from_text(markdown_line_value(section, "Target tecnico naturale"))
+
+    if pd.isna(ema200_target):
+        ema200_target = first_price_from_text(markdown_line_value(section, "EMA200"))
+
+    upside_ema200 = first_pct_from_text(markdown_line_value(section, "Upside verso EMA200"))
+    distance_ema200 = first_pct_from_text(markdown_line_value(section, "Distanza prezzo da EMA200"))
+    ema_gap = first_pct_from_text(markdown_line_value(section, "Gap EMA50/EMA200"))
+
+    cross_status = markdown_line_value(section, "Stato cross")
+
+    if not cross_status:
+        cross_status = markdown_line_value(section, "Stato incrocio")
+
+    if not cross_status:
+        cross_status = markdown_line_value(section, "Stato EMA50/EMA200")
+
+    hit_ema200_12w = first_pct_from_text(markdown_line_value(section, "Hit EMA200 12w analoghi"))
+
+    if pd.isna(hit_ema200_12w):
+        hit_ema200_12w = first_pct_from_text(markdown_line_value(section, "Probabilità storica hit EMA200 12w"))
+
+    max_gain_median_12w = first_pct_from_text(markdown_line_value(section, "Max gain mediano 12w"))
+    drawdown_median_12w = first_pct_from_text(markdown_line_value(section, "Drawdown mediano 12w"))
+
+    if not pd.isna(suggested_weight):
+        score = int(round(suggested_weight))
+    else:
+        score = 0
+
+        if not pd.isna(raw_score):
+            if raw_score >= 5:
+                score = 1
+            elif raw_score <= -3:
+                score = -1
+
+        if "SETUP FORTE" in bias.upper():
+            score = max(score, 1)
+
+        if "PEGGIORA" in trend.upper() or "INDEBOL" in trend.upper():
+            score -= 1
+
+    score = clamp(score, -1, 1)
+
+    summary_parts = []
+
+    if not pd.isna(raw_score):
+        summary_parts.append(f"Lifecycle score {int(raw_score)}")
+
+    summary_parts.append(f"peso Global {fmt_score(score)}")
+
+    if bias:
+        summary_parts.append(f"bias {bias}")
+
+    if not pd.isna(ema200_target):
+        summary_parts.append(f"EMA200 {fmt_price(asset, ema200_target)} $")
+
+    if not pd.isna(upside_ema200):
+        summary_parts.append(f"upside EMA200 {fmt_pct(upside_ema200)}")
+
+    if cross_status:
+        summary_parts.append(f"stato {cross_status}")
+
+    if not pd.isna(hit_ema200_12w):
+        summary_parts.append(f"hit EMA200 12w {fmt_pct(hit_ema200_12w)}")
+
+    if trend:
+        summary_parts.append(f"trend {trend}")
+
+    summary = ", ".join(summary_parts) + "."
+
+    return {
+        "score": score,
+        "summary": summary,
+        "found": True,
+        "raw_score": raw_score,
+        "suggested_weight": suggested_weight,
+        "bias": bias,
+        "action": action,
+        "trend": trend,
+        "trend_score": trend_score,
+        "ema200_target": ema200_target,
+        "upside_ema200": upside_ema200,
+        "distance_ema200": distance_ema200,
+        "ema_gap": ema_gap,
+        "cross_status": cross_status,
+        "hit_ema200_12w": hit_ema200_12w,
+        "max_gain_median_12w": max_gain_median_12w,
+        "drawdown_median_12w": drawdown_median_12w,
     }
 
 
@@ -1277,13 +1418,13 @@ def plain_interpretation(asset, score):
         if score >= 3:
             return (
                 "SOL ha una confluenza costruttiva, ma va ancora trattato come setup anticipato. "
-                "La conferma vera arriva solo sopra le resistenze tecniche e frattali. "
-                "Il nuovo tracking del percorso frattale servirà a capire se sta davvero seguendo BTC 2022."
+                "La conferma vera arriva solo sopra le resistenze tecniche, frattali e verso la zona EMA200 weekly. "
+                "Il modulo lifecycle/EMA200 aggiunge una lettura positiva da squeeze, ma non sostituisce le conferme di prezzo."
             )
 
         if score >= 0:
             return (
-                "SOL è interessante ma non confermato. Il frattale e alcuni filtri aiutano, "
+                "SOL è interessante ma non confermato. Il frattale, il lifecycle/EMA200 e alcuni filtri aiutano, "
                 "ma scanner e struttura tecnica non danno ancora una conferma pulita."
             )
 
@@ -1319,6 +1460,7 @@ def build_global_confluence():
         fractal = component_fractal(asset, latest_text)
         fractal_path = component_fractal_path(asset)
         rsi_top = component_rsi_top_cycle(asset, latest_text)
+        lifecycle = component_lifecycle_squeeze(asset, latest_text)
         futures = component_futures(asset, latest_text)
         daily = component_daily_change(asset, latest_text)
 
@@ -1330,6 +1472,7 @@ def build_global_confluence():
             fractal["score"],
             fractal_path["score"],
             rsi_top["score"],
+            lifecycle["score"],
             futures["score"],
             daily["score"],
         ]
@@ -1353,8 +1496,24 @@ def build_global_confluence():
             "fractal_score": fractal["score"],
             "fractal_path_score": fractal_path["score"],
             "rsi_top_cycle_score": rsi_top["score"],
+            "lifecycle_squeeze_score": lifecycle["score"],
             "futures_score": futures["score"],
             "daily_change_score": daily["score"],
+
+            "lifecycle_raw_score": lifecycle.get("raw_score", np.nan),
+            "lifecycle_suggested_weight": lifecycle.get("suggested_weight", np.nan),
+            "lifecycle_bias": lifecycle.get("bias", ""),
+            "lifecycle_action": lifecycle.get("action", ""),
+            "lifecycle_trend": lifecycle.get("trend", ""),
+            "lifecycle_trend_score": lifecycle.get("trend_score", np.nan),
+            "lifecycle_ema200_target": lifecycle.get("ema200_target", np.nan),
+            "lifecycle_upside_ema200": lifecycle.get("upside_ema200", np.nan),
+            "lifecycle_distance_ema200": lifecycle.get("distance_ema200", np.nan),
+            "lifecycle_ema_gap": lifecycle.get("ema_gap", np.nan),
+            "lifecycle_cross_status": lifecycle.get("cross_status", ""),
+            "lifecycle_hit_ema200_12w": lifecycle.get("hit_ema200_12w", np.nan),
+            "lifecycle_max_gain_median_12w": lifecycle.get("max_gain_median_12w", np.nan),
+            "lifecycle_drawdown_median_12w": lifecycle.get("drawdown_median_12w", np.nan),
 
             "confirmation": levels["confirmation"],
             "invalidation": levels["invalidation"],
@@ -1370,6 +1529,7 @@ def build_global_confluence():
             "fractal": fractal,
             "fractal_path": fractal_path,
             "rsi_top": rsi_top,
+            "lifecycle": lifecycle,
             "futures": futures,
             "daily": daily,
             "levels": levels,
@@ -1401,6 +1561,7 @@ def render_report(metrics, details):
     lines.append("- Frattale BTC 2022 vs SOL 2026, solo per SOL")
     lines.append("- Fractal path tracker, solo per SOL")
     lines.append("- RSI top-cycle, soprattutto per SOL")
+    lines.append("- Major alt lifecycle squeeze / EMA200 weekly, solo per SOL")
     lines.append("- Futures / liquidazioni")
     lines.append("- Cambiamento giornaliero")
     lines.append("")
@@ -1440,6 +1601,7 @@ def render_report(metrics, details):
             "Frattale SOL": fmt_score(r["fractal_score"]),
             "Fractal path": fmt_score(r["fractal_path_score"]),
             "RSI top-cycle": fmt_score(r["rsi_top_cycle_score"]),
+            "Lifecycle EMA": fmt_score(r["lifecycle_squeeze_score"]),
             "Futures": fmt_score(r["futures_score"]),
             "Daily change": fmt_score(r["daily_change_score"]),
             "Totale": fmt_score(r["confluence_score"]),
@@ -1475,6 +1637,7 @@ def render_report(metrics, details):
         lines.append(f"- Frattale SOL/BTC: **{fmt_score(d['fractal']['score'])}** — {d['fractal']['summary']}")
         lines.append(f"- Fractal path tracker: **{fmt_score(d['fractal_path']['score'])}** — {d['fractal_path']['summary']}")
         lines.append(f"- RSI top-cycle: **{fmt_score(d['rsi_top']['score'])}** — {d['rsi_top']['summary']}")
+        lines.append(f"- Lifecycle EMA200: **{fmt_score(d['lifecycle']['score'])}** — {d['lifecycle']['summary']}")
         lines.append(f"- Futures/liquidazioni: **{fmt_score(d['futures']['score'])}** — {d['futures']['summary']}")
         lines.append(f"- Cambiamento giornaliero: **{fmt_score(d['daily']['score'])}** — {d['daily']['summary']}")
         lines.append("")
@@ -1493,6 +1656,8 @@ def render_report(metrics, details):
     lines.append("")
     lines.append("Nota: Scanner path e Fractal path sono già integrati, ma finché hanno pochi controlli restano quasi sempre a punteggio 0.")
     lines.append("Servono almeno 5 controlli prima di influire leggermente, e 30+ controlli prima di pesare davvero.")
+    lines.append("")
+    lines.append("Nota lifecycle EMA200: il modulo Major alt lifecycle squeeze pesa al massimo +1 / -1 nel Global, perché è un filtro di contesto e non una conferma diretta di prezzo.")
     lines.append("")
 
     return "\n".join(lines) + "\n"
