@@ -1,7 +1,7 @@
 # Decisione operativa sintetica
 
-Generato: **2026-07-09 03:16:02 CEST**  
-UTC: **2026-07-09 01:16:02 UTC**
+Generato: **2026-07-09 03:48:04 CEST**  
+UTC: **2026-07-09 01:48:04 UTC**
 
 Questo report prende tutti i dati dello scanner e li trasforma in una lettura pratica.
 
@@ -16,9 +16,9 @@ Scopo:
 
 | Asset | Prezzo | Direzione | Spot | Long leva | Short leva | Max long | Max short | Rischio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 62.394 $ | LEGGERMENTE BULLISH | ACCUMULA SOLO SU PULLBACK | LONG PRUDENTE | NO SHORT | max 2x isolated | nessuna | BASSO |
-| SOL | 78,39 $ | NEUTRALE / COSTRUTTIVO | HOLD / TRANCHE PICCOLE, NO LEVA | NO LONG A LEVA | NO SHORT | nessuna | nessuna | MOLTO ALTO |
-| DOGE | 0,07268 $ | BEARISH | VENDI PARZIALE / STAI FUORI | NO LONG A LEVA | SHORT SOLO DOPO SPIKE | nessuna | max 1x-2x isolated | MOLTO ALTO |
+| BTC | 62.053 $ | LEGGERMENTE BULLISH | ACCUMULA SOLO SU PULLBACK | LONG PRUDENTE | NO SHORT | max 2x isolated | nessuna | BASSO |
+| SOL | 77,57 $ | NEUTRALE / COSTRUTTIVO | HOLD / TRANCHE PICCOLE, NO LEVA | NO LONG A LEVA | NO SHORT | nessuna | nessuna | MOLTO ALTO |
+| DOGE | 0,07223 $ | BEARISH | VENDI PARZIALE / STAI FUORI | NO LONG A LEVA | SHORT SOLO DOPO SPIKE | nessuna | max 1x-2x isolated | MOLTO ALTO |
 
 ## Spiegazione semplice
 
@@ -88,7 +88,7 @@ Lo short viene indicato solo se:
 
 ## Bitcoin — BTC
 
-Prezzo usato: **62.394 $**
+Prezzo usato: **62.053 $**
 
 - **Direzione:** LEGGERMENTE BULLISH
 - **Spot:** ACCUMULA SOLO SU PULLBACK
@@ -134,12 +134,12 @@ Prezzo usato: **62.394 $**
 
 | Area | Prezzo | Uso pratico |
 | --- | --- | --- |
-| Pullback -5% | 59.275 $ | zona dove valutare accumulo, non comprare a caso |
-| Target rimbalzo +10% | 68.634 $ | zona obiettivo dopo pullback |
-| Spike +10% | 68.634 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
-| Dump -5% | 59.275 $ | zona di scarico dopo spike |
-| Zona bassa storica | 56.455 $ | zona rischio; con leva bisogna rispettarla |
-| Zona alta storica | 80.367 $ | zona alta; se ci arriva, pensare a profitto |
+| Pullback -5% | 58.950 $ | zona dove valutare accumulo, non comprare a caso |
+| Target rimbalzo +10% | 68.258 $ | zona obiettivo dopo pullback |
+| Spike +10% | 68.258 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
+| Dump -5% | 58.950 $ | zona di scarico dopo spike |
+| Zona bassa storica | 56.146 $ | zona rischio; con leva bisogna rispettarla |
+| Zona alta storica | 79.928 $ | zona alta; se ci arriva, pensare a profitto |
 | EMA200 weekly SOL | n/d | target tecnico del modulo lifecycle squeeze, solo se applicabile |
 
 ### Conferme e invalidazioni
@@ -149,13 +149,13 @@ Prezzo usato: **62.394 $**
 
 ### Piano sintetico
 
-> spot: valutare accumulo solo verso 59.275 $; long: long prudente, max 2x isolated; short: evitato; zona bassa storica/rischio: 56.455 $; zona alta storica/take profit: 80.367 $
+> spot: valutare accumulo solo verso 58.950 $; long: long prudente, max 2x isolated; short: evitato; zona bassa storica/rischio: 56.146 $; zona alta storica/take profit: 79.928 $
 
 ---
 
 ## Solana — SOL
 
-Prezzo usato: **78,39 $**
+Prezzo usato: **77,57 $**
 
 - **Direzione:** NEUTRALE / COSTRUTTIVO
 - **Spot:** HOLD / TRANCHE PICCOLE, NO LEVA
@@ -167,11 +167,11 @@ Prezzo usato: **78,39 $**
 
 ### Perché
 
-- casi positivi sotto la media (+42,50%); rimbalzo dopo discesa debole (+10,71%); dump dopo spike poco frequente (+20,00%); Global Confluence costruttivo (+6); Lifecycle EMA200 positivo: possibile squeeze verso EMA200 (+1); troppi long aperti (2,71)
+- casi positivi sotto la media (+45,00%); rimbalzo dopo discesa debole (+11,11%); dump dopo spike poco frequente (+18,75%); Global Confluence costruttivo (+6); Lifecycle EMA200 positivo: possibile squeeze verso EMA200 (+1); troppi long aperti (2,71)
 
 ### Rischi principali
 
-- zona bassa storica molto profonda (-23,93%); rimbalzo dopo discesa debole (+10,71%)
+- zona bassa storica molto profonda (-23,33%); rimbalzo dopo discesa debole (+11,11%)
 
 ### Lettura Global Confluence
 
@@ -182,18 +182,18 @@ Prezzo usato: **78,39 $**
 | Azione globale | HOLD / TRANCHE PICCOLE, NO LEVA | azione coerente nel Global Confluence |
 | Lifecycle EMA | +1 | SQUEEZE SETUP FORTE |
 | EMA200 weekly | 113,51 $ | target tecnico naturale del modulo squeeze |
-| Upside EMA200 | +44,96% | spazio teorico verso EMA200 |
+| Upside EMA200 | +46,44% | spazio teorico verso EMA200 |
 
 ### Numeri semplici
 
 | Dato | Valore | Traduzione |
 | --- | --- | --- |
-| Casi positivi 30 giorni | +42,50% | quante volte i casi simili chiudevano verdi dopo 30 giorni |
-| Rendimento mediano | -2,37% | risultato centrale dei casi storici |
-| Zona bassa storica | -23,93% | discesa pesante da rispettare |
-| Zona alta storica | +16,63% | zona alta dove non inseguire troppo |
-| Rimbalzo dopo -5% → +10% | +10,71% | se scende prima, quante volte poi rimbalza forte |
-| Dump dopo +10% → -5% | +20,00% | se fa spike prima, quante volte poi scarica |
+| Casi positivi 30 giorni | +45,00% | quante volte i casi simili chiudevano verdi dopo 30 giorni |
+| Rendimento mediano | -2,05% | risultato centrale dei casi storici |
+| Zona bassa storica | -23,33% | discesa pesante da rispettare |
+| Zona alta storica | +16,73% | zona alta dove non inseguire troppo |
+| Rimbalzo dopo -5% → +10% | +11,11% | se scende prima, quante volte poi rimbalza forte |
+| Dump dopo +10% → -5% | +18,75% | se fa spike prima, quante volte poi scarica |
 | Funding | +0,00% | se è alto positivo, troppi long possono essere un rischio |
 | Long/Short ratio | 2,71 | se è alto, ci sono molti long aperti |
 
@@ -201,28 +201,28 @@ Prezzo usato: **78,39 $**
 
 | Area | Prezzo | Uso pratico |
 | --- | --- | --- |
-| Pullback -5% | 74,47 $ | zona dove valutare accumulo, non comprare a caso |
-| Target rimbalzo +10% | 86,23 $ | zona obiettivo dopo pullback |
-| Spike +10% | 86,23 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
-| Dump -5% | 74,47 $ | zona di scarico dopo spike |
-| Zona bassa storica | 59,63 $ | zona rischio; con leva bisogna rispettarla |
-| Zona alta storica | 91,43 $ | zona alta; se ci arriva, pensare a profitto |
+| Pullback -5% | 73,69 $ | zona dove valutare accumulo, non comprare a caso |
+| Target rimbalzo +10% | 85,33 $ | zona obiettivo dopo pullback |
+| Spike +10% | 85,33 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
+| Dump -5% | 73,69 $ | zona di scarico dopo spike |
+| Zona bassa storica | 59,47 $ | zona rischio; con leva bisogna rispettarla |
+| Zona alta storica | 90,55 $ | zona alta; se ci arriva, pensare a profitto |
 | EMA200 weekly SOL | 113,51 $ | target tecnico del modulo lifecycle squeeze, solo se applicabile |
 
 ### Conferme e invalidazioni
 
-- Conferme: Conferme sopra 83,81 / 106,19 / 115,76.
-- Invalidazioni: Allarmi sotto 74,39 / 64,42 / 62,19.
+- Conferme: Conferme sopra 83,81 / 105,18 / 114,65.
+- Invalidazioni: Allarmi sotto 73,68 / 64,42 / 62,19.
 
 ### Piano sintetico
 
-> spot: hold o tranche piccole, senza inseguire e senza leva; long: evitato; short: evitato; EMA200 weekly / target squeeze: 113,51 $; zona bassa storica/rischio: 59,63 $; zona alta storica/take profit: 91,43 $
+> spot: hold o tranche piccole, senza inseguire e senza leva; long: evitato; short: evitato; EMA200 weekly / target squeeze: 113,51 $; zona bassa storica/rischio: 59,47 $; zona alta storica/take profit: 90,55 $
 
 ---
 
 ## Dogecoin — DOGE
 
-Prezzo usato: **0,07268 $**
+Prezzo usato: **0,07223 $**
 
 - **Direzione:** BEARISH
 - **Spot:** VENDI PARZIALE / STAI FUORI
@@ -268,12 +268,12 @@ Prezzo usato: **0,07268 $**
 
 | Area | Prezzo | Uso pratico |
 | --- | --- | --- |
-| Pullback -5% | 0,06905 $ | zona dove valutare accumulo, non comprare a caso |
-| Target rimbalzo +10% | 0,07995 $ | zona obiettivo dopo pullback |
-| Spike +10% | 0,07995 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
-| Dump -5% | 0,06905 $ | zona di scarico dopo spike |
-| Zona bassa storica | 0,04736 $ | zona rischio; con leva bisogna rispettarla |
-| Zona alta storica | 0,08204 $ | zona alta; se ci arriva, pensare a profitto |
+| Pullback -5% | 0,06862 $ | zona dove valutare accumulo, non comprare a caso |
+| Target rimbalzo +10% | 0,07945 $ | zona obiettivo dopo pullback |
+| Spike +10% | 0,07945 $ | zona dove non inseguire; possibile take profit o short solo se il quadro è bearish |
+| Dump -5% | 0,06862 $ | zona di scarico dopo spike |
+| Zona bassa storica | 0,04706 $ | zona rischio; con leva bisogna rispettarla |
+| Zona alta storica | 0,08153 $ | zona alta; se ci arriva, pensare a profitto |
 | EMA200 weekly SOL | n/d | target tecnico del modulo lifecycle squeeze, solo se applicabile |
 
 ### Conferme e invalidazioni
@@ -283,6 +283,6 @@ Prezzo usato: **0,07268 $**
 
 ### Piano sintetico
 
-> spot: ridurre esposizione o stare fuori; long: evitato; short: solo dopo spike verso 0,07995 $, possibile target scarico 0,06905 $; zona bassa storica/rischio: 0,04736 $; zona alta storica/take profit: 0,08204 $
+> spot: ridurre esposizione o stare fuori; long: evitato; short: solo dopo spike verso 0,07945 $, possibile target scarico 0,06862 $; zona bassa storica/rischio: 0,04706 $; zona alta storica/take profit: 0,08153 $
 
 ---
