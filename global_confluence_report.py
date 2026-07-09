@@ -239,6 +239,27 @@ def extract_section_after(text: str, start_pattern: str, end_pattern: str = r"\n
     return text[start:end]
 
 
+def extract_heading_block(text: str, heading_regex: str) -> str:
+    """
+    Estrae solo il blocco sotto un titolo Markdown specifico.
+    Serve a evitare che i parser leggano numeri da tabelle sbagliate
+    come prezzi, date o anni.
+    """
+    match = re.search(heading_regex, text, flags=re.IGNORECASE)
+    if not match:
+        return ""
+
+    start = match.start()
+    rest = text[match.end() :]
+
+    end_match = re.search(r"\n##\s+", rest)
+    if not end_match:
+        return text[start:]
+
+    end = match.end() + end_match.start()
+    return text[start:end]
+
+
 def extract_quick_asset_section(text: str, asset: str) -> str:
     name = ASSET_NAMES[asset]
 
@@ -385,14 +406,22 @@ def parse_scanner_component(text: str, asset: str):
 
 
 def parse_scanner_path_component(block: str, asset: str):
+    accuracy_block = extract_heading_block(
+        block,
+        r"##\s+Accuratezza percorso scanner\b",
+    )
+
     max_controls = 0
 
-    for line in block.splitlines():
+    for line in accuracy_block.splitlines():
         cells = split_md_row(line)
         if not cells or len(cells) < 3:
             continue
 
         if cells[0].upper() != asset:
+            continue
+
+        if not re.fullmatch(r"\d+g", cells[1].strip().lower()):
             continue
 
         controls = parse_number(cells[2])
@@ -589,7 +618,7 @@ def parse_sol_fractal_component(block: str):
     if m:
         verdict = clean_cell(m.group(1)).upper()
 
-    m = re.search(r"Fase attuale:\*\*\s*([^-\n*]+)", block, flags=re.IGNORECASE)
+    m = re.search(r"Fase attuale:\*\*\s*([^\n*]+)", block, flags=re.IGNORECASE)
     if m:
         phase = clean_cell(m.group(1)).upper()
 
@@ -634,12 +663,11 @@ def parse_sol_fractal_component(block: str):
 
     verdict_u = verdict or ""
     tracking_u = tracking or ""
-    risk_u = risk or ""
 
     if "ROTTO" in verdict_u or "NO" == verdict_u:
         score = -2
     elif "PARZIALMENTE" in verdict_u:
-        if similarity is not None and similarity >= 78 and "STABILE" in tracking_u and "ALTO" not in risk_u:
+        if similarity is not None and similarity >= 78 and "STABILE" in tracking_u:
             score = 2
         elif similarity is not None and similarity >= 70 and "STABILE" in tracking_u:
             score = 1
@@ -683,14 +711,19 @@ def parse_fractal_path_component(block: str):
     if not block:
         return component_template(0, "Fractal path tracker non disponibile.")
 
+    accuracy_block = extract_heading_block(
+        block,
+        r"##\s+Accuratezza storica della proiezione futura\b",
+    )
+
     max_controls = 0
 
-    for line in block.splitlines():
+    for line in accuracy_block.splitlines():
         cells = split_md_row(line)
         if not cells or len(cells) < 2:
             continue
 
-        first = cells[0].lower()
+        first = cells[0].strip().lower()
         if re.fullmatch(r"\d+g", first):
             controls = parse_number(cells[1])
             if controls is not None:
@@ -985,7 +1018,6 @@ def build_confirmations(asset: str, components: dict) -> str:
     sol_fractal = components[asset]["Frattale SOL"]["data"]
 
     resistance = technical.get("resistance")
-    support = technical.get("support")
 
     if asset == "BTC":
         if resistance is not None:
@@ -1294,6 +1326,11 @@ def build_report(components: dict):
         "Nota lifecycle EMA200: il modulo Major alt lifecycle squeeze resta nel report, ma pesa **0** nel Global "
         "perché EMA50/EMA200 e target EMA200 sono contesto, non conferme dirette di prezzo."
     )
+    lines.append("")
+    lines.append(
+        "Nota tecnica: Scanner path e Fractal path leggono i controlli solo dalle rispettive tabelle di accuratezza, "
+        "così non confondono prezzi, date o anni con il numero di controlli."
+    )
 
     return "\n".join(lines).rstrip() + "\n", results
 
@@ -1317,6 +1354,7 @@ def write_metrics_csv(components: dict, results: dict) -> None:
         "scanner_positive_rate",
         "scanner_return_p50",
         "scanner_path_score",
+        "scanner_path_controls",
         "market_score",
         "market_matches",
         "market_positive_30d",
@@ -1333,6 +1371,7 @@ def write_metrics_csv(components: dict, results: dict) -> None:
         "sol_fractal_phase",
         "sol_fractal_risk",
         "fractal_path_score",
+        "fractal_path_controls",
         "rsi_score",
         "rsi_risk",
         "lifecycle_score_component",
@@ -1371,6 +1410,7 @@ def write_metrics_csv(components: dict, results: dict) -> None:
             "scanner_positive_rate": c["Scanner"]["data"].get("positive_rate"),
             "scanner_return_p50": c["Scanner"]["data"].get("return_p50"),
             "scanner_path_score": c["Scanner path"]["score"],
+            "scanner_path_controls": c["Scanner path"]["data"].get("controls"),
             "market_score": c["Market regime"]["score"],
             "market_matches": c["Market regime"]["data"].get("matches"),
             "market_positive_30d": c["Market regime"]["data"].get("positive_30d"),
@@ -1387,6 +1427,7 @@ def write_metrics_csv(components: dict, results: dict) -> None:
             "sol_fractal_phase": c["Frattale SOL"]["data"].get("phase"),
             "sol_fractal_risk": c["Frattale SOL"]["data"].get("risk"),
             "fractal_path_score": c["Fractal path"]["score"],
+            "fractal_path_controls": c["Fractal path"]["data"].get("controls"),
             "rsi_score": c["RSI top-cycle"]["score"],
             "rsi_risk": c["RSI top-cycle"]["data"].get("risk"),
             "lifecycle_score_component": c["Lifecycle EMA"]["score"],
