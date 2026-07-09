@@ -133,29 +133,37 @@ def safe_float(v, default=np.nan):
     try:
         if v is None:
             return default
+
         if isinstance(v, str):
             s = v.strip()
+
             if not s or s.lower() in ["nan", "none", "null", "n/a", "na", "n/d"]:
                 return default
+
             s = s.replace("%", "")
             s = s.replace("$", "")
             s = s.replace("€", "")
             s = s.replace("+", "")
             s = s.replace("−", "-")
             s = s.replace(" ", "")
+
             if "," in s and "." in s:
                 s = s.replace(".", "").replace(",", ".")
             elif "," in s:
                 s = s.replace(",", ".")
+
             s = re.sub(r"[^0-9.\-]", "", s)
+
             if not s or s in ["-", ".", "-."]:
                 return default
+
             return float(s)
 
         if pd.isna(v):
             return default
 
         return float(v)
+
     except Exception:
         return default
 
@@ -202,21 +210,27 @@ def parse_date(value):
 
     try:
         dt = pd.to_datetime(value, errors="coerce")
+
         if pd.isna(dt):
             return pd.NaT
+
         if getattr(dt, "tzinfo", None) is not None:
             dt = dt.tz_convert(None)
+
         return pd.Timestamp(dt).normalize()
+
     except Exception:
         return pd.NaT
 
 
 def parse_date_series(series):
     out = pd.to_datetime(series, errors="coerce")
+
     try:
         out = out.dt.tz_localize(None)
     except Exception:
         pass
+
     return out.dt.normalize()
 
 
@@ -244,18 +258,22 @@ def normalize_ohlcv(df):
 
         if any(f in level0 for f in fields):
             tmp = {}
+
             for field in fields:
                 if field in level0:
                     part = out.xs(field, axis=1, level=0)
                     tmp[field] = part.iloc[:, 0]
+
             out = pd.DataFrame(tmp)
 
         elif any(f in level1 for f in fields):
             tmp = {}
+
             for field in fields:
                 if field in level1:
                     part = out.xs(field, axis=1, level=1)
                     tmp[field] = part.iloc[:, 0]
+
             out = pd.DataFrame(tmp)
 
     if "Close" not in out.columns:
@@ -297,14 +315,17 @@ def download_prices(ticker, start=None, end=None, period=None):
 
         if start is not None:
             kwargs["start"] = str(start)
+
         if end is not None:
             kwargs["end"] = str(end)
+
         if start is None and period is not None:
             kwargs["period"] = period
         elif start is None and period is None:
             kwargs["period"] = "max"
 
         raw = yf.download(**kwargs)
+
         return normalize_ohlcv(raw)
 
     except Exception as e:
@@ -317,6 +338,7 @@ def get_close_on_or_before(prices, date):
         return np.nan
 
     date = parse_date(date)
+
     if pd.isna(date):
         return np.nan
 
@@ -333,6 +355,7 @@ def get_close_on_or_after(prices, date):
         return np.nan
 
     date = parse_date(date)
+
     if pd.isna(date):
         return np.nan
 
@@ -354,38 +377,95 @@ def ensure_tracking_dataframe(path):
     df = pd.read_csv(path)
     df = normalize_columns(df)
 
-    col_day = find_col(df, ["giorno", "day", "day_index", "index"], required=False)
-    col_sol_date = find_col(df, ["data sol", "sol_date", "date_sol", "date"], required=False)
+    col_day = find_col(
+        df,
+        ["giorno", "day", "day_index", "index"],
+        required=False,
+    )
+
+    col_sol_date = find_col(
+        df,
+        ["data sol", "sol_date", "date_sol", "date", "data"],
+        required=False,
+    )
+
     col_btc_eq = find_col(
         df,
-        ["data btc eq.", "data btc eq", "btc_equivalent_date", "btc_eq_date", "btc_date"],
+        [
+            "data btc eq.",
+            "data btc eq",
+            "btc_equivalent_date",
+            "btc_eq_date",
+            "btc_date",
+            "data btc",
+        ],
         required=False,
     )
+
     col_sol_real = find_col(
         df,
-        ["sol reale", "sol_price_real", "sol_real", "sol_price", "price_real", "SOL reale"],
+        [
+            "sol reale",
+            "sol_price_real",
+            "sol_real",
+            "sol_price",
+            "price_real",
+            "prezzo sol",
+            "prezzo",
+            "current_price",
+        ],
         required=False,
     )
+
     col_btc_scaled = find_col(
         df,
-        ["btc scalato", "btc_scaled", "btc_scaled_price", "scaled_btc_price", "BTC scalato"],
+        [
+            "btc scalato",
+            "btc_scaled",
+            "btc_scaled_price",
+            "scaled_btc_price",
+            "btc_scaled_on_sol",
+            "btc path",
+            "btc_path",
+            "fractal_price",
+            "prezzo btc scalato",
+        ],
         required=False,
     )
-    col_error = find_col(df, ["errore", "error_pct", "error", "gap_pct"], required=False)
-    col_phase = find_col(df, ["fase", "phase", "segment", "programma"], required=False)
+
+    col_error = find_col(
+        df,
+        [
+            "errore",
+            "error_pct",
+            "error",
+            "gap_pct",
+            "gap",
+            "gap sol btc",
+            "gap_sol_btc",
+            "differenza",
+        ],
+        required=False,
+    )
+
+    col_phase = find_col(
+        df,
+        ["fase", "phase", "segment", "programma"],
+        required=False,
+    )
 
     if not col_sol_real:
-        raise KeyError("Non trovo la colonna del prezzo reale SOL nello storico tracking.")
-
-    if not col_btc_scaled:
-        raise KeyError("Non trovo la colonna BTC scalato nello storico tracking.")
+        raise KeyError(
+            "Non trovo la colonna del prezzo reale SOL nello storico tracking. "
+            f"Colonne disponibili: {list(df.columns)}"
+        )
 
     out = pd.DataFrame()
 
     if col_day:
         out["day_index"] = pd.to_numeric(df[col_day], errors="coerce")
     else:
-        out["day_index"] = range(len(df))
+        out["day_index"] = np.arange(len(df))
 
     if col_sol_date:
         out["sol_date"] = parse_date_series(df[col_sol_date])
@@ -398,11 +478,34 @@ def ensure_tracking_dataframe(path):
         out["btc_eq_date"] = pd.NaT
 
     out["sol_real"] = pd.to_numeric(df[col_sol_real], errors="coerce")
-    out["btc_scaled"] = pd.to_numeric(df[col_btc_scaled], errors="coerce")
 
-    if col_error:
-        out["error_pct"] = df[col_error].map(safe_float)
+    if col_btc_scaled:
+        out["btc_scaled"] = pd.to_numeric(df[col_btc_scaled], errors="coerce")
+
+    elif col_error:
+        error_pct = df[col_error].map(safe_float)
+        denominator = 1.0 + (error_pct / 100.0)
+        denominator = denominator.replace(0, np.nan)
+
+        out["btc_scaled"] = out["sol_real"] / denominator
+        out["error_pct"] = error_pct
+
+        print(
+            "Nota: colonna BTC scalato non trovata. "
+            f"Ricostruita usando la colonna errore/gap: {col_error}"
+        )
+
     else:
+        out["btc_scaled"] = out["sol_real"]
+        out["error_pct"] = 0.0
+
+        print(
+            "ATTENZIONE: non trovo né BTC scalato né errore/gap nello storico tracking. "
+            "Uso fallback neutro: BTC scalato = SOL reale. "
+            "Il grafico gap sarà temporaneamente piatto a 0%."
+        )
+
+    if "error_pct" not in out.columns:
         out["error_pct"] = ((out["sol_real"] / out["btc_scaled"]) - 1.0) * 100.0
 
     if col_phase:
@@ -411,7 +514,15 @@ def ensure_tracking_dataframe(path):
         out["phase"] = "n/a"
 
     out = out.dropna(subset=["sol_real", "btc_scaled"]).reset_index(drop=True)
-    out["day_index"] = pd.to_numeric(out["day_index"], errors="coerce").fillna(range(len(out))).astype(int)
+
+    out["day_index"] = pd.to_numeric(out["day_index"], errors="coerce")
+    missing_day = out["day_index"].isna()
+
+    if missing_day.any():
+        out.loc[missing_day, "day_index"] = out.index[missing_day]
+
+    out["day_index"] = out["day_index"].astype(int)
+
     out["error_pct"] = ((out["sol_real"] / out["btc_scaled"]) - 1.0) * 100.0
     out["abs_error_pct"] = out["error_pct"].abs()
 
@@ -621,6 +732,7 @@ def build_milestones_from_daily_projection(daily_projection):
         start_price = safe_float(r["sol_start_price"])
 
         btc_move = np.nan
+
         if not pd.isna(start_price) and start_price != 0:
             btc_move = (base / start_price - 1.0) * 100.0
 
@@ -641,8 +753,6 @@ def append_and_check_projection_log(milestones):
     if milestones is None or milestones.empty:
         return pd.DataFrame(), pd.DataFrame()
 
-    forecast_date = str(milestones["target_date"].iloc[0])
-    # forecast_date reale: target - horizon
     first_horizon = int(milestones["horizon_days"].iloc[0])
     forecast_date_dt = parse_date(milestones["target_date"].iloc[0]) - pd.Timedelta(days=first_horizon)
     forecast_date = forecast_date_dt.strftime("%Y-%m-%d")
@@ -725,8 +835,10 @@ def append_and_check_projection_log(milestones):
                 error_pct = (real_price / base - 1.0) * 100.0
 
                 inside = "yes"
+
                 if not pd.isna(min_path) and real_price < min_path:
                     inside = "no"
+
                 if not pd.isna(max_path) and real_price > max_path:
                     inside = "no"
 
@@ -847,6 +959,7 @@ def generate_path_tracking_chart(df, daily_projection):
         last_x = x_real.iloc[-1]
         last_y = df["sol_real"].iloc[-1]
         plt.scatter([last_x], [last_y], s=50)
+
         try:
             plt.annotate("Oggi SOL", (last_x, last_y), xytext=(10, 10), textcoords="offset points")
         except Exception:
@@ -945,10 +1058,20 @@ def build_recent_table(df, rows=10):
 
     tail = df.tail(rows).copy()
 
+    if tail["sol_date"].notna().any():
+        sol_dates = tail["sol_date"].dt.strftime("%Y-%m-%d")
+    else:
+        sol_dates = ["n/a"] * len(tail)
+
+    if tail["btc_eq_date"].notna().any():
+        btc_dates = tail["btc_eq_date"].dt.strftime("%Y-%m-%d")
+    else:
+        btc_dates = ["n/a"] * len(tail)
+
     display = pd.DataFrame({
         "Giorno": tail["day_index"].astype(int),
-        "Data SOL": tail["sol_date"].dt.strftime("%Y-%m-%d") if tail["sol_date"].notna().any() else "n/a",
-        "Data BTC eq.": tail["btc_eq_date"].dt.strftime("%Y-%m-%d") if tail["btc_eq_date"].notna().any() else "n/a",
+        "Data SOL": sol_dates,
+        "Data BTC eq.": btc_dates,
         "SOL reale": [fmt_price(v) for v in tail["sol_real"]],
         "BTC scalato": [fmt_price(v) for v in tail["btc_scaled"]],
         "Errore": [fmt_pct(v, signed=True) for v in tail["error_pct"]],
@@ -964,6 +1087,7 @@ def build_milestone_table(milestones, latest_projection_rows):
     if latest_projection_rows is not None and not latest_projection_rows.empty:
         for _, r in latest_projection_rows.iterrows():
             h = int(safe_float(r.get("horizon_days", np.nan)))
+
             rows.append({
                 "Orizzonte": f"{h}g",
                 "Data target": str(r.get("target_date", "")),
