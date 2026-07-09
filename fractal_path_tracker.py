@@ -14,31 +14,44 @@ from tabulate import tabulate
 
 
 REPORT_DIR = "reports"
+
 MAIN_REPORT_PATH = os.path.join(REPORT_DIR, "latest_report.md")
 REPORT_PATH = os.path.join(REPORT_DIR, "fractal_path_tracker.md")
+BTC_SOL_REPORT_PATH = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_report.md")
 
 START_MARKER = "<!-- FRACTAL_PATH_TRACKER_START -->"
 END_MARKER = "<!-- FRACTAL_PATH_TRACKER_END -->"
 
 HORIZONS = [7, 14, 30, 60, 90, 120]
 
-TRACKING_INPUT_CANDIDATES = [
-    os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_tracking_history.csv"),
-    os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_history.csv"),
-    os.path.join(REPORT_DIR, "sol_btc_fractal_history.csv"),
-]
+FULL_TRACKING_CSV = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_path_tracking_full.csv")
+FUTURE_DAILY_PROJECTION_CSV = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_future_daily_projection.csv")
+PROJECTION_LOG_CSV = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_projection_log.csv")
+
+PATH_TRACKING_CHART_PATH = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_path_tracking_chart.png")
+BOTTOM_BACKTEST_CHART_PATH = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_bottom_backtest_chart.png")
+GAP_60D_CHART_PATH = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_gap_60d_chart.png")
 
 LATEST_JSON_CANDIDATES = [
     os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_latest.json"),
     os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_report.json"),
 ]
 
-PATH_TRACKING_CHART_PATH = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_path_tracking_chart.png")
-BOTTOM_BACKTEST_CHART_PATH = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_bottom_backtest_chart.png")
-GAP_60D_CHART_PATH = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_gap_60d_chart.png")
 
-FUTURE_DAILY_PROJECTION_CSV = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_future_daily_projection.csv")
-PROJECTION_LOG_CSV = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_projection_log.csv")
+ITALIAN_MONTHS = {
+    "gennaio": 1,
+    "febbraio": 2,
+    "marzo": 3,
+    "aprile": 4,
+    "maggio": 5,
+    "giugno": 6,
+    "luglio": 7,
+    "agosto": 8,
+    "settembre": 9,
+    "ottobre": 10,
+    "novembre": 11,
+    "dicembre": 12,
+}
 
 
 def now_utc():
@@ -46,14 +59,7 @@ def now_utc():
 
 
 def today_date():
-    return pd.Timestamp.utcnow().normalize().tz_localize(None)
-
-
-def pick_existing_path(candidates):
-    for path in candidates:
-        if os.path.exists(path):
-            return path
-    return None
+    return pd.Timestamp.now(tz="UTC").tz_convert(None).normalize()
 
 
 def read_text(path):
@@ -78,10 +84,11 @@ def load_json_if_exists(path):
         return {}
 
 
-def normalize_columns(df):
-    df = df.copy()
-    df.columns = [str(c).strip() for c in df.columns]
-    return df
+def pick_existing_path(candidates):
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+    return None
 
 
 def normalize_key(s):
@@ -96,37 +103,10 @@ def normalize_key(s):
     return s.strip("_")
 
 
-def find_col(df, candidates, required=True):
-    if df is None or df.empty:
-        if required:
-            raise KeyError("DataFrame vuoto.")
-        return None
-
-    norm_map = {normalize_key(c): c for c in df.columns}
-
-    for cand in candidates:
-        c = normalize_key(cand)
-        if c in norm_map:
-            return norm_map[c]
-
-    if required:
-        raise KeyError(
-            f"Colonna non trovata. Candidate: {candidates}. "
-            f"Colonne disponibili: {list(df.columns)}"
-        )
-
-    return None
-
-
-def pick_value(d, keys, default=None):
-    if not isinstance(d, dict):
-        return default
-
-    for k in keys:
-        if k in d and d[k] is not None:
-            return d[k]
-
-    return default
+def normalize_columns(df):
+    df = df.copy()
+    df.columns = [str(c).strip() for c in df.columns]
+    return df
 
 
 def safe_float(v, default=np.nan):
@@ -195,18 +175,45 @@ def fmt_pct(v, decimals=2, signed=False):
     return f"{v:.{decimals}f}%".replace(".", ",")
 
 
-def fmt_int(v):
-    try:
-        if pd.isna(v):
-            return "0"
-        return str(int(v))
-    except Exception:
-        return "0"
+def parse_italian_date(value):
+    if value is None:
+        return pd.NaT
+
+    s = str(value).strip().lower()
+
+    m = re.search(
+        r"(\d{1,2})\s+"
+        r"(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)"
+        r"\s+(\d{4})",
+        s,
+    )
+
+    if not m:
+        return pd.NaT
+
+    day = int(m.group(1))
+    month = ITALIAN_MONTHS[m.group(2)]
+    year = int(m.group(3))
+
+    return pd.Timestamp(year=year, month=month, day=day)
 
 
 def parse_date(value):
     if value is None:
         return pd.NaT
+
+    if isinstance(value, pd.Timestamp):
+        try:
+            return value.tz_convert(None).normalize()
+        except Exception:
+            try:
+                return value.tz_localize(None).normalize()
+            except Exception:
+                return value.normalize()
+
+    italian = parse_italian_date(value)
+    if pd.notna(italian):
+        return italian
 
     try:
         dt = pd.to_datetime(value, errors="coerce")
@@ -221,17 +228,6 @@ def parse_date(value):
 
     except Exception:
         return pd.NaT
-
-
-def parse_date_series(series):
-    out = pd.to_datetime(series, errors="coerce")
-
-    try:
-        out = out.dt.tz_localize(None)
-    except Exception:
-        pass
-
-    return out.dt.normalize()
 
 
 def df_to_markdown(df):
@@ -290,9 +286,12 @@ def normalize_ohlcv(df):
     out.index = pd.to_datetime(out.index, errors="coerce")
 
     try:
-        out.index = out.index.tz_localize(None)
+        out.index = out.index.tz_convert(None)
     except Exception:
-        pass
+        try:
+            out.index = out.index.tz_localize(None)
+        except Exception:
+            pass
 
     out.index = out.index.normalize()
     out = out[~out.index.duplicated(keep="last")]
@@ -367,232 +366,261 @@ def get_close_on_or_after(prices, date):
     return safe_float(d.iloc[0]["Close"])
 
 
-def ensure_tracking_dataframe(path):
-    if not path or not os.path.exists(path):
-        raise FileNotFoundError(
-            "Non trovo il file di tracking del frattale. "
-            "Controlla che btc_2022_vs_sol_2026_report.py stia salvando uno storico CSV."
-        )
-
-    df = pd.read_csv(path)
-    df = normalize_columns(df)
-
-    col_day = find_col(
-        df,
-        ["giorno", "day", "day_index", "index"],
-        required=False,
-    )
-
-    col_sol_date = find_col(
-        df,
-        ["data sol", "sol_date", "date_sol", "date", "data"],
-        required=False,
-    )
-
-    col_btc_eq = find_col(
-        df,
-        [
-            "data btc eq.",
-            "data btc eq",
-            "btc_equivalent_date",
-            "btc_eq_date",
-            "btc_date",
-            "data btc",
-        ],
-        required=False,
-    )
-
-    col_sol_real = find_col(
-        df,
-        [
-            "sol reale",
-            "sol_price_real",
-            "sol_real",
-            "sol_price",
-            "price_real",
-            "prezzo sol",
-            "prezzo",
-            "current_price",
-        ],
-        required=False,
-    )
-
-    col_btc_scaled = find_col(
-        df,
-        [
-            "btc scalato",
-            "btc_scaled",
-            "btc_scaled_price",
-            "scaled_btc_price",
-            "btc_scaled_on_sol",
-            "btc path",
-            "btc_path",
-            "fractal_price",
-            "prezzo btc scalato",
-        ],
-        required=False,
-    )
-
-    col_error = find_col(
-        df,
-        [
-            "errore",
-            "error_pct",
-            "error",
-            "gap_pct",
-            "gap",
-            "gap sol btc",
-            "gap_sol_btc",
-            "differenza",
-        ],
-        required=False,
-    )
-
-    col_phase = find_col(
-        df,
-        ["fase", "phase", "segment", "programma"],
-        required=False,
-    )
-
-    if not col_sol_real:
-        raise KeyError(
-            "Non trovo la colonna del prezzo reale SOL nello storico tracking. "
-            f"Colonne disponibili: {list(df.columns)}"
-        )
-
-    out = pd.DataFrame()
-
-    if col_day:
-        out["day_index"] = pd.to_numeric(df[col_day], errors="coerce")
-    else:
-        out["day_index"] = np.arange(len(df))
-
-    if col_sol_date:
-        out["sol_date"] = parse_date_series(df[col_sol_date])
-    else:
-        out["sol_date"] = pd.NaT
-
-    if col_btc_eq:
-        out["btc_eq_date"] = parse_date_series(df[col_btc_eq])
-    else:
-        out["btc_eq_date"] = pd.NaT
-
-    out["sol_real"] = pd.to_numeric(df[col_sol_real], errors="coerce")
-
-    if col_btc_scaled:
-        out["btc_scaled"] = pd.to_numeric(df[col_btc_scaled], errors="coerce")
-
-    elif col_error:
-        error_pct = df[col_error].map(safe_float)
-        denominator = 1.0 + (error_pct / 100.0)
-        denominator = denominator.replace(0, np.nan)
-
-        out["btc_scaled"] = out["sol_real"] / denominator
-        out["error_pct"] = error_pct
-
-        print(
-            "Nota: colonna BTC scalato non trovata. "
-            f"Ricostruita usando la colonna errore/gap: {col_error}"
-        )
-
-    else:
-        out["btc_scaled"] = out["sol_real"]
-        out["error_pct"] = 0.0
-
-        print(
-            "ATTENZIONE: non trovo né BTC scalato né errore/gap nello storico tracking. "
-            "Uso fallback neutro: BTC scalato = SOL reale. "
-            "Il grafico gap sarà temporaneamente piatto a 0%."
-        )
-
-    if "error_pct" not in out.columns:
-        out["error_pct"] = ((out["sol_real"] / out["btc_scaled"]) - 1.0) * 100.0
-
-    if col_phase:
-        out["phase"] = df[col_phase].astype(str)
-    else:
-        out["phase"] = "n/a"
-
-    out = out.dropna(subset=["sol_real", "btc_scaled"]).reset_index(drop=True)
-
-    out["day_index"] = pd.to_numeric(out["day_index"], errors="coerce")
-    missing_day = out["day_index"].isna()
-
-    if missing_day.any():
-        out.loc[missing_day, "day_index"] = out.index[missing_day]
-
-    out["day_index"] = out["day_index"].astype(int)
-
-    out["error_pct"] = ((out["sol_real"] / out["btc_scaled"]) - 1.0) * 100.0
-    out["abs_error_pct"] = out["error_pct"].abs()
-
-    return out
+def extract_first(pattern, text, flags=re.IGNORECASE | re.DOTALL):
+    m = re.search(pattern, text, flags)
+    if not m:
+        return None
+    return m.group(1).strip()
 
 
-def derive_metadata(df, latest_json):
+def parse_report_metadata_from_markdown():
+    text = read_text(BTC_SOL_REPORT_PATH)
+
+    if not text:
+        text = read_text(MAIN_REPORT_PATH)
+
     metadata = {}
 
-    forecast_date = pick_value(
-        latest_json,
-        ["forecast_date", "data_previsione", "date", "last_date"],
-        None,
+    forecast_raw = extract_first(
+        r"Ultima candela SOL usata:\s*\*\*([^*]+)\*\*",
+        text,
     )
 
-    sol_bottom_date = pick_value(
-        latest_json,
-        ["sol_bottom_date", "bottom_sol_date", "bottom_date_sol"],
-        None,
+    sol_day_raw = extract_first(
+        r"SOL\s+(?:e|è)\s+al giorno:\s*([0-9]+)",
+        text,
     )
 
-    btc_bottom_date = pick_value(
-        latest_json,
-        ["btc_bottom_date", "bottom_btc_date", "bottom_date_btc"],
-        None,
+    btc_eq_raw = extract_first(
+        r"Giorno BTC equivalente:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})",
+        text,
     )
 
-    program_start_date = pick_value(
-        latest_json,
-        ["program_start_date", "scanner_start_date", "start_program_date"],
-        None,
+    program_raw = extract_first(
+        r"Inizio programma/scanner:\s*([^\n]+)",
+        text,
     )
 
-    current_price = pick_value(
-        latest_json,
-        ["sol_price_today", "price_today", "sol_price", "current_price", "latest_price"],
-        None,
+    phase = extract_first(
+        r"\*\*Fase attuale:\*\*\s*([^\n]+)",
+        text,
     )
 
-    if df is not None and not df.empty:
-        if forecast_date is None and "sol_date" in df.columns and df["sol_date"].notna().any():
-            forecast_date = df["sol_date"].iloc[-1]
-
-        if sol_bottom_date is None and "sol_date" in df.columns and df["sol_date"].notna().any():
-            sol_bottom_date = df["sol_date"].iloc[0]
-
-        if btc_bottom_date is None and "btc_eq_date" in df.columns and df["btc_eq_date"].notna().any():
-            btc_bottom_date = df["btc_eq_date"].iloc[0]
-
-        if current_price is None or pd.isna(safe_float(current_price)):
-            current_price = safe_float(df["sol_real"].iloc[-1])
-
-    if program_start_date is None:
-        program_start_date = "2026-07-03"
-
-    metadata["forecast_date"] = parse_date(forecast_date)
-    metadata["sol_bottom_date"] = parse_date(sol_bottom_date)
-    metadata["btc_bottom_date"] = parse_date(btc_bottom_date)
-    metadata["program_start_date"] = parse_date(program_start_date)
-    metadata["current_price"] = safe_float(current_price)
-
-    metadata["verdict"] = pick_value(latest_json, ["verdict", "verdetto"], "n/a")
-    metadata["similarity"] = safe_float(
-        pick_value(latest_json, ["similarity_total", "somiglianza_totale", "similarity"], np.nan)
+    similarity_raw = extract_first(
+        r"\*\*Somiglianza totale:\*\*\s*([^\n]+)",
+        text,
     )
-    metadata["tracking"] = pick_value(latest_json, ["tracking_status", "tracking"], "n/a")
-    metadata["phase"] = pick_value(latest_json, ["phase", "fase"], "n/a")
-    metadata["phase_risk"] = pick_value(latest_json, ["phase_risk", "rischio_fase"], "n/a")
+
+    risk_phase = extract_first(
+        r"\*\*Rischio fase:\*\*\s*([^\n]+)",
+        text,
+    )
+
+    tracking = extract_first(
+        r"\*\*Trend tracking:\*\*\s*([^\n]+)",
+        text,
+    )
+
+    verdict = extract_first(
+        r"##\s*Verdetto:\s*([^\n]+)",
+        text,
+    )
+
+    if verdict:
+        verdict = verdict.replace("*", "").strip()
+
+    forecast_date = parse_date(forecast_raw)
+    btc_eq_date = parse_date(btc_eq_raw)
+    program_start_date = parse_date(program_raw)
+
+    sol_day = None
+    try:
+        if sol_day_raw is not None:
+            sol_day = int(sol_day_raw)
+    except Exception:
+        sol_day = None
+
+    sol_bottom_date = pd.NaT
+    btc_bottom_date = pd.NaT
+
+    if pd.notna(forecast_date) and sol_day is not None:
+        sol_bottom_date = forecast_date - pd.Timedelta(days=sol_day)
+
+    if pd.notna(btc_eq_date) and sol_day is not None:
+        btc_bottom_date = btc_eq_date - pd.Timedelta(days=sol_day)
+
+    if pd.isna(sol_bottom_date):
+        bottom_raw = extract_first(
+            r"Prima del programma\s*\|\s*([^|]+?)\s*->",
+            text,
+        )
+        sol_bottom_date = parse_date(bottom_raw)
+
+    if pd.isna(program_start_date):
+        program_start_date = pd.Timestamp("2026-07-03")
+
+    metadata["forecast_date"] = forecast_date
+    metadata["sol_day"] = sol_day
+    metadata["btc_eq_date"] = btc_eq_date
+    metadata["sol_bottom_date"] = sol_bottom_date
+    metadata["btc_bottom_date"] = btc_bottom_date
+    metadata["program_start_date"] = program_start_date
+    metadata["verdict"] = verdict or "n/a"
+    metadata["phase"] = phase or "n/a"
+    metadata["similarity"] = safe_float(similarity_raw)
+    metadata["phase_risk"] = risk_phase or "n/a"
+    metadata["tracking"] = tracking or "n/a"
 
     return metadata
+
+
+def enrich_metadata_with_json(metadata):
+    json_path = pick_existing_path(LATEST_JSON_CANDIDATES)
+    latest_json = load_json_if_exists(json_path)
+
+    if not latest_json:
+        return metadata
+
+    def maybe_set_date(key, candidates):
+        if pd.notna(metadata.get(key, pd.NaT)):
+            return
+        for c in candidates:
+            if c in latest_json and latest_json[c] is not None:
+                metadata[key] = parse_date(latest_json[c])
+                return
+
+    maybe_set_date("forecast_date", ["forecast_date", "data_previsione", "date", "last_date"])
+    maybe_set_date("sol_bottom_date", ["sol_bottom_date", "bottom_sol_date", "bottom_date_sol"])
+    maybe_set_date("btc_bottom_date", ["btc_bottom_date", "bottom_btc_date", "bottom_date_btc"])
+    maybe_set_date("program_start_date", ["program_start_date", "scanner_start_date", "start_program_date"])
+
+    if metadata.get("verdict", "n/a") == "n/a":
+        metadata["verdict"] = latest_json.get("verdict", latest_json.get("verdetto", "n/a"))
+
+    if metadata.get("phase", "n/a") == "n/a":
+        metadata["phase"] = latest_json.get("phase", latest_json.get("fase", "n/a"))
+
+    if metadata.get("tracking", "n/a") == "n/a":
+        metadata["tracking"] = latest_json.get("tracking_status", latest_json.get("tracking", "n/a"))
+
+    if metadata.get("phase_risk", "n/a") == "n/a":
+        metadata["phase_risk"] = latest_json.get("phase_risk", latest_json.get("rischio_fase", "n/a"))
+
+    if pd.isna(safe_float(metadata.get("similarity", np.nan))):
+        metadata["similarity"] = safe_float(
+            latest_json.get("similarity_total", latest_json.get("somiglianza_totale", latest_json.get("similarity")))
+        )
+
+    return metadata
+
+
+def build_metadata():
+    metadata = parse_report_metadata_from_markdown()
+    metadata = enrich_metadata_with_json(metadata)
+
+    if pd.isna(metadata.get("forecast_date", pd.NaT)):
+        metadata["forecast_date"] = today_date()
+
+    if pd.isna(metadata.get("program_start_date", pd.NaT)):
+        metadata["program_start_date"] = pd.Timestamp("2026-07-03")
+
+    if metadata.get("sol_day") is None:
+        if pd.notna(metadata.get("forecast_date", pd.NaT)) and pd.notna(metadata.get("sol_bottom_date", pd.NaT)):
+            metadata["sol_day"] = int((metadata["forecast_date"] - metadata["sol_bottom_date"]).days)
+        else:
+            metadata["sol_day"] = 33
+
+    if pd.isna(metadata.get("sol_bottom_date", pd.NaT)):
+        metadata["sol_bottom_date"] = metadata["forecast_date"] - pd.Timedelta(days=int(metadata["sol_day"]))
+
+    if pd.isna(metadata.get("btc_bottom_date", pd.NaT)):
+        if pd.notna(metadata.get("btc_eq_date", pd.NaT)):
+            metadata["btc_bottom_date"] = metadata["btc_eq_date"] - pd.Timedelta(days=int(metadata["sol_day"]))
+        else:
+            metadata["btc_bottom_date"] = pd.Timestamp("2022-11-21")
+
+    if pd.isna(metadata.get("btc_eq_date", pd.NaT)):
+        metadata["btc_eq_date"] = metadata["btc_bottom_date"] + pd.Timedelta(days=int(metadata["sol_day"]))
+
+    return metadata
+
+
+def build_full_tracking_from_prices(metadata):
+    forecast_date = metadata["forecast_date"]
+    sol_bottom_date = metadata["sol_bottom_date"]
+    btc_bottom_date = metadata["btc_bottom_date"]
+    program_start_date = metadata["program_start_date"]
+
+    if pd.isna(forecast_date) or pd.isna(sol_bottom_date) or pd.isna(btc_bottom_date):
+        return pd.DataFrame()
+
+    total_days = int((forecast_date - sol_bottom_date).days)
+
+    if total_days < 0:
+        return pd.DataFrame()
+
+    sol_start = (sol_bottom_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
+    sol_end = (forecast_date + pd.Timedelta(days=2)).strftime("%Y-%m-%d")
+
+    btc_start = (btc_bottom_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
+    btc_end = (btc_bottom_date + pd.Timedelta(days=total_days + max(HORIZONS) + 10)).strftime("%Y-%m-%d")
+
+    sol_prices = download_prices("SOL-USD", start=sol_start, end=sol_end)
+    btc_prices = download_prices("BTC-USD", start=btc_start, end=btc_end)
+
+    if sol_prices.empty or btc_prices.empty:
+        return pd.DataFrame()
+
+    sol_bottom_price = get_close_on_or_before(sol_prices, sol_bottom_date)
+    btc_bottom_price = get_close_on_or_before(btc_prices, btc_bottom_date)
+
+    if pd.isna(sol_bottom_price) or pd.isna(btc_bottom_price) or btc_bottom_price == 0:
+        return pd.DataFrame()
+
+    rows = []
+
+    for day in range(0, total_days + 1):
+        sol_date = sol_bottom_date + pd.Timedelta(days=day)
+        btc_eq_date = btc_bottom_date + pd.Timedelta(days=day)
+
+        sol_real = get_close_on_or_before(sol_prices, sol_date)
+        btc_close = get_close_on_or_before(btc_prices, btc_eq_date)
+
+        if pd.isna(sol_real) or pd.isna(btc_close):
+            continue
+
+        btc_scaled = sol_bottom_price * (btc_close / btc_bottom_price)
+
+        if pd.isna(btc_scaled) or btc_scaled == 0:
+            continue
+
+        error_pct = (sol_real / btc_scaled - 1.0) * 100.0
+
+        if pd.notna(program_start_date) and sol_date >= program_start_date:
+            phase = "da inizio programma"
+        else:
+            phase = "prima programma"
+
+        rows.append({
+            "day_index": day,
+            "sol_date": sol_date,
+            "btc_eq_date": btc_eq_date,
+            "sol_real": sol_real,
+            "btc_scaled": btc_scaled,
+            "error_pct": error_pct,
+            "abs_error_pct": abs(error_pct),
+            "phase": phase,
+            "sol_bottom_price": sol_bottom_price,
+            "btc_bottom_price": btc_bottom_price,
+            "btc_close": btc_close,
+        })
+
+    out = pd.DataFrame(rows)
+
+    if not out.empty:
+        out.to_csv(FULL_TRACKING_CSV, index=False)
+
+    return out
 
 
 def classify_deviation(last_abs_error):
@@ -635,28 +663,21 @@ def classify_gap(gap):
 
 
 def build_daily_fractal_projection(df, metadata):
-    forecast_date = metadata.get("forecast_date", pd.NaT)
-    sol_bottom_date = metadata.get("sol_bottom_date", pd.NaT)
-    btc_bottom_date = metadata.get("btc_bottom_date", pd.NaT)
-    start_price = safe_float(metadata.get("current_price", np.nan))
+    if df is None or df.empty:
+        return pd.DataFrame()
 
-    if pd.isna(forecast_date) and df is not None and not df.empty and df["sol_date"].notna().any():
-        forecast_date = df["sol_date"].iloc[-1]
+    forecast_date = metadata["forecast_date"]
+    sol_bottom_date = metadata["sol_bottom_date"]
+    btc_bottom_date = metadata["btc_bottom_date"]
 
-    if pd.isna(sol_bottom_date) and df is not None and not df.empty and df["sol_date"].notna().any():
-        sol_bottom_date = df["sol_date"].iloc[0]
-
-    if pd.isna(btc_bottom_date) and df is not None and not df.empty and df["btc_eq_date"].notna().any():
-        btc_bottom_date = df["btc_eq_date"].iloc[0]
-
-    if pd.isna(start_price) and df is not None and not df.empty:
-        start_price = safe_float(df["sol_real"].iloc[-1])
+    start_price = safe_float(df.iloc[-1]["sol_real"])
 
     if pd.isna(forecast_date) or pd.isna(sol_bottom_date) or pd.isna(btc_bottom_date) or pd.isna(start_price):
         return pd.DataFrame()
 
     day_from_bottom_today = int((forecast_date - sol_bottom_date).days)
     btc_equivalent_today = btc_bottom_date + pd.Timedelta(days=day_from_bottom_today)
+
     max_forward_days = max(HORIZONS)
 
     btc_start = (btc_equivalent_today - pd.Timedelta(days=5)).strftime("%Y-%m-%d")
@@ -898,6 +919,7 @@ def generate_bottom_backtest_chart(df):
     plt.figure(figsize=(12, 6))
     plt.plot(x, df["sol_real"], label="SOL reale")
     plt.plot(x, df["btc_scaled"], label="BTC scalato su SOL", linestyle="--")
+
     plt.title("Backtest dal bottom: SOL reale vs BTC scalato")
     plt.xlabel("Data SOL" if df["sol_date"].notna().any() else "Giorni dal bottom")
     plt.ylabel("Prezzo SOL")
@@ -908,7 +930,7 @@ def generate_bottom_backtest_chart(df):
     plt.close()
 
 
-def generate_path_tracking_chart(df, daily_projection):
+def generate_path_tracking_chart(df, daily_projection, metadata):
     if df is None or df.empty:
         return
 
@@ -918,6 +940,14 @@ def generate_path_tracking_chart(df, daily_projection):
 
     plt.plot(x_real, df["sol_real"], label="SOL reale")
     plt.plot(x_real, df["btc_scaled"], label="BTC scalato su SOL", linestyle="--")
+
+    program_start = metadata.get("program_start_date", pd.NaT)
+
+    if pd.notna(program_start) and df["sol_date"].notna().any():
+        try:
+            plt.axvline(program_start, linestyle=":", linewidth=1)
+        except Exception:
+            pass
 
     if daily_projection is not None and not daily_projection.empty:
         future_dates = pd.to_datetime(daily_projection["target_sol_date"], errors="coerce")
@@ -991,7 +1021,6 @@ def generate_gap_60d_chart(df):
     x = gap_df["sol_date"] if gap_df["sol_date"].notna().any() else gap_df["day_index"]
 
     plt.figure(figsize=(12, 6))
-
     plt.axhline(0, linestyle="--", linewidth=1, color="black", alpha=0.7)
 
     try:
@@ -1058,15 +1087,8 @@ def build_recent_table(df, rows=10):
 
     tail = df.tail(rows).copy()
 
-    if tail["sol_date"].notna().any():
-        sol_dates = tail["sol_date"].dt.strftime("%Y-%m-%d")
-    else:
-        sol_dates = ["n/a"] * len(tail)
-
-    if tail["btc_eq_date"].notna().any():
-        btc_dates = tail["btc_eq_date"].dt.strftime("%Y-%m-%d")
-    else:
-        btc_dates = ["n/a"] * len(tail)
+    sol_dates = tail["sol_date"].dt.strftime("%Y-%m-%d") if tail["sol_date"].notna().any() else ["n/a"] * len(tail)
+    btc_dates = tail["btc_eq_date"].dt.strftime("%Y-%m-%d") if tail["btc_eq_date"].notna().any() else ["n/a"] * len(tail)
 
     display = pd.DataFrame({
         "Giorno": tail["day_index"].astype(int),
@@ -1161,6 +1183,7 @@ def build_report(df, metadata, daily_projection, milestones, log_df, latest_proj
     forecast_date = metadata["forecast_date"]
     sol_bottom_date = metadata["sol_bottom_date"]
     btc_bottom_date = metadata["btc_bottom_date"]
+    btc_eq_date = metadata["btc_eq_date"]
     program_start_date = metadata["program_start_date"]
 
     if pd.notna(program_start_date) and df is not None and not df.empty and df["sol_date"].notna().any():
@@ -1177,6 +1200,8 @@ def build_report(df, metadata, daily_projection, milestones, log_df, latest_proj
     mean_abs_program = from_program_df["abs_error_pct"].mean() if not from_program_df.empty else np.nan
     last_error = df["error_pct"].iloc[-1] if not df.empty else np.nan
     deviation_state = classify_deviation(abs(last_error))
+
+    current_price = df["sol_real"].iloc[-1] if not df.empty else np.nan
 
     gap_summary = build_gap_summary(gap_df)
 
@@ -1203,10 +1228,11 @@ Ora il controllo è diviso in quattro parti:
 - Data previsione: **{forecast_date.strftime("%Y-%m-%d") if pd.notna(forecast_date) else "n/a"}**
 - Bottom SOL usato: **{sol_bottom_date.strftime("%Y-%m-%d") if pd.notna(sol_bottom_date) else "n/a"}**
 - Bottom BTC 2022 equivalente: **{btc_bottom_date.strftime("%Y-%m-%d") if pd.notna(btc_bottom_date) else "n/a"}**
+- Giorno BTC equivalente oggi: **{btc_eq_date.strftime("%Y-%m-%d") if pd.notna(btc_eq_date) else "n/a"}**
 - Inizio programma/scanner rilevato: **{program_start_date.strftime("%Y-%m-%d") if pd.notna(program_start_date) else "n/a"}**
-- Prezzo iniziale SOL: **{fmt_price(metadata.get("current_price", np.nan))}**
+- Prezzo SOL corrente: **{fmt_price(current_price)}**
 - Verdetto: **{metadata.get("verdict", "n/a")}**
-- Somiglianza: **{fmt_pct(metadata.get("similarity", np.nan))}**
+- Somiglianza: **{fmt_pct(metadata.get("similarity", np.nan), signed=True)}**
 - Tracking: **{metadata.get("tracking", "n/a")}**
 - Fase: **{metadata.get("phase", "n/a")}**
 - Rischio fase: **{metadata.get("phase_risk", "n/a")}**
@@ -1299,19 +1325,22 @@ def replace_section_in_latest_report(section_text):
 def main():
     os.makedirs(REPORT_DIR, exist_ok=True)
 
-    tracking_path = pick_existing_path(TRACKING_INPUT_CANDIDATES)
-    latest_json_path = pick_existing_path(LATEST_JSON_CANDIDATES)
+    metadata = build_metadata()
 
-    df = ensure_tracking_dataframe(tracking_path)
-    latest_json = load_json_if_exists(latest_json_path)
-    metadata = derive_metadata(df, latest_json)
+    df = build_full_tracking_from_prices(metadata)
+
+    if df.empty:
+        raise RuntimeError(
+            "Fractal Path Tracker: impossibile costruire il tracking completo. "
+            "Controlla btc_2022_vs_sol_2026_report.md e il download prezzi da Yahoo Finance."
+        )
 
     daily_projection = build_daily_fractal_projection(df, metadata)
     milestones = build_milestones_from_daily_projection(daily_projection)
     projection_log, latest_projection_rows = append_and_check_projection_log(milestones)
 
     generate_bottom_backtest_chart(df)
-    generate_path_tracking_chart(df, daily_projection)
+    generate_path_tracking_chart(df, daily_projection, metadata)
     gap_df = generate_gap_60d_chart(df)
 
     report_text = build_report(
@@ -1329,6 +1358,7 @@ def main():
 
     print(f"Report scritto in: {REPORT_PATH}")
     print(f"Latest report aggiornato: {MAIN_REPORT_PATH}")
+    print(f"CSV tracking completo salvato in: {FULL_TRACKING_CSV}")
     print(f"Grafico tracking salvato in: {PATH_TRACKING_CHART_PATH}")
     print(f"Grafico backtest salvato in: {BOTTOM_BACKTEST_CHART_PATH}")
     print(f"Grafico gap 60d salvato in: {GAP_60D_CHART_PATH}")
