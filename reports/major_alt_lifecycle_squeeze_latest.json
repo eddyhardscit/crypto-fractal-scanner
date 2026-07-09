@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-09 15:03:46 UTC",
+  "generated_at_utc": "2026-07-09 15:40:40 UTC",
   "source": "Yahoo Finance SOL-USD weekly",
   "cross_near_band_pct": 2.0,
   "max_analog_events_total": 30,
@@ -10,19 +10,19 @@
     "event_date": "2026-07-06",
     "age_reference_date": "2020-03-16",
     "age_years": 6.30527036276523,
-    "close": 77.62999725341797,
-    "ema20": 86.32181349422726,
-    "ema50": 112.11869189445466,
-    "ema100": 124.63866032225611,
-    "ema200": 113.50803733722601,
-    "price_to_ema200_pct": -31.608369702681404,
-    "upside_to_ema200_pct": 46.21672208320009,
-    "ema50_ema200_gap_pct": -1.2240062249016748,
-    "ema50_slope_4w_pct": -5.318829869580943,
-    "ema200_slope_8w_pct": -2.6818622932378133,
-    "rsi14": 40.43609731270791,
-    "rsi_4w_change": 5.826931705424919,
-    "gain_from_26w_low_pct": 28.495173057927104,
+    "close": 77.6500015258789,
+    "ema20": 86.32371866303306,
+    "ema50": 112.11947637572763,
+    "ema100": 124.63905644646326,
+    "ema200": 113.50823638471319,
+    "price_to_ema200_pct": -31.590866003150687,
+    "upside_to_ema200_pct": 46.17930992169212,
+    "ema50_ema200_gap_pct": -1.2234883152255405,
+    "ema50_slope_4w_pct": -5.318167396592588,
+    "ema200_slope_8w_pct": -2.6816916363290866,
+    "rsi14": 40.44524839975403,
+    "rsi_4w_change": 5.836082792471039,
+    "gain_from_26w_low_pct": 28.528284645492597,
     "cross_state": "EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO",
     "weeks_since_death_cross": 1
   },
@@ -44,9 +44,9 @@
     "median_weeks_to_ema200": 12.0
   },
   "levels": {
-    "first_confirmation": 105.65,
-    "second_confirmation": 114.38,
-    "soft_invalidation": 73.73,
+    "first_confirmation": 105.7,
+    "second_confirmation": 114.44,
+    "soft_invalidation": 73.77,
     "hard_invalidation": 62.19
   },
   "score": 5,
@@ -61,28 +61,28 @@
       {
         "name": "Prezzo SOL",
         "previous": "77,46 $",
-        "current": "77,63 $",
+        "current": "77,65 $",
         "points": 0,
         "reading": "Prezzo quasi stabile rispetto al controllo precedente."
       },
       {
         "name": "Distanza da EMA200",
         "previous": "-31,76%",
-        "current": "-31,61%",
+        "current": "-31,59%",
         "points": 0,
         "reading": "Distanza da EMA200 quasi invariata."
       },
       {
         "name": "Upside verso EMA200",
         "previous": "+46,54%",
-        "current": "+46,22%",
+        "current": "+46,18%",
         "points": 0,
         "reading": "Upside verso EMA200 quasi invariato."
       },
       {
         "name": "RSI weekly",
         "previous": "40,36",
-        "current": "40,44",
+        "current": "40,45",
         "points": 0,
         "reading": "RSI quasi stabile."
       },
@@ -148,7 +148,7 @@
       "return_16w_pct": -18.952439297476744,
       "hit_ema200_16w": false,
       "weeks_to_ema200": 48,
-      "similarity_to_sol": 90.19393990629324
+      "similarity_to_sol": 90.19115633531283
     },
     {
       "asset": "ETC-USD",
@@ -188,7 +188,7 @@
       "return_16w_pct": -17.21237621943157,
       "hit_ema200_16w": false,
       "weeks_to_ema200": 30,
-      "similarity_to_sol": 86.21686111205346
+      "similarity_to_sol": 86.22608004663874
     },
     {
       "asset": "LINK-USD",
@@ -228,7 +228,7 @@
       "return_16w_pct": -3.1279400739040786,
       "hit_ema200_16w": false,
       "weeks_to_ema200": null,
-      "similarity_to_sol": 85.72073304242373
+      "similarity_to_sol": 85.7086825478523
     },
     {
       "asset": "MKR-USD",
@@ -268,7 +268,7 @@
       "return_16w_pct": 102.26354318244964,
       "hit_ema200_16w": true,
       "weeks_to_ema200": 3,
-      "similarity_to_sol": 85.28698979380809
+      "similarity_to_sol": 85.30535625430298
     },
     {
       "asset": "THETA-USD",
@@ -308,7 +308,7 @@
       "return_16w_pct": -40.137891507868794,
       "hit_ema200_16w": false,
       "weeks_to_ema200": null,
-      "similarity_to_sol": 84.98065117493383
+      "similarity_to_sol": 84.9898701095191
     },
     {
       "asset": "ETC-USD",
@@ -348,7 +348,7 @@
       "return_16w_pct": 47.17181606147365,
       "hit_ema200_16w": true,
       "weeks_to_ema200": 10,
-      "similarity_to_sol": 84.42244102181611
+      "similarity_to_sol": 84.42598943830981
     },
     {
       "asset": "ETC-USD",
@@ -388,7 +388,7 @@
       "return_16w_pct": 16.522364412651246,
       "hit_ema200_16w": true,
       "weeks_to_ema200": 7,
-      "similarity_to_sol": 84.38722694289129
+      "similarity_to_sol": 84.4048285578729
     },
     {
       "asset": "XRP-USD",
@@ -428,7 +428,7 @@
       "return_16w_pct": 6.52741165513675,
       "hit_ema200_16w": false,
       "weeks_to_ema200": 34,
-      "similarity_to_sol": 82.97447636417554
+      "similarity_to_sol": 82.94760782560292
     },
     {
       "asset": "LTC-USD",
@@ -468,7 +468,7 @@
       "return_16w_pct": 15.000088899706299,
       "hit_ema200_16w": true,
       "weeks_to_ema200": 5,
-      "similarity_to_sol": 82.46832899578459
+      "similarity_to_sol": 82.4859306107662
     },
     {
       "asset": "XLM-USD",
@@ -508,7 +508,7 @@
       "return_16w_pct": -19.826940276328063,
       "hit_ema200_16w": false,
       "weeks_to_ema200": null,
-      "similarity_to_sol": 82.26405872848245
+      "similarity_to_sol": 82.24286070800144
     },
     {
       "asset": "MANA-USD",
@@ -548,7 +548,7 @@
       "return_16w_pct": -41.88525726518274,
       "hit_ema200_16w": false,
       "weeks_to_ema200": 40,
-      "similarity_to_sol": 82.20529743033829
+      "similarity_to_sol": 82.19248209025358
     },
     {
       "asset": "XRP-USD",
@@ -588,47 +588,7 @@
       "return_16w_pct": -2.105736621038534,
       "hit_ema200_16w": false,
       "weeks_to_ema200": 18,
-      "similarity_to_sol": 81.94793257561398
-    },
-    {
-      "asset": "LINK-USD",
-      "name": "Chainlink",
-      "event_date": "2022-11-28",
-      "age_reference_date": "2017-09-20",
-      "age_years": 5.188227241615332,
-      "close": 7.446814060211182,
-      "ema20": 7.601359351515485,
-      "ema50": 10.906788386869357,
-      "ema100": 13.2487051304171,
-      "ema200": 11.926665573343113,
-      "price_to_ema200_pct": -37.561642737302,
-      "upside_to_ema200_pct": 60.15796120206724,
-      "ema50_ema200_gap_pct": -8.551234879539592,
-      "ema50_slope_4w_pct": -6.44824704372291,
-      "ema200_slope_8w_pct": -3.300843483342575,
-      "rsi14": 46.182601866763264,
-      "rsi_4w_change": -0.22716241930204717,
-      "gain_from_26w_low_pct": 38.86612456736329,
-      "cross_state": "DEATH CROSS CONFERMATO DA POCO",
-      "weeks_since_death_cross": 7,
-      "max_gain_4w_pct": 1.6944309958679238,
-      "drawdown_4w_pct": -27.300873574423324,
-      "return_4w_pct": -24.49867616275261,
-      "hit_ema200_4w": false,
-      "max_gain_8w_pct": 1.6944309958679238,
-      "drawdown_8w_pct": -27.300873574423324,
-      "return_8w_pct": -0.7935723794063931,
-      "hit_ema200_8w": false,
-      "max_gain_12w_pct": 11.97047390549628,
-      "drawdown_12w_pct": -27.300873574423324,
-      "return_12w_pct": 0.6049138057056869,
-      "hit_ema200_12w": false,
-      "max_gain_16w_pct": 11.97047390549628,
-      "drawdown_16w_pct": -27.300873574423324,
-      "return_16w_pct": -2.4802938778458294,
-      "hit_ema200_16w": false,
-      "weeks_to_ema200": 48,
-      "similarity_to_sol": 81.48162826929082
+      "similarity_to_sol": 81.96553419059558
     },
     {
       "asset": "LINK-USD",
@@ -668,7 +628,47 @@
       "return_16w_pct": -15.134551920179062,
       "hit_ema200_16w": false,
       "weeks_to_ema200": null,
-      "similarity_to_sol": 81.44359146118667
+      "similarity_to_sol": 81.47122484527257
+    },
+    {
+      "asset": "LINK-USD",
+      "name": "Chainlink",
+      "event_date": "2022-11-28",
+      "age_reference_date": "2017-09-20",
+      "age_years": 5.188227241615332,
+      "close": 7.446814060211182,
+      "ema20": 7.601359351515485,
+      "ema50": 10.906788386869357,
+      "ema100": 13.2487051304171,
+      "ema200": 11.926665573343113,
+      "price_to_ema200_pct": -37.561642737302,
+      "upside_to_ema200_pct": 60.15796120206724,
+      "ema50_ema200_gap_pct": -8.551234879539592,
+      "ema50_slope_4w_pct": -6.44824704372291,
+      "ema200_slope_8w_pct": -3.300843483342575,
+      "rsi14": 46.182601866763264,
+      "rsi_4w_change": -0.22716241930204717,
+      "gain_from_26w_low_pct": 38.86612456736329,
+      "cross_state": "DEATH CROSS CONFERMATO DA POCO",
+      "weeks_since_death_cross": 7,
+      "max_gain_4w_pct": 1.6944309958679238,
+      "drawdown_4w_pct": -27.300873574423324,
+      "return_4w_pct": -24.49867616275261,
+      "hit_ema200_4w": false,
+      "max_gain_8w_pct": 1.6944309958679238,
+      "drawdown_8w_pct": -27.300873574423324,
+      "return_8w_pct": -0.7935723794063931,
+      "hit_ema200_8w": false,
+      "max_gain_12w_pct": 11.97047390549628,
+      "drawdown_12w_pct": -27.300873574423324,
+      "return_12w_pct": 0.6049138057056869,
+      "hit_ema200_12w": false,
+      "max_gain_16w_pct": 11.97047390549628,
+      "drawdown_16w_pct": -27.300873574423324,
+      "return_16w_pct": -2.4802938778458294,
+      "hit_ema200_16w": false,
+      "weeks_to_ema200": 48,
+      "similarity_to_sol": 81.46881292920612
     },
     {
       "asset": "BCH-USD",
@@ -708,7 +708,7 @@
       "return_16w_pct": -16.9690125194743,
       "hit_ema200_16w": false,
       "weeks_to_ema200": null,
-      "similarity_to_sol": 80.87183873261185
+      "similarity_to_sol": 80.88105766719713
     },
     {
       "asset": "DOGE-USD",
@@ -748,7 +748,7 @@
       "return_16w_pct": -9.468242445772002,
       "hit_ema200_16w": false,
       "weeks_to_ema200": 23,
-      "similarity_to_sol": 80.70598718523996
+      "similarity_to_sol": 80.71520611982524
     },
     {
       "asset": "DOGE-USD",
@@ -788,7 +788,7 @@
       "return_16w_pct": 31.815380521393077,
       "hit_ema200_16w": true,
       "weeks_to_ema200": 4,
-      "similarity_to_sol": 79.99010639002051
+      "similarity_to_sol": 79.9993253246058
     },
     {
       "asset": "ADA-USD",
@@ -828,7 +828,7 @@
       "return_16w_pct": -42.52502671270174,
       "hit_ema200_16w": false,
       "weeks_to_ema200": null,
-      "similarity_to_sol": 79.97160737237662
+      "similarity_to_sol": 79.97515578887031
     },
     {
       "asset": "XLM-USD",
@@ -868,7 +868,7 @@
       "return_16w_pct": -24.46420932149801,
       "hit_ema200_16w": false,
       "weeks_to_ema200": null,
-      "similarity_to_sol": 79.93745504114361
+      "similarity_to_sol": 79.910586502571
     },
     {
       "asset": "LTC-USD",
@@ -908,7 +908,7 @@
       "return_16w_pct": -2.3720909877628427,
       "hit_ema200_16w": true,
       "weeks_to_ema200": 3,
-      "similarity_to_sol": 79.30377299576648
+      "similarity_to_sol": 79.30732141226017
     }
   ]
 }

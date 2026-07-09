@@ -1,7 +1,7 @@
 <!-- FRACTAL_PATH_TRACKER_START -->
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-09 15:03 UTC
+Generato: 2026-07-09 15:40 UTC
 
 Questo report controlla se SOL sta seguendo il percorso previsto dal frattale BTC 2022 vs SOL 2026.
 
@@ -27,10 +27,10 @@ Ora il controllo è diviso in quattro parti:
 
 ## Confronto dal bottom a oggi
 
-- Giorni controllati dal bottom: **2**
+- Giorni controllati dal bottom: **3**
 - Giorni controllati da inizio programma/scanner: **0**
-- Errore medio assoluto dal bottom: **13,51%**
-- Errore medio assoluto ultimi 7 giorni: **13,51%**
+- Errore medio assoluto dal bottom: **12,33%**
+- Errore medio assoluto ultimi 7 giorni: **12,33%**
 - Errore medio assoluto da inizio programma/scanner: **n/a**
 - Errore ultimo giorno: **+9,96%**
 - Stato: **DEVIAZIONE CONTENUTA**
@@ -50,7 +50,7 @@ Ora il controllo è diviso in quattro parti:
 ### Lettura rapida gap
 
 - Ultimo gap: **+9,96%**
-- Media mobile 7g gap: **+13,51%**
+- Media mobile 7g gap: **+12,33%**
 - Stato gap: **SOPRA FRATTALE**
 - Trend gap: **SOL si sta indebolendo rispetto al frattale**
 
@@ -68,6 +68,7 @@ Come leggerlo:
 |---------:|:-----------|:---------------|:------------|:--------------|:---------|:----------------|
 |        0 | n/a        | n/a            | 77,45 $     | 66,17 $       | +17,05%  | FASE ANTICIPATA |
 |        1 | n/a        | n/a            | 77,58 $     | 70,55 $       | +9,96%   | FASE ANTICIPATA |
+|        2 | n/a        | n/a            | 77,58 $     | 70,55 $       | +9,96%   | nan             |
 
 ## Proiezione futura salvata
 
