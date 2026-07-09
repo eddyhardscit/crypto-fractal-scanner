@@ -30,16 +30,12 @@ GLOBAL_END = "<!-- GLOBAL_CONFLUENCE_END -->"
 
 TARGET_TICKER = "SOL-USD"
 
-# Quando il gap EMA50/EMA200 è dentro questa fascia, non lo chiamiamo death cross netto.
-# Lo classifichiamo come "medie sovrapposte / incrocio in corso".
 CROSS_NEAR_BAND_PCT = 2.0
 
-# Limiti per evitare che un singolo asset, per esempio LTC o ETC, domini tutti gli analoghi.
 MAX_ANALOG_EVENTS_TOTAL = 30
 MAX_ANALOG_EVENTS_PER_ASSET = 3
 MIN_ANALOG_SIMILARITY = 45.0
 
-# Solo crypto. Niente stock market.
 CRYPTO_ASSETS = {
     "BTC-USD": "Bitcoin",
     "ETH-USD": "Ethereum",
@@ -83,9 +79,6 @@ CRYPTO_ASSETS = {
     "GRT6719-USD": "The Graph",
 }
 
-# Date di riferimento per calcolare l'età reale dell'asset.
-# Sono date pratiche: genesis, mainnet, lancio pubblico o prima fase trading rilevante.
-# Se una data è imperfetta, è comunque molto meglio del primo dato disponibile su Yahoo.
 ASSET_LAUNCH_DATES = {
     "BTC-USD": "2009-01-03",
     "ETH-USD": "2015-07-30",
@@ -199,6 +192,10 @@ HISTORY_COLUMNS = [
     "lifecycle_score",
     "lifecycle_bias",
     "global_weight_suggestion",
+    "squeeze_trend",
+    "squeeze_trend_score",
+    "squeeze_trend_previous_date",
+    "squeeze_trend_reasons",
     "target_ema200",
     "first_confirmation",
     "second_confirmation",
@@ -488,9 +485,6 @@ def classify_cross_state(df, pos):
     if gap is None:
         return "n/a", None
 
-    # Punto importante:
-    # Se il gap è dentro ±2%, non diciamo death cross netto.
-    # Exchange diversi possono mostrare cross già fatto o ancora no.
     if abs(gap) <= CROSS_NEAR_BAND_PCT:
         if gap >= 0:
             return "EMA50/EMA200 SOVRAPPOSTE / INCROCIO IMMINENTE", weeks_since
@@ -664,7 +658,6 @@ def detect_historical_events(ticker, name, df):
         setup["similarity_to_sol"] = None
         events.append(setup)
 
-        # Evita di salvare 20 settimane consecutive dello stesso identico setup.
         cooldown_until = pos + 8
 
     return events
@@ -781,8 +774,6 @@ def build_analog_set(events):
         max_per_asset=MAX_ANALOG_EVENTS_PER_ASSET,
     )
 
-    # Se il limite 3 per asset lascia troppi pochi analoghi, allarga leggermente a 5.
-    # Meglio avere un campione un po' più largo che una statistica su 4 eventi.
     if len(balanced) < 12:
         balanced = take_balanced_events(
             candidates,
@@ -1242,6 +1233,406 @@ def update_history(row):
     return rows
 
 
+def find_previous_history_row(history_rows, current_date):
+    valid_rows = []
+
+    for row in history_rows:
+        row_date = clean_text(row.get("date"))
+
+        if not row_date:
+            continue
+
+        if row_date == current_date:
+            continue
+
+        valid_rows.append(row)
+
+    if not valid_rows:
+        return None
+
+    valid_rows.sort(key=lambda r: r.get("date", ""))
+
+    return valid_rows[-1]
+
+
+def trend_point(reasons, name, previous, current, points, reading):
+    reasons.append(
+        {
+            "name": name,
+            "previous": previous,
+            "current": current,
+            "points": points,
+            "reading": reading,
+        }
+    )
+
+    return points
+
+
+def classify_squeeze_trend(score):
+    if score >= 4:
+        return "IN FORTE MIGLIORAMENTO"
+    if score >= 2:
+        return "IN MIGLIORAMENTO"
+    if score <= -4:
+        return "IN FORTE PEGGIORAMENTO"
+    if score <= -2:
+        return "IN PEGGIORAMENTO"
+    return "STABILE / DA CONFERMARE"
+
+
+def compute_squeeze_trend(sol_setup, stats, levels, lifecycle_score, history_rows):
+    current_date = today_str()
+    previous = find_previous_history_row(history_rows, current_date)
+
+    reasons = []
+
+    if previous is None:
+        return {
+            "label": "PRIMO CONTROLLO / BASELINE",
+            "score": 0,
+            "previous_date": None,
+            "reasons": [
+                {
+                    "name": "Storico",
+                    "previous": "n/a",
+                    "current": current_date,
+                    "points": 0,
+                    "reading": "Serve almeno un controllo precedente per capire se il setup sta migliorando o peggiorando.",
+                }
+            ],
+        }
+
+    trend_score = 0
+
+    prev_price = safe_float(previous.get("sol_price"))
+    cur_price = safe_float(sol_setup.get("close"))
+
+    if prev_price is not None and cur_price is not None:
+        price_change = pct_change(cur_price, prev_price)
+
+        if price_change is not None and price_change >= 1.5:
+            trend_score += trend_point(
+                reasons,
+                "Prezzo SOL",
+                fmt_price(prev_price),
+                fmt_price(cur_price),
+                1,
+                f"Prezzo in aumento rispetto al controllo precedente ({fmt_pct(price_change)}).",
+            )
+        elif price_change is not None and price_change <= -1.5:
+            trend_score += trend_point(
+                reasons,
+                "Prezzo SOL",
+                fmt_price(prev_price),
+                fmt_price(cur_price),
+                -1,
+                f"Prezzo in calo rispetto al controllo precedente ({fmt_pct(price_change)}).",
+            )
+        else:
+            trend_score += trend_point(
+                reasons,
+                "Prezzo SOL",
+                fmt_price(prev_price),
+                fmt_price(cur_price),
+                0,
+                "Prezzo quasi stabile rispetto al controllo precedente.",
+            )
+
+    prev_dist = safe_float(previous.get("sol_price_to_ema200_pct"))
+    cur_dist = safe_float(sol_setup.get("price_to_ema200_pct"))
+
+    if prev_dist is not None and cur_dist is not None:
+        diff = cur_dist - prev_dist
+
+        if diff >= 1.0:
+            trend_score += trend_point(
+                reasons,
+                "Distanza da EMA200",
+                fmt_pct(prev_dist),
+                fmt_pct(cur_dist),
+                1,
+                "SOL si è avvicinata alla EMA200: miglioramento del setup squeeze.",
+            )
+        elif diff <= -1.0:
+            trend_score += trend_point(
+                reasons,
+                "Distanza da EMA200",
+                fmt_pct(prev_dist),
+                fmt_pct(cur_dist),
+                -1,
+                "SOL si è allontanata dalla EMA200: peggioramento del setup squeeze.",
+            )
+        else:
+            trend_score += trend_point(
+                reasons,
+                "Distanza da EMA200",
+                fmt_pct(prev_dist),
+                fmt_pct(cur_dist),
+                0,
+                "Distanza da EMA200 quasi invariata.",
+            )
+
+    prev_upside = safe_float(previous.get("sol_upside_to_ema200_pct"))
+    cur_upside = safe_float(sol_setup.get("upside_to_ema200_pct"))
+
+    if prev_upside is not None and cur_upside is not None:
+        diff = cur_upside - prev_upside
+
+        if diff <= -1.0:
+            trend_score += trend_point(
+                reasons,
+                "Upside verso EMA200",
+                fmt_pct(prev_upside),
+                fmt_pct(cur_upside),
+                1,
+                "L'upside residuo verso EMA200 si è ridotto: SOL si sta avvicinando al target.",
+            )
+        elif diff >= 1.0:
+            trend_score += trend_point(
+                reasons,
+                "Upside verso EMA200",
+                fmt_pct(prev_upside),
+                fmt_pct(cur_upside),
+                -1,
+                "L'upside residuo verso EMA200 è aumentato: SOL si è allontanata dal target.",
+            )
+        else:
+            trend_score += trend_point(
+                reasons,
+                "Upside verso EMA200",
+                fmt_pct(prev_upside),
+                fmt_pct(cur_upside),
+                0,
+                "Upside verso EMA200 quasi invariato.",
+            )
+
+    prev_rsi = safe_float(previous.get("sol_rsi14"))
+    cur_rsi = safe_float(sol_setup.get("rsi14"))
+
+    if prev_rsi is not None and cur_rsi is not None:
+        diff = cur_rsi - prev_rsi
+
+        if diff >= 1.0 and cur_rsi <= 55:
+            trend_score += trend_point(
+                reasons,
+                "RSI weekly",
+                fmt_number(prev_rsi, 2),
+                fmt_number(cur_rsi, 2),
+                1,
+                "RSI in recupero da zona ancora non estrema: migliora il momentum.",
+            )
+        elif diff <= -1.0:
+            trend_score += trend_point(
+                reasons,
+                "RSI weekly",
+                fmt_number(prev_rsi, 2),
+                fmt_number(cur_rsi, 2),
+                -1,
+                "RSI in calo: momentum più debole.",
+            )
+        elif cur_rsi > 60:
+            trend_score += trend_point(
+                reasons,
+                "RSI weekly",
+                fmt_number(prev_rsi, 2),
+                fmt_number(cur_rsi, 2),
+                -1,
+                "RSI già alto: lo squeeze potrebbe essere avanzato.",
+            )
+        else:
+            trend_score += trend_point(
+                reasons,
+                "RSI weekly",
+                fmt_number(prev_rsi, 2),
+                fmt_number(cur_rsi, 2),
+                0,
+                "RSI quasi stabile.",
+            )
+
+    prev_lifecycle_score = safe_float(previous.get("lifecycle_score"))
+
+    if prev_lifecycle_score is not None:
+        if lifecycle_score > prev_lifecycle_score:
+            trend_score += trend_point(
+                reasons,
+                "Lifecycle score",
+                fmt_number(prev_lifecycle_score, 0),
+                fmt_number(lifecycle_score, 0),
+                1,
+                "Score lifecycle in aumento.",
+            )
+        elif lifecycle_score < prev_lifecycle_score:
+            trend_score += trend_point(
+                reasons,
+                "Lifecycle score",
+                fmt_number(prev_lifecycle_score, 0),
+                fmt_number(lifecycle_score, 0),
+                -1,
+                "Score lifecycle in diminuzione.",
+            )
+        else:
+            trend_score += trend_point(
+                reasons,
+                "Lifecycle score",
+                fmt_number(prev_lifecycle_score, 0),
+                fmt_number(lifecycle_score, 0),
+                0,
+                "Score lifecycle stabile.",
+            )
+
+    prev_hit12 = safe_float(previous.get("analog_hit_ema200_12w_pct"))
+    cur_hit12 = safe_float(stats.get("hit_ema200_12w_pct"))
+
+    if prev_hit12 is not None and cur_hit12 is not None:
+        diff = cur_hit12 - prev_hit12
+
+        if diff >= 5.0:
+            trend_score += trend_point(
+                reasons,
+                "Analoghi hit EMA200 12w",
+                fmt_pct(prev_hit12, force_sign=False),
+                fmt_pct(cur_hit12, force_sign=False),
+                1,
+                "Gli analoghi selezionati sono diventati più favorevoli.",
+            )
+        elif diff <= -5.0:
+            trend_score += trend_point(
+                reasons,
+                "Analoghi hit EMA200 12w",
+                fmt_pct(prev_hit12, force_sign=False),
+                fmt_pct(cur_hit12, force_sign=False),
+                -1,
+                "Gli analoghi selezionati sono diventati meno favorevoli.",
+            )
+        else:
+            trend_score += trend_point(
+                reasons,
+                "Analoghi hit EMA200 12w",
+                fmt_pct(prev_hit12, force_sign=False),
+                fmt_pct(cur_hit12, force_sign=False),
+                0,
+                "Probabilità storica degli analoghi quasi invariata.",
+            )
+
+    prev_drawdown = safe_float(previous.get("analog_median_drawdown_12w_pct"))
+    cur_drawdown = safe_float(stats.get("median_drawdown_12w_pct"))
+
+    if prev_drawdown is not None and cur_drawdown is not None:
+        diff = cur_drawdown - prev_drawdown
+
+        if diff >= 5.0:
+            trend_score += trend_point(
+                reasons,
+                "Drawdown mediano analoghi",
+                fmt_pct(prev_drawdown),
+                fmt_pct(cur_drawdown),
+                1,
+                "Il drawdown mediano degli analoghi è meno negativo: rischio storico più leggero.",
+            )
+        elif diff <= -5.0:
+            trend_score += trend_point(
+                reasons,
+                "Drawdown mediano analoghi",
+                fmt_pct(prev_drawdown),
+                fmt_pct(cur_drawdown),
+                -1,
+                "Il drawdown mediano degli analoghi è più negativo: rischio storico più pesante.",
+            )
+        else:
+            trend_score += trend_point(
+                reasons,
+                "Drawdown mediano analoghi",
+                fmt_pct(prev_drawdown),
+                fmt_pct(cur_drawdown),
+                0,
+                "Drawdown mediano degli analoghi quasi invariato.",
+            )
+
+    soft_invalidation = safe_float(levels.get("soft_invalidation"))
+    hard_invalidation = safe_float(levels.get("hard_invalidation"))
+    first_confirmation = safe_float(levels.get("first_confirmation"))
+    second_confirmation = safe_float(levels.get("second_confirmation"))
+
+    if cur_price is not None and hard_invalidation is not None and cur_price < hard_invalidation:
+        trend_score += trend_point(
+            reasons,
+            "Invalidazione forte",
+            fmt_price(hard_invalidation),
+            fmt_price(cur_price),
+            -4,
+            "Prezzo sotto invalidazione forte: setup quasi rotto.",
+        )
+    elif cur_price is not None and soft_invalidation is not None and cur_price < soft_invalidation:
+        trend_score += trend_point(
+            reasons,
+            "Invalidazione soft",
+            fmt_price(soft_invalidation),
+            fmt_price(cur_price),
+            -2,
+            "Prezzo sotto invalidazione soft: setup in peggioramento.",
+        )
+    elif cur_price is not None and soft_invalidation is not None and cur_price <= soft_invalidation * 1.05:
+        trend_score += trend_point(
+            reasons,
+            "Vicinanza invalidazione soft",
+            fmt_price(soft_invalidation),
+            fmt_price(cur_price),
+            -1,
+            "Prezzo ancora troppo vicino all'invalidazione soft.",
+        )
+
+    if cur_price is not None and second_confirmation is not None and cur_price >= second_confirmation:
+        trend_score += trend_point(
+            reasons,
+            "Seconda conferma",
+            fmt_price(second_confirmation),
+            fmt_price(cur_price),
+            3,
+            "Prezzo sopra seconda conferma: squeeze verso EMA200 molto più credibile.",
+        )
+    elif cur_price is not None and first_confirmation is not None and cur_price >= first_confirmation:
+        trend_score += trend_point(
+            reasons,
+            "Prima conferma",
+            fmt_price(first_confirmation),
+            fmt_price(cur_price),
+            2,
+            "Prezzo sopra prima conferma: setup in netto miglioramento.",
+        )
+
+    trend_score = max(-8, min(8, trend_score))
+
+    return {
+        "label": classify_squeeze_trend(trend_score),
+        "score": trend_score,
+        "previous_date": previous.get("date"),
+        "reasons": reasons,
+    }
+
+
+def trend_reasons_to_text(trend):
+    reasons = trend.get("reasons") or []
+
+    parts = []
+
+    for r in reasons:
+        name = clean_text(r.get("name"))
+        points = r.get("points")
+        reading = clean_text(r.get("reading"))
+
+        if points is None:
+            points_text = "0"
+        elif points > 0:
+            points_text = f"+{points}"
+        else:
+            points_text = str(points)
+
+        parts.append(f"{name}: {points_text} — {reading}")
+
+    return " | ".join(parts)
+
+
 def make_sol_chart(sol_df, sol_setup):
     try:
         import matplotlib.pyplot as plt
@@ -1319,6 +1710,40 @@ def build_score_table(components):
         return "Nessun componente disponibile."
 
     return md_table(["Componente", "Valore", "Punti", "Lettura"], rows)
+
+
+def build_squeeze_trend_table(trend):
+    reasons = trend.get("reasons") or []
+
+    if not reasons:
+        return "Nessun autocontrollo disponibile."
+
+    rows = []
+
+    for r in reasons:
+        points = r.get("points")
+
+        if points is None:
+            points_text = "0"
+        elif points > 0:
+            points_text = f"+{points}"
+        else:
+            points_text = str(points)
+
+        rows.append(
+            [
+                r.get("name"),
+                r.get("previous"),
+                r.get("current"),
+                points_text,
+                r.get("reading"),
+            ]
+        )
+
+    return md_table(
+        ["Controllo", "Precedente", "Attuale", "Punti", "Lettura"],
+        rows,
+    )
 
 
 def build_top_analogs_table(analog_events, limit=15):
@@ -1432,6 +1857,7 @@ def build_history_table(rows):
                 fmt_pct(r.get("analog_hit_ema200_12w_pct"), force_sign=False),
                 r.get("lifecycle_score"),
                 r.get("lifecycle_bias"),
+                r.get("squeeze_trend") or "n/a",
             ]
         )
 
@@ -1446,12 +1872,13 @@ def build_history_table(rows):
             "Hit EMA200 12w",
             "Score",
             "Bias",
+            "Trend squeeze",
         ],
         table_rows,
     )
 
 
-def build_markdown_report(sol_setup, stats, analog_events, components, history_rows, levels, score, bias, action, global_weight):
+def build_markdown_report(sol_setup, stats, analog_events, components, history_rows, levels, score, bias, action, global_weight, squeeze_trend):
     rome_now = datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z")
 
     chart_name = None
@@ -1481,6 +1908,9 @@ def build_markdown_report(sol_setup, stats, analog_events, components, history_r
                 ["Bias", bias],
                 ["Azione coerente", action],
                 ["Peso suggerito nel Global", global_weight],
+                ["Trend squeeze", squeeze_trend.get("label")],
+                ["Trend squeeze score", squeeze_trend.get("score")],
+                ["Confronto precedente", squeeze_trend.get("previous_date") or "n/a"],
                 ["Target tecnico naturale", fmt_price(sol_setup.get("ema200"))],
                 ["Upside verso EMA200", fmt_pct(sol_setup.get("upside_to_ema200_pct"))],
                 ["Stato EMA50/EMA200", sol_setup.get("cross_state")],
@@ -1491,6 +1921,14 @@ def build_markdown_report(sol_setup, stats, analog_events, components, history_r
             ],
         )
     )
+    lines.append("")
+    lines.append("## Autocontrollo setup")
+    lines.append("")
+    lines.append(f"Trend squeeze: **{squeeze_trend.get('label')}**  ")
+    lines.append(f"Score trend: **{squeeze_trend.get('score')}**  ")
+    lines.append(f"Confronto con: **{squeeze_trend.get('previous_date') or 'n/a'}**")
+    lines.append("")
+    lines.append(build_squeeze_trend_table(squeeze_trend))
     lines.append("")
     lines.append("## SOL oggi")
     lines.append("")
@@ -1526,7 +1964,7 @@ def build_markdown_report(sol_setup, stats, analog_events, components, history_r
     lines.append("- **RSI basso ma in recupero**: migliora la possibilità di relief rally.")
     lines.append("- **Asset giovane-maturo**: non è più una microcoin appena nata, ma può ancora avere squeeze più forti di un asset molto maturo.")
     lines.append("- **Hit EMA200 12w**: quante volte gli analoghi storici hanno toccato EMA200 entro circa 3 mesi.")
-    lines.append("- **Limite per asset**: gli analoghi sono bilanciati per evitare che un singolo asset domini il campione.")
+    lines.append("- **Autocontrollo setup**: confronta il controllo attuale con l'ultimo controllo precedente e dice se il setup verso EMA200 sta migliorando o peggiorando.")
     lines.append("")
     lines.append("## Lettura pratica")
     lines.append("")
@@ -1542,7 +1980,7 @@ def build_markdown_report(sol_setup, stats, analog_events, components, history_r
     return "\n".join(lines)
 
 
-def build_main_report_block(sol_setup, stats, score, bias, action, global_weight):
+def build_main_report_block(sol_setup, stats, score, bias, action, global_weight, squeeze_trend):
     return "\n".join(
         [
             START_MARKER,
@@ -1560,6 +1998,9 @@ def build_main_report_block(sol_setup, stats, score, bias, action, global_weight
                     ["Bias", bias],
                     ["Azione coerente", action],
                     ["Peso suggerito Global", global_weight],
+                    ["Trend squeeze", squeeze_trend.get("label")],
+                    ["Trend squeeze score", squeeze_trend.get("score")],
+                    ["Confronto precedente", squeeze_trend.get("previous_date") or "n/a"],
                     ["Fonte prezzi", "Yahoo Finance SOL-USD weekly"],
                     ["Prezzo SOL", fmt_price(sol_setup.get("close"))],
                     ["EMA200 weekly target", fmt_price(sol_setup.get("ema200"))],
@@ -1581,6 +2022,8 @@ def build_main_report_block(sol_setup, stats, score, bias, action, global_weight
             "",
             f"**{action}**",
             "",
+            f"Autocontrollo: **{squeeze_trend.get('label')}**.",
+            "",
             "Questo modulo confronta SOL con altre crypto in fasi simili di età, distanza da EMA200, EMA50/EMA200 e RSI. Non usa stock market.",
             "",
             "Nota: se EMA50/EMA200 sono dentro ±2%, il modulo parla di medie sovrapposte / incrocio in corso, perché exchange diversi possono mostrare il cross leggermente prima o dopo.",
@@ -1590,7 +2033,7 @@ def build_main_report_block(sol_setup, stats, score, bias, action, global_weight
     )
 
 
-def inject_into_main_report(sol_setup, stats, score, bias, action, global_weight):
+def inject_into_main_report(sol_setup, stats, score, bias, action, global_weight, squeeze_trend):
     if not os.path.exists(MAIN_REPORT_PATH):
         return
 
@@ -1605,7 +2048,7 @@ def inject_into_main_report(sol_setup, stats, score, bias, action, global_weight
         after = text.split(END_MARKER, 1)[1].lstrip()
         text = before + "\n\n" + after
 
-    block = build_main_report_block(sol_setup, stats, score, bias, action, global_weight).strip()
+    block = build_main_report_block(sol_setup, stats, score, bias, action, global_weight, squeeze_trend).strip()
 
     if SOL_ONCHAIN_END in text:
         pos = text.find(SOL_ONCHAIN_END) + len(SOL_ONCHAIN_END)
@@ -1626,7 +2069,7 @@ def inject_into_main_report(sol_setup, stats, score, bias, action, global_weight
         f.write(new_text.rstrip() + "\n")
 
 
-def build_history_row(sol_setup, stats, levels, score, bias, global_weight):
+def build_history_row(sol_setup, stats, levels, score, bias, global_weight, squeeze_trend):
     return {
         "date": today_str(),
         "generated_at_utc": utc_str(),
@@ -1656,6 +2099,10 @@ def build_history_row(sol_setup, stats, levels, score, bias, global_weight):
         "lifecycle_score": score,
         "lifecycle_bias": bias,
         "global_weight_suggestion": global_weight,
+        "squeeze_trend": squeeze_trend.get("label"),
+        "squeeze_trend_score": squeeze_trend.get("score"),
+        "squeeze_trend_previous_date": squeeze_trend.get("previous_date"),
+        "squeeze_trend_reasons": trend_reasons_to_text(squeeze_trend),
         "target_ema200": sol_setup.get("ema200"),
         "first_confirmation": levels.get("first_confirmation"),
         "second_confirmation": levels.get("second_confirmation"),
@@ -1690,11 +2137,14 @@ def run_scan():
 
     score, bias, action, global_weight, components = compute_lifecycle_score(sol_setup, stats, levels)
 
+    history_rows_before = load_history()
+    squeeze_trend = compute_squeeze_trend(sol_setup, stats, levels, score, history_rows_before)
+
     save_events_csv(all_events)
 
     make_sol_chart(sol_df, sol_setup)
 
-    history_row = build_history_row(sol_setup, stats, levels, score, bias, global_weight)
+    history_row = build_history_row(sol_setup, stats, levels, score, bias, global_weight, squeeze_trend)
     history_rows = update_history(history_row)
 
     latest_payload = {
@@ -1710,6 +2160,7 @@ def run_scan():
         "bias": bias,
         "action": action,
         "global_weight_suggestion": global_weight,
+        "squeeze_trend": squeeze_trend,
         "top_analogs": analog_events[:20],
     }
 
@@ -1727,12 +2178,13 @@ def run_scan():
         bias=bias,
         action=action,
         global_weight=global_weight,
+        squeeze_trend=squeeze_trend,
     )
 
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
         f.write(markdown)
 
-    inject_into_main_report(sol_setup, stats, score, bias, action, global_weight)
+    inject_into_main_report(sol_setup, stats, score, bias, action, global_weight, squeeze_trend)
 
     print(f"Wrote {REPORT_PATH}")
     print(f"Wrote {EVENTS_CSV_PATH}")
@@ -1740,6 +2192,7 @@ def run_scan():
     print(f"Wrote {LATEST_JSON_PATH}")
     print(f"Updated {MAIN_REPORT_PATH}")
     print(f"SOL lifecycle squeeze score: {score} / {bias}")
+    print(f"Squeeze trend: {squeeze_trend.get('label')} ({squeeze_trend.get('score')})")
     print(f"Cross state: {sol_setup.get('cross_state')}")
     print(f"EMA50/EMA200 gap: {fmt_pct(sol_setup.get('ema50_ema200_gap_pct'))}")
     print(f"Target EMA200 weekly: {fmt_price(sol_setup.get('ema200'))}")
