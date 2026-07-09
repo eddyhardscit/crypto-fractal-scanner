@@ -1,7 +1,7 @@
 # Major alt lifecycle squeeze report - SOL
 
-Generato: **2026-07-09 02:36:49 CEST**  
-UTC: **2026-07-09 00:36:49 UTC**
+Generato: **2026-07-09 03:06:50 CEST**  
+UTC: **2026-07-09 01:06:50 UTC**
 
 Questo modulo confronta SOL con altre crypto storiche in fasi simili di ciclo.
 
@@ -21,9 +21,9 @@ Idea centrale: una EMA50 che scende verso EMA200 non è rialzista di per sé. Pe
 | Trend squeeze score | 0 |
 | Confronto precedente | 2026-07-08 |
 | Target tecnico naturale | 113,51 $ |
-| Upside verso EMA200 | +46,29% |
+| Upside verso EMA200 | +45,86% |
 | Stato EMA50/EMA200 | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO |
-| Gap EMA50/EMA200 | -1,23% |
+| Gap EMA50/EMA200 | -1,22% |
 | Probabilità storica hit EMA200 12w | 36,67% |
 | Max gain mediano 12w analoghi | +22,68% |
 | Drawdown mediano 12w analoghi | -22,63% |
@@ -36,10 +36,10 @@ Confronto con: **2026-07-08**
 
 | Controllo | Precedente | Attuale | Punti | Lettura |
 | --- | --- | --- | --- | --- |
-| Prezzo SOL | 77,46 $ | 77,59 $ | 0 | Prezzo quasi stabile rispetto al controllo precedente. |
-| Distanza da EMA200 | -31,76% | -31,64% | 0 | Distanza da EMA200 quasi invariata. |
-| Upside verso EMA200 | +46,54% | +46,29% | 0 | Upside verso EMA200 quasi invariato. |
-| RSI weekly | 40,36 | 40,42 | 0 | RSI quasi stabile. |
+| Prezzo SOL | 77,46 $ | 77,82 $ | 0 | Prezzo quasi stabile rispetto al controllo precedente. |
+| Distanza da EMA200 | -31,76% | -31,44% | 0 | Distanza da EMA200 quasi invariata. |
+| Upside verso EMA200 | +46,54% | +45,86% | 0 | Upside verso EMA200 quasi invariato. |
+| RSI weekly | 40,36 | 40,52 | 0 | RSI quasi stabile. |
 | Lifecycle score | 5 | 5 | 0 | Score lifecycle stabile. |
 | Analoghi hit EMA200 12w | 36,67% | 36,67% | 0 | Probabilità storica degli analoghi quasi invariata. |
 | Drawdown mediano analoghi | -22,63% | -22,63% | 0 | Drawdown mediano degli analoghi quasi invariato. |
@@ -49,33 +49,33 @@ Confronto con: **2026-07-08**
 | Voce | Valore | Lettura |
 | --- | --- | --- |
 | Fonte prezzi | Yahoo Finance SOL-USD weekly | Può differire da KuCoin/CoinEx/Binance per chiusura candela e storico EMA. |
-| Prezzo SOL | 77,59 $ | Prezzo weekly attuale. |
-| EMA20 | 86,32 $ | Media breve. |
-| EMA50 | 112,12 $ | Media intermedia. |
+| Prezzo SOL | 77,82 $ | Prezzo weekly attuale. |
+| EMA20 | 86,34 $ | Media breve. |
+| EMA50 | 112,13 $ | Media intermedia. |
 | EMA100 | 124,64 $ | Media lunga intermedia. |
 | EMA200 | 113,51 $ | Target naturale del bear-market squeeze. |
-| Distanza prezzo da EMA200 | -31,64% | Negativa = prezzo sotto EMA200. |
-| Upside verso EMA200 | +46,29% | Quanto dovrebbe salire per tornare a EMA200. |
-| Gap EMA50/EMA200 | -1,23% | Dentro ±2% = medie sovrapposte, non cross netto. |
+| Distanza prezzo da EMA200 | -31,44% | Negativa = prezzo sotto EMA200. |
+| Upside verso EMA200 | +45,86% | Quanto dovrebbe salire per tornare a EMA200. |
+| Gap EMA50/EMA200 | -1,22% | Dentro ±2% = medie sovrapposte, non cross netto. |
 | Stato incrocio | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO | Fase EMA50/EMA200. |
-| RSI weekly | 40,42 | RSI basso/in recupero può aiutare il relief rally. |
-| Cambio RSI 4w | 5,81 | Positivo = RSI in recupero. |
-| Gain da minimo 26w | +28,43% | Misura se il primo spike è già partito. |
+| RSI weekly | 40,52 | RSI basso/in recupero può aiutare il relief rally. |
+| Cambio RSI 4w | 5,91 | Positivo = RSI in recupero. |
+| Gain da minimo 26w | +28,81% | Misura se il primo spike è già partito. |
 | Età asset | 6,3 anni | Calcolata da data reale di riferimento, non dal primo dato Yahoo. |
 | Data riferimento età | 2020-03-16 | Genesis/mainnet/lancio pubblico o trading rilevante. |
-| Prima conferma frattale | 105,16 $ | Livello letto dal report principale, se disponibile. |
-| Seconda conferma frattale | 114,63 $ | Livello letto dal report principale, se disponibile. |
-| Invalidazione soft | 73,67 $ | Sotto qui il setup si indebolisce. |
+| Prima conferma frattale | 105,43 $ | Livello letto dal report principale, se disponibile. |
+| Seconda conferma frattale | 114,93 $ | Livello letto dal report principale, se disponibile. |
+| Invalidazione soft | 73,86 $ | Sotto qui il setup si indebolisce. |
 | Invalidazione forte | 62,19 $ | Sotto qui il setup si rompe quasi del tutto. |
 
 ## Componenti del punteggio
 
 | Componente | Valore | Punti | Lettura |
 | --- | --- | --- | --- |
-| Prezzo vs EMA200 | -31,64% | +1 | SOL è sotto EMA200 weekly: possibile magnete tecnico. |
-| Upside verso EMA200 | +46,29% | +1 | La EMA200 weekly è abbastanza lontana da essere un target tecnico rilevante. |
-| EMA50/EMA200 | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO (-1,23%) | +1 | Le medie sono praticamente attaccate: fase compatibile con incrocio tardivo/squeeze. |
-| RSI weekly | 40,42 / cambio 4w 5,81 | +1 | RSI basso ma in recupero: setup coerente con relief rally. |
+| Prezzo vs EMA200 | -31,44% | +1 | SOL è sotto EMA200 weekly: possibile magnete tecnico. |
+| Upside verso EMA200 | +45,86% | +1 | La EMA200 weekly è abbastanza lontana da essere un target tecnico rilevante. |
+| EMA50/EMA200 | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO (-1,22%) | +1 | Le medie sono praticamente attaccate: fase compatibile con incrocio tardivo/squeeze. |
+| RSI weekly | 40,52 / cambio 4w 5,91 | +1 | RSI basso ma in recupero: setup coerente con relief rally. |
 | Età asset | 6,3 anni | +1 | SOL è in fascia giovane-matura: abbastanza storica, ma ancora growth. |
 | Analoghi storici | 36,67% hit EMA200 entro 12w | 0 | Gli analoghi storici sono misti. |
 
@@ -98,21 +98,21 @@ Confronto con: **2026-07-08**
 
 | Data | Asset | Ticker | Similarità | Età | Ref. età | Prezzo | Dist. EMA200 | Gap EMA50/200 | Stato cross | RSI | Hit EMA200 12w | Max gain 12w | Drawdown 12w |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2022-10-24 | Maker | MKR-USD | 90,20% | 4,9 anni | 2017-11-25 | 909,81 $ | -34,78% | -0,07% | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO | 43,16 | no | +1,30% | -44,63% |
-| 2023-05-29 | Ethereum Classic | ETC-USD | 86,20% | 6,9 anni | 2016-07-20 | 18,22 $ | -23,71% | -3,84% | DEATH CROSS CONFERMATO DA POCO | 42,38 | no | +26,83% | -26,32% |
-| 2022-10-03 | Chainlink | LINK-USD | 85,74% | 5,0 anni | 2017-09-20 | 7,63 $ | -38,17% | +0,30% | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IMMINENTE | 43,12 | no | +22,87% | -29,01% |
-| 2025-03-31 | Maker | MKR-USD | 85,25% | 7,3 anni | 2017-11-25 | 1.147 $ | -25,84% | +3,66% | EMA50 SOPRA EMA200 MA IN AVVICINAMENTO | 42,90 | sì | +99,36% | -8,48% |
-| 2025-02-03 | Theta | THETA-USD | 84,96% | 7,0 anni | 2018-01-17 | 1,28 $ | -27,61% | -2,89% | EMA50 SOTTO EMA200 / CROSS GIÀ AVVENUTO | 41,40 | no | +14,29% | -52,78% |
-| 2024-08-26 | Ethereum Classic | ETC-USD | 84,42% | 8,1 anni | 2016-07-20 | 17,63 $ | -24,31% | +0,76% | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IMMINENTE | 38,70 | sì | +76,98% | -4,66% |
-| 2025-05-26 | Ethereum Classic | ETC-USD | 84,35% | 8,8 anni | 2016-07-20 | 17,09 $ | -24,41% | -6,89% | DEATH CROSS CONFERMATO DA POCO | 43,50 | sì | +50,28% | -15,11% |
-| 2022-08-01 | XRP | XRP-USD | 83,03% | 10,2 anni | 2012-06-01 | 0,372506 $ | -33,07% | +11,50% | EMA50 ANCORA SOPRA EMA200 | 35,52 | no | +48,26% | -15,19% |
-| 2020-06-22 | Litecoin | LTC-USD | 82,43% | 8,7 anni | 2011-10-13 | 41,41 $ | -29,01% | -5,42% | DEATH CROSS CONFERMATO DA POCO | 42,21 | sì | +65,47% | -1,82% |
-| 2022-10-10 | Stellar | XLM-USD | 82,31% | 8,2 anni | 2014-07-31 | 0,113487 $ | -39,79% | -8,44% | DEATH CROSS CONFERMATO DA POCO | 40,85 | no | +2,45% | -37,58% |
-| 2023-05-29 | Decentraland | MANA-USD | 82,23% | 5,7 anni | 2017-09-18 | 0,504748 $ | -36,75% | -5,60% | DEATH CROSS CONFERMATO DA POCO | 42,70 | no | +5,27% | -43,64% |
-| 2022-11-21 | XRP | XRP-USD | 81,91% | 10,5 anni | 2012-06-01 | 0,396821 $ | -25,80% | -2,39% | DEATH CROSS RECENTE / APPENA CONFERMATO | 45,27 | no | +8,64% | -18,95% |
-| 2022-11-28 | Chainlink | LINK-USD | 81,51% | 5,2 anni | 2017-09-20 | 7,45 $ | -37,56% | -8,55% | DEATH CROSS CONFERMATO DA POCO | 46,18 | no | +11,97% | -27,30% |
-| 2022-08-08 | Chainlink | LINK-USD | 81,39% | 4,9 anni | 2017-09-20 | 8,77 $ | -31,18% | +11,86% | EMA50 ANCORA SOPRA EMA200 | 42,65 | no | +2,98% | -28,96% |
-| 2021-11-29 | Bitcoin Cash | BCH-USD | 80,85% | 4,3 anni | 2017-08-01 | 453,49 $ | -24,22% | -5,66% | EMA50 SOTTO EMA200 / CROSS GIÀ AVVENUTO | 42,25 | no | +10,28% | -42,37% |
+| 2022-10-24 | Maker | MKR-USD | 90,17% | 4,9 anni | 2017-11-25 | 909,81 $ | -34,78% | -0,07% | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO | 43,16 | no | +1,30% | -44,63% |
+| 2023-05-29 | Ethereum Classic | ETC-USD | 86,30% | 6,9 anni | 2016-07-20 | 18,22 $ | -23,71% | -3,84% | DEATH CROSS CONFERMATO DA POCO | 42,38 | no | +26,83% | -26,32% |
+| 2022-10-03 | Chainlink | LINK-USD | 85,61% | 5,0 anni | 2017-09-20 | 7,63 $ | -38,17% | +0,30% | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IMMINENTE | 43,12 | no | +22,87% | -29,01% |
+| 2025-03-31 | Maker | MKR-USD | 85,46% | 7,3 anni | 2017-11-25 | 1.147 $ | -25,84% | +3,66% | EMA50 SOPRA EMA200 MA IN AVVICINAMENTO | 42,90 | sì | +99,36% | -8,48% |
+| 2025-02-03 | Theta | THETA-USD | 85,07% | 7,0 anni | 2018-01-17 | 1,28 $ | -27,61% | -2,89% | EMA50 SOTTO EMA200 / CROSS GIÀ AVVENUTO | 41,40 | no | +14,29% | -52,78% |
+| 2025-05-26 | Ethereum Classic | ETC-USD | 84,55% | 8,8 anni | 2016-07-20 | 17,09 $ | -24,41% | -6,89% | DEATH CROSS CONFERMATO DA POCO | 43,50 | sì | +50,28% | -15,11% |
+| 2024-08-26 | Ethereum Classic | ETC-USD | 84,46% | 8,1 anni | 2016-07-20 | 17,63 $ | -24,31% | +0,76% | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IMMINENTE | 38,70 | sì | +76,98% | -4,66% |
+| 2022-08-01 | XRP | XRP-USD | 82,72% | 10,2 anni | 2012-06-01 | 0,372506 $ | -33,07% | +11,50% | EMA50 ANCORA SOPRA EMA200 | 35,52 | no | +48,26% | -15,19% |
+| 2020-06-22 | Litecoin | LTC-USD | 82,64% | 8,7 anni | 2011-10-13 | 41,41 $ | -29,01% | -5,42% | DEATH CROSS CONFERMATO DA POCO | 42,21 | sì | +65,47% | -1,82% |
+| 2022-11-21 | XRP | XRP-USD | 82,11% | 10,5 anni | 2012-06-01 | 0,396821 $ | -25,80% | -2,39% | DEATH CROSS RECENTE / APPENA CONFERMATO | 45,27 | no | +8,64% | -18,95% |
+| 2023-05-29 | Decentraland | MANA-USD | 82,08% | 5,7 anni | 2017-09-18 | 0,504748 $ | -36,75% | -5,60% | DEATH CROSS CONFERMATO DA POCO | 42,70 | no | +5,27% | -43,64% |
+| 2022-10-10 | Stellar | XLM-USD | 82,06% | 8,2 anni | 2014-07-31 | 0,113487 $ | -39,79% | -8,44% | DEATH CROSS CONFERMATO DA POCO | 40,85 | no | +2,45% | -37,58% |
+| 2022-08-08 | Chainlink | LINK-USD | 81,71% | 4,9 anni | 2017-09-20 | 8,77 $ | -31,18% | +11,86% | EMA50 ANCORA SOPRA EMA200 | 42,65 | no | +2,98% | -28,96% |
+| 2022-11-28 | Chainlink | LINK-USD | 81,36% | 5,2 anni | 2017-09-20 | 7,45 $ | -37,56% | -8,55% | DEATH CROSS CONFERMATO DA POCO | 46,18 | no | +11,97% | -27,30% |
+| 2021-11-29 | Bitcoin Cash | BCH-USD | 80,96% | 4,3 anni | 2017-08-01 | 453,49 $ | -24,22% | -5,66% | EMA50 SOTTO EMA200 / CROSS GIÀ AVVENUTO | 42,25 | no | +10,28% | -42,37% |
 
 ## Grafico SOL
 
@@ -123,7 +123,7 @@ Confronto con: **2026-07-08**
 | Data | SOL | EMA200 | Upside EMA200 | Stato cross | RSI | Hit EMA200 12w | Score | Bias | Trend squeeze |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-07-08 | 77,46 $ | 113,51 $ | +46,54% | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO | 40,36 | 36,67% | 5 | SQUEEZE SETUP FORTE | n/a |
-| 2026-07-09 | 77,59 $ | 113,51 $ | +46,29% | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO | 40,42 | 36,67% | 5 | SQUEEZE SETUP FORTE | STABILE / DA CONFERMARE |
+| 2026-07-09 | 77,82 $ | 113,51 $ | +45,86% | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO | 40,52 | 36,67% | 5 | SQUEEZE SETUP FORTE | STABILE / DA CONFERMARE |
 
 ## Come leggerlo
 
@@ -138,8 +138,8 @@ Confronto con: **2026-07-08**
 
 Target tecnico naturale: **113,51 $**.
 
-Conferme: **105,16 $ / 114,63 $**.
+Conferme: **105,43 $ / 114,93 $**.
 
-Invalidazioni: **73,67 $ / 62,19 $**.
+Invalidazioni: **73,86 $ / 62,19 $**.
 
 Questo modulo non dice che SOL deve per forza arrivare alla EMA200. Dice se il setup attuale assomiglia a vecchie fasi crypto dove il prezzo ha fatto uno squeeze verso la media lunga.
