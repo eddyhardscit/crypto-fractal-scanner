@@ -44,9 +44,6 @@ jobs:
       - name: Run bounce after drawdown report
         run: python bounce_after_drawdown_report.py
 
-      - name: Run decision report
-        run: python decision_report.py
-
       - name: Run BTC 2022 vs SOL 2026 fractal report
         run: python btc_2022_vs_sol_2026_report.py
 
@@ -62,26 +59,29 @@ jobs:
       - name: Run technical structure report
         run: python technical_structure_report.py
 
-      - name: Run global confluence report
-        run: python global_confluence_report.py
-
-      - name: Run module signal tracker
-        run: python module_signal_tracker.py
-
       - name: Run scanner forecast tracker
         run: python scanner_forecast_tracker.py
-
-      - name: Build 30d forecast history report
-        run: python forecast_30d_history_report.py
-
-      - name: Build SOL BTC fractal history report
-        run: python sol_btc_fractal_history_report.py
 
       - name: Build SOL on-chain metrics report
         run: python sol_onchain_metrics_report.py
 
       - name: Build major alt lifecycle squeeze report
         run: python major_alt_lifecycle_squeeze_report.py
+
+      - name: Run global confluence report
+        run: python global_confluence_report.py
+
+      - name: Run decision report
+        run: python decision_report.py
+
+      - name: Run module signal tracker
+        run: python module_signal_tracker.py
+
+      - name: Build 30d forecast history report
+        run: python forecast_30d_history_report.py
+
+      - name: Build SOL BTC fractal history report
+        run: python sol_btc_fractal_history_report.py
 
       - name: Commit reports
         run: |
