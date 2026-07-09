@@ -23,6 +23,7 @@ TRACKING_CHART = REPORTS_DIR / "btc_2022_vs_sol_2026_path_tracking_chart.png"
 ERROR_CHART = REPORTS_DIR / "btc_2022_vs_sol_2026_path_error_chart.png"
 BOTTOM_BACKTEST_CHART = REPORTS_DIR / "btc_2022_vs_sol_2026_bottom_backtest_chart.png"
 BOTTOM_BACKTEST_CSV = REPORTS_DIR / "btc_2022_vs_sol_2026_bottom_backtest.csv"
+FUTURE_DAILY_PROJECTION_CSV = REPORTS_DIR / "btc_2022_vs_sol_2026_future_daily_projection.csv"
 
 START_MARKER = "<!-- FRACTAL_PATH_TRACKER_START -->"
 END_MARKER = "<!-- FRACTAL_PATH_TRACKER_END -->"
@@ -502,6 +503,7 @@ def infer_program_start_date():
 
     return min(clean_candidates)
 
+
 def infer_bottom_date(meta):
     last_dt = pd.to_datetime(meta.get("last_candle_date", pd.NaT), errors="coerce")
     day_from_bottom = safe_float(meta.get("day_from_bottom", np.nan))
@@ -845,6 +847,13 @@ def latest_forecast(log_df):
 
 
 def build_projection_points(latest):
+    """
+    Costruisce solo i punti milestone 7/14/30/60/90/120 giorni.
+
+    Questi punti restano utili per la tabella e per i marker sul grafico,
+    ma non vengono più usati come linea principale della proiezione futura,
+    perché collegarli produceva segmenti retti fuorvianti.
+    """
     if latest.empty:
         return pd.DataFrame()
 
@@ -872,6 +881,107 @@ def build_projection_points(latest):
     p = p.sort_values("date")
 
     return p
+
+
+def build_daily_fractal_projection(latest):
+    """
+    Costruisce la proiezione futura giornaliera usando davvero il path BTC equivalente.
+
+    Metodo:
+    - prende il giorno BTC equivalente alla data SOL di previsione;
+    - prende ogni giorno BTC futuro fino all'orizzonte massimo;
+    - scala il movimento BTC su SOL partendo dal prezzo SOL attuale.
+
+    Così la linea futura non è più una retta tra 7g/14g/30g/60g/90g/120g,
+    ma segue i su e giù reali del frattale BTC.
+    """
+    if latest.empty:
+        return pd.DataFrame()
+
+    first = latest.iloc[0]
+
+    forecast_date = pd.to_datetime(first.get("forecast_date", today_str()), errors="coerce")
+    sol_bottom_date = pd.to_datetime(first.get("sol_bottom_date", pd.NaT), errors="coerce")
+    btc_bottom_date = pd.to_datetime(first.get("btc_bottom_date", pd.NaT), errors="coerce")
+
+    start_price = safe_float(first.get("start_price", np.nan))
+
+    if pd.isna(forecast_date) or pd.isna(sol_bottom_date) or pd.isna(btc_bottom_date):
+        return pd.DataFrame()
+
+    if pd.isna(start_price) or start_price <= 0:
+        return pd.DataFrame()
+
+    latest_dates = pd.to_datetime(latest["target_date"], errors="coerce").dropna()
+
+    if latest_dates.empty:
+        end_date = forecast_date + pd.Timedelta(days=max(HORIZONS))
+    else:
+        end_date = latest_dates.max()
+
+    max_forward_days = int((end_date.normalize() - forecast_date.normalize()).days)
+
+    if max_forward_days < 0:
+        return pd.DataFrame()
+
+    day_from_bottom_today = int((forecast_date.normalize() - sol_bottom_date.normalize()).days)
+
+    if day_from_bottom_today < 0:
+        return pd.DataFrame()
+
+    btc_equivalent_today = btc_bottom_date.normalize() + pd.Timedelta(days=day_from_bottom_today)
+    btc_equivalent_end = btc_equivalent_today + pd.Timedelta(days=max_forward_days)
+
+    btc_prices = download_prices(
+        BTC_TICKER,
+        start=(btc_equivalent_today - pd.Timedelta(days=3)).strftime("%Y-%m-%d"),
+    )
+
+    if btc_prices.empty:
+        return pd.DataFrame()
+
+    btc_today_price = actual_price_on_or_after(btc_prices, btc_equivalent_today)
+
+    if pd.isna(btc_today_price) or btc_today_price == 0:
+        return pd.DataFrame()
+
+    rows = []
+
+    for forward_day in range(max_forward_days + 1):
+        sol_date = forecast_date.normalize() + pd.Timedelta(days=forward_day)
+        btc_date = btc_equivalent_today + pd.Timedelta(days=forward_day)
+
+        if btc_date.normalize() > btc_equivalent_end.normalize():
+            continue
+
+        btc_price = actual_price_on_or_after(btc_prices, btc_date)
+
+        if pd.isna(btc_price):
+            continue
+
+        btc_return_from_today = (btc_price / btc_today_price - 1) * 100
+        projected_price = start_price * (btc_price / btc_today_price)
+
+        rows.append({
+            "forecast_date": forecast_date.strftime("%Y-%m-%d"),
+            "forward_day": forward_day,
+            "sol_date": sol_date.strftime("%Y-%m-%d"),
+            "btc_equivalent_date": btc_date.strftime("%Y-%m-%d"),
+            "btc_price": btc_price,
+            "btc_return_from_today_pct": btc_return_from_today,
+            "projected_base": projected_price,
+        })
+
+    out = pd.DataFrame(rows)
+
+    if out.empty:
+        return out
+
+    out["projected_base"] = pd.to_numeric(out["projected_base"], errors="coerce")
+    out["path_min"] = out["projected_base"].cummin()
+    out["path_max"] = out["projected_base"].cummax()
+
+    return out
 
 
 def build_btc_scaled_path(first, end_date):
@@ -1062,7 +1172,8 @@ def plot_tracking_chart(log_df, backtest_df=None):
             (sol_prices.index <= end_date.normalize())
         ]
 
-    projection = build_projection_points(latest)
+    milestone_projection = build_projection_points(latest)
+    daily_projection = build_daily_fractal_projection(latest)
     btc_scaled = build_btc_scaled_path(first, end_date)
 
     plt.figure(figsize=(13, 7))
@@ -1071,8 +1182,8 @@ def plot_tracking_chart(log_df, backtest_df=None):
         plt.plot(
             btc_scaled["sol_mapped_date"],
             btc_scaled["btc_scaled_to_sol"],
-            linewidth=2,
-            label="BTC 2022 scalato su SOL",
+            linewidth=1.8,
+            label="BTC 2022 scalato dal bottom",
         )
 
     if not sol_prices.empty:
@@ -1080,18 +1191,71 @@ def plot_tracking_chart(log_df, backtest_df=None):
         sol_future = sol_prices[sol_prices.index > forecast_date]
 
         if not sol_past.empty:
-            plt.plot(sol_past.index, sol_past["Close"], marker="o", label="SOL reale dal bottom")
+            plt.plot(
+                sol_past.index,
+                sol_past["Close"],
+                marker="o",
+                linewidth=1.8,
+                label="SOL reale dal bottom",
+            )
 
         if not sol_future.empty:
-            plt.plot(sol_future.index, sol_future["Close"], marker="o", label="SOL reale dopo previsione")
+            plt.plot(
+                sol_future.index,
+                sol_future["Close"],
+                marker="o",
+                linewidth=1.8,
+                label="SOL reale dopo previsione",
+            )
 
-    if not projection.empty:
-        plt.plot(projection["date"], projection["base"], marker="o", label="Proiezione frattale base")
-        plt.plot(projection["date"], projection["min"], linestyle="--", label="Percorso minimo")
-        plt.plot(projection["date"], projection["max"], linestyle="--", label="Percorso massimo")
+    if not daily_projection.empty:
+        dproj = daily_projection.copy()
+        dproj["sol_date_dt"] = pd.to_datetime(dproj["sol_date"], errors="coerce")
+        dproj = dproj.dropna(subset=["sol_date_dt", "projected_base"])
 
-        if projection["min"].notna().any() and projection["max"].notna().any():
-            plt.fill_between(projection["date"], projection["min"], projection["max"], alpha=0.15)
+        if not dproj.empty:
+            x_values = dproj["sol_date_dt"].dt.to_pydatetime()
+            base_values = pd.to_numeric(dproj["projected_base"], errors="coerce").to_numpy(dtype=float)
+            min_values = pd.to_numeric(dproj["path_min"], errors="coerce").to_numpy(dtype=float)
+            max_values = pd.to_numeric(dproj["path_max"], errors="coerce").to_numpy(dtype=float)
+
+            plt.plot(
+                x_values,
+                base_values,
+                linewidth=2.4,
+                label="Proiezione frattale giornaliera",
+            )
+
+            plt.plot(
+                x_values,
+                min_values,
+                linestyle="--",
+                linewidth=1.2,
+                label="Min percorso giornaliero",
+            )
+
+            plt.plot(
+                x_values,
+                max_values,
+                linestyle="--",
+                linewidth=1.2,
+                label="Max percorso giornaliero",
+            )
+
+            plt.fill_between(
+                x_values,
+                min_values,
+                max_values,
+                alpha=0.12,
+            )
+
+    if not milestone_projection.empty:
+        plt.scatter(
+            milestone_projection["date"],
+            milestone_projection["base"],
+            s=35,
+            label="Milestone 7/14/30/60/90/120g",
+        )
 
     if not pd.isna(sol_bottom_date):
         plt.axvline(sol_bottom_date, linestyle=":", linewidth=1.2, label="Bottom SOL usato")
@@ -1101,7 +1265,7 @@ def plot_tracking_chart(log_df, backtest_df=None):
 
     plt.axvline(forecast_date, linestyle=":", linewidth=1.2, label="Oggi / inizio nuova previsione")
 
-    plt.title("BTC 2022 scalato vs SOL reale dal bottom + proiezione futura")
+    plt.title("BTC 2022 scalato vs SOL reale + proiezione giornaliera frattale")
     plt.xlabel("Data SOL")
     plt.ylabel("Prezzo SOL")
     plt.legend()
@@ -1205,7 +1369,8 @@ def render_report(log_df, metrics, backtest_df, backtest_summary):
     lines.append("")
     lines.append("- confronto dal bottom: BTC 2022 scalato contro SOL reale")
     lines.append("- tratto da inizio programma/scanner: verifica se il tracking recente sta reggendo")
-    lines.append("- proiezione futura: percorso atteso da oggi in avanti")
+    lines.append("- proiezione futura giornaliera: BTC 2022 viene scalato giorno per giorno su SOL")
+    lines.append("- tabella milestone: 7g / 14g / 30g / 60g / 90g / 120g restano come livelli sintetici")
     lines.append("")
 
     if latest.empty:
@@ -1241,7 +1406,7 @@ def render_report(log_df, metrics, backtest_df, backtest_summary):
         lines.append("")
 
     if TRACKING_CHART.exists():
-        lines.append("## Grafico completo: bottom, inizio programma e proiezione")
+        lines.append("## Grafico completo: bottom, inizio programma e proiezione giornaliera")
         lines.append("")
         lines.append(f"![Tracking percorso frattale]({TRACKING_CHART.name})")
         lines.append("")
@@ -1291,6 +1456,11 @@ def render_report(log_df, metrics, backtest_df, backtest_summary):
     lines.append("")
     lines.append(df_to_markdown(pd.DataFrame(table_rows)))
     lines.append("")
+    lines.append(
+        "Nota: la tabella sopra mostra solo le milestone principali. "
+        "Il grafico invece usa la proiezione giornaliera del frattale BTC scalato su SOL."
+    )
+    lines.append("")
 
     lines.append("## Accuratezza storica della proiezione futura")
     lines.append("")
@@ -1327,6 +1497,9 @@ def render_report(log_df, metrics, backtest_df, backtest_summary):
     lines.append("- Se SOL resta vicino a BTC scalato, il frattale è in linea.")
     lines.append("- Se SOL sta sopra BTC scalato, il frattale è in anticipo o più forte.")
     lines.append("- Se SOL sta sotto BTC scalato, il frattale è in ritardo o più debole.")
+    lines.append("- La linea futura ora non collega solo 7g/14g/30g/60g: segue il path giornaliero di BTC equivalente.")
+    lines.append("- I punti milestone servono solo come sintesi operativa, non come forma reale del percorso.")
+    lines.append("- Questo grafico resta un tracking operativo a 120 giorni, non il grafico del ciclo completo fino al top BTC 2025.")
     lines.append("- La proiezione futura va letta insieme alle conferme e invalidazioni del report frattale principale.")
     lines.append("")
 
@@ -1396,6 +1569,11 @@ def main():
         if not backtest_df.empty:
             backtest_df.to_csv(BOTTOM_BACKTEST_CSV, index=False)
 
+        future_daily_projection = build_daily_fractal_projection(latest)
+
+        if not future_daily_projection.empty:
+            future_daily_projection.to_csv(FUTURE_DAILY_PROJECTION_CSV, index=False)
+
     plot_tracking_chart(log_df, backtest_df)
     plot_bottom_backtest_chart(backtest_df, first) if first is not None else None
     plot_error_chart(log_df)
@@ -1411,6 +1589,9 @@ def main():
 
     if not backtest_df.empty:
         print(f"Creato {BOTTOM_BACKTEST_CSV}")
+
+    if FUTURE_DAILY_PROJECTION_CSV.exists():
+        print(f"Creato {FUTURE_DAILY_PROJECTION_CSV}")
 
     if TRACKING_CHART.exists():
         print(f"Creato {TRACKING_CHART}")
