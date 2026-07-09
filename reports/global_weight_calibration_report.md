@@ -1,6 +1,6 @@
 # Calibrazione pesi Global Confluence
 
-Generato: **2026-07-09 18:21 UTC**
+Generato: **2026-07-09 18:31 UTC**
 
 Questo report prepara la calibrazione futura dei pesi del Global Confluence.
 
