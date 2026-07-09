@@ -1,7 +1,7 @@
 # Storico frattale SOL/BTC
 
-Generato: **2026-07-09 04:32:40 CEST**  
-UTC: **2026-07-09 02:32:40 UTC**
+Generato: **2026-07-09 17:03:50 CEST**  
+UTC: **2026-07-09 15:03:50 UTC**
 
 Questo file salva giorno per giorno la lettura del frattale **BTC novembre 2022 vs SOL giugno 2026**.
 
@@ -15,7 +15,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | --- | --- |
 | Prima rilevazione salvata | 2026-07-08 |
 | Ultima rilevazione salvata | 2026-07-09 |
-| Righe salvate | 2 |
+| Righe salvate | 3 |
 
 ## Ultima lettura
 
@@ -42,6 +42,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-07-08 | 77,45 $ | 66,17 $ | +17,05% | +73,94% | FASE ANTICIPATA | FRATTALE STABILE | +22,55% | +17,05% | 104,76 $ | 112,67 $ | 73,58 $ | 105,03 $ | 575,23 $ |
 | 2026-07-09 | 77,58 $ | 70,55 $ | +9,96% | +73,93% | FASE ANTICIPATA | FRATTALE STABILE | +22,59% | +9,96% | 104,94 $ | 112,86 $ | 73,70 $ | 105,20 $ | 576,19 $ |
+| n/a | 77,58 $ | 70,55 $ | +9,96% | +73,80% | n/a | n/a | +21,83% | +9,96% | 105,65 $ | 111,43 $ | 73,73 $ | 105,65 $ | 574,68 $ |
 
 ## Aderenza prima e dopo inizio programma
 
@@ -49,6 +50,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-07-08 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +54,89% | +22,55% | STACCATO / MOLTO IN ANTICIPO | +81,94% | +9,03% | ABBASTANZA ALLINEATO |
 | 2026-07-09 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +54,83% | +22,59% | STACCATO / MOLTO IN ANTICIPO | +81,93% | +9,04% | ABBASTANZA ALLINEATO |
+| n/a | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +56,35% | +21,83% | STACCATO / MOLTO IN ANTICIPO | +81,44% | +9,28% | ABBASTANZA ALLINEATO |
 
 ## Storico proiezioni frattali
 
@@ -56,6 +58,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-07-08 | 76,55 $ | 78,16 $ | 104,76 $ | 112,67 $ | 130,65 $ | 128,27 $ | 76,30 $ | 105,03 $ | 575,23 $ |
 | 2026-07-09 | 76,68 $ | 78,30 $ | 104,94 $ | 112,86 $ | 130,87 $ | 128,48 $ | 76,43 $ | 105,20 $ | 576,19 $ |
+| n/a | 76,23 $ | 78,10 $ | 105,65 $ | 111,43 $ | 126,65 $ | 127,10 $ | 76,23 $ | 105,65 $ | 574,68 $ |
 
 ## Come leggerlo
 

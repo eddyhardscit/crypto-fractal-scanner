@@ -1,6 +1,6 @@
 # Calibrazione pesi Global Confluence
 
-Generato: **2026-07-09 02:32 UTC**
+Generato: **2026-07-09 15:03 UTC**
 
 Questo report prepara la calibrazione futura dei pesi del Global Confluence.
 
@@ -60,14 +60,14 @@ Questa tabella mostra gli score attuali. La calibrazione qui sotto non li modifi
 
 | Asset   | Modulo        | Score attuale   |
 |:--------|:--------------|:----------------|
-| BTC     | Daily change  | 0,00            |
+| BTC     | Daily change  | +1,00           |
 | BTC     | Fractal path  | 0,00            |
 | BTC     | Frattale SOL  | 0,00            |
 | BTC     | Futures       | 0,00            |
 | BTC     | Lifecycle EMA | 0,00            |
 | BTC     | Market regime | +3,00           |
 | BTC     | RSI top-cycle | 0,00            |
-| BTC     | Scanner       | +2,00           |
+| BTC     | Scanner       | +3,00           |
 | BTC     | Scanner path  | 0,00            |
 | SOL     | Daily change  | 0,00            |
 | SOL     | Fractal path  | 0,00            |
