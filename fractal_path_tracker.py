@@ -21,7 +21,16 @@ BTC_SOL_REPORT_PATH = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_report.md")
 START_MARKER = "<!-- FRACTAL_PATH_TRACKER_START -->"
 END_MARKER = "<!-- FRACTAL_PATH_TRACKER_END -->"
 
-HORIZONS = [7, 14, 30, 60, 90, 120]
+# Controlli settimanali fino a circa 4 mesi.
+# Lo scanner continua ogni giorno all'infinito.
+# Ogni singola previsione viene poi controllata settimana dopo settimana.
+HORIZONS = [
+    7, 14, 21, 28,
+    35, 42, 49, 56,
+    63, 70, 77, 84,
+    91, 98, 105, 112,
+    119, 126,
+]
 
 FULL_TRACKING_CSV = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_path_tracking_full.csv")
 FUTURE_DAILY_PROJECTION_CSV = os.path.join(REPORT_DIR, "btc_2022_vs_sol_2026_future_daily_projection.csv")
@@ -379,8 +388,6 @@ def get_close_on_or_after(prices, date):
 
 
 def parse_report_metadata_from_markdown():
-    # Legge entrambi: report separato e latest_report.
-    # Così, se un campo manca in uno dei due, lo recupera dall'altro.
     raw_report = read_text(BTC_SOL_REPORT_PATH)
     raw_latest = read_text(MAIN_REPORT_PATH)
 
@@ -431,7 +438,6 @@ def parse_report_metadata_from_markdown():
         or extract_first(r"Rischio:\s*([^\n]+)", text)
     )
 
-    # Pulizia valori eventualmente presi da righe troppo lunghe.
     if verdict:
         verdict = verdict.split("-")[0].strip()
         verdict = verdict.replace("#", "").strip()
@@ -831,12 +837,13 @@ def append_and_check_projection_log(milestones):
             if col not in old.columns:
                 old[col] = np.nan
 
-        key_cols = ["forecast_date", "horizon_days"]
+        # Pulizia importante:
+        # se oggi rigeneri la stessa previsione con orizzonti nuovi,
+        # eliminiamo tutte le vecchie righe della stessa forecast_date.
+        # Così non restano mischiate vecchie milestone 30/60/90/120
+        # con le nuove milestone settimanali.
+        old = old[old["forecast_date"].astype(str) != str(forecast_date)].copy()
 
-        old_key = old[key_cols].astype(str).agg("|".join, axis=1)
-        new_key = new_df[key_cols].astype(str).agg("|".join, axis=1)
-
-        old = old[~old_key.isin(set(new_key))]
         log_df = pd.concat([old, new_df], ignore_index=True)
 
     today = today_date()
@@ -888,9 +895,15 @@ def append_and_check_projection_log(milestones):
                 log_df.at[idx, "error_pct"] = error_pct
                 log_df.at[idx, "inside_band"] = inside
 
+    log_df = log_df.sort_values(
+        by=["forecast_date", "horizon_days"],
+        ascending=[True, True],
+    ).reset_index(drop=True)
+
     log_df.to_csv(PROJECTION_LOG_CSV, index=False)
 
     latest_rows = log_df[log_df["forecast_date"].astype(str) == str(forecast_date)].copy()
+    latest_rows = latest_rows.sort_values("horizon_days").reset_index(drop=True)
 
     return log_df, latest_rows
 
@@ -1270,6 +1283,7 @@ Ora il controllo è diviso in quattro parti:
 - confronto dal bottom: BTC 2022 scalato contro SOL reale
 - tratto da inizio programma/scanner: verifica se il tracking recente sta reggendo
 - proiezione futura giornaliera: BTC 2022 viene scalato giorno per giorno su SOL
+- controllo settimanale: ogni previsione viene verificata a 7, 14, 21, 28 giorni e così via fino a 126 giorni
 - grafico gap: differenza leggibile tra SOL reale e BTC scalato
 
 ## Stato ultimo frattale salvato
@@ -1332,7 +1346,7 @@ Come leggerlo:
 
 {df_to_markdown(milestone_table)}
 
-Nota: la tabella sopra mostra solo le milestone principali. Il grafico invece usa la proiezione giornaliera del frattale BTC scalato su SOL.
+Nota: la tabella sopra mostra le milestone settimanali principali. Il grafico invece usa la proiezione giornaliera del frattale BTC scalato su SOL.
 
 ## Accuratezza storica della proiezione futura
 
@@ -1347,6 +1361,7 @@ Nota: la tabella sopra mostra solo le milestone principali. Il grafico invece us
 - Se SOL sta sopra BTC scalato, il frattale è in anticipo o più forte.
 - Se SOL sta sotto BTC scalato, il frattale è in ritardo o più debole.
 - Il grafico gap ultimi 60 giorni serve proprio per vedere meglio questa differenza.
+- Le milestone settimanali servono a controllare il percorso passo passo.
 - La proiezione futura va letta insieme alle conferme e invalidazioni del report frattale principale.
 {END_MARKER}
 """
@@ -1417,6 +1432,7 @@ def main():
     print(f"Verdetto letto: {metadata.get('verdict', 'n/a')}")
     print(f"Somiglianza letta: {metadata.get('similarity', 'n/a')}")
     print(f"Tracking letto: {metadata.get('tracking', 'n/a')}")
+    print(f"Orizzonti controllo: {HORIZONS}")
 
 
 if __name__ == "__main__":
