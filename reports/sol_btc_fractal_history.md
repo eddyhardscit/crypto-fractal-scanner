@@ -1,7 +1,7 @@
 # Storico frattale SOL/BTC
 
-Generato: **2026-07-10 01:10:24 CEST**  
-UTC: **2026-07-09 23:10:24 UTC**
+Generato: **2026-07-10 01:44:39 CEST**  
+UTC: **2026-07-09 23:44:39 UTC**
 
 Questo file salva giorno per giorno la lettura del frattale **BTC novembre 2022 vs SOL giugno 2026**.
 
@@ -22,26 +22,26 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | Voce | Valore |
 | --- | --- |
 | Data lettura | 2026-07-09 |
-| Prezzo SOL | 78,00 $ |
+| Prezzo SOL | 77,99 $ |
 | BTC scalato | 66,37 $ |
-| Gap SOL vs BTC-scalato | +17,52% |
+| Gap SOL vs BTC-scalato | +17,51% |
 | Somiglianza totale | +73,76% |
 | Fase | FASE ANTICIPATA |
 | Tracking | FRATTALE STABILE |
 | Errore medio da inizio programma | +21,91% |
-| Errore ultimo giorno | +17,53% |
-| Conferma 1 | 106,15 $ |
-| Conferma 2 | 114,92 $ |
-| Invalidazione soft | 74,08 $ |
+| Errore ultimo giorno | +17,51% |
+| Conferma 1 | 106,17 $ |
+| Conferma 2 | 114,94 $ |
+| Invalidazione soft | 74,09 $ |
 | Invalidazione forte | 62,19 $ |
-| Target ciclo base da oggi | 577,42 $ |
+| Target ciclo base da oggi | 577,49 $ |
 
 ## Storico compatto giorno per giorno
 
 | Data | SOL | BTC scalato | Gap | Somiglianza | Fase | Tracking | Errore live medio | Errore ultimo | Base 30g | Base 60g | Soft invalid. | Conferma 1 | Target ciclo oggi |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-07-08 | 77,45 $ | 66,17 $ | +17,05% | +73,94% | FASE ANTICIPATA | FRATTALE STABILE | +22,55% | +17,05% | 104,76 $ | 112,67 $ | 73,58 $ | 105,03 $ | 575,23 $ |
-| 2026-07-09 | 78,00 $ | 66,37 $ | +17,52% | +73,76% | FASE ANTICIPATA | FRATTALE STABILE | +21,91% | +17,53% | 106,15 $ | 111,96 $ | 74,08 $ | 106,15 $ | 577,42 $ |
+| 2026-07-09 | 77,99 $ | 66,37 $ | +17,51% | +73,76% | FASE ANTICIPATA | FRATTALE STABILE | +21,91% | +17,51% | 106,17 $ | 111,97 $ | 74,09 $ | 106,17 $ | 577,49 $ |
 | nan | 77,58 $ | 70,55 $ | +9,96% | +73,80% | nan | nan | +21,83% | +9,96% | 105,65 $ | 111,43 $ | 73,73 $ | 105,65 $ | 574,68 $ |
 | nan | 77,58 $ | 70,55 $ | +9,96% | +73,79% | nan | nan | +21,83% | +9,96% | 105,70 $ | 111,48 $ | 73,77 $ | 105,70 $ | 574,97 $ |
 
@@ -59,7 +59,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | Data | Base 7g | Base 14g | Base 30g | Base 60g | Base 90g | Base 120g | Min 30g | Max 30g | Target ciclo oggi |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-07-08 | 76,55 $ | 78,16 $ | 104,76 $ | 112,67 $ | 130,65 $ | 128,27 $ | 76,30 $ | 105,03 $ | 575,23 $ |
-| 2026-07-09 | 76,59 $ | 78,48 $ | 106,15 $ | 111,96 $ | 127,25 $ | 127,71 $ | 76,59 $ | 106,15 $ | 577,42 $ |
+| 2026-07-09 | 76,60 $ | 78,49 $ | 106,17 $ | 111,97 $ | 127,27 $ | 127,72 $ | 76,60 $ | 106,17 $ | 577,49 $ |
 | nan | 76,23 $ | 78,10 $ | 105,65 $ | 111,43 $ | 126,65 $ | 127,10 $ | 76,23 $ | 105,65 $ | 574,68 $ |
 | nan | 76,27 $ | 78,14 $ | 105,70 $ | 111,48 $ | 126,71 $ | 127,17 $ | 76,27 $ | 105,70 $ | 574,97 $ |
 

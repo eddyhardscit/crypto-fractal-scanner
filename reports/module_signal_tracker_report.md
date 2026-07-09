@@ -1,9 +1,15 @@
-<!-- MODULE_ACCURACY_START -->
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-09 23:10 UTC
+Generato: 2026-07-09 23:44 UTC
 
-Questo report salva ogni giorno i segnali dei moduli e controlla, dopo vari orizzonti, quali moduli stanno davvero aiutando.
+Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno quali orizzonti sono maturati.
+
+La calibrazione ora controlla questi orizzonti:
+
+- **1g / 2g / 3g** = feedback rapidissimo
+- **5g / 7g / 10g** = feedback settimanale
+- **14g / 21g** = feedback swing
+- **30g / 45g / 60g** = feedback più serio
 
 Moduli controllati:
 
@@ -11,131 +17,95 @@ Moduli controllati:
 - Scanner grezzo
 - Market regime
 - Struttura tecnica
+- Classic technical confirmation
 - Frattale SOL/BTC, solo per SOL
 
-Orizzonti controllati: 1, 3, 7, 14, 30 e 60 giorni.
+Nota: i controlli vengono aggiornati **ogni giorno**, ma i pesi del Global non devono cambiare automaticamente sotto 30 controlli. Prima si osserva, poi si calibra.
 
 Segnali totali salvati: **3**.
 
 ## Ultimi segnali salvati
 
-| Data       | Asset   | Prezzo    |   Global |   Scanner |   Market |   Tecnico |   Frattale | Azione                                             |
-|:-----------|:--------|:----------|---------:|----------:|---------:|----------:|-----------:|:---------------------------------------------------|
-| 2026-07-09 | BTC     | 63.140,12 |       +6 |        +3 |       +3 |        -1 |          0 | ACCUMULA SU PULLBACK / NO SHORT                    |
-| 2026-07-09 | DOGE    | 0.07299   |      -10 |        -3 |       -3 |        -3 |          0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
-| 2026-07-09 | SOL     | 78,02     |       +4 |        -1 |       +2 |        +1 |         +1 | HOLD / TRANCHE PICCOLE, NO LEVA                    |
+| Data | Asset | Prezzo | Global | Scanner | Market | Tecnico | Classic | Frattale | Azione |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-07-09 | BTC | 63.234,86 | +6 | +3 | +3 | -1 | 0 | 0 | ACCUMULA SU PULLBACK / NO SHORT |
+| 2026-07-09 | DOGE | 0.07285 | -10 | -3 | -3 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
+| 2026-07-09 | SOL | 78,02 | +4 | -1 | +2 | +1 | 0 | +1 | HOLD / TRANCHE PICCOLE, NO LEVA |
 
-## Stato controlli
+## Stato controlli per orizzonte
 
-| Asset   |   Segnali salvati |   1g controllati |   3g controllati |   7g controllati |   14g controllati |   30g controllati |   60g controllati |
-|:--------|------------------:|-----------------:|-----------------:|-----------------:|------------------:|------------------:|------------------:|
-| BTC     |                 1 |                0 |                0 |                0 |                 0 |                 0 |                 0 |
-| SOL     |                 1 |                0 |                0 |                0 |                 0 |                 0 |                 0 |
-| DOGE    |                 1 |                0 |                0 |                0 |                 0 |                 0 |                 0 |
+| Asset | Segnali salvati | 1g | 2g | 3g | 5g | 7g | 10g | 14g | 21g | 30g | 45g | 60g |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BTC | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| SOL | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| DOGE | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+## Prossimi controlli in arrivo
+
+| Asset | Segnale | Orizzonte | Data target | Quando |
+| --- | --- | --- | --- | --- |
+| BTC | 2026-07-09 | 1g | 2026-07-10 | domani |
+| SOL | 2026-07-09 | 1g | 2026-07-10 | domani |
+| DOGE | 2026-07-09 | 1g | 2026-07-10 | domani |
+
+## Lettura rapida Global Confluence
+
+| Asset | Orizzonte | Controlli | Accuratezza direzione | Return medio | Return corretto direzione | Stato |
+| --- | --- | --- | --- | --- | --- | --- |
+| BTC | 1g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 2g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 3g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 5g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 7g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 10g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 14g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 21g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 30g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 45g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 60g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 1g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 2g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 3g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 5g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 7g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 10g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 14g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 21g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 30g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 45g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 60g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 1g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 2g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 3g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 5g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 7g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 10g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 14g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 21g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 30g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 45g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 60g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 
 ## Accuratezza direzionale per modulo
 
-| Asset   | Orizzonte   | Modulo            |   Controlli | Accuratezza direzione   | Return medio   | Drawdown medio   | Max gain medio   | Stato         |
-|:--------|:------------|:------------------|------------:|:------------------------|:---------------|:-----------------|:-----------------|:--------------|
-| BTC     | 1g          | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 1g          | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 1g          | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 1g          | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 1g          | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 3g          | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 3g          | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 3g          | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 3g          | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 3g          | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 7g          | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 7g          | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 7g          | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 7g          | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 7g          | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 14g         | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 14g         | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 14g         | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 14g         | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 14g         | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 30g         | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 30g         | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 30g         | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 30g         | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 30g         | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 60g         | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 60g         | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 60g         | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 60g         | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| BTC     | 60g         | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 1g          | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 1g          | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 1g          | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 1g          | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 1g          | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 3g          | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 3g          | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 3g          | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 3g          | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 3g          | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 7g          | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 7g          | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 7g          | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 7g          | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 7g          | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 14g         | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 14g         | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 14g         | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 14g         | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 14g         | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 30g         | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 30g         | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 30g         | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 30g         | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 30g         | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 60g         | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 60g         | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 60g         | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 60g         | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| SOL     | 60g         | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 1g          | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 1g          | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 1g          | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 1g          | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 1g          | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 3g          | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 3g          | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 3g          | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 3g          | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 3g          | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 7g          | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 7g          | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 7g          | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 7g          | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 7g          | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 14g         | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 14g         | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 14g         | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 14g         | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 14g         | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 30g         | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 30g         | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 30g         | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 30g         | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 30g         | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 60g         | Global confluence |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 60g         | Scanner           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 60g         | Market regime     |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 60g         | Tecnico           |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
-| DOGE    | 60g         | Frattale SOL      |           0 | n/a                     | n/a            | n/a              | n/a              | RACCOLTA DATI |
+Nessun controllo modulo ancora maturato. Dal primo giorno utile compariranno i controlli 1g, poi 2g, 3g, 5g e così via.
 
 ## Come leggerlo
 
-- Prima di 30 controlli per asset/modulo, è solo raccolta dati.
-- Dopo 30 controlli, il modulo può iniziare a dare una calibrazione leggera.
-- Dopo 60 controlli, la lettura diventa più utile.
-- Dopo 100+ controlli, i pesi dei moduli possono essere regolati con più fiducia.
+- **Controlli** = segnali non neutrali già verificati su quell'orizzonte.
+- **Accuratezza direzione** = quante volte un segnale positivo ha avuto return positivo o un segnale negativo ha avuto return negativo.
+- **Return medio** = rendimento reale medio dell'asset su quell'orizzonte.
+- **Return corretto direzione** = return visto dal lato del modulo: se il modulo era ribassista, un calo conta positivo.
+- **Drawdown medio** = peggior discesa media durante l'orizzonte.
+- **Max gain medio** = massimo rialzo medio durante l'orizzonte.
 
-Questo report non cambia ancora automaticamente i pesi del Global Confluence. Serve prima a capire quali moduli funzionano davvero.
+Regole operative:
 
-Nota tecnica: questo file ora legge i punteggi reali da **global_confluence_metrics.csv** e forza le colonne data come testo. Quindi non deve più dare errore `Invalid value '2026-07-10' for dtype 'float64'`.
-<!-- MODULE_ACCURACY_END -->
+- Sotto **30 controlli**: solo osservazione, nessuna modifica ai pesi.
+- Da **30 controlli**: possibile calibrazione leggera.
+- Da **60 controlli**: lettura più utile.
+- Da **100+ controlli**: possibile revisione più seria dei pesi.
+
+Questo report non cambia ancora automaticamente i pesi del Global Confluence. Serve prima a capire quali moduli funzionano davvero sui vari orizzonti.
+
+Nota tecnica: le colonne data sono forzate come testo, quindi non deve più apparire l'errore `Invalid value 'YYYY-MM-DD' for dtype 'float64'`.

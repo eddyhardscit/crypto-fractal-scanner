@@ -1,6 +1,6 @@
 # Decisione operativa sintetica
 
-Generato: 2026-07-09 23:10 UTC
+Generato: 2026-07-09 23:44 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 
@@ -43,8 +43,8 @@ Sintesi automatica dello scanner: spot, long, short e rischio. Ora segue il Glob
 - Long leva: **NO LONG A LEVA**
 - Short leva: **NO SHORT**
 - Rischio: **MOLTO ALTO**
-- Conferme: Conferme sopra 83,81 / 106,15 / 114,92.
-- Invalidazioni: Allarmi sotto 74,08 / 64,42 / 62,19.
+- Conferme: Conferme sopra 83,81 / 106,17 / 114,94.
+- Invalidazioni: Allarmi sotto 74,09 / 64,42 / 62,19.
 
 ### DOGE
 
@@ -63,6 +63,6 @@ Sintesi automatica dello scanner: spot, long, short e rischio. Ora segue il Glob
 
 - **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.
 - **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.
-- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 5; EMA200 circa 113,51 $; upside verso EMA200 +45,47%. Non autorizza leva e non aggiunge punti automatici.
+- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 5; EMA200 circa 113,51 $; upside verso EMA200 +45,51%. Non autorizza leva e non aggiunge punti automatici.
 - **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.
 - Per SOL, se il Global è da **+3 in su**, la decisione non deve diventare bearish solo perché lo scanner grezzo a 30 giorni è incerto.

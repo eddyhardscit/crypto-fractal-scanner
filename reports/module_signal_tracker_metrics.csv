@@ -1,91 +1,199 @@
-Asset,Orizzonte,Modulo,Controlli,Accuratezza direzione,Return medio,Drawdown medio,Max gain medio,Stato
-BTC,1g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,1g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,1g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,1g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,1g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,3g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,3g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,3g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,3g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,3g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,7g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,7g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,7g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,7g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,7g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,14g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,14g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,14g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,14g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,14g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,30g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,30g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,30g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,30g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,30g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,60g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,60g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,60g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,60g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-BTC,60g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,1g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,1g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,1g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,1g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,1g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,3g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,3g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,3g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,3g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,3g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,7g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,7g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,7g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,7g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,7g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,14g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,14g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,14g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,14g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,14g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,30g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,30g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,30g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,30g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,30g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,60g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,60g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,60g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,60g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-SOL,60g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,1g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,1g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,1g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,1g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,1g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,3g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,3g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,3g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,3g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,3g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,7g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,7g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,7g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,7g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,7g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,14g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,14g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,14g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,14g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,14g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,30g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,30g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,30g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,30g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,30g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,60g,Global confluence,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,60g,Scanner,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,60g,Market regime,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,60g,Tecnico,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
-DOGE,60g,Frattale SOL,0,n/a,n/a,n/a,n/a,RACCOLTA DATI
+generated_utc,asset,horizon_days,horizon,horizon_family,module_key,module,controls,correct,accuracy_direction_pct,avg_return_pct,avg_direction_adjusted_return_pct,avg_drawdown_pct,avg_max_gain_pct,status
+2026-07-09T23:44:37+00:00,BTC,1,1g,BREVE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,1,1g,BREVE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,1,1g,BREVE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,1,1g,BREVE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,1,1g,BREVE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,1,1g,BREVE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,2,2g,BREVE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,2,2g,BREVE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,2,2g,BREVE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,2,2g,BREVE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,2,2g,BREVE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,2,2g,BREVE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,3,3g,BREVE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,3,3g,BREVE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,3,3g,BREVE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,3,3g,BREVE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,3,3g,BREVE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,3,3g,BREVE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,5,5g,SETTIMANALE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,5,5g,SETTIMANALE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,5,5g,SETTIMANALE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,5,5g,SETTIMANALE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,5,5g,SETTIMANALE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,5,5g,SETTIMANALE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,7,7g,SETTIMANALE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,7,7g,SETTIMANALE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,7,7g,SETTIMANALE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,7,7g,SETTIMANALE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,7,7g,SETTIMANALE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,7,7g,SETTIMANALE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,10,10g,SETTIMANALE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,10,10g,SETTIMANALE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,10,10g,SETTIMANALE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,10,10g,SETTIMANALE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,10,10g,SETTIMANALE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,10,10g,SETTIMANALE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,14,14g,SWING,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,14,14g,SWING,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,14,14g,SWING,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,14,14g,SWING,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,14,14g,SWING,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,14,14g,SWING,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,21,21g,SWING,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,21,21g,SWING,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,21,21g,SWING,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,21,21g,SWING,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,21,21g,SWING,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,21,21g,SWING,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,30,30g,MEDIO,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,30,30g,MEDIO,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,30,30g,MEDIO,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,30,30g,MEDIO,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,30,30g,MEDIO,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,30,30g,MEDIO,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,45,45g,MEDIO,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,45,45g,MEDIO,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,45,45g,MEDIO,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,45,45g,MEDIO,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,45,45g,MEDIO,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,45,45g,MEDIO,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,60,60g,MEDIO,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,60,60g,MEDIO,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,60,60g,MEDIO,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,60,60g,MEDIO,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,60,60g,MEDIO,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,BTC,60,60g,MEDIO,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,1,1g,BREVE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,1,1g,BREVE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,1,1g,BREVE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,1,1g,BREVE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,1,1g,BREVE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,1,1g,BREVE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,2,2g,BREVE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,2,2g,BREVE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,2,2g,BREVE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,2,2g,BREVE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,2,2g,BREVE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,2,2g,BREVE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,3,3g,BREVE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,3,3g,BREVE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,3,3g,BREVE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,3,3g,BREVE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,3,3g,BREVE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,3,3g,BREVE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,5,5g,SETTIMANALE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,5,5g,SETTIMANALE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,5,5g,SETTIMANALE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,5,5g,SETTIMANALE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,5,5g,SETTIMANALE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,5,5g,SETTIMANALE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,7,7g,SETTIMANALE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,7,7g,SETTIMANALE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,7,7g,SETTIMANALE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,7,7g,SETTIMANALE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,7,7g,SETTIMANALE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,7,7g,SETTIMANALE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,10,10g,SETTIMANALE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,10,10g,SETTIMANALE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,10,10g,SETTIMANALE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,10,10g,SETTIMANALE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,10,10g,SETTIMANALE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,10,10g,SETTIMANALE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,14,14g,SWING,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,14,14g,SWING,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,14,14g,SWING,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,14,14g,SWING,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,14,14g,SWING,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,14,14g,SWING,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,21,21g,SWING,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,21,21g,SWING,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,21,21g,SWING,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,21,21g,SWING,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,21,21g,SWING,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,21,21g,SWING,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,30,30g,MEDIO,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,30,30g,MEDIO,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,30,30g,MEDIO,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,30,30g,MEDIO,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,30,30g,MEDIO,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,30,30g,MEDIO,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,45,45g,MEDIO,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,45,45g,MEDIO,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,45,45g,MEDIO,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,45,45g,MEDIO,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,45,45g,MEDIO,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,45,45g,MEDIO,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,60,60g,MEDIO,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,60,60g,MEDIO,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,60,60g,MEDIO,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,60,60g,MEDIO,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,60,60g,MEDIO,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,SOL,60,60g,MEDIO,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,1,1g,BREVE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,1,1g,BREVE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,1,1g,BREVE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,1,1g,BREVE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,1,1g,BREVE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,1,1g,BREVE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,2,2g,BREVE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,2,2g,BREVE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,2,2g,BREVE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,2,2g,BREVE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,2,2g,BREVE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,2,2g,BREVE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,3,3g,BREVE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,3,3g,BREVE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,3,3g,BREVE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,3,3g,BREVE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,3,3g,BREVE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,3,3g,BREVE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,5,5g,SETTIMANALE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,5,5g,SETTIMANALE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,5,5g,SETTIMANALE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,5,5g,SETTIMANALE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,5,5g,SETTIMANALE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,5,5g,SETTIMANALE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,7,7g,SETTIMANALE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,7,7g,SETTIMANALE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,7,7g,SETTIMANALE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,7,7g,SETTIMANALE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,7,7g,SETTIMANALE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,7,7g,SETTIMANALE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,10,10g,SETTIMANALE,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,10,10g,SETTIMANALE,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,10,10g,SETTIMANALE,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,10,10g,SETTIMANALE,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,10,10g,SETTIMANALE,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,10,10g,SETTIMANALE,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,14,14g,SWING,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,14,14g,SWING,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,14,14g,SWING,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,14,14g,SWING,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,14,14g,SWING,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,14,14g,SWING,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,21,21g,SWING,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,21,21g,SWING,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,21,21g,SWING,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,21,21g,SWING,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,21,21g,SWING,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,21,21g,SWING,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,30,30g,MEDIO,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,30,30g,MEDIO,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,30,30g,MEDIO,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,30,30g,MEDIO,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,30,30g,MEDIO,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,30,30g,MEDIO,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,45,45g,MEDIO,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,45,45g,MEDIO,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,45,45g,MEDIO,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,45,45g,MEDIO,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,45,45g,MEDIO,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,45,45g,MEDIO,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,60,60g,MEDIO,global,Global confluence,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,60,60g,MEDIO,scanner,Scanner,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,60,60g,MEDIO,market,Market regime,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,60,60g,MEDIO,technical,Tecnico,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,60,60g,MEDIO,classic_technical,Classic technical,0,0,,,,,,RACCOLTA DATI
+2026-07-09T23:44:37+00:00,DOGE,60,60g,MEDIO,sol_fractal,Frattale SOL,0,0,,,,,,RACCOLTA DATI
