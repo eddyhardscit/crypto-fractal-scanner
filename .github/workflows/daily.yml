@@ -80,6 +80,9 @@ jobs:
       - name: Run global weight calibration report
         run: python global_weight_calibration_report.py
 
+      - name: Run risk calibration report
+        run: python risk_calibration_report.py
+
       - name: Build 30d forecast history report
         run: python forecast_30d_history_report.py
 
