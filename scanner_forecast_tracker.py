@@ -1,814 +1,365 @@
-from pathlib import Path
-from datetime import datetime, timezone
-import re
+import os
+from datetime import datetime, timedelta, timezone
 
 import numpy as np
 import pandas as pd
 import yfinance as yf
-
 import matplotlib
-matplotlib.use("Agg")
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-REPORTS_DIR = Path("reports")
-LATEST_REPORT = REPORTS_DIR / "latest_report.md"
+REPORT_DIR = "reports"
+MATCHES_PATH = os.path.join(REPORT_DIR, "latest_scanner_matches.csv")
+REPORT_PATH = os.path.join(REPORT_DIR, "scanner_forecast_tracker_report.md")
+SNAPSHOT_PATH = os.path.join(REPORT_DIR, "scanner_forecast_snapshots.csv")
 
-FORECAST_LOG = REPORTS_DIR / "scanner_forecast_path_log.csv"
-ACCURACY_METRICS = REPORTS_DIR / "scanner_forecast_path_accuracy_metrics.csv"
-OUTPUT_REPORT = REPORTS_DIR / "scanner_forecast_path_report.md"
-
-START_MARKER = "<!-- SCANNER_FORECAST_TRACKER_START -->"
-END_MARKER = "<!-- SCANNER_FORECAST_TRACKER_END -->"
-
-ASSETS = {
-    "BTC": {
-        "name": "Bitcoin",
-        "ticker": "BTC-USD",
-        "chart": REPORTS_DIR / "scanner_forecast_BTC.png",
-    },
-    "SOL": {
-        "name": "Solana",
-        "ticker": "SOL-USD",
-        "chart": REPORTS_DIR / "scanner_forecast_SOL.png",
-    },
-    "DOGE": {
-        "name": "Dogecoin",
-        "ticker": "DOGE-USD",
-        "chart": REPORTS_DIR / "scanner_forecast_DOGE.png",
-    },
-}
-
-PERCENTILES = [10, 25, 50, 75, 90]
+ASSETS = ["BTC", "SOL", "DOGE"]
+TARGET_TICKERS = {asset: f"{asset}-USD" for asset in ASSETS}
 FORECAST_DAYS = 30
-
-NUMBER_PATTERN = r"([0-9]{1,3}(?:\.[0-9]{3})*(?:,[0-9]+)?|[0-9]+(?:[.,][0-9]+)?)"
-
-
-def utc_now():
-    return datetime.now(timezone.utc)
+DISPLAY_HORIZONS = [1, 3, 7, 14, 30]
 
 
-def today_str():
-    return utc_now().strftime("%Y-%m-%d")
+# -----------------------------
+# helpers
+# -----------------------------
+
+def ensure_reports_dir():
+    os.makedirs(REPORT_DIR, exist_ok=True)
 
 
-def safe_float(x):
+def fmt_number_it(value, decimals=2):
     try:
-        if pd.isna(x):
-            return np.nan
-        return float(x)
+        s = f"{float(value):,.{decimals}f}"
+        return s.replace(",", "X").replace(".", ",").replace("X", ".")
     except Exception:
-        return np.nan
-
-
-def parse_number(value):
-    if value is None:
-        return np.nan
-
-    s = str(value).strip()
-
-    if not s or s.lower() == "nan":
-        return np.nan
-
-    s = s.replace("$", "")
-    s = s.replace("€", "")
-    s = s.replace("+", "")
-    s = s.replace("−", "-")
-    s = s.replace(" ", "")
-
-    if "," in s and "." in s:
-        s = s.replace(".", "").replace(",", ".")
-    elif "," in s:
-        s = s.replace(",", ".")
-
-    s = re.sub(r"[^0-9.\-]", "", s)
-
-    if not s or s in ["-", ".", "-."]:
-        return np.nan
-
-    try:
-        return float(s)
-    except Exception:
-        return np.nan
-
-
-def parse_pct(value):
-    if value is None:
-        return np.nan
-
-    s = str(value).strip()
-    s = s.replace("%", "")
-    s = s.replace("+", "")
-    s = s.replace("−", "-")
-    s = s.replace(",", ".")
-    s = re.sub(r"[^0-9.\-]", "", s)
-
-    if not s or s in ["-", ".", "-."]:
-        return np.nan
-
-    try:
-        return float(s)
-    except Exception:
-        return np.nan
-
-
-def fmt_pct(x):
-    x = safe_float(x)
-
-    if pd.isna(x):
         return "n/a"
 
-    return f"{x:.2f}%".replace(".", ",")
 
-
-def fmt_price(asset, x):
-    x = safe_float(x)
-
-    if pd.isna(x):
+def fmt_pct(value, decimals=2):
+    if pd.isna(value):
         return "n/a"
-
-    if asset == "DOGE":
-        return f"{x:.5f} $"
-
-    if x >= 1000:
-        return f"{x:,.2f} $".replace(",", "X").replace(".", ",").replace("X", ".")
-
-    return f"{x:.2f} $".replace(".", ",")
+    return f"{fmt_number_it(value, decimals)}%"
 
 
-def df_to_markdown(df):
-    if df is None or df.empty:
-        return "_Nessun dato disponibile._"
-
-    try:
-        return df.to_markdown(index=False)
-    except Exception:
-        return "```csv\n" + df.to_csv(index=False) + "\n```"
+def fmt_price(value):
+    if pd.isna(value):
+        return "n/a"
+    return f"{fmt_number_it(value, 2)} $"
 
 
-def read_text(path):
-    if not path.exists():
-        return ""
-
-    try:
-        return path.read_text(encoding="utf-8")
-    except Exception:
-        return ""
-
-
-def clean_text(s):
-    if s is None:
-        return ""
-
-    s = str(s)
-    s = s.replace("**", "")
-    s = s.replace("__", "")
-    s = s.replace("`", "")
-    s = s.replace("|", " ")
-    s = re.sub(r"\s+", " ", s)
-
-    return s.strip()
-
-
-def first_price(text):
-    if not text:
-        return np.nan
-
-    m = re.search(NUMBER_PATTERN + r"\s*\$", str(text))
-
-    if not m:
-        return np.nan
-
-    return parse_number(m.group(1))
-
-
-def first_pct(text):
-    if not text:
-        return np.nan
-
-    m = re.search(r"([+\-]?[0-9]+(?:[.,][0-9]+)?)\s*%", str(text))
-
-    if not m:
-        return np.nan
-
-    return parse_pct(m.group(1))
-
-
-def normalize_ohlcv(df):
-    if df is None or df.empty:
+def load_matches():
+    if not os.path.exists(MATCHES_PATH):
         return pd.DataFrame()
-
-    out = df.copy()
-
-    if isinstance(out.columns, pd.MultiIndex):
-        level0 = list(out.columns.get_level_values(0))
-        level1 = list(out.columns.get_level_values(1))
-        fields = ["Open", "High", "Low", "Close", "Adj Close", "Volume"]
-
-        if any(f in level0 for f in fields):
-            tmp = {}
-
-            for field in fields:
-                if field in level0:
-                    part = out.xs(field, axis=1, level=0)
-                    tmp[field] = part.iloc[:, 0]
-
-            out = pd.DataFrame(tmp)
-
-        elif any(f in level1 for f in fields):
-            tmp = {}
-
-            for field in fields:
-                if field in level1:
-                    part = out.xs(field, axis=1, level=1)
-                    tmp[field] = part.iloc[:, 0]
-
-            out = pd.DataFrame(tmp)
-
-    needed = ["Open", "High", "Low", "Close", "Volume"]
-
-    for col in needed:
-        if col not in out.columns:
-            if col in ["Open", "High", "Low"] and "Close" in out.columns:
-                out[col] = out["Close"]
-            elif col == "Volume":
-                out[col] = np.nan
-            else:
-                return pd.DataFrame()
-
-    out = out[needed].copy()
-    out.index = pd.to_datetime(out.index)
-
     try:
-        if out.index.tz is not None:
-            out.index = out.index.tz_convert(None)
+        df = pd.read_csv(MATCHES_PATH)
     except Exception:
-        pass
-
-    out.index = out.index.normalize()
-    out = out[~out.index.duplicated(keep="last")]
-    out = out.sort_index()
-    out = out.dropna(subset=["Close"])
-
-    return out
-
-
-def download_prices(ticker, start=None):
-    try:
-        kwargs = {
-            "tickers": ticker,
-            "interval": "1d",
-            "progress": False,
-            "auto_adjust": False,
-            "actions": False,
-            "threads": False,
-        }
-
-        if start:
-            kwargs["start"] = start
-        else:
-            kwargs["period"] = "max"
-
-        raw = yf.download(**kwargs)
-
-        return normalize_ohlcv(raw)
-
-    except Exception as e:
-        print(f"Download prezzi fallito per {ticker}: {e}")
         return pd.DataFrame()
+    return df
 
 
-def current_price_from_market(ticker):
-    df = download_prices(ticker, start="2020-01-01")
+def download_history(tickers, start_date, end_date):
+    data = {}
+    tickers = sorted(set(tickers))
+    if not tickers:
+        return data
 
-    if df.empty:
-        return np.nan
-
-    return safe_float(df["Close"].iloc[-1])
-
-
-def actual_price_on_or_after(df, date):
-    if df.empty:
-        return np.nan
-
-    date = pd.to_datetime(date).normalize()
-    d = df[df.index >= date]
-
-    if d.empty:
-        return np.nan
-
-    return safe_float(d.iloc[0]["Close"])
-
-
-def extract_asset_block(text, asset_name):
-    heading = f"# {asset_name} — mappa semplice"
-
-    start = text.find(heading)
-
-    if start == -1:
-        heading = f"# {asset_name}"
-        start = text.find(heading)
-
-    if start == -1:
-        return ""
-
-    rest = text[start:]
-
-    possible_stops = []
-
-    for other in ["# Bitcoin", "# Solana", "# Dogecoin", "# Come leggere correttamente"]:
-        pos = rest.find("\n" + other, len(heading))
-
-        if pos != -1:
-            possible_stops.append(pos)
-
-    if possible_stops:
-        return rest[:min(possible_stops)]
-
-    return rest
-
-
-def extract_between_headings(block, start_label, end_label):
-    start = block.lower().find(start_label.lower())
-
-    if start == -1:
-        return ""
-
-    rest = block[start:]
-
-    end = rest.lower().find(end_label.lower())
-
-    if end == -1:
-        return rest
-
-    return rest[:end]
-
-
-def parse_current_price(block):
-    for line in block.splitlines():
-        clean = clean_text(line)
-
-        if "Prezzo attuale" in clean:
-            price = first_price(clean)
-
-            if not pd.isna(price):
-                return price
-
-    return np.nan
-
-
-def parse_direction_stats(block):
-    direction = ""
-    positive = np.nan
-    negative = np.nan
-
-    for line in block.splitlines():
-        clean = clean_text(line)
-        low = clean.lower()
-
-        if "direzione più probabile" in low:
-            if ":" in clean:
-                direction = clean.split(":", 1)[-1].strip()
-
-        if "probabilità storica di salita" in low or "casi positivi" in low:
-            pct = first_pct(clean)
-
-            if not pd.isna(pct):
-                positive = pct
-
-        if "probabilità storica di discesa" in low or "casi negativi" in low:
-            pct = first_pct(clean)
-
-            if not pd.isna(pct):
-                negative = pct
-
-    return direction, positive, negative
-
-
-def parse_return_percentiles(block):
-    section = extract_between_headings(
-        block,
-        "## 1. Return 30d",
-        "## 2. Drawdown 30d",
+    raw = yf.download(
+        tickers=tickers,
+        start=start_date,
+        end=end_date,
+        interval="1d",
+        auto_adjust=False,
+        group_by="ticker",
+        progress=False,
+        threads=True,
     )
 
-    if not section:
-        section = block
+    if isinstance(raw.columns, pd.MultiIndex):
+        for ticker in tickers:
+            if ticker not in raw.columns.get_level_values(0):
+                continue
+            part = raw[ticker].copy()
+            if "Close" not in part.columns:
+                continue
+            part = part[["Close"]].dropna().copy()
+            part.index = pd.to_datetime(part.index).tz_localize(None)
+            data[ticker] = part
+    else:
+        if "Close" in raw.columns and len(tickers) == 1:
+            part = raw[["Close"]].dropna().copy()
+            part.index = pd.to_datetime(part.index).tz_localize(None)
+            data[tickers[0]] = part
 
-    out = {}
-
-    for p in PERCENTILES:
-        out[p] = {
-            "return_pct": np.nan,
-            "price": np.nan,
-        }
-
-    # Formato dettagliato:
-    # Percentile 10%: -12,81% → 54.134,13 $
-    for line in section.splitlines():
-        clean = clean_text(line)
-
-        m = re.search(
-            rf"Percentile\s+([0-9]+)%\s*:\s*([+\-]?[0-9]+(?:[.,][0-9]+)?)\s*%.*?{NUMBER_PATTERN}\s*\$",
-            clean,
-            flags=re.IGNORECASE,
-        )
-
-        if not m:
-            continue
-
-        p = int(m.group(1))
-
-        if p not in PERCENTILES:
-            continue
-
-        out[p] = {
-            "return_pct": parse_pct(m.group(2)),
-            "price": parse_number(m.group(3)),
-        }
-
-    # Formato mappa semplice:
-    # Se va molto male: 54.134,13 $ (-12,81%)
-    # Se va male: 60.493,40 $ (-2,57%)
-    # Scenario normale: 64.188,68 $ (3,39%)
-    # Se va bene: 74.215,01 $ (19,54%)
-    # Se va molto bene: 89.248,60 $ (43,75%)
-    label_to_percentile = {
-        "se va molto male": 10,
-        "se va male": 25,
-        "scenario normale": 50,
-        "se va bene": 75,
-        "se va molto bene": 90,
-    }
-
-    ordered_labels = [
-        "se va molto male",
-        "se va molto bene",
-        "se va male",
-        "se va bene",
-        "scenario normale",
-    ]
-
-    for line in section.splitlines():
-        clean = clean_text(line)
-        low = clean.lower()
-
-        matched_label = None
-
-        for label in ordered_labels:
-            if label in low:
-                matched_label = label
-                break
-
-        if matched_label is None:
-            continue
-
-        p = label_to_percentile[matched_label]
-        price = first_price(clean)
-
-        pct = np.nan
-        pct_match = re.search(r"$begin:math:text$\(\[\+\\\-\]\?\[0\-9\]\+\(\?\:\[\.\,\]\[0\-9\]\+\)\?\)\\s\*\%$end:math:text$", clean)
-
-        if pct_match:
-            pct = parse_pct(pct_match.group(1))
-        else:
-            pct = first_pct(clean)
-
-        if not pd.isna(price):
-            out[p] = {
-                "return_pct": pct,
-                "price": price,
-            }
-
-    return out
+    return data
 
 
-def parse_scanner_forecast_from_latest():
-    text = read_text(LATEST_REPORT)
+def get_index_pos_on_or_after(index, dt):
+    dt = pd.Timestamp(dt).tz_localize(None)
+    pos = index.searchsorted(dt)
+    if pos >= len(index):
+        return None
+    return int(pos)
 
+
+def build_forward_path(close_series, start_dt, horizon=FORECAST_DAYS):
+    if close_series is None or close_series.empty:
+        return None
+    idx = get_index_pos_on_or_after(close_series.index, start_dt)
+    if idx is None:
+        return None
+    if idx + horizon >= len(close_series):
+        return None
+
+    base = float(close_series.iloc[idx])
+    if base == 0 or np.isnan(base):
+        return None
+
+    future = close_series.iloc[idx: idx + horizon + 1].astype(float)
+    returns = (future / base - 1.0) * 100.0
+    returns.index = range(0, len(returns))
+    return returns
+
+
+def build_current_actual_path(close_series, anchor_date, horizon=FORECAST_DAYS):
+    if close_series is None or close_series.empty:
+        return None
+    idx = get_index_pos_on_or_after(close_series.index, anchor_date)
+    if idx is None:
+        return None
+    base = float(close_series.iloc[idx])
+    if base == 0 or np.isnan(base):
+        return None
+
+    max_len = min(horizon, len(close_series) - 1 - idx)
+    future = close_series.iloc[idx: idx + max_len + 1].astype(float)
+    returns = (future / base - 1.0) * 100.0
+    returns.index = range(0, len(returns))
+    return returns
+
+
+def build_path_matrix(asset_matches, history_map, horizon=FORECAST_DAYS):
     rows = []
     meta = []
 
-    if not text:
+    for _, row in asset_matches.iterrows():
+        ticker = row.get("similar_asset")
+        end_date = pd.to_datetime(row.get("end_date"), errors="coerce")
+        if pd.isna(end_date):
+            continue
+        hist = history_map.get(ticker)
+        if hist is None or hist.empty:
+            continue
+        path = build_forward_path(hist["Close"], end_date, horizon=horizon)
+        if path is None or len(path) != horizon + 1:
+            continue
+        rows.append(path.values)
+        meta.append(row)
+
+    if not rows:
         return pd.DataFrame(), pd.DataFrame()
 
-    forecast_date = today_str()
-    created_at = utc_now().strftime("%Y-%m-%d %H:%M:%S UTC")
+    matrix = pd.DataFrame(rows, columns=list(range(0, horizon + 1)))
+    meta_df = pd.DataFrame(meta).reset_index(drop=True)
+    return matrix, meta_df
 
-    for asset, cfg in ASSETS.items():
-        block = extract_asset_block(text, cfg["name"])
 
-        if not block:
+def percentiles_from_matrix(matrix):
+    if matrix.empty:
+        return pd.DataFrame()
+
+    out = []
+    for day in matrix.columns:
+        values = matrix[day].dropna().astype(float)
+        if values.empty:
             continue
-
-        start_price = parse_current_price(block)
-
-        if pd.isna(start_price):
-            start_price = current_price_from_market(cfg["ticker"])
-
-        direction, positive, negative = parse_direction_stats(block)
-        percentiles = parse_return_percentiles(block)
-
-        meta.append({
-            "forecast_date": forecast_date,
-            "created_at_utc": created_at,
-            "asset": asset,
-            "ticker": cfg["ticker"],
-            "start_price": start_price,
-            "direction": direction,
-            "positive_rate": positive,
-            "negative_rate": negative,
-            "p10_30d": percentiles[10]["price"],
-            "p25_30d": percentiles[25]["price"],
-            "p50_30d": percentiles[50]["price"],
-            "p75_30d": percentiles[75]["price"],
-            "p90_30d": percentiles[90]["price"],
+        out.append({
+            "day": int(day),
+            "p10": np.percentile(values, 10),
+            "p25": np.percentile(values, 25),
+            "p50": np.percentile(values, 50),
+            "p75": np.percentile(values, 75),
+            "p90": np.percentile(values, 90),
+            "mean": values.mean(),
         })
-
-        for day in range(0, FORECAST_DAYS + 1):
-            target_date = pd.to_datetime(forecast_date) + pd.Timedelta(days=day)
-            t = day / FORECAST_DAYS if FORECAST_DAYS > 0 else 1.0
-
-            row = {
-                "forecast_date": forecast_date,
-                "created_at_utc": created_at,
-                "asset": asset,
-                "ticker": cfg["ticker"],
-                "day_index": day,
-                "target_date": target_date.strftime("%Y-%m-%d"),
-                "start_price": start_price,
-                "direction": direction,
-                "positive_rate": positive,
-                "negative_rate": negative,
-                "checked": 0.0,
-                "actual_price": np.nan,
-                "inside_p10_p90": np.nan,
-                "inside_p25_p75": np.nan,
-                "error_vs_p50_pct": np.nan,
-            }
-
-            for p in PERCENTILES:
-                target_price = safe_float(percentiles[p]["price"])
-
-                if day == 0:
-                    projected = start_price
-                elif pd.isna(start_price) or pd.isna(target_price):
-                    projected = np.nan
-                else:
-                    projected = start_price + (target_price - start_price) * t
-
-                row[f"p{p}"] = projected
-
-            rows.append(row)
-
-    return pd.DataFrame(rows), pd.DataFrame(meta)
+    return pd.DataFrame(out)
 
 
-def append_today_forecast(today_df):
-    if FORECAST_LOG.exists():
-        old = pd.read_csv(FORECAST_LOG)
+def current_price_from_history(history_map, ticker):
+    hist = history_map.get(ticker)
+    if hist is None or hist.empty:
+        return np.nan
+    return float(hist["Close"].iloc[-1])
+
+
+def positive_case_rate(asset_matches):
+    if asset_matches.empty:
+        return np.nan
+    vals = pd.to_numeric(asset_matches.get("return_30d"), errors="coerce")
+    vals = vals.dropna()
+    if vals.empty:
+        return np.nan
+    return (vals > 0).mean() * 100.0
+
+
+def save_snapshot_rows(snapshot_rows):
+    new_df = pd.DataFrame(snapshot_rows)
+    if new_df.empty:
+        return
+
+    if os.path.exists(SNAPSHOT_PATH):
+        old = pd.read_csv(SNAPSHOT_PATH)
+        all_df = pd.concat([old, new_df], ignore_index=True)
     else:
-        old = pd.DataFrame()
+        all_df = new_df.copy()
 
-    if old.empty:
-        combined = today_df
-    else:
-        keys = ["forecast_date", "asset", "day_index"]
+    all_df["prediction_date"] = all_df["prediction_date"].astype(str)
+    all_df["asset"] = all_df["asset"].astype(str)
+    all_df["day"] = pd.to_numeric(all_df["day"], errors="coerce").fillna(0).astype(int)
 
-        for k in keys:
-            if k not in old.columns:
-                old[k] = np.nan
-
-        old_marker = old[keys].astype(str).agg("|".join, axis=1)
-        today_marker = today_df[keys].astype(str).agg("|".join, axis=1)
-
-        old = old[~old_marker.isin(set(today_marker))]
-        combined = pd.concat([old, today_df], ignore_index=True)
-
-    combined.to_csv(FORECAST_LOG, index=False)
-
-    return combined
+    all_df = all_df.sort_values(["prediction_date", "asset", "day"])
+    all_df = all_df.drop_duplicates(subset=["prediction_date", "asset", "day"], keep="last")
+    all_df.to_csv(SNAPSHOT_PATH, index=False)
 
 
-def update_checks(log_df):
-    if log_df.empty:
-        return log_df
-
-    today = pd.to_datetime(today_str()).normalize()
-
-    for asset, cfg in ASSETS.items():
-        asset_df = log_df[log_df["asset"].astype(str) == asset]
-
-        if asset_df.empty:
-            continue
-
-        min_date = pd.to_datetime(asset_df["forecast_date"], errors="coerce").min()
-
-        if pd.isna(min_date):
-            min_date = today - pd.Timedelta(days=10)
-
-        dl_start = (min_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
-        prices = download_prices(cfg["ticker"], start=dl_start)
-
-        if prices.empty:
-            continue
-
-        idxs = log_df.index[log_df["asset"].astype(str) == asset].tolist()
-
-        for idx in idxs:
-            row = log_df.loc[idx]
-
-            checked = safe_float(row.get("checked", 0.0))
-
-            if not pd.isna(checked) and checked >= 1:
-                continue
-
-            target_date = pd.to_datetime(row.get("target_date", ""), errors="coerce")
-
-            if pd.isna(target_date):
-                continue
-
-            if target_date.normalize() > today:
-                continue
-
-            actual = actual_price_on_or_after(prices, target_date)
-
-            if pd.isna(actual):
-                continue
-
-            p10 = safe_float(row.get("p10", np.nan))
-            p25 = safe_float(row.get("p25", np.nan))
-            p50 = safe_float(row.get("p50", np.nan))
-            p75 = safe_float(row.get("p75", np.nan))
-            p90 = safe_float(row.get("p90", np.nan))
-
-            inside_wide = np.nan
-            inside_mid = np.nan
-
-            if not pd.isna(p10) and not pd.isna(p90):
-                lo = min(p10, p90)
-                hi = max(p10, p90)
-                inside_wide = 1.0 if lo <= actual <= hi else 0.0
-
-            if not pd.isna(p25) and not pd.isna(p75):
-                lo = min(p25, p75)
-                hi = max(p25, p75)
-                inside_mid = 1.0 if lo <= actual <= hi else 0.0
-
-            error = np.nan
-
-            if not pd.isna(p50) and p50 != 0:
-                error = (actual / p50 - 1) * 100
-
-            log_df.at[idx, "checked"] = 1.0
-            log_df.at[idx, "actual_price"] = actual
-            log_df.at[idx, "inside_p10_p90"] = inside_wide
-            log_df.at[idx, "inside_p25_p75"] = inside_mid
-            log_df.at[idx, "error_vs_p50_pct"] = error
-
-    log_df.to_csv(FORECAST_LOG, index=False)
-
-    return log_df
-
-
-def latest_forecast(log_df, asset):
-    if log_df.empty:
+def compute_accuracy(history_map):
+    if not os.path.exists(SNAPSHOT_PATH):
         return pd.DataFrame()
 
-    d = log_df[log_df["asset"].astype(str) == asset].copy()
-
-    if d.empty:
+    snap = pd.read_csv(SNAPSHOT_PATH)
+    if snap.empty:
         return pd.DataFrame()
 
-    d["forecast_date_dt"] = pd.to_datetime(d["forecast_date"], errors="coerce")
-    max_date = d["forecast_date_dt"].max()
+    snap["prediction_date"] = pd.to_datetime(snap["prediction_date"], errors="coerce")
+    snap["target_date"] = snap["prediction_date"] + pd.to_timedelta(pd.to_numeric(snap["day"], errors="coerce"), unit="D")
 
-    latest = d[d["forecast_date_dt"] == max_date].copy()
-    latest["day_index"] = pd.to_numeric(latest["day_index"], errors="coerce")
-
-    return latest.sort_values("day_index")
-
-
-def summarize_accuracy(log_df):
     rows = []
+    today = pd.Timestamp.utcnow().tz_localize(None).normalize()
 
-    if log_df.empty:
-        return pd.DataFrame()
+    for asset in ASSETS:
+        ticker = TARGET_TICKERS[asset]
+        hist = history_map.get(ticker)
+        if hist is None or hist.empty:
+            continue
+        close_series = hist["Close"].copy()
+        close_series.index = pd.to_datetime(close_series.index).tz_localize(None)
 
-    checked = log_df[pd.to_numeric(log_df["checked"], errors="coerce").fillna(0) >= 1].copy()
+        asset_snap = snap[snap["asset"].astype(str) == asset].copy()
+        if asset_snap.empty:
+            continue
 
-    for asset in ASSETS.keys():
-        d_asset = checked[checked["asset"].astype(str) == asset].copy()
+        for horizon in DISPLAY_HORIZONS:
+            sub = asset_snap[asset_snap["day"] == horizon].copy()
+            if sub.empty:
+                rows.append({
+                    "asset": asset,
+                    "day_label": f"{horizon}g",
+                    "checks": 0,
+                    "inside_p10_p90": np.nan,
+                    "inside_p25_p75": np.nan,
+                    "abs_error_mean": np.nan,
+                    "error_mean": np.nan,
+                })
+                continue
 
-        for day in [1, 3, 7, 14, 30]:
-            d = d_asset[pd.to_numeric(d_asset["day_index"], errors="coerce") == day].copy()
-            n = len(d)
+            results = []
+            for _, row in sub.iterrows():
+                pred_date = pd.Timestamp(row["prediction_date"]).normalize()
+                tgt_date = pd.Timestamp(row["target_date"]).normalize()
+                if tgt_date > today:
+                    continue
 
-            if n == 0:
-                wide_rate = np.nan
-                mid_rate = np.nan
-                avg_abs_error = np.nan
-                avg_error = np.nan
+                anchor_idx = get_index_pos_on_or_after(close_series.index, pred_date)
+                target_idx = get_index_pos_on_or_after(close_series.index, tgt_date)
+                if anchor_idx is None or target_idx is None:
+                    continue
+                if target_idx < anchor_idx:
+                    continue
+
+                base = float(close_series.iloc[anchor_idx])
+                actual = float(close_series.iloc[target_idx])
+                actual_ret = (actual / base - 1.0) * 100.0
+
+                p10 = pd.to_numeric(row.get("p10"), errors="coerce")
+                p25 = pd.to_numeric(row.get("p25"), errors="coerce")
+                p50 = pd.to_numeric(row.get("p50"), errors="coerce")
+                p75 = pd.to_numeric(row.get("p75"), errors="coerce")
+                p90 = pd.to_numeric(row.get("p90"), errors="coerce")
+
+                results.append({
+                    "actual": actual_ret,
+                    "inside_10_90": int(p10 <= actual_ret <= p90) if pd.notna(p10) and pd.notna(p90) else np.nan,
+                    "inside_25_75": int(p25 <= actual_ret <= p75) if pd.notna(p25) and pd.notna(p75) else np.nan,
+                    "abs_error": abs(actual_ret - p50) if pd.notna(p50) else np.nan,
+                    "error": actual_ret - p50 if pd.notna(p50) else np.nan,
+                })
+
+            if not results:
+                rows.append({
+                    "asset": asset,
+                    "day_label": f"{horizon}g",
+                    "checks": 0,
+                    "inside_p10_p90": np.nan,
+                    "inside_p25_p75": np.nan,
+                    "abs_error_mean": np.nan,
+                    "error_mean": np.nan,
+                })
             else:
-                wide_values = pd.to_numeric(d["inside_p10_p90"], errors="coerce").dropna()
-                mid_values = pd.to_numeric(d["inside_p25_p75"], errors="coerce").dropna()
-
-                wide_rate = wide_values.mean() * 100 if len(wide_values) else np.nan
-                mid_rate = mid_values.mean() * 100 if len(mid_values) else np.nan
-
-                errors = pd.to_numeric(d["error_vs_p50_pct"], errors="coerce")
-                avg_abs_error = errors.abs().mean()
-                avg_error = errors.mean()
-
-            rows.append({
-                "asset": asset,
-                "day_index": day,
-                "checked_predictions": n,
-                "inside_p10_p90_rate": wide_rate,
-                "inside_p25_p75_rate": mid_rate,
-                "avg_abs_error_vs_p50": avg_abs_error,
-                "avg_error_vs_p50": avg_error,
-            })
+                df = pd.DataFrame(results)
+                rows.append({
+                    "asset": asset,
+                    "day_label": f"{horizon}g",
+                    "checks": len(df),
+                    "inside_p10_p90": df["inside_10_90"].mean() * 100.0,
+                    "inside_p25_p75": df["inside_25_75"].mean() * 100.0,
+                    "abs_error_mean": df["abs_error"].mean(),
+                    "error_mean": df["error"].mean(),
+                })
 
     return pd.DataFrame(rows)
 
 
-def plot_asset_chart(log_df, asset):
-    cfg = ASSETS[asset]
-    latest = latest_forecast(log_df, asset)
+def plot_forecast(asset, percentiles, actual_path, generated_at):
+    if percentiles.empty:
+        return None
 
-    if latest.empty:
-        return
+    fig, ax = plt.subplots(figsize=(11, 6.5))
+    x = percentiles["day"].values
 
-    latest["target_date_dt"] = pd.to_datetime(latest["target_date"], errors="coerce")
-    latest = latest.dropna(subset=["target_date_dt"])
+    ax.fill_between(x, percentiles["p10"], percentiles["p90"], alpha=0.18, label="Banda larga p10-p90")
+    ax.fill_between(x, percentiles["p25"], percentiles["p75"], alpha=0.28, label="Banda centrale p25-p75")
+    ax.plot(x, percentiles["p50"], marker="o", linewidth=2.4, label="Scenario centrale p50")
+    ax.plot(x, percentiles["p10"], linestyle="--", linewidth=1.2, label="p10")
+    ax.plot(x, percentiles["p90"], linestyle="--", linewidth=1.2, label="p90")
+    ax.plot(x, percentiles["mean"], linestyle=":", linewidth=1.8, label="Media")
 
-    if latest.empty:
-        return
+    if actual_path is not None and len(actual_path) > 0:
+        ax.plot(actual_path.index, actual_path.values, marker="o", linewidth=2.2, label=f"{asset} reale")
 
-    start_date = pd.to_datetime(latest["forecast_date"].iloc[0]).normalize()
-    end_date = latest["target_date_dt"].max()
+    ax.axhline(0, linewidth=0.8, linestyle=":")
+    ax.set_title(f"{asset} — cono previsionale scanner 40 casi")
+    ax.set_xlabel("Giorni da oggi")
+    ax.set_ylabel("Return % dal giorno 0")
+    ax.grid(True, alpha=0.25)
+    ax.legend(loc="best", fontsize=9)
 
-    for col in ["p10", "p25", "p50", "p75", "p90"]:
-        latest[col] = pd.to_numeric(latest[col], errors="coerce")
+    subtitle = generated_at.strftime("Generato: %Y-%m-%d %H:%M UTC")
+    fig.text(0.99, 0.01, subtitle, ha="right", va="bottom", fontsize=8)
+    fig.tight_layout(rect=[0, 0.02, 1, 1])
 
-    if latest[["p10", "p25", "p50", "p75", "p90"]].isna().all().all():
-        return
-
-    actual = download_prices(
-        cfg["ticker"],
-        start=(start_date - pd.Timedelta(days=3)).strftime("%Y-%m-%d"),
-    )
-
-    if not actual.empty:
-        actual = actual[(actual.index >= start_date) & (actual.index <= end_date)]
-
-    plt.figure(figsize=(11, 6))
-
-    plt.fill_between(
-        latest["target_date_dt"],
-        latest["p10"],
-        latest["p90"],
-        alpha=0.12,
-        label="Banda larga p10-p90",
-    )
-
-    plt.fill_between(
-        latest["target_date_dt"],
-        latest["p25"],
-        latest["p75"],
-        alpha=0.20,
-        label="Banda centrale p25-p75",
-    )
-
-    plt.plot(latest["target_date_dt"], latest["p50"], marker="o", label="Scenario centrale p50")
-    plt.plot(latest["target_date_dt"], latest["p10"], linestyle="--", label="p10")
-    plt.plot(latest["target_date_dt"], latest["p90"], linestyle="--", label="p90")
-
-    if not actual.empty:
-        plt.plot(actual.index, actual["Close"], marker="o", label=f"{asset} reale")
-
-    plt.title(f"{asset} — cono previsionale scanner 40 casi")
-    plt.xlabel("Data")
-    plt.ylabel("Prezzo")
-    plt.legend()
-    plt.grid(True, alpha=0.25)
-    plt.tight_layout()
-    plt.savefig(cfg["chart"], dpi=160)
-    plt.close()
+    out = os.path.join(REPORT_DIR, f"scanner_forecast_{asset}.png")
+    fig.savefig(out, dpi=150)
+    plt.close(fig)
+    return out
 
 
-def render_report(log_df, metrics):
-    now = utc_now().strftime("%Y-%m-%d %H:%M UTC")
-
+def build_report(asset_rows, accuracy_df, generated_at):
     lines = []
-
     lines.append("# Scanner forecast path / cono probabilistico")
     lines.append("")
-    lines.append(f"Generato: {now}")
+    lines.append(f"Generato: {generated_at.strftime('%Y-%m-%d %H:%M UTC')}")
     lines.append("")
-    lines.append("Questo report trasforma lo scanner dei 40 casi simili in un grafico a percorso.")
+    lines.append("Questo report costruisce il cono usando direttamente **i 40 match reali** del file `latest_scanner_matches.csv`, senza più leggere il markdown del report principale.")
     lines.append("")
     lines.append("Per ogni asset crea:")
     lines.append("")
@@ -820,77 +371,37 @@ def render_report(log_df, metrics):
     lines.append("Serve a vedere se il prezzo reale sta camminando dentro il percorso previsto dallo scanner.")
     lines.append("")
 
-    if log_df.empty:
-        lines.append("_Nessuna previsione scanner salvata._")
-        return "\n".join(lines) + "\n"
-
     lines.append("## Ultimo cono previsionale salvato")
     lines.append("")
-
-    summary_rows = []
-
-    for asset in ASSETS.keys():
-        latest = latest_forecast(log_df, asset)
-
-        if latest.empty:
-            continue
-
-        first = latest.iloc[0]
-        final = latest[latest["day_index"] == FORECAST_DAYS]
-
-        if final.empty:
-            final_row = latest.iloc[-1]
-        else:
-            final_row = final.iloc[0]
-
-        summary_rows.append({
-            "Asset": asset,
-            "Data": first.get("forecast_date", ""),
-            "Prezzo iniziale": fmt_price(asset, first.get("start_price", np.nan)),
-            "Direzione scanner": first.get("direction", ""),
-            "Casi positivi": fmt_pct(first.get("positive_rate", np.nan)),
-            "P10 30g": fmt_price(asset, final_row.get("p10", np.nan)),
-            "P25 30g": fmt_price(asset, final_row.get("p25", np.nan)),
-            "P50 30g": fmt_price(asset, final_row.get("p50", np.nan)),
-            "P75 30g": fmt_price(asset, final_row.get("p75", np.nan)),
-            "P90 30g": fmt_price(asset, final_row.get("p90", np.nan)),
-        })
-
-    lines.append(df_to_markdown(pd.DataFrame(summary_rows)))
+    lines.append("| Asset | Data | Prezzo iniziale | Direzione scanner | Casi positivi | P10 30g | P25 30g | P50 30g | P75 30g | P90 30g |")
+    lines.append("|:------|:-----|----------------:|:------------------|--------------:|--------:|--------:|--------:|--------:|--------:|")
+    for row in asset_rows:
+        lines.append(
+            f"| {row['asset']} | {row['date']} | {row['current_price_fmt']} | {row['direction']} | {row['positive_rate_fmt']} | {row['p10_30_fmt']} | {row['p25_30_fmt']} | {row['p50_30_fmt']} | {row['p75_30_fmt']} | {row['p90_30_fmt']} |"
+        )
     lines.append("")
 
     lines.append("## Grafici")
     lines.append("")
+    for row in asset_rows:
+        lines.append(f"### {row['asset']}")
+        lines.append("")
+        lines.append(f"![Scanner forecast {row['asset']}](scanner_forecast_{row['asset']}.png)")
+        lines.append("")
 
-    for asset, cfg in ASSETS.items():
-        if cfg["chart"].exists():
-            lines.append(f"### {asset}")
-            lines.append("")
-            lines.append(f"![Scanner forecast {asset}]({cfg['chart'].name})")
-            lines.append("")
+    if not accuracy_df.empty:
+        lines.append("## Accuratezza percorso scanner")
+        lines.append("")
+        lines.append("| Asset | Giorno | Controlli | Dentro p10-p90 | Dentro p25-p75 | Errore medio abs vs p50 | Errore medio vs p50 |")
+        lines.append("|:------|:-------|----------:|:---------------|:---------------|------------------------:|--------------------:|")
+        for asset in ASSETS:
+            sub = accuracy_df[accuracy_df["asset"] == asset]
+            for _, row in sub.iterrows():
+                lines.append(
+                    f"| {asset} | {row['day_label']} | {int(row['checks'])} | {fmt_pct(row['inside_p10_p90'])} | {fmt_pct(row['inside_p25_p75'])} | {fmt_pct(row['abs_error_mean'])} | {fmt_pct(row['error_mean'])} |"
+                )
+        lines.append("")
 
-    lines.append("## Accuratezza percorso scanner")
-    lines.append("")
-
-    if metrics.empty:
-        lines.append("_Dati insufficienti._")
-    else:
-        metric_rows = []
-
-        for _, r in metrics.iterrows():
-            metric_rows.append({
-                "Asset": r["asset"],
-                "Giorno": f"{int(r['day_index'])}g",
-                "Controlli": int(r["checked_predictions"]),
-                "Dentro p10-p90": fmt_pct(r["inside_p10_p90_rate"]),
-                "Dentro p25-p75": fmt_pct(r["inside_p25_p75_rate"]),
-                "Errore medio abs vs p50": fmt_pct(r["avg_abs_error_vs_p50"]),
-                "Errore medio vs p50": fmt_pct(r["avg_error_vs_p50"]),
-            })
-
-        lines.append(df_to_markdown(pd.DataFrame(metric_rows)))
-
-    lines.append("")
     lines.append("## Come leggerlo")
     lines.append("")
     lines.append("- Se il prezzo resta dentro p10-p90, lo scanner sta ancora descrivendo bene il range largo.")
@@ -899,82 +410,104 @@ def render_report(log_df, metrics):
     lines.append("- Se il prezzo esce da p10-p90, il modello statistico dei 40 casi sta perdendo aderenza.")
     lines.append("- Questo non sostituisce drawdown e max gain: serve soprattutto a vedere il percorso del return previsto.")
     lines.append("")
-
-    return "\n".join(lines) + "\n"
-
-
-def inject_into_latest_report(section_md):
-    if not LATEST_REPORT.exists():
-        return
-
-    old = read_text(LATEST_REPORT)
-
-    if not old:
-        return
-
-    clean = section_md.strip()
-    new_section = START_MARKER + "\n" + clean + "\n" + END_MARKER
-
-    if START_MARKER in old and END_MARKER in old:
-        start = old.find(START_MARKER)
-        end = old.find(END_MARKER)
-
-        if start != -1 and end != -1 and end > start:
-            end = end + len(END_MARKER)
-            new = old[:start] + new_section + old[end:]
-        else:
-            new = old.rstrip() + "\n\n" + new_section + "\n"
-    else:
-        anchor = "<!-- MODULE_ACCURACY_END -->"
-
-        if anchor in old:
-            idx = old.find(anchor) + len(anchor)
-            new = old[:idx] + "\n\n" + new_section + old[idx:]
-        else:
-            anchor = "<!-- BOUNCE_AFTER_DRAWDOWN_END -->"
-
-            if anchor in old:
-                idx = old.find(anchor) + len(anchor)
-                new = old[:idx] + "\n\n" + new_section + old[idx:]
-            else:
-                new = old.rstrip() + "\n\n" + new_section + "\n"
-
-    LATEST_REPORT.write_text(new, encoding="utf-8")
+    return "\n".join(lines)
 
 
 def main():
-    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_reports_dir()
+    matches = load_matches()
 
-    today_df, meta_df = parse_scanner_forecast_from_latest()
-
-    if today_df.empty:
-        md = "# Scanner forecast path / cono probabilistico\n\nNessuna previsione scanner trovata.\n"
-        OUTPUT_REPORT.write_text(md, encoding="utf-8")
-        inject_into_latest_report(md)
-        print("Nessuna previsione scanner trovata.")
+    generated_at = datetime.now(timezone.utc)
+    if matches.empty:
+        with open(REPORT_PATH, "w", encoding="utf-8") as f:
+            f.write("# Scanner forecast path / cono probabilistico\n\nDati non disponibili.\n")
         return
 
-    log_df = append_today_forecast(today_df)
-    log_df = update_checks(log_df)
+    tickers_needed = set(matches["similar_asset"].dropna().astype(str).tolist())
+    tickers_needed.update(TARGET_TICKERS.values())
 
-    metrics = summarize_accuracy(log_df)
-    metrics.to_csv(ACCURACY_METRICS, index=False)
+    start_date = (generated_at - timedelta(days=5000)).strftime("%Y-%m-%d")
+    end_date = (generated_at + timedelta(days=90)).strftime("%Y-%m-%d")
+    history_map = download_history(tickers_needed, start_date, end_date)
 
-    for asset in ASSETS.keys():
-        plot_asset_chart(log_df, asset)
+    snapshot_rows = []
+    asset_rows = []
 
-    md = render_report(log_df, metrics)
+    today = pd.Timestamp(generated_at).tz_localize(None).normalize()
 
-    OUTPUT_REPORT.write_text(md, encoding="utf-8")
-    inject_into_latest_report(md)
+    for asset in ASSETS:
+        asset_matches = matches[matches["target_asset"].astype(str) == asset].copy()
+        matrix, meta = build_path_matrix(asset_matches, history_map, horizon=FORECAST_DAYS)
+        pct_df = percentiles_from_matrix(matrix)
 
-    print(f"Creato/aggiornato {FORECAST_LOG}")
-    print(f"Creato {ACCURACY_METRICS}")
-    print(f"Creato {OUTPUT_REPORT}")
+        current_ticker = TARGET_TICKERS[asset]
+        current_price = current_price_from_history(history_map, current_ticker)
+        actual_path = build_current_actual_path(history_map.get(current_ticker, pd.DataFrame()).get("Close") if current_ticker in history_map else None, today, FORECAST_DAYS)
+        if actual_path is None:
+            hist = history_map.get(current_ticker)
+            if hist is not None and not hist.empty:
+                actual_path = pd.Series([0.0], index=[0])
 
-    for asset, cfg in ASSETS.items():
-        if cfg["chart"].exists():
-            print(f"Creato {cfg['chart']}")
+        plot_forecast(asset, pct_df, actual_path, generated_at)
+
+        if not pct_df.empty:
+            for _, row in pct_df.iterrows():
+                snapshot_rows.append({
+                    "prediction_date": today.strftime("%Y-%m-%d"),
+                    "asset": asset,
+                    "day": int(row["day"]),
+                    "p10": row["p10"],
+                    "p25": row["p25"],
+                    "p50": row["p50"],
+                    "p75": row["p75"],
+                    "p90": row["p90"],
+                    "mean": row["mean"],
+                    "current_price": current_price,
+                })
+
+        p30 = pct_df[pct_df["day"] == FORECAST_DAYS]
+        if not p30.empty:
+            p30 = p30.iloc[0]
+            p10_30 = current_price * (1 + p30["p10"] / 100.0)
+            p25_30 = current_price * (1 + p30["p25"] / 100.0)
+            p50_30 = current_price * (1 + p30["p50"] / 100.0)
+            p75_30 = current_price * (1 + p30["p75"] / 100.0)
+            p90_30 = current_price * (1 + p30["p90"] / 100.0)
+        else:
+            p10_30 = p25_30 = p50_30 = p75_30 = p90_30 = np.nan
+
+        pos_rate = positive_case_rate(asset_matches)
+        if pd.isna(pos_rate):
+            direction = "n/a"
+        elif pos_rate >= 60:
+            direction = "SALITA"
+        elif pos_rate <= 40:
+            direction = "DISCESA"
+        else:
+            direction = "INCERTO"
+
+        asset_rows.append({
+            "asset": asset,
+            "date": today.strftime("%Y-%m-%d"),
+            "current_price_fmt": fmt_price(current_price),
+            "direction": direction,
+            "positive_rate_fmt": fmt_pct(pos_rate),
+            "p10_30_fmt": fmt_price(p10_30),
+            "p25_30_fmt": fmt_price(p25_30),
+            "p50_30_fmt": fmt_price(p50_30),
+            "p75_30_fmt": fmt_price(p75_30),
+            "p90_30_fmt": fmt_price(p90_30),
+        })
+
+    save_snapshot_rows(snapshot_rows)
+    accuracy_df = compute_accuracy(history_map)
+    report_md = build_report(asset_rows, accuracy_df, generated_at)
+
+    with open(REPORT_PATH, "w", encoding="utf-8") as f:
+        f.write(report_md)
+
+    print(report_md)
+    print(f"Report salvato in {REPORT_PATH}")
 
 
 if __name__ == "__main__":
