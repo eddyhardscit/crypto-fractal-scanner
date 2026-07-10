@@ -12,6 +12,8 @@ METRICS_CSV_PATH = REPORTS_DIR / "decision_report_metrics.csv"
 
 GLOBAL_CONFLUENCE_METRICS_PATH = REPORTS_DIR / "global_confluence_metrics.csv"
 RISK_CALIBRATION_METRICS_PATH = REPORTS_DIR / "risk_calibration_metrics.csv"
+MARKET_SNAPSHOT_CSV_PATH = REPORTS_DIR / "latest_market_snapshot.csv"
+BTC_LONG_CONFIRMATION_PRICE = 67248.0
 
 START_MARKER = "<!-- DECISION_REPORT_START -->"
 END_MARKER = "<!-- DECISION_REPORT_END -->"
@@ -147,6 +149,25 @@ def read_csv_rows(path: Path):
             return list(csv.DictReader(f))
     except Exception:
         return []
+
+
+def read_snapshot_prices():
+    # Legge i prezzi coerenti creati da market_snapshot.py.
+    rows = read_csv_rows(MARKET_SNAPSHOT_CSV_PATH)
+    out = {}
+    for row in rows:
+        asset = clean_cell(row.get("asset") or row.get("Asset")).upper()
+        if asset not in ASSETS:
+            continue
+        price = parse_number(
+            row.get("price")
+            or row.get("close")
+            or row.get("current_price"),
+            None,
+        )
+        if price is not None:
+            out[asset] = float(price)
+    return out
 
 
 def read_global_from_csv():
@@ -398,12 +419,17 @@ def spot_action(asset: str, score: int, direction: str, global_row: dict):
     return global_action or "n/a"
 
 
-def long_action(asset: str, score: int, direction: str, risk: str):
+def long_action(asset: str, score: int, direction: str, risk: str, current_price=None):
     risk_u = clean_cell(risk).upper()
 
     if asset == "BTC":
-        if score >= 7 and "MOLTO ALTO" not in risk_u:
-            return "LONG PRUDENTE"
+        # Lo score statistico può giustificare accumulo spot, ma non basta
+        # per autorizzare leva durante Stage 4 / struttura non confermata.
+        price = parse_number(current_price, None)
+        if price is None:
+            return "NO LONG A LEVA / SNAPSHOT NON DISPONIBILE"
+        if price < BTC_LONG_CONFIRMATION_PRICE:
+            return "NO LONG A LEVA / ATTENDI SOPRA 67.248 $"
         if score >= 3 and "MOLTO ALTO" not in risk_u:
             return "LONG PRUDENTE"
         return "NO LONG A LEVA"
@@ -503,6 +529,7 @@ def lifecycle_note(global_data: dict):
 def build_decisions(global_data: dict, risk_data: dict):
     rows = []
     details = {}
+    snapshot_prices = read_snapshot_prices()
 
     for asset in ASSETS:
         g = global_data.get(asset, {})
@@ -512,7 +539,7 @@ def build_decisions(global_data: dict, risk_data: dict):
         direction = direction_from_global(asset, score, g)
         risk = risk_from_global(asset, score, g, risk_data)
         spot = spot_action(asset, score, direction, g)
-        long_sig = long_action(asset, score, direction, risk)
+        long_sig = long_action(asset, score, direction, risk, snapshot_prices.get(asset))
         short_sig = short_action(asset, score, direction)
         max_l = max_long(asset, score, long_sig, risk)
         max_s = max_short(asset, score, short_sig)
@@ -643,6 +670,7 @@ def build_report(decision_rows, details, global_data):
     lines.append("")
     lines.append("- **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.")
     lines.append("- **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.")
+    lines.append("- **BTC leva** = nessun long a leva finché il prezzo snapshot non supera **67.248 $**; sotto quella soglia resta solo accumulo spot prudente.")
     lines.append(f"- {lifecycle_note(global_data)}")
     lines.append("- **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.")
     lines.append("- Per SOL, se il Global è da **+3 in su**, la decisione non deve diventare bearish solo perché lo scanner grezzo a 30 giorni è incerto.")

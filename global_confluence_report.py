@@ -974,23 +974,23 @@ def parse_rsi_component(block: str, asset: str):
         return component_template(0, "Non applicabile a questo asset.")
 
     risk = None
-
     for line in block.splitlines():
         cells = split_md_row(line)
         if not cells or len(cells) < 2:
             continue
-
         if "Rischio top-cycle RSI" in cells[0]:
             risk = clean_cell(cells[1]).upper()
             break
 
-    score = 0
-    if risk == "BASSO":
-        score = 1
-    elif risk == "MEDIO":
-        score = -1
-    elif risk == "ALTO":
-        score = -2
+    # Questo modulo misura il rischio di top, non la forza rialzista.
+    # Un rischio BASSO o MEDIO non deve aggiungere punti al Global.
+    score_by_risk = {
+        "BASSO": 0,
+        "MEDIO": 0,
+        "ALTO": -1,
+        "MOLTO ALTO": -2,
+    }
+    score = score_by_risk.get(risk, 0)
 
     return component_template(
         score,
