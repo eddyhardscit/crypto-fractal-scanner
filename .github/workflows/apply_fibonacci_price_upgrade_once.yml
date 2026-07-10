@@ -1,0 +1,73 @@
+name: Prepare Fibonacci Daily Workflow Once
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-daily-workflow:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Prepare upgraded daily workflow
+        run: python install_fibonacci_price_upgrade.py
+
+      - name: Compile upgraded Python files
+        run: |
+          python -m py_compile \
+            shared_market_snapshot.py \
+            price_coherence_sync.py \
+            technical_structure_report.py \
+            classic_technical_visual_report.py \
+            rsi_top_cycle_report.py \
+            btc_2022_vs_sol_2026_report.py \
+            fractal_path_tracker.py \
+            data_quality_coherence_report.py \
+            install_fibonacci_price_upgrade.py
+
+      - name: Verify workflow order
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('.github/workflows/daily.yml')
+          text = path.read_text(encoding='utf-8')
+          scripts = [
+              'technical_structure_report.py',
+              'classic_technical_visual_report.py',
+              'price_coherence_sync.py',
+              'global_confluence_report.py',
+          ]
+          positions = {name: text.find(f'python {name}') for name in scripts}
+          print(positions)
+          if any(value < 0 for value in positions.values()):
+              raise SystemExit('Uno o più passaggi richiesti non sono presenti nel daily.yml preparato.')
+          if not all(positions[a] < positions[b] for a, b in zip(scripts, scripts[1:])):
+              raise SystemExit('Ordine non valido nel daily.yml preparato.')
+          PY
+
+      - name: Package prepared daily workflow
+        run: |
+          mkdir -p prepared_daily_workflow
+          cp .github/workflows/daily.yml prepared_daily_workflow/daily.yml
+
+      - name: Upload prepared daily workflow
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-fibonacci-ready
+          path: prepared_daily_workflow/daily.yml
+          if-no-files-found: error
+          retention-days: 7
