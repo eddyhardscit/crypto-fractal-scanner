@@ -1,75 +1,36 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-07-10 13:47 UTC",
-  "overall_status": "WARN",
+  "generated_at_utc": "2026-07-10 14:08 UTC",
+  "overall_status": "OK",
   "critical_issues": [],
-  "warnings": [
-    "Il report contiene ancora caratteri corrotti: verificare sorgente e scrittura UTF-8."
-  ],
+  "warnings": [],
   "snapshot_available": true,
   "scanner_summary_available": true,
   "price_checks": [
     {
       "asset": "BTC",
       "status": "OK",
-      "scanner_price": 64375.0,
-      "snapshot_price": 64375.0,
+      "scanner_price": 64307.890625,
+      "snapshot_price": 64307.890625,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "SOL",
       "status": "OK",
-      "scanner_price": 78.94000244140625,
-      "snapshot_price": 78.94000244140625,
+      "scanner_price": 78.56999969482422,
+      "snapshot_price": 78.56999969482422,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "DOGE",
       "status": "OK",
-      "scanner_price": 0.0741799995303154,
-      "snapshot_price": 0.0741799995303154,
-      "difference_pct": 0.0,
+      "scanner_price": 0.0741200000047683,
+      "snapshot_price": 0.07412000000476837,
+      "difference_pct": -8.881784197001252e-14,
       "message": "Prezzi coerenti."
     }
   ],
-  "mojibake": [
-    {
-      "token": "Ã",
-      "count": 56,
-      "examples": [
-        {
-          "line": 1765,
-          "text": "- Data breakout, etÃ , target teorico, progresso e recupero della neckline"
-        },
-        {
-          "line": 1779,
-          "text": "| SOL     | 79,05    |           3 | COSTRUTTIVO MA NON CONFERMATO | Trend misto      | Momentum misto  | VolatilitÃ  in espansione                             |              +2 | "
-        },
-        {
-          "line": 1815,
-          "text": "- Supporto piÃ¹ vicino: **57.748**"
-        }
-      ]
-    },
-    {
-      "token": "Â",
-      "count": 3,
-      "examples": [
-        {
-          "line": 1916,
-          "text": "- **ATTIVO**: breakout avvenuto da 0 a 3 giorni; peso prudente Â±1."
-        },
-        {
-          "line": 1917,
-          "text": "- **CONFERMATO RECENTE**: breakout da 4 a 14 giorni; peso massimo prudente Â±2."
-        },
-        {
-          "line": 1918,
-          "text": "- **MATURO**: breakout piÃ¹ vecchio di 14 giorni e ancora valido; peso ridotto Â±1."
-        }
-      ]
-    }
-  ]
+  "mojibake": []
 }
