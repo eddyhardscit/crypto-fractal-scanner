@@ -1,6 +1,6 @@
 # Decisione operativa sintetica
 
-Generato: 2026-07-10 15:48 UTC
+Generato: 2026-07-10 16:11 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 
@@ -43,8 +43,8 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - Long leva: **NO LONG A LEVA**
 - Short leva: **NO SHORT**
 - Rischio: **MOLTO ALTO**
-- Conferme: Conferma tecnica sopra 64,42; milestone analogiche 82,03 / 115,17, che non valgono come conferma operativa senza rientro del gap.
-- Invalidazioni: Allarmi sotto 74,21 / 62,19.
+- Conferme: Conferma tecnica sopra 64,42; milestone analogiche 81,83 / 114,89, che non valgono come conferma operativa senza rientro del gap.
+- Invalidazioni: Allarmi sotto 74,03 / 62,19.
 
 ### DOGE
 
@@ -65,6 +65,6 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.
 - **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.
 - **BTC leva** = nessun long a leva finché il prezzo snapshot non supera **67.248 $**; sotto quella soglia resta solo l'azione spot indicata dal Global.
-- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 5; EMA200 circa 113,51 $; upside verso EMA200 +45,32%. Non autorizza leva e non aggiunge punti automatici.
+- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 5; EMA200 circa 113,51 $; upside verso EMA200 +45,66%. Non autorizza leva e non aggiunge punti automatici.
 - **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.
 - Per SOL, se il Global è da **+3 in su**, la decisione non deve diventare bearish solo perché lo scanner grezzo a 30 giorni è incerto.

@@ -1,7 +1,7 @@
 # RSI top-cycle warning - SOL
 
-Generato: **2026-07-10 17:48:04 CEST**  
-UTC: **2026-07-10 15:48:04 UTC**
+Generato: **2026-07-10 18:11:14 CEST**  
+UTC: **2026-07-10 16:11:14 UTC**
 
 Questo report usa l'RSI soltanto come filtro di possibile esaurimento ciclo.
 La vicinanza matematica a una retta non basta: la linea deve essere costruita su almeno tre picchi, superare i controlli di qualità e trovarsi in una vera zona RSI da top.
@@ -10,15 +10,15 @@ La vicinanza matematica a una retta non basta: la linea deve essere costruita su
 
 | Voce | RSI attuale | Linea stimata grezza | Distanza matematica | Vicinanza matematica | Rischio reale | Picchi | R² | RMSE | Qualità linea |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Weekly RSI | 40,65 | 54,36 | 13,71 | LONTANO | LINEA NON AFFIDABILE / RISCHIO NON ATTIVO | 3 | 0,93 | 2,45 | IRREALISTICA / NON OPERATIVA |
-| Monthly RSI | 41,42 | 56,16 | 14,74 | LONTANO | RSI TROPPO BASSO PER RISCHIO TOP | 3 | 1,00 | 0,18 | VALIDA / USO PRUDENTE |
+| Weekly RSI | 40,57 | 54,36 | 13,79 | LONTANO | LINEA NON AFFIDABILE / RISCHIO NON ATTIVO | 3 | 0,93 | 2,45 | IRREALISTICA / NON OPERATIVA |
+| Monthly RSI | 41,39 | 56,16 | 14,78 | LONTANO | RSI TROPPO BASSO PER RISCHIO TOP | 3 | 1,00 | 0,18 | VALIDA / USO PRUDENTE |
 
 ## Confluenza con target ciclo SOL
 
 | Voce | Valore |
 | --- | --- |
-| Prezzo SOL attuale | 78,10 $ |
-| Target ciclo base | 578,65 $ |
+| Prezzo SOL attuale | 77,93 $ |
+| Target ciclo base | 577,25 $ |
 | Avanzamento verso target base | +13,50% |
 | Fase prezzo | inizio ciclo / lontano dal target macro |
 | Rischio top-cycle RSI | BASSO |
