@@ -1,6 +1,6 @@
 # Report struttura tecnica
 
-Generato: 2026-07-10 12:09 UTC
+Generato: 2026-07-10 12:20 UTC
 
 Questo report aggiunge al tuo scanner una lettura classica di analisi tecnica.
 
@@ -20,9 +20,9 @@ Moduli inclusi:
 
 | Asset   | Prezzo   |   Punteggio | Verdetto           | Trend            | Momentum        | Struttura                                             | Divergenza                                                   | Wyckoff                 | Supporto   | Resistenza   |
 |:--------|:---------|------------:|:-------------------|:-----------------|:----------------|:------------------------------------------------------|:-------------------------------------------------------------|:------------------------|:-----------|:-------------|
-| BTC     | 64.345   |          -2 | NEUTRALE / MISTO   | Trend ribassista | Momentum misto  | Struttura ribassista con massimi e minimi decrescenti | Divergenza rialzista RSI, Divergenza ribassista nascosta RSI | Possibile accumulazione | 57.748     | 64.598       |
-| SOL     | 79,21    |           2 | NEUTRALE / MISTO   | Trend misto      | Momentum misto  | Volatilità in espansione                              | Nessuna                                                      | Range / fase non chiara | 64,42      | 83,81        |
-| DOGE    | 0.07414  |         -10 | RIBASSISTA TECNICO | Trend ribassista | Momentum debole | Struttura ribassista con massimi e minimi decrescenti | Divergenza ribassista nascosta RSI                           | Possibile accumulazione | 0.06961    | 0.07923      |
+| BTC     | 64.406   |          -2 | NEUTRALE / MISTO   | Trend ribassista | Momentum misto  | Struttura ribassista con massimi e minimi decrescenti | Divergenza rialzista RSI, Divergenza ribassista nascosta RSI | Possibile accumulazione | 57.748     | 64.598       |
+| SOL     | 79,23    |           2 | NEUTRALE / MISTO   | Trend misto      | Momentum misto  | Volatilità in espansione                              | Nessuna                                                      | Range / fase non chiara | 64,42      | 83,81        |
+| DOGE    | 0.07426  |         -10 | RIBASSISTA TECNICO | Trend ribassista | Momentum debole | Struttura ribassista con massimi e minimi decrescenti | Divergenza ribassista nascosta RSI                           | Possibile accumulazione | 0.06961    | 0.07923      |
 
 ## Riepilogo pattern
 
@@ -36,15 +36,15 @@ Moduli inclusi:
 
 | Asset   |   RSI 14 |   Istogramma MACD | MA20    | MA50    | MA200   | Pendenza MA50 20g   | Pendenza MA200 60g   | Rendimento 30g   | Rendimento 90g   |
 |:--------|---------:|------------------:|:--------|:--------|:--------|:--------------------|:---------------------|:-----------------|:-----------------|
-| BTC     |    54.57 |         630.44    | 61.826  | 65.373  | 74.104  | -9,33%              | -10,10%              | 1,23%            | -9,06%           |
-| SOL     |    56.8  |           0.39481 | 75,63   | 74,71   | 92,21   | -6,31%              | -18,37%              | 18,54%           | -2,85%           |
-| DOGE    |    37.85 |           0.00049 | 0.07559 | 0.08518 | 0.10156 | -13,28%             | -16,38%              | -13,77%          | -18,38%          |
+| BTC     |    54.78 |         634.337   | 61.829  | 65.374  | 74.104  | -9,33%              | -10,10%              | 1,33%            | -8,97%           |
+| SOL     |    56.84 |           0.39609 | 75,63   | 74,71   | 92,21   | -6,31%              | -18,37%              | 18,57%           | -2,83%           |
+| DOGE    |    38.24 |           0.0005  | 0.07560 | 0.08518 | 0.10156 | -13,27%             | -16,38%              | -13,63%          | -18,25%          |
 
 ## Dettaglio asset
 
 ### BTC
 
-- Prezzo: **64.345**
+- Prezzo: **64.406**
 - Punteggio tecnico: **-2 / 12**
 - Verdetto: **NEUTRALE / MISTO**
 - Trend: **Trend ribassista** (-3)
@@ -54,7 +54,7 @@ Moduli inclusi:
   - Dettaglio struttura: Ultimi minimi: 5.808e+04 -> 5.775e+04. Ultimi massimi: 6.554e+04 -> 6.46e+04.
 - Divergenza: **Divergenza rialzista RSI, Divergenza ribassista nascosta RSI** (1)
 - Fase Wyckoff candidata: **Possibile accumulazione** (1)
-  - Dettaglio Wyckoff: Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI 54.6.
+  - Dettaglio Wyckoff: Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI 54.8.
 - Supporto più vicino: **57.748**
 - Resistenza più vicina: **64.598**
 
@@ -75,7 +75,7 @@ Pattern classici:
 
 ### SOL
 
-- Prezzo: **79,21**
+- Prezzo: **79,23**
 - Punteggio tecnico: **2 / 12**
 - Verdetto: **NEUTRALE / MISTO**
 - Trend: **Trend misto** (-1)
@@ -85,7 +85,7 @@ Pattern classici:
   - Dettaglio struttura: Ultimi minimi: 67.92 -> 64.42. Ultimi massimi: 74.89 -> 83.81.
 - Divergenza: **Nessuna** (0)
 - Fase Wyckoff candidata: **Range / fase non chiara** (0)
-  - Dettaglio Wyckoff: Posizione nel range a 120 giorni: 49,65%. Fase non abbastanza chiara.
+  - Dettaglio Wyckoff: Posizione nel range a 120 giorni: 49,71%. Fase non abbastanza chiara.
 - Supporto più vicino: **64,42**
 - Resistenza più vicina: **83,81**
 
@@ -106,7 +106,7 @@ Pattern classici:
 
 ### DOGE
 
-- Prezzo: **0.07414**
+- Prezzo: **0.07426**
 - Punteggio tecnico: **-10 / 12**
 - Verdetto: **RIBASSISTA TECNICO**
 - Trend: **Trend ribassista** (-3)
@@ -116,7 +116,7 @@ Pattern classici:
   - Dettaglio struttura: Ultimi minimi: 0.07809 -> 0.06961. Ultimi massimi: 0.09169 -> 0.07923.
 - Divergenza: **Divergenza ribassista nascosta RSI** (-1)
 - Fase Wyckoff candidata: **Possibile accumulazione** (1)
-  - Dettaglio Wyckoff: Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI 37.8.
+  - Dettaglio Wyckoff: Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI 38.2.
 - Supporto più vicino: **0.06961**
 - Resistenza più vicina: **0.07923**
 
