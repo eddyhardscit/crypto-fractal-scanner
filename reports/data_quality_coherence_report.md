@@ -1,6 +1,6 @@
 # Data quality / coherence check
 
-Generato: 2026-07-10 12:38 UTC
+Generato: 2026-07-10 12:52 UTC
 
 Questo controllo non modifica punteggi o decisioni. Segnala soltanto problemi tecnici, dati mancanti e ambiguità di lettura.
 
@@ -10,9 +10,9 @@ Questo controllo non modifica punteggi o decisioni. Segnala soltanto problemi te
 
 | Asset   | Stato   | Snapshot   | Scanner   | Differenza   |
 |:--------|:--------|:-----------|:----------|:-------------|
-| BTC     | OK      | 64.419 $   | 64.419 $  | +0,000%      |
-| SOL     | OK      | 79,22 $    | 79,22 $   | +0,000%      |
-| DOGE    | OK      | 0.07420 $  | 0.07420 $ | -0,000%      |
+| BTC     | OK      | 64.306 $   | 64.306 $  | +0,000%      |
+| SOL     | OK      | 78,94 $    | 78,94 $   | +0,000%      |
+| DOGE    | OK      | 0.07405 $  | 0.07405 $ | -0,000%      |
 
 ## Controllo codifica UTF-8
 
