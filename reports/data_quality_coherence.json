@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-07-10 11:40 UTC",
+  "generated_at_utc": "2026-07-10 11:50 UTC",
   "overall_status": "WARN",
   "critical_issues": [],
   "warnings": [
@@ -12,25 +12,25 @@
     {
       "asset": "BTC",
       "status": "OK",
-      "scanner_price": 64311.8984375,
-      "snapshot_price": 64311.8984375,
+      "scanner_price": 64418.0703125,
+      "snapshot_price": 64418.0703125,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "SOL",
       "status": "OK",
-      "scanner_price": 79.19999694824219,
-      "snapshot_price": 79.19999694824219,
+      "scanner_price": 79.31999969482422,
+      "snapshot_price": 79.31999969482422,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "DOGE",
       "status": "OK",
-      "scanner_price": 0.0741299986839294,
-      "snapshot_price": 0.07412999868392944,
-      "difference_pct": -5.551115123125783e-14,
+      "scanner_price": 0.0742200016975402,
+      "snapshot_price": 0.07422000169754028,
+      "difference_pct": -1.1102230246251565e-13,
       "message": "Prezzi coerenti."
     }
   ],
@@ -59,7 +59,7 @@
       "examples": [
         {
           "line": 524,
-          "text": "| Gap corrente | +19,38% | Deve rientrare circa entro Â±12%. |"
+          "text": "| Gap corrente | +19,65% | Deve rientrare circa entro Â±12%. |"
         },
         {
           "line": 562,

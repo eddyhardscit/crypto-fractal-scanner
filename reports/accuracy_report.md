@@ -1,7 +1,7 @@
 # Report accuratezza scanner
 
-Generato: **2026-07-10 13:40:33 CEST**  
-UTC: **2026-07-10 11:40:33 UTC**
+Generato: **2026-07-10 13:50:35 CEST**  
+UTC: **2026-07-10 11:50:35 UTC**
 
 Questo report spiega se lo scanner ha già abbastanza previsioni vecchie da controllare.
 
