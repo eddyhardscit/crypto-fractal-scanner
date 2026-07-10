@@ -1,6 +1,6 @@
 # Sintesi finale di confluenza
 
-Generato: 2026-07-10 16:43 UTC
+Generato: 2026-07-10 17:49 UTC
 
 Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.
 
@@ -28,7 +28,7 @@ Nota Classic technical: **pesa massimo ±1** perché è un filtro di conferma e 
 | Asset | Punteggio | Confluenza | Bias | Affidabilità | Azione coerente | Conferme | Invalidazioni |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | BTC | +5 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA | ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE | Sopra 57.748 migliora; sopra la neckline tecnica successiva il recupero diventa più credibile. | Sotto i supporti tecnici principali il quadro peggiora. |
-| SOL | 0 | MISTA / PARZIALE | Neutrale / misto | BASSA / RACCOLTA DATI | HOLD LEGGERO / ATTESA CONFERME | Conferma tecnica sopra 64,42; milestone analogiche 81,63 / 114,61, che non valgono come conferma operativa senza rientro del gap. | Allarmi sotto 73,85 / 62,19. |
+| SOL | 0 | MISTA / PARZIALE | Neutrale / misto | BASSA / RACCOLTA DATI | HOLD LEGGERO / ATTESA CONFERME | Conferma tecnica sopra 64,42; milestone analogiche 81,55 / 114,50, che non valgono come conferma operativa senza rientro del gap. | Allarmi sotto 73,79 / 62,19. |
 | DOGE | -8 | NEGATIVA | Ribassista | MEDIA / ALTA | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | Sopra 0.06961 migliora, ma resta asset debole finché scanner e struttura non girano. | Sotto i supporti tecnici principali il rischio aumenta. |
 
 ## Punteggi per modulo
@@ -65,7 +65,7 @@ Dettaglio moduli:
 - Fractal path: **0** — Non applicabile a questo asset.
 - RSI top-cycle: **0** — Non applicabile a questo asset.
 - Lifecycle EMA: **0** — Non applicabile a questo asset.
-- Futures: **0** — Lettura futures Misto, forza 1/5.
+- Futures: **0** — Lettura futures Rischio sotto, forza 5/5.
 - Daily change: **+1** — BTC: cambiamento medio in miglioramento rispetto a ieri.
 
 Conferme: Sopra 57.748 migliora; sopra la neckline tecnica successiva il recupero diventa più credibile.
@@ -89,17 +89,17 @@ Dettaglio moduli:
 - Market regime (diagnostico, già incluso nella Famiglia statistica): **0** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 20, positivi 30g 50,00%, return p50 +0,22%.
 - Scanner path: **0** — Raccolta dati. Controlli disponibili 0. Servono almeno 5 controlli prima di pesare il cono previsionale.
 - Tecnico: **+1** — Score tecnico 1/12, verdetto neutrale / misto, trend trend misto, struttura volatilità in espansione, divergenza +2, Wyckoff doppio minimo / confermato recente.
-- Classic technical: **0** — Score classico -3/12, verdetto DEBOLE / NON CONFERMATO, stage STAGE 4 / MARKDOWN, struttura VOLATILITÀ IN ESPANSIONE, Wyckoff RANGE / FASE NON CHIARA, volatilità locale BASSO. Peso Global limitato a ±1 perché è un filtro di conferma.
-- Frattale SOL: **0** — Verdetto STRUTTURA ANALOGA, PREZZO NON ADERENTE, somiglianza strutturale +65,17%, aderenza live +57,35%, errore live +21,33%, gap corrente +17,18%, peso operativo 0, tracking STORICO INIZIALE, fase FRATTALE NON CONFERMATO DAL PREZZO, rischio ALTO.
-- Fractal path: **0** — Tracking operativo, ma nessuna milestone settimanale ancora verificata. Gap corrente +17,18%, errore live +21,33%. Il modulo non pesa finché non maturano abbastanza controlli.
+- Classic technical: **0** — Score classico -4/12, verdetto DEBOLE / NON CONFERMATO, stage STAGE 4 / MARKDOWN, struttura VOLATILITÀ IN ESPANSIONE, Wyckoff RANGE / FASE NON CHIARA, volatilità locale BASSO. Peso Global limitato a ±1 perché è un filtro di conferma.
+- Frattale SOL: **0** — Verdetto STRUTTURA ANALOGA, PREZZO NON ADERENTE, somiglianza strutturale +65,18%, aderenza live +57,37%, errore live +21,31%, gap corrente +17,07%, peso operativo 0, tracking STORICO INIZIALE, fase FRATTALE NON CONFERMATO DAL PREZZO, rischio ALTO.
+- Fractal path: **0** — Tracking operativo, ma nessuna milestone settimanale ancora verificata. Gap corrente +17,07%, errore live +21,31%. Il modulo non pesa finché non maturano abbastanza controlli.
 - RSI top-cycle: **0** — Rischio top-cycle RSI: BASSO.
-- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 5, bias SQUEEZE SETUP FORTE, EMA200 113,51 $, upside EMA200 +46,01%, gap EMA50/EMA200 -1,22%, hit EMA200 12w +23,33%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
+- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 5, bias SQUEEZE SETUP FORTE, EMA200 113,51 $, upside EMA200 +46,14%, gap EMA50/EMA200 -1,22%, hit EMA200 12w +23,33%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
 - Futures: **0** — Lettura futures Misto, forza 1/5.
 - Daily change: **0** — SOL: nessun cambiamento forte in peggioramento rispetto a ieri.
 
-Conferme: Conferma tecnica sopra 64,42; milestone analogiche 81,63 / 114,61, che non valgono come conferma operativa senza rientro del gap.
+Conferme: Conferma tecnica sopra 64,42; milestone analogiche 81,55 / 114,50, che non valgono come conferma operativa senza rientro del gap.
 
-Invalidazioni: Allarmi sotto 73,85 / 62,19.
+Invalidazioni: Allarmi sotto 73,79 / 62,19.
 
 ### DOGE
 
