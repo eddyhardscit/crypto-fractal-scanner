@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-07-10 16:34 UTC",
+  "generated_at_utc": "2026-07-10 16:43 UTC",
   "overall_status": "OK",
   "critical_issues": [],
   "warnings": [],
@@ -10,16 +10,16 @@
     {
       "asset": "BTC",
       "status": "OK",
-      "scanner_price": 63947.33984375,
-      "snapshot_price": 63947.33984375,
+      "scanner_price": 63900.01171875,
+      "snapshot_price": 63900.01171875,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "SOL",
       "status": "OK",
-      "scanner_price": 77.9000015258789,
-      "snapshot_price": 77.9000015258789,
+      "scanner_price": 77.73999786376953,
+      "snapshot_price": 77.73999786376953,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
