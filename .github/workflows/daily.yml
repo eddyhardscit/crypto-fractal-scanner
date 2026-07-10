@@ -69,7 +69,14 @@ jobs:
         run: python major_alt_lifecycle_squeeze_report.py
 
       - name: Run liquidation report
-        run: python liquidation_report.py
+        run: |
+          if [ -f liquidation_report.py ]; then
+            python liquidation_report.py
+          elif [ -f liquidations_report.py ]; then
+            python liquidations_report.py
+          else
+            echo "No liquidation report script found. Skipping liquidation report."
+          fi
 
       - name: Run global confluence report
         run: python global_confluence_report.py
