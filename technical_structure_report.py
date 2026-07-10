@@ -1,5 +1,5 @@
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 import numpy as np
 import pandas as pd
@@ -19,6 +19,28 @@ TICKERS = ["BTC-USD", "SOL-USD", "DOGE-USD"]
 PIVOT_WINDOW = 4
 LOOKBACK_DAYS = 220
 
+# Ciclo di vita dei pattern.
+BREAKOUT_BUFFER_PCT = 0.50
+INVALIDATION_BUFFER_PCT = 2.00
+INVALIDATION_CONFIRM_DAYS = 2
+ACTIVE_MAX_DAYS = 3
+RECENT_MAX_DAYS = 14
+
+PATTERN_STATUS_PRIORITY = {
+    "ASSENTE": 0,
+    "INVALIDATO": 1,
+    "TARGET_RAGGIUNTO": 2,
+    "CANDIDATO": 3,
+    "MATURO": 4,
+    "ATTIVO": 5,
+    "CONFERMATO_RECENTE": 6,
+}
+
+
+# -----------------------------------------------------------------------------
+# Utility
+# -----------------------------------------------------------------------------
+
 
 def safe_float(x):
     try:
@@ -27,6 +49,22 @@ def safe_float(x):
         return float(x)
     except Exception:
         return np.nan
+
+
+def safe_int(x, default=0):
+    x = safe_float(x)
+    if pd.isna(x):
+        return default
+    return int(x)
+
+
+def safe_date_str(value):
+    if value is None or value == "":
+        return ""
+    try:
+        return pd.Timestamp(value).strftime("%Y-%m-%d")
+    except Exception:
+        return str(value)
 
 
 def fmt_num(x, digits=2):
@@ -55,6 +93,11 @@ def fmt_pct(x):
     if pd.isna(x):
         return "n/a"
     return f"{x:.2f}%".replace(".", ",")
+
+
+def fmt_signed_int(x):
+    x = safe_int(x, 0)
+    return f"+{x}" if x > 0 else str(x)
 
 
 def df_to_markdown(df):
@@ -90,7 +133,7 @@ def it_label(value):
         "HH_HL_UPSTRUCTURE": "Struttura rialzista con massimi e minimi crescenti",
         "LH_LL_DOWNSTRUCTURE": "Struttura ribassista con massimi e minimi decrescenti",
         "COMPRESSION_TRIANGLE": "Compressione / triangolo",
-        "EXPANDING_VOLATILITY": "Volatilità in espansione",
+        "EXPANDING_VOLATILITY": "VolatilitÃ  in espansione",
         "UNKNOWN": "Sconosciuto",
 
         "BULLISH_RSI_DIVERGENCE": "Divergenza rialzista RSI",
@@ -105,14 +148,25 @@ def it_label(value):
         "MARKDOWN": "Markdown / fase ribassista",
         "RANGE_OR_UNKNOWN": "Range / fase non chiara",
 
-        "ASSENTE": "Assente",
-        "POSSIBILE": "Possibile",
-        "CONFERMATO": "Confermato",
+        "ASSENTE": "ASSENTE",
+        "CANDIDATO": "CANDIDATO",
+        "ATTIVO": "ATTIVO",
+        "CONFERMATO_RECENTE": "CONFERMATO RECENTE",
+        "MATURO": "MATURO",
+        "TARGET_RAGGIUNTO": "TARGET RAGGIUNTO",
+        "INVALIDATO": "INVALIDATO",
 
         "ADAM_AND_EVE_BOTTOM": "Adam and Eve Bottom",
         "EVE_AND_ADAM_BOTTOM": "Eve and Adam Bottom",
         "ADAM_AND_EVE_TOP": "Adam and Eve Top",
         "EVE_AND_ADAM_TOP": "Eve and Adam Top",
+
+        "BULLISH": "rialzista",
+        "BEARISH": "ribassista",
+        "ABOVE_NECKLINE": "sopra neckline",
+        "BELOW_NECKLINE": "sotto neckline",
+        "NEAR_NECKLINE": "vicino alla neckline",
+        "UNKNOWN_RELATION": "relazione non disponibile",
     }
 
     if pd.isna(value):
@@ -127,6 +181,11 @@ def it_label(value):
     return mapping.get(value, value)
 
 
+# -----------------------------------------------------------------------------
+# Dati e indicatori
+# -----------------------------------------------------------------------------
+
+
 def normalize_ohlcv(df):
     if df is None or df.empty:
         return pd.DataFrame()
@@ -136,7 +195,6 @@ def normalize_ohlcv(df):
     if isinstance(out.columns, pd.MultiIndex):
         level0 = list(out.columns.get_level_values(0))
         level1 = list(out.columns.get_level_values(1))
-
         fields = ["Open", "High", "Low", "Close", "Adj Close", "Volume"]
 
         if any(f in level0 for f in fields):
@@ -146,7 +204,6 @@ def normalize_ohlcv(df):
                     part = out.xs(field, axis=1, level=0)
                     tmp[field] = part.iloc[:, 0]
             out = pd.DataFrame(tmp)
-
         elif any(f in level1 for f in fields):
             tmp = {}
             for field in fields:
@@ -154,7 +211,6 @@ def normalize_ohlcv(df):
                     part = out.xs(field, axis=1, level=1)
                     tmp[field] = part.iloc[:, 0]
             out = pd.DataFrame(tmp)
-
         else:
             return pd.DataFrame()
 
@@ -236,7 +292,6 @@ def add_indicators(df):
     d["macd_hist"] = d["macd"] - d["macd_signal"]
 
     d["rsi14"] = rsi(d["Close"], 14)
-
     d["vol_ma20"] = d["Volume"].rolling(20, min_periods=10).mean()
 
     prev_close = d["Close"].shift(1)
@@ -320,7 +375,6 @@ def recent_slice(df, days=LOOKBACK_DAYS):
 
 def pivot_rows(df, kind, days=LOOKBACK_DAYS):
     d = recent_slice(df, days)
-
     col = "pivot_low" if kind == "low" else "pivot_high"
 
     if col not in d.columns:
@@ -333,9 +387,9 @@ def pivot_rows(df, kind, days=LOOKBACK_DAYS):
 
     price_col = "Low" if kind == "low" else "High"
 
-    return piv[
-        [price_col, "Close", "rsi14", "macd_hist", "Volume"]
-    ].rename(columns={price_col: "pivot_price"})
+    return piv[[price_col, "Close", "rsi14", "macd_hist", "Volume"]].rename(
+        columns={price_col: "pivot_price"}
+    )
 
 
 def near(a, b, tolerance_pct):
@@ -348,110 +402,362 @@ def near(a, b, tolerance_pct):
     return abs(a / b - 1) * 100 <= tolerance_pct
 
 
-def empty_bottom_result():
+# -----------------------------------------------------------------------------
+# Ciclo di vita pattern
+# -----------------------------------------------------------------------------
+
+
+def empty_pattern_result(direction):
     return {
         "status": "ASSENTE",
+        "direction": direction,
         "confidence": "LOW",
         "details": "",
+        "variant": "",
         "neckline": np.nan,
+        "anchor": np.nan,
         "support": np.nan,
-        "confirmed": False,
-        "score": 0,
-    }
-
-
-def empty_top_result():
-    return {
-        "status": "ASSENTE",
-        "confidence": "LOW",
-        "details": "",
-        "neckline": np.nan,
         "resistance": np.nan,
+        "target": np.nan,
+        "invalidation_level": np.nan,
+        "target_progress_pct": np.nan,
+        "current_relation": "UNKNOWN_RELATION",
+        "start_date": "",
+        "end_date": "",
+        "formation_age_days": np.nan,
+        "breakout_date": "",
+        "breakout_age_days": np.nan,
         "confirmed": False,
+        "target_reached": False,
+        "invalidated": False,
         "score": 0,
+        "geometry_rank": 0.0,
     }
+
+
+def current_relation_to_neckline(close, neckline):
+    close = safe_float(close)
+    neckline = safe_float(neckline)
+
+    if pd.isna(close) or pd.isna(neckline) or neckline == 0:
+        return "UNKNOWN_RELATION"
+
+    distance_pct = (close / neckline - 1) * 100
+
+    if abs(distance_pct) <= 1.0:
+        return "NEAR_NECKLINE"
+    if distance_pct > 0:
+        return "ABOVE_NECKLINE"
+    return "BELOW_NECKLINE"
+
+
+def theoretical_target(direction, neckline, anchor):
+    neckline = safe_float(neckline)
+    anchor = safe_float(anchor)
+
+    if pd.isna(neckline) or pd.isna(anchor):
+        return np.nan
+
+    if direction == "BULLISH":
+        height = max(0.0, neckline - anchor)
+        return neckline + height
+
+    height = max(0.0, anchor - neckline)
+    return max(neckline - height, neckline * 0.05)
+
+
+def target_progress(direction, close, neckline, target):
+    close = safe_float(close)
+    neckline = safe_float(neckline)
+    target = safe_float(target)
+
+    if pd.isna(close) or pd.isna(neckline) or pd.isna(target):
+        return np.nan
+
+    if direction == "BULLISH":
+        denom = target - neckline
+        if denom <= 0:
+            return np.nan
+        return (close - neckline) / denom * 100
+
+    denom = neckline - target
+    if denom <= 0:
+        return np.nan
+    return (neckline - close) / denom * 100
+
+
+def first_breakout_date(df, pattern_end, direction, neckline):
+    if pd.isna(neckline):
+        return None
+
+    pattern_end = pd.Timestamp(pattern_end)
+    after = df[df.index >= pattern_end].copy()
+
+    if after.empty:
+        return None
+
+    if direction == "BULLISH":
+        threshold = neckline * (1 + BREAKOUT_BUFFER_PCT / 100)
+        hits = after[after["Close"] > threshold]
+    else:
+        threshold = neckline * (1 - BREAKOUT_BUFFER_PCT / 100)
+        hits = after[after["Close"] < threshold]
+
+    if hits.empty:
+        return None
+
+    return pd.Timestamp(hits.index[0])
+
+
+def has_consecutive_true(series, count):
+    if series is None or len(series) < count:
+        return False
+
+    values = pd.Series(series).fillna(False).astype(bool)
+    runs = values.astype(int).rolling(count).sum()
+    return bool((runs >= count).any())
+
+
+def evaluate_pattern_lifecycle(
+    df,
+    ticker,
+    direction,
+    start_date,
+    end_date,
+    anchor,
+    neckline,
+    geometry_details,
+    geometry_rank,
+    variant="",
+):
+    result = empty_pattern_result(direction)
+
+    start_date = pd.Timestamp(start_date)
+    end_date = pd.Timestamp(end_date)
+    last_date = pd.Timestamp(df.index[-1])
+    close = safe_float(df["Close"].iloc[-1])
+
+    target = theoretical_target(direction, neckline, anchor)
+    formation_age = max(0, (last_date - end_date).days)
+    breakout_date = first_breakout_date(df, end_date, direction, neckline)
+
+    result.update({
+        "variant": variant,
+        "neckline": neckline,
+        "anchor": anchor,
+        "support": anchor if direction == "BULLISH" else np.nan,
+        "resistance": anchor if direction == "BEARISH" else np.nan,
+        "target": target,
+        "start_date": safe_date_str(start_date),
+        "end_date": safe_date_str(end_date),
+        "formation_age_days": formation_age,
+        "current_relation": current_relation_to_neckline(close, neckline),
+        "geometry_rank": float(geometry_rank),
+    })
+
+    if direction == "BULLISH":
+        invalidation_level = neckline * (1 - INVALIDATION_BUFFER_PCT / 100)
+    else:
+        invalidation_level = neckline * (1 + INVALIDATION_BUFFER_PCT / 100)
+
+    result["invalidation_level"] = invalidation_level
+
+    if breakout_date is None:
+        result.update({
+            "status": "CANDIDATO",
+            "confidence": "LOW/MEDIUM",
+            "confirmed": False,
+            "score": 0,
+            "target_progress_pct": target_progress(direction, close, neckline, target),
+            "details": (
+                f"{geometry_details} Stato: CANDIDATO; la neckline non Ã¨ ancora stata "
+                f"rotta con un margine di almeno {BREAKOUT_BUFFER_PCT:.2f}%. "
+                f"EtÃ  della formazione: {formation_age} giorni."
+            ),
+        })
+        return result
+
+    breakout_age = max(0, (last_date - breakout_date).days)
+    post_breakout = df[df.index >= breakout_date].copy()
+
+    if direction == "BULLISH":
+        target_reached = bool((post_breakout["High"] >= target).any()) if not pd.isna(target) else False
+        invalid_flags = post_breakout["Close"] < invalidation_level
+    else:
+        target_reached = bool((post_breakout["Low"] <= target).any()) if not pd.isna(target) else False
+        invalid_flags = post_breakout["Close"] > invalidation_level
+
+    invalidated = has_consecutive_true(invalid_flags, INVALIDATION_CONFIRM_DAYS)
+
+    if target_reached:
+        status = "TARGET_RAGGIUNTO"
+        score = 0
+        confidence = "COMPLETATO"
+    elif invalidated:
+        status = "INVALIDATO"
+        score = 0
+        confidence = "ANNULLATO"
+    elif breakout_age <= ACTIVE_MAX_DAYS:
+        status = "ATTIVO"
+        score = 1 if direction == "BULLISH" else -1
+        confidence = "MEDIUM"
+    elif breakout_age <= RECENT_MAX_DAYS:
+        status = "CONFERMATO_RECENTE"
+        score = 2 if direction == "BULLISH" else -2
+        confidence = "MEDIUM/HIGH"
+    else:
+        status = "MATURO"
+        score = 1 if direction == "BULLISH" else -1
+        confidence = "MEDIUM/DECAY"
+
+    progress = target_progress(direction, close, neckline, target)
+
+    result.update({
+        "status": status,
+        "confidence": confidence,
+        "confirmed": status in {"ATTIVO", "CONFERMATO_RECENTE", "MATURO", "TARGET_RAGGIUNTO"},
+        "breakout_date": safe_date_str(breakout_date),
+        "breakout_age_days": breakout_age,
+        "target_reached": target_reached,
+        "invalidated": invalidated,
+        "target_progress_pct": progress,
+        "score": score,
+        "details": (
+            f"{geometry_details} Breakout neckline: {safe_date_str(breakout_date)} "
+            f"({breakout_age} giorni fa). Stato: {it_label(status)}. "
+            f"Target teorico: {fmt_price(ticker, target)}; progresso corrente: "
+            f"{fmt_pct(progress)}. Relazione prezzo/neckline: "
+            f"{it_label(result['current_relation'])}."
+        ),
+    })
+
+    return result
+
+
+def pattern_sort_key(result):
+    status_priority = PATTERN_STATUS_PRIORITY.get(result.get("status", "ASSENTE"), 0)
+    score_strength = abs(safe_int(result.get("score"), 0))
+
+    breakout_date = result.get("breakout_date") or ""
+    end_date = result.get("end_date") or ""
+
+    try:
+        recency = pd.Timestamp(breakout_date or end_date).value
+    except Exception:
+        recency = 0
+
+    geometry = safe_float(result.get("geometry_rank"))
+    if pd.isna(geometry):
+        geometry = 0.0
+
+    return status_priority, score_strength, recency, geometry
+
+
+def choose_best_pattern(named_results, direction):
+    candidates = []
+
+    for name, result in named_results:
+        if result.get("direction") != direction:
+            continue
+        if result.get("status") == "ASSENTE":
+            continue
+        candidates.append((name, result))
+
+    if not candidates:
+        return "", empty_pattern_result(direction)
+
+    return max(candidates, key=lambda item: pattern_sort_key(item[1]))
+
+
+def pattern_score_from_results(named_results):
+    bull_name, bull = choose_best_pattern(named_results, "BULLISH")
+    bear_name, bear = choose_best_pattern(named_results, "BEARISH")
+
+    bull_score = safe_int(bull.get("score"), 0)
+    bear_score = safe_int(bear.get("score"), 0)
+    net = int(max(-3, min(3, bull_score + bear_score)))
+
+    parts = []
+
+    if bull_name:
+        parts.append(
+            f"rialzista dominante: {bull_name} ({it_label(bull.get('status'))}, {fmt_signed_int(bull_score)})"
+        )
+
+    if bear_name:
+        parts.append(
+            f"ribassista dominante: {bear_name} ({it_label(bear.get('status'))}, {fmt_signed_int(bear_score)})"
+        )
+
+    explanation = "; ".join(parts) if parts else "nessun pattern operativo dominante"
+
+    return net, bull_name, bull, bear_name, bear, explanation
+
+
+# -----------------------------------------------------------------------------
+# Riconoscimento geometrico pattern
+# -----------------------------------------------------------------------------
 
 
 def pattern_double_bottom(df, ticker):
     lows = pivot_rows(df, "low")
     highs = pivot_rows(df, "high")
 
-    result = empty_bottom_result()
-
     if len(lows) < 2:
-        return result
+        return empty_pattern_result("BULLISH")
 
     recent_lows = lows.tail(5)
     best = None
+    last_date = pd.Timestamp(df.index[-1])
 
     for i in range(len(recent_lows) - 1):
         for j in range(i + 1, len(recent_lows)):
             d1 = recent_lows.index[i]
             d2 = recent_lows.index[j]
-
             p1 = safe_float(recent_lows.iloc[i]["pivot_price"])
             p2 = safe_float(recent_lows.iloc[j]["pivot_price"])
-
             sep = (d2 - d1).days
 
-            if sep < 10 or sep > 160:
-                continue
-
-            if not near(p1, p2, 7.0):
+            if sep < 10 or sep > 160 or not near(p1, p2, 7.0):
                 continue
 
             between_highs = highs[(highs.index > d1) & (highs.index < d2)]
-
             if between_highs.empty:
                 continue
 
             neckline = safe_float(between_highs["pivot_price"].max())
             support = min(p1, p2)
-            close = safe_float(df["Close"].iloc[-1])
-            confirmed = close > neckline if not pd.isna(neckline) else False
-
-            strength = 100 - abs(p1 / p2 - 1) * 100 + min(sep, 80) / 10
-            candidate = (strength, d1, d2, support, neckline, confirmed)
+            recency_bonus = max(0, 90 - (last_date - d2).days) / 10
+            rank = 100 - abs(p1 / p2 - 1) * 100 + min(sep, 80) / 10 + recency_bonus
+            candidate = (rank, d1, d2, support, neckline)
 
             if best is None or candidate[0] > best[0]:
                 best = candidate
 
     if best is None:
-        return result
+        return empty_pattern_result("BULLISH")
 
-    _, d1, d2, support, neckline, confirmed = best
+    rank, d1, d2, support, neckline = best
+    details = (
+        f"Due minimi simili vicino a {fmt_price(ticker, support)} tra "
+        f"{d1.date()} e {d2.date()}. Neckline stimata: {fmt_price(ticker, neckline)}."
+    )
 
-    status = "CONFERMATO" if confirmed else "POSSIBILE"
-    score = 2 if confirmed else 1
-
-    result.update({
-        "status": status,
-        "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
-        "details": (
-            f"Due minimi simili vicino a {fmt_price(ticker, support)} "
-            f"tra {d1.date()} e {d2.date()}. "
-            f"Neckline stimata: {fmt_price(ticker, neckline)}."
-        ),
-        "neckline": neckline,
-        "support": support,
-        "confirmed": confirmed,
-        "score": score,
-    })
-
-    return result
+    return evaluate_pattern_lifecycle(
+        df, ticker, "BULLISH", d1, d2, support, neckline, details, rank
+    )
 
 
 def pattern_triple_bottom(df, ticker):
     lows = pivot_rows(df, "low")
     highs = pivot_rows(df, "high")
 
-    result = empty_bottom_result()
-
     if len(lows) < 3:
-        return result
+        return empty_pattern_result("BULLISH")
 
     recent = lows.tail(7)
     best = None
+    last_date = pd.Timestamp(df.index[-1])
 
     for a in range(len(recent) - 2):
         for b in range(a + 1, len(recent) - 1):
@@ -462,136 +768,101 @@ def pattern_triple_bottom(df, ticker):
                     safe_float(recent.iloc[b]["pivot_price"]),
                     safe_float(recent.iloc[c]["pivot_price"]),
                 ]
-
                 span = (dates[-1] - dates[0]).days
 
                 if span < 20 or span > 220:
                     continue
-
-                if max(prices) / min(prices) - 1 > 0.09:
+                if min(prices) <= 0 or max(prices) / min(prices) - 1 > 0.09:
                     continue
 
                 between_highs = highs[(highs.index > dates[0]) & (highs.index < dates[-1])]
-
                 if between_highs.empty:
                     continue
 
                 neckline = safe_float(between_highs["pivot_price"].max())
                 support = min(prices)
-                close = safe_float(df["Close"].iloc[-1])
-                confirmed = close > neckline if not pd.isna(neckline) else False
-
-                tightness = 100 - (max(prices) / min(prices) - 1) * 100
-                candidate = (tightness, dates, support, neckline, confirmed)
+                recency_bonus = max(0, 100 - (last_date - dates[-1]).days) / 10
+                rank = 100 - (max(prices) / min(prices) - 1) * 100 + recency_bonus
+                candidate = (rank, dates, support, neckline)
 
                 if best is None or candidate[0] > best[0]:
                     best = candidate
 
     if best is None:
-        return result
+        return empty_pattern_result("BULLISH")
 
-    _, dates, support, neckline, confirmed = best
+    rank, dates, support, neckline = best
+    details = (
+        f"Tre minimi simili vicino a {fmt_price(ticker, support)} dal "
+        f"{dates[0].date()} al {dates[-1].date()}. Neckline stimata: "
+        f"{fmt_price(ticker, neckline)}."
+    )
 
-    status = "CONFERMATO" if confirmed else "POSSIBILE"
-    score = 3 if confirmed else 1
-
-    result.update({
-        "status": status,
-        "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
-        "details": (
-            f"Tre minimi simili vicino a {fmt_price(ticker, support)} "
-            f"dal {dates[0].date()} al {dates[-1].date()}. "
-            f"Neckline stimata: {fmt_price(ticker, neckline)}."
-        ),
-        "neckline": neckline,
-        "support": support,
-        "confirmed": confirmed,
-        "score": score,
-    })
-
-    return result
+    return evaluate_pattern_lifecycle(
+        df, ticker, "BULLISH", dates[0], dates[-1], support, neckline, details, rank
+    )
 
 
 def pattern_double_top(df, ticker):
     highs = pivot_rows(df, "high")
     lows = pivot_rows(df, "low")
 
-    result = empty_top_result()
-
     if len(highs) < 2:
-        return result
+        return empty_pattern_result("BEARISH")
 
     recent_highs = highs.tail(5)
     best = None
+    last_date = pd.Timestamp(df.index[-1])
 
     for i in range(len(recent_highs) - 1):
         for j in range(i + 1, len(recent_highs)):
             d1 = recent_highs.index[i]
             d2 = recent_highs.index[j]
-
             p1 = safe_float(recent_highs.iloc[i]["pivot_price"])
             p2 = safe_float(recent_highs.iloc[j]["pivot_price"])
-
             sep = (d2 - d1).days
 
-            if sep < 10 or sep > 160:
-                continue
-
-            if not near(p1, p2, 7.0):
+            if sep < 10 or sep > 160 or not near(p1, p2, 7.0):
                 continue
 
             between_lows = lows[(lows.index > d1) & (lows.index < d2)]
-
             if between_lows.empty:
                 continue
 
             neckline = safe_float(between_lows["pivot_price"].min())
             resistance = max(p1, p2)
-            close = safe_float(df["Close"].iloc[-1])
-            confirmed = close < neckline if not pd.isna(neckline) else False
-
-            strength = 100 - abs(p1 / p2 - 1) * 100 + min(sep, 80) / 10
-            candidate = (strength, d1, d2, resistance, neckline, confirmed)
+            recency_bonus = max(0, 90 - (last_date - d2).days) / 10
+            rank = 100 - abs(p1 / p2 - 1) * 100 + min(sep, 80) / 10 + recency_bonus
+            candidate = (rank, d1, d2, resistance, neckline)
 
             if best is None or candidate[0] > best[0]:
                 best = candidate
 
     if best is None:
-        return result
+        return empty_pattern_result("BEARISH")
 
-    _, d1, d2, resistance, neckline, confirmed = best
+    rank, d1, d2, resistance, neckline = best
+    details = (
+        f"Due massimi simili vicino a {fmt_price(ticker, resistance)} tra "
+        f"{d1.date()} e {d2.date()}. Neckline ribassista stimata: "
+        f"{fmt_price(ticker, neckline)}."
+    )
 
-    status = "CONFERMATO" if confirmed else "POSSIBILE"
-    score = -2 if confirmed else -1
-
-    result.update({
-        "status": status,
-        "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
-        "details": (
-            f"Due massimi simili vicino a {fmt_price(ticker, resistance)} "
-            f"tra {d1.date()} e {d2.date()}. "
-            f"Neckline ribassista stimata: {fmt_price(ticker, neckline)}."
-        ),
-        "neckline": neckline,
-        "resistance": resistance,
-        "confirmed": confirmed,
-        "score": score,
-    })
-
-    return result
+    return evaluate_pattern_lifecycle(
+        df, ticker, "BEARISH", d1, d2, resistance, neckline, details, rank
+    )
 
 
 def pattern_triple_top(df, ticker):
     highs = pivot_rows(df, "high")
     lows = pivot_rows(df, "low")
 
-    result = empty_top_result()
-
     if len(highs) < 3:
-        return result
+        return empty_pattern_result("BEARISH")
 
     recent = highs.tail(7)
     best = None
+    last_date = pd.Timestamp(df.index[-1])
 
     for a in range(len(recent) - 2):
         for b in range(a + 1, len(recent) - 1):
@@ -602,54 +873,39 @@ def pattern_triple_top(df, ticker):
                     safe_float(recent.iloc[b]["pivot_price"]),
                     safe_float(recent.iloc[c]["pivot_price"]),
                 ]
-
                 span = (dates[-1] - dates[0]).days
 
                 if span < 20 or span > 220:
                     continue
-
-                if max(prices) / min(prices) - 1 > 0.09:
+                if min(prices) <= 0 or max(prices) / min(prices) - 1 > 0.09:
                     continue
 
                 between_lows = lows[(lows.index > dates[0]) & (lows.index < dates[-1])]
-
                 if between_lows.empty:
                     continue
 
                 neckline = safe_float(between_lows["pivot_price"].min())
                 resistance = max(prices)
-                close = safe_float(df["Close"].iloc[-1])
-                confirmed = close < neckline if not pd.isna(neckline) else False
-
-                tightness = 100 - (max(prices) / min(prices) - 1) * 100
-                candidate = (tightness, dates, resistance, neckline, confirmed)
+                recency_bonus = max(0, 100 - (last_date - dates[-1]).days) / 10
+                rank = 100 - (max(prices) / min(prices) - 1) * 100 + recency_bonus
+                candidate = (rank, dates, resistance, neckline)
 
                 if best is None or candidate[0] > best[0]:
                     best = candidate
 
     if best is None:
-        return result
+        return empty_pattern_result("BEARISH")
 
-    _, dates, resistance, neckline, confirmed = best
+    rank, dates, resistance, neckline = best
+    details = (
+        f"Tre massimi simili vicino a {fmt_price(ticker, resistance)} dal "
+        f"{dates[0].date()} al {dates[-1].date()}. Neckline ribassista stimata: "
+        f"{fmt_price(ticker, neckline)}."
+    )
 
-    status = "CONFERMATO" if confirmed else "POSSIBILE"
-    score = -3 if confirmed else -1
-
-    result.update({
-        "status": status,
-        "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
-        "details": (
-            f"Tre massimi simili vicino a {fmt_price(ticker, resistance)} "
-            f"dal {dates[0].date()} al {dates[-1].date()}. "
-            f"Neckline ribassista stimata: {fmt_price(ticker, neckline)}."
-        ),
-        "neckline": neckline,
-        "resistance": resistance,
-        "confirmed": confirmed,
-        "score": score,
-    })
-
-    return result
+    return evaluate_pattern_lifecycle(
+        df, ticker, "BEARISH", dates[0], dates[-1], resistance, neckline, details, rank
+    )
 
 
 def bottom_shape_metrics(df, pivot_date):
@@ -657,13 +913,11 @@ def bottom_shape_metrics(df, pivot_date):
         return {"sharp_score": 0, "round_score": 0}
 
     pos = df.index.get_loc(pivot_date)
-
     if isinstance(pos, slice):
         pos = pos.start
 
     start = max(0, pos - 12)
     end = min(len(df) - 1, pos + 12)
-
     window = df.iloc[start:end + 1]
 
     if window.empty:
@@ -682,28 +936,15 @@ def bottom_shape_metrics(df, pivot_date):
     right_rebound = (right_high / low - 1) * 100 if low and not pd.isna(right_high) else 0
 
     sharp_score = 0
-
-    if left_drop >= 8:
-        sharp_score += 1
-
-    if right_rebound >= 8:
-        sharp_score += 1
-
-    if not pd.isna(atr) and low > 0 and (atr / low * 100) >= 4:
-        sharp_score += 1
+    sharp_score += int(left_drop >= 8)
+    sharp_score += int(right_rebound >= 8)
+    sharp_score += int(not pd.isna(atr) and low > 0 and (atr / low * 100) >= 4)
 
     near_low = window[window["Low"] <= low * 1.07]
-
     round_score = 0
-
-    if len(near_low) >= 5:
-        round_score += 1
-
-    if len(near_low) >= 8:
-        round_score += 1
-
-    if not pd.isna(atr) and low > 0 and (atr / low * 100) < 6:
-        round_score += 1
+    round_score += int(len(near_low) >= 5)
+    round_score += int(len(near_low) >= 8)
+    round_score += int(not pd.isna(atr) and low > 0 and (atr / low * 100) < 6)
 
     return {"sharp_score": sharp_score, "round_score": round_score}
 
@@ -713,13 +954,11 @@ def top_shape_metrics(df, pivot_date):
         return {"sharp_score": 0, "round_score": 0}
 
     pos = df.index.get_loc(pivot_date)
-
     if isinstance(pos, slice):
         pos = pos.start
 
     start = max(0, pos - 12)
     end = min(len(df) - 1, pos + 12)
-
     window = df.iloc[start:end + 1]
 
     if window.empty:
@@ -738,222 +977,170 @@ def top_shape_metrics(df, pivot_date):
     right_drop = (high / right_low - 1) * 100 if right_low and not pd.isna(right_low) else 0
 
     sharp_score = 0
-
-    if left_rise >= 8:
-        sharp_score += 1
-
-    if right_drop >= 8:
-        sharp_score += 1
-
-    if not pd.isna(atr) and high > 0 and (atr / high * 100) >= 4:
-        sharp_score += 1
+    sharp_score += int(left_rise >= 8)
+    sharp_score += int(right_drop >= 8)
+    sharp_score += int(not pd.isna(atr) and high > 0 and (atr / high * 100) >= 4)
 
     near_high = window[window["High"] >= high * 0.93]
-
     round_score = 0
-
-    if len(near_high) >= 5:
-        round_score += 1
-
-    if len(near_high) >= 8:
-        round_score += 1
-
-    if not pd.isna(atr) and high > 0 and (atr / high * 100) < 6:
-        round_score += 1
+    round_score += int(len(near_high) >= 5)
+    round_score += int(len(near_high) >= 8)
+    round_score += int(not pd.isna(atr) and high > 0 and (atr / high * 100) < 6)
 
     return {"sharp_score": sharp_score, "round_score": round_score}
-
-
-def empty_adam_eve_bottom_result():
-    out = empty_bottom_result()
-    out["variant"] = ""
-    return out
-
-
-def empty_adam_eve_top_result():
-    out = empty_top_result()
-    out["variant"] = ""
-    return out
 
 
 def pattern_adam_eve_bottom(df, ticker):
     lows = pivot_rows(df, "low")
     highs = pivot_rows(df, "high")
 
-    result = empty_adam_eve_bottom_result()
-
     if len(lows) < 2:
-        return result
+        return empty_pattern_result("BULLISH")
 
     recent_lows = lows.tail(6)
     best = None
+    last_date = pd.Timestamp(df.index[-1])
 
     for i in range(len(recent_lows) - 1):
         for j in range(i + 1, len(recent_lows)):
             d1 = recent_lows.index[i]
             d2 = recent_lows.index[j]
-
             p1 = safe_float(recent_lows.iloc[i]["pivot_price"])
             p2 = safe_float(recent_lows.iloc[j]["pivot_price"])
-
             sep = (d2 - d1).days
 
-            if sep < 12 or sep > 180:
-                continue
-
-            if not near(p1, p2, 9.0):
+            if sep < 12 or sep > 180 or not near(p1, p2, 9.0):
                 continue
 
             m1 = bottom_shape_metrics(df, d1)
             m2 = bottom_shape_metrics(df, d2)
-
             variant = ""
-            pattern_score = 0
+            shape_rank = 0
 
             if m1["sharp_score"] >= 2 and m2["round_score"] >= 2:
                 variant = "ADAM_AND_EVE_BOTTOM"
-                pattern_score = m1["sharp_score"] + m2["round_score"]
-
+                shape_rank = m1["sharp_score"] + m2["round_score"]
             elif m1["round_score"] >= 2 and m2["sharp_score"] >= 2:
                 variant = "EVE_AND_ADAM_BOTTOM"
-                pattern_score = m1["round_score"] + m2["sharp_score"]
+                shape_rank = m1["round_score"] + m2["sharp_score"]
 
             if not variant:
                 continue
 
             between_highs = highs[(highs.index > d1) & (highs.index < d2)]
-
             if between_highs.empty:
                 continue
 
             neckline = safe_float(between_highs["pivot_price"].max())
             support = min(p1, p2)
-            close = safe_float(df["Close"].iloc[-1])
-            confirmed = close > neckline if not pd.isna(neckline) else False
-
-            candidate = (pattern_score, d1, d2, support, neckline, confirmed, variant)
+            recency_bonus = max(0, 100 - (last_date - d2).days) / 10
+            rank = shape_rank * 10 + recency_bonus - abs(p1 / p2 - 1) * 100
+            candidate = (rank, d1, d2, support, neckline, variant)
 
             if best is None or candidate[0] > best[0]:
                 best = candidate
 
     if best is None:
-        return result
+        return empty_pattern_result("BULLISH")
 
-    _, d1, d2, support, neckline, confirmed, variant = best
+    rank, d1, d2, support, neckline, variant = best
+    details = (
+        f"Pattern {it_label(variant)} vicino a {fmt_price(ticker, support)} dal "
+        f"{d1.date()} al {d2.date()}. Un minimo Ã¨ piÃ¹ appuntito e l'altro piÃ¹ "
+        f"arrotondato. Neckline stimata: {fmt_price(ticker, neckline)}."
+    )
 
-    status = "CONFERMATO" if confirmed else "POSSIBILE"
-    score = 3 if confirmed else 1
-
-    variant_it = it_label(variant)
-
-    result.update({
-        "status": status,
-        "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
-        "variant": variant,
-        "details": (
-            f"Possibile pattern {variant_it} vicino a {fmt_price(ticker, support)} "
-            f"dal {d1.date()} al {d2.date()}. "
-            f"Nel modello Adam/Eve un minimo è più appuntito e violento, "
-            f"l'altro è più arrotondato. "
-            f"Neckline stimata: {fmt_price(ticker, neckline)}."
-        ),
-        "neckline": neckline,
-        "support": support,
-        "confirmed": confirmed,
-        "score": score,
-    })
-
-    return result
+    return evaluate_pattern_lifecycle(
+        df,
+        ticker,
+        "BULLISH",
+        d1,
+        d2,
+        support,
+        neckline,
+        details,
+        rank,
+        variant=variant,
+    )
 
 
 def pattern_adam_eve_top(df, ticker):
     highs = pivot_rows(df, "high")
     lows = pivot_rows(df, "low")
 
-    result = empty_adam_eve_top_result()
-
     if len(highs) < 2:
-        return result
+        return empty_pattern_result("BEARISH")
 
     recent_highs = highs.tail(6)
     best = None
+    last_date = pd.Timestamp(df.index[-1])
 
     for i in range(len(recent_highs) - 1):
         for j in range(i + 1, len(recent_highs)):
             d1 = recent_highs.index[i]
             d2 = recent_highs.index[j]
-
             p1 = safe_float(recent_highs.iloc[i]["pivot_price"])
             p2 = safe_float(recent_highs.iloc[j]["pivot_price"])
-
             sep = (d2 - d1).days
 
-            if sep < 12 or sep > 180:
-                continue
-
-            if not near(p1, p2, 9.0):
+            if sep < 12 or sep > 180 or not near(p1, p2, 9.0):
                 continue
 
             m1 = top_shape_metrics(df, d1)
             m2 = top_shape_metrics(df, d2)
-
             variant = ""
-            pattern_score = 0
+            shape_rank = 0
 
             if m1["sharp_score"] >= 2 and m2["round_score"] >= 2:
                 variant = "ADAM_AND_EVE_TOP"
-                pattern_score = m1["sharp_score"] + m2["round_score"]
-
+                shape_rank = m1["sharp_score"] + m2["round_score"]
             elif m1["round_score"] >= 2 and m2["sharp_score"] >= 2:
                 variant = "EVE_AND_ADAM_TOP"
-                pattern_score = m1["round_score"] + m2["sharp_score"]
+                shape_rank = m1["round_score"] + m2["sharp_score"]
 
             if not variant:
                 continue
 
             between_lows = lows[(lows.index > d1) & (lows.index < d2)]
-
             if between_lows.empty:
                 continue
 
             neckline = safe_float(between_lows["pivot_price"].min())
             resistance = max(p1, p2)
-            close = safe_float(df["Close"].iloc[-1])
-            confirmed = close < neckline if not pd.isna(neckline) else False
-
-            candidate = (pattern_score, d1, d2, resistance, neckline, confirmed, variant)
+            recency_bonus = max(0, 100 - (last_date - d2).days) / 10
+            rank = shape_rank * 10 + recency_bonus - abs(p1 / p2 - 1) * 100
+            candidate = (rank, d1, d2, resistance, neckline, variant)
 
             if best is None or candidate[0] > best[0]:
                 best = candidate
 
     if best is None:
-        return result
+        return empty_pattern_result("BEARISH")
 
-    _, d1, d2, resistance, neckline, confirmed, variant = best
+    rank, d1, d2, resistance, neckline, variant = best
+    details = (
+        f"Pattern {it_label(variant)} vicino a {fmt_price(ticker, resistance)} dal "
+        f"{d1.date()} al {d2.date()}. Un massimo Ã¨ piÃ¹ appuntito e l'altro piÃ¹ "
+        f"arrotondato. Neckline ribassista stimata: {fmt_price(ticker, neckline)}."
+    )
 
-    status = "CONFERMATO" if confirmed else "POSSIBILE"
-    score = -3 if confirmed else -1
+    return evaluate_pattern_lifecycle(
+        df,
+        ticker,
+        "BEARISH",
+        d1,
+        d2,
+        resistance,
+        neckline,
+        details,
+        rank,
+        variant=variant,
+    )
 
-    variant_it = it_label(variant)
 
-    result.update({
-        "status": status,
-        "confidence": "MEDIUM" if confirmed else "LOW/MEDIUM",
-        "variant": variant,
-        "details": (
-            f"Possibile pattern {variant_it} vicino a {fmt_price(ticker, resistance)} "
-            f"dal {d1.date()} al {d2.date()}. "
-            f"Nel modello Adam/Eve un massimo è più appuntito e violento, "
-            f"l'altro è più arrotondato. "
-            f"Neckline ribassista stimata: {fmt_price(ticker, neckline)}."
-        ),
-        "neckline": neckline,
-        "resistance": resistance,
-        "confirmed": confirmed,
-        "score": score,
-    })
-
-    return result
+# -----------------------------------------------------------------------------
+# Struttura, trend, momentum, volume, Wyckoff
+# -----------------------------------------------------------------------------
 
 
 def recent_structure(df):
@@ -978,15 +1165,12 @@ def recent_structure(df):
         if higher_low and higher_high:
             structure = "HH_HL_UPSTRUCTURE"
             score = 2
-
         elif lower_low and lower_high:
             structure = "LH_LL_DOWNSTRUCTURE"
             score = -2
-
         elif higher_low and lower_high:
             structure = "COMPRESSION_TRIANGLE"
             score = 0
-
         elif lower_low and higher_high:
             structure = "EXPANDING_VOLATILITY"
             score = 0
@@ -1015,7 +1199,6 @@ def detect_divergences(df):
         if p2 < p1 and r2 > r1 + 2:
             divs.append("BULLISH_RSI_DIVERGENCE")
             score += 2
-
         elif p2 > p1 and r2 < r1 - 2:
             divs.append("HIDDEN_BULLISH_RSI_DIVERGENCE")
             score += 1
@@ -1029,7 +1212,6 @@ def detect_divergences(df):
         if p2 > p1 and r2 < r1 - 2:
             divs.append("BEARISH_RSI_DIVERGENCE")
             score -= 2
-
         elif p2 < p1 and r2 > r1 + 2:
             divs.append("HIDDEN_BEARISH_RSI_DIVERGENCE")
             score -= 1
@@ -1056,16 +1238,12 @@ def trend_score(df):
 
     if not pd.isna(ma20):
         score += 1 if close > ma20 else -1
-
     if not pd.isna(ma50):
         score += 1 if close > ma50 else -1
-
     if not pd.isna(ma200):
         score += 1 if close > ma200 else -1
-
     if not pd.isna(ma50_slope):
         score += 1 if ma50_slope > 0 else -1
-
     if not pd.isna(ma200_slope):
         score += 1 if ma200_slope > 0 else -1
 
@@ -1087,10 +1265,8 @@ def momentum_score(df):
 
     rsi_now = safe_float(latest["rsi14"])
     rsi_prev = safe_float(prev5["rsi14"])
-
     macd = safe_float(latest["macd"])
     signal = safe_float(latest["macd_signal"])
-
     hist_now = safe_float(latest["macd_hist"])
     hist_prev = safe_float(prev5["macd_hist"])
 
@@ -1128,17 +1304,13 @@ def volume_score(df):
 
     close = safe_float(latest["Close"])
     prev_close = safe_float(df["Close"].iloc[-2]) if len(df) > 2 else np.nan
-
     volume = safe_float(latest["Volume"])
     vol_ma20 = safe_float(latest["vol_ma20"])
-
     obv = safe_float(latest["obv"])
     obv_ma20 = safe_float(latest["obv_ma20"])
-
     cmf = safe_float(latest["cmf20"])
 
     score = 0
-
     up_day = False
 
     if not pd.isna(close) and not pd.isna(prev_close):
@@ -1181,7 +1353,6 @@ def wyckoff_candidate(df):
 
     ret90 = pct_change_days(close, 90)
     ret30 = pct_change_days(close, 30)
-
     recent = recent_slice(df, 120)
 
     if recent.empty:
@@ -1189,7 +1360,6 @@ def wyckoff_candidate(df):
 
     high_120 = safe_float(recent["High"].max())
     low_120 = safe_float(recent["Low"].min())
-
     range_pct = (high_120 / low_120 - 1) * 100 if low_120 and not pd.isna(high_120) else np.nan
 
     near_range_low = False
@@ -1248,7 +1418,6 @@ def wyckoff_candidate(df):
 def support_resistance(df):
     lows = pivot_rows(df, "low")
     highs = pivot_rows(df, "high")
-
     close = safe_float(df["Close"].iloc[-1])
 
     support = np.nan
@@ -1256,7 +1425,6 @@ def support_resistance(df):
 
     if not lows.empty:
         below = lows[lows["pivot_price"] <= close]
-
         if not below.empty:
             support = safe_float(below["pivot_price"].iloc[-1])
         else:
@@ -1264,7 +1432,6 @@ def support_resistance(df):
 
     if not highs.empty:
         above = highs[highs["pivot_price"] >= close]
-
         if not above.empty:
             resistance = safe_float(above["pivot_price"].iloc[-1])
         else:
@@ -1283,6 +1450,31 @@ def verdict_from_score(score):
     if score >= -6:
         return "DEBOLE"
     return "BEARISH_TECNICO"
+
+
+# -----------------------------------------------------------------------------
+# Analisi asset e metriche
+# -----------------------------------------------------------------------------
+
+
+def add_pattern_columns(row, prefix, result):
+    row[prefix] = result.get("status", "ASSENTE")
+    row[f"{prefix}_score"] = safe_int(result.get("score"), 0)
+    row[f"{prefix}_direction"] = result.get("direction", "")
+    row[f"{prefix}_variant"] = result.get("variant", "")
+    row[f"{prefix}_start_date"] = result.get("start_date", "")
+    row[f"{prefix}_end_date"] = result.get("end_date", "")
+    row[f"{prefix}_formation_age_days"] = result.get("formation_age_days", np.nan)
+    row[f"{prefix}_breakout_date"] = result.get("breakout_date", "")
+    row[f"{prefix}_breakout_age_days"] = result.get("breakout_age_days", np.nan)
+    row[f"{prefix}_neckline"] = result.get("neckline", np.nan)
+    row[f"{prefix}_target"] = result.get("target", np.nan)
+    row[f"{prefix}_target_progress_pct"] = result.get("target_progress_pct", np.nan)
+    row[f"{prefix}_invalidation_level"] = result.get("invalidation_level", np.nan)
+    row[f"{prefix}_current_relation"] = result.get("current_relation", "")
+    row[f"{prefix}_target_reached"] = bool(result.get("target_reached", False))
+    row[f"{prefix}_invalidated"] = bool(result.get("invalidated", False))
+    row[f"{prefix}_details"] = result.get("details", "")
 
 
 def analyze_asset(ticker):
@@ -1312,14 +1504,23 @@ def analyze_asset(ticker):
     ae_bottom = pattern_adam_eve_bottom(df, ticker)
     ae_top = pattern_adam_eve_top(df, ticker)
 
-    pattern_score = 0
-    pattern_score += db["score"]
-    pattern_score += tb["score"]
-    pattern_score += dt["score"]
-    pattern_score += tt["score"]
-    pattern_score += ae_bottom["score"]
-    pattern_score += ae_top["score"]
-    pattern_score = int(max(-4, min(4, pattern_score)))
+    named_patterns = [
+        ("Doppio minimo", db),
+        ("Triplo minimo", tb),
+        (it_label(ae_bottom.get("variant")) if ae_bottom.get("variant") else "Adam/Eve Bottom", ae_bottom),
+        ("Doppio massimo", dt),
+        ("Triplo massimo", tt),
+        (it_label(ae_top.get("variant")) if ae_top.get("variant") else "Adam/Eve Top", ae_top),
+    ]
+
+    (
+        pattern_score,
+        dominant_bullish_name,
+        dominant_bullish,
+        dominant_bearish_name,
+        dominant_bearish,
+        pattern_score_explanation,
+    ) = pattern_score_from_results(named_patterns)
 
     total_score = int(
         t_score
@@ -1330,11 +1531,9 @@ def analyze_asset(ticker):
         + wy_score
         + pattern_score
     )
-
     total_score = int(max(-12, min(12, total_score)))
 
     support, resistance = support_resistance(df)
-
     verdict = verdict_from_score(total_score)
 
     row = {
@@ -1346,70 +1545,102 @@ def analyze_asset(ticker):
 
         "trend": t_label,
         "trend_score": t_score,
-
         "momentum": m_label,
         "momentum_score": m_score,
-
         "volume": v_label,
         "volume_score": v_score,
-
         "structure": struct_label,
         "structure_score": struct_score,
-
         "divergence": div_label,
         "divergence_score": div_score,
-
         "wyckoff": wy_label,
         "wyckoff_score": wy_score,
 
         "pattern_score": pattern_score,
-
-        "double_bottom": db["status"],
-        "triple_bottom": tb["status"],
-        "double_top": dt["status"],
-        "triple_top": tt["status"],
-
-        "adam_eve_bottom": ae_bottom["status"],
-        "adam_eve_bottom_variant": ae_bottom["variant"],
-
-        "adam_eve_top": ae_top["status"],
-        "adam_eve_top_variant": ae_top["variant"],
+        "pattern_score_explanation": pattern_score_explanation,
+        "dominant_bullish_pattern": dominant_bullish_name,
+        "dominant_bullish_status": dominant_bullish.get("status", "ASSENTE"),
+        "dominant_bullish_score": safe_int(dominant_bullish.get("score"), 0),
+        "dominant_bearish_pattern": dominant_bearish_name,
+        "dominant_bearish_status": dominant_bearish.get("status", "ASSENTE"),
+        "dominant_bearish_score": safe_int(dominant_bearish.get("score"), 0),
 
         "support": support,
         "resistance": resistance,
-
         "rsi14": safe_float(latest["rsi14"]),
         "macd_hist": safe_float(latest["macd_hist"]),
-
         "ma20": safe_float(latest["ma20"]),
         "ma50": safe_float(latest["ma50"]),
         "ma200": safe_float(latest["ma200"]),
-
         "ma20_slope_10d": ma20_slope,
         "ma50_slope_20d": ma50_slope,
         "ma200_slope_60d": ma200_slope,
-
         "return_30d": pct_change_days(df["Close"], 30),
         "return_90d": pct_change_days(df["Close"], 90),
-
         "wyckoff_details": wy_details,
         "structure_details": struct_details,
-
-        "double_bottom_details": db["details"],
-        "triple_bottom_details": tb["details"],
-        "double_top_details": dt["details"],
-        "triple_top_details": tt["details"],
-
-        "adam_eve_bottom_details": ae_bottom["details"],
-        "adam_eve_top_details": ae_top["details"],
     }
+
+    add_pattern_columns(row, "double_bottom", db)
+    add_pattern_columns(row, "triple_bottom", tb)
+    add_pattern_columns(row, "double_top", dt)
+    add_pattern_columns(row, "triple_top", tt)
+    add_pattern_columns(row, "adam_eve_bottom", ae_bottom)
+    add_pattern_columns(row, "adam_eve_top", ae_top)
+
+    # CompatibilitÃ  con i nomi giÃ  letti da altri script.
+    row["adam_eve_bottom_variant"] = ae_bottom.get("variant", "")
+    row["adam_eve_top_variant"] = ae_top.get("variant", "")
 
     return row
 
 
-def render_report(metrics):
-    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+# -----------------------------------------------------------------------------
+# Report
+# -----------------------------------------------------------------------------
 
+
+def pattern_cell(status, variant=""):
+    status_txt = it_label(status)
+    if variant:
+        return f"{it_label(variant)} â {status_txt}"
+    return status_txt
+
+
+def append_pattern_detail(lines, ticker, label, row, prefix, variant_col=None):
+    status = row.get(prefix, "ASSENTE")
+    variant = row.get(variant_col, "") if variant_col else ""
+    title = it_label(variant) if variant else label
+
+    lines.append(f"- {title}: **{it_label(status)}** ({fmt_signed_int(row.get(f'{prefix}_score', 0))})")
+
+    details = row.get(f"{prefix}_details", "")
+    if details:
+        lines.append(f"  - {details}")
+
+    if status != "ASSENTE":
+        neckline = row.get(f"{prefix}_neckline")
+        target = row.get(f"{prefix}_target")
+        breakout = row.get(f"{prefix}_breakout_date", "")
+        age = row.get(f"{prefix}_breakout_age_days")
+        progress = row.get(f"{prefix}_target_progress_pct")
+        relation = row.get(f"{prefix}_current_relation", "")
+
+        extra = [
+            f"neckline {fmt_price(ticker, neckline)}",
+            f"target {fmt_price(ticker, target)}",
+            f"progresso {fmt_pct(progress)}",
+            f"prezzo {it_label(relation)}",
+        ]
+
+        if breakout:
+            extra.insert(2, f"breakout {breakout} ({safe_int(age, 0)}g)")
+
+        lines.append("  - " + "; ".join(extra) + ".")
+
+
+def render_report(metrics):
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     lines = []
 
     lines.append("# Report struttura tecnica")
@@ -1424,11 +1655,19 @@ def render_report(metrics):
     lines.append("- Massimi e minimi crescenti oppure decrescenti")
     lines.append("- Doppio minimo, triplo minimo, doppio massimo, triplo massimo")
     lines.append("- Pattern Adam and Eve Bottom / Top")
+    lines.append("- Ciclo di vita pattern: candidato, attivo, confermato recente, maturo, target raggiunto, invalidato")
+    lines.append("- Data breakout, etÃ , target teorico, progresso e recupero della neckline")
     lines.append("- Divergenze RSI e divergenze RSI nascoste")
     lines.append("- Momentum MACD")
     lines.append("- Conferma volume con OBV / CMF")
     lines.append("- Candidato fase Wyckoff")
     lines.append("- Punteggio tecnico di confluenza")
+    lines.append("")
+    lines.append(
+        "Regola anti-pattern-zombie: un pattern vecchio non resta indefinitamente confermato. "
+        "Dopo il target vale 0; se viene recuperata stabilmente la neckline viene invalidato; "
+        "se resta valido ma invecchia passa a MATURO con peso ridotto."
+    )
     lines.append("")
 
     lines.append("## Sintesi")
@@ -1438,7 +1677,6 @@ def render_report(metrics):
 
     for _, r in metrics.iterrows():
         ticker = r["ticker"]
-
         summary_rows.append({
             "Asset": r["asset"],
             "Prezzo": fmt_price(ticker, r["price"]),
@@ -1447,8 +1685,15 @@ def render_report(metrics):
             "Trend": it_label(r["trend"]),
             "Momentum": it_label(r["momentum"]),
             "Struttura": it_label(r["structure"]),
-            "Divergenza": it_label(r["divergence"]),
-            "Wyckoff": it_label(r["wyckoff"]),
+            "Pattern score": fmt_signed_int(r["pattern_score"]),
+            "Pattern rialzista": (
+                f"{r['dominant_bullish_pattern']} / {it_label(r['dominant_bullish_status'])}"
+                if r["dominant_bullish_pattern"] else "nessuno"
+            ),
+            "Pattern ribassista": (
+                f"{r['dominant_bearish_pattern']} / {it_label(r['dominant_bearish_status'])}"
+                if r["dominant_bearish_pattern"] else "nessuno"
+            ),
             "Supporto": fmt_price(ticker, r["support"]),
             "Resistenza": fmt_price(ticker, r["resistance"]),
         })
@@ -1456,23 +1701,20 @@ def render_report(metrics):
     lines.append(df_to_markdown(pd.DataFrame(summary_rows)))
     lines.append("")
 
-    lines.append("## Riepilogo pattern")
+    lines.append("## Riepilogo ciclo di vita pattern")
     lines.append("")
 
     pattern_rows = []
 
     for _, r in metrics.iterrows():
-        adam_bottom = it_label(r["adam_eve_bottom_variant"]) if r["adam_eve_bottom"] != "ASSENTE" else "Assente"
-        adam_top = it_label(r["adam_eve_top_variant"]) if r["adam_eve_top"] != "ASSENTE" else "Assente"
-
         pattern_rows.append({
             "Asset": r["asset"],
-            "Doppio minimo": it_label(r["double_bottom"]),
-            "Triplo minimo": it_label(r["triple_bottom"]),
-            "Adam/Eve Bottom": adam_bottom,
-            "Doppio massimo": it_label(r["double_top"]),
-            "Triplo massimo": it_label(r["triple_top"]),
-            "Adam/Eve Top": adam_top,
+            "Doppio minimo": pattern_cell(r["double_bottom"]),
+            "Triplo minimo": pattern_cell(r["triple_bottom"]),
+            "Adam/Eve Bottom": pattern_cell(r["adam_eve_bottom"], r["adam_eve_bottom_variant"]),
+            "Doppio massimo": pattern_cell(r["double_top"]),
+            "Triplo massimo": pattern_cell(r["triple_top"]),
+            "Adam/Eve Top": pattern_cell(r["adam_eve_top"], r["adam_eve_top_variant"]),
             "Punteggio pattern": int(r["pattern_score"]),
         })
 
@@ -1486,7 +1728,6 @@ def render_report(metrics):
 
     for _, r in metrics.iterrows():
         ticker = r["ticker"]
-
         ind_rows.append({
             "Asset": r["asset"],
             "RSI 14": fmt_num(r["rsi14"], 2),
@@ -1528,45 +1769,51 @@ def render_report(metrics):
         if r["wyckoff_details"]:
             lines.append(f"  - Dettaglio Wyckoff: {r['wyckoff_details']}")
 
-        lines.append(f"- Supporto più vicino: **{fmt_price(ticker, r['support'])}**")
-        lines.append(f"- Resistenza più vicina: **{fmt_price(ticker, r['resistance'])}**")
+        lines.append(f"- Punteggio pattern: **{fmt_signed_int(r['pattern_score'])}**")
+        lines.append(f"  - {r['pattern_score_explanation']}.")
+        lines.append(f"- Supporto piÃ¹ vicino: **{fmt_price(ticker, r['support'])}**")
+        lines.append(f"- Resistenza piÃ¹ vicina: **{fmt_price(ticker, r['resistance'])}**")
         lines.append("")
 
-        lines.append("Pattern classici:")
+        lines.append("Pattern classici e ciclo di vita:")
         lines.append("")
-        lines.append(f"- Doppio minimo: **{it_label(r['double_bottom'])}**")
-
-        if r["double_bottom_details"]:
-            lines.append(f"  - {r['double_bottom_details']}")
-
-        lines.append(f"- Triplo minimo: **{it_label(r['triple_bottom'])}**")
-
-        if r["triple_bottom_details"]:
-            lines.append(f"  - {r['triple_bottom_details']}")
-
-        adam_bottom = it_label(r["adam_eve_bottom_variant"]) if r["adam_eve_bottom"] != "ASSENTE" else "Assente"
-        lines.append(f"- Adam/Eve Bottom: **{adam_bottom}**")
-
-        if r["adam_eve_bottom_details"]:
-            lines.append(f"  - {r['adam_eve_bottom_details']}")
-
-        lines.append(f"- Doppio massimo: **{it_label(r['double_top'])}**")
-
-        if r["double_top_details"]:
-            lines.append(f"  - {r['double_top_details']}")
-
-        lines.append(f"- Triplo massimo: **{it_label(r['triple_top'])}**")
-
-        if r["triple_top_details"]:
-            lines.append(f"  - {r['triple_top_details']}")
-
-        adam_top = it_label(r["adam_eve_top_variant"]) if r["adam_eve_top"] != "ASSENTE" else "Assente"
-        lines.append(f"- Adam/Eve Top: **{adam_top}**")
-
-        if r["adam_eve_top_details"]:
-            lines.append(f"  - {r['adam_eve_top_details']}")
-
+        append_pattern_detail(lines, ticker, "Doppio minimo", r, "double_bottom")
+        append_pattern_detail(lines, ticker, "Triplo minimo", r, "triple_bottom")
+        append_pattern_detail(
+            lines,
+            ticker,
+            "Adam/Eve Bottom",
+            r,
+            "adam_eve_bottom",
+            variant_col="adam_eve_bottom_variant",
+        )
+        append_pattern_detail(lines, ticker, "Doppio massimo", r, "double_top")
+        append_pattern_detail(lines, ticker, "Triplo massimo", r, "triple_top")
+        append_pattern_detail(
+            lines,
+            ticker,
+            "Adam/Eve Top",
+            r,
+            "adam_eve_top",
+            variant_col="adam_eve_top_variant",
+        )
         lines.append("")
+
+    lines.append("## Stati del ciclo di vita")
+    lines.append("")
+    lines.append("- **CANDIDATO**: geometria presente, ma neckline non ancora rotta; punteggio 0.")
+    lines.append("- **ATTIVO**: breakout avvenuto da 0 a 3 giorni; peso prudente Â±1.")
+    lines.append("- **CONFERMATO RECENTE**: breakout da 4 a 14 giorni; peso massimo prudente Â±2.")
+    lines.append("- **MATURO**: breakout piÃ¹ vecchio di 14 giorni e ancora valido; peso ridotto Â±1.")
+    lines.append("- **TARGET RAGGIUNTO**: movimento teorico giÃ  sviluppato; punteggio 0.")
+    lines.append("- **INVALIDATO**: recupero stabile della neckline contro il pattern; punteggio 0.")
+    lines.append("")
+    lines.append(
+        "Per evitare doppio conteggio, nel punteggio entra soltanto il miglior pattern "
+        "rialzista e il miglior pattern ribassista. Doppio, triplo e Adam/Eve che descrivono "
+        "la stessa struttura non vengono piÃ¹ sommati tutti insieme."
+    )
+    lines.append("")
 
     lines.append("## Come leggere il punteggio")
     lines.append("")
@@ -1576,7 +1823,10 @@ def render_report(metrics):
     lines.append("- Da -6 a -3: struttura tecnica debole.")
     lines.append("- Da -12 a -7: forte confluenza tecnica ribassista.")
     lines.append("")
-    lines.append("Nota importante: questo report non è una previsione da solo. È un filtro tecnico da leggere insieme a scanner frattale, market regime, futures e RSI.")
+    lines.append(
+        "Nota importante: questo report non Ã¨ una previsione da solo. Ã un filtro tecnico "
+        "da leggere insieme a scanner frattale, market regime, futures e RSI."
+    )
     lines.append("")
 
     return "\n".join(lines) + "\n"
@@ -1605,7 +1855,7 @@ def inject_into_latest_report(section_md):
     else:
         new = old.rstrip() + "\n\n" + START_MARKER + "\n" + clean + "\n" + END_MARKER + "\n"
 
-    LATEST_REPORT.write_text(new, encoding="utf-8")
+    LATEST_REPORT.write_text(new, encoding="utf-8", newline="\n")
 
 
 def main():
@@ -1622,7 +1872,7 @@ def main():
 
     if not rows:
         md = "# Report struttura tecnica\n\nNessun dato valido scaricato.\n"
-        OUTPUT_REPORT.write_text(md, encoding="utf-8")
+        OUTPUT_REPORT.write_text(md, encoding="utf-8", newline="\n")
         inject_into_latest_report(md)
         print("Nessun dato valido scaricato.")
         return
@@ -1631,11 +1881,21 @@ def main():
     metrics.to_csv(OUTPUT_METRICS, index=False)
 
     md = render_report(metrics)
-    OUTPUT_REPORT.write_text(md, encoding="utf-8")
+    OUTPUT_REPORT.write_text(md, encoding="utf-8", newline="\n")
     inject_into_latest_report(md)
 
     print(f"Creato {OUTPUT_REPORT}")
     print(f"Creato {OUTPUT_METRICS}")
+
+    for _, row in metrics.iterrows():
+        print(
+            f"{row['asset']}: tecnico {fmt_signed_int(row['technical_score'])} | "
+            f"pattern {fmt_signed_int(row['pattern_score'])} | "
+            f"bull {row['dominant_bullish_pattern'] or 'nessuno'} "
+            f"({it_label(row['dominant_bullish_status'])}) | "
+            f"bear {row['dominant_bearish_pattern'] or 'nessuno'} "
+            f"({it_label(row['dominant_bearish_status'])})"
+        )
 
 
 if __name__ == "__main__":
