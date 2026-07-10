@@ -1,26 +1,32 @@
 # Data quality / coherence check
 
-Generato: 2026-07-10 12:52 UTC
+Generato: 2026-07-10 13:12 UTC
 
 Questo controllo non modifica punteggi o decisioni. Segnala soltanto problemi tecnici, dati mancanti e ambiguità di lettura.
 
-## Stato finale: **OK**
+## Stato finale: **WARN**
+
+## Avvisi
+
+- Il report contiene ancora caratteri corrotti: verificare sorgente e scrittura UTF-8.
 
 ## Coerenza prezzi snapshot
 
 | Asset   | Stato   | Snapshot   | Scanner   | Differenza   |
 |:--------|:--------|:-----------|:----------|:-------------|
-| BTC     | OK      | 64.306 $   | 64.306 $  | +0,000%      |
-| SOL     | OK      | 78,94 $    | 78,94 $   | +0,000%      |
-| DOGE    | OK      | 0.07405 $  | 0.07405 $ | -0,000%      |
+| BTC     | OK      | 64.250 $   | 64.250 $  | +0,000%      |
+| SOL     | OK      | 78,87 $    | 78,87 $   | +0,000%      |
+| DOGE    | OK      | 0.07397 $  | 0.07397 $ | +0,000%      |
 
 ## Controllo codifica UTF-8
 
-Nessun indicatore comune di mojibake trovato.
+Trovati **8** possibili frammenti con codifica rotta nel report principale.
+
+- Token `Ã`: 8 occorrenze
 
 ## File strutturati
 
 - Snapshot condiviso: **OK**
 - Scanner summary: **OK**
 
-Il workflow è tecnicamente coerente nei controlli disponibili.
+Il workflow può continuare, ma gli avvisi sopra vanno sistemati per rendere il report più affidabile e leggibile.

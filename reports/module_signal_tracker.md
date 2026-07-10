@@ -1,6 +1,6 @@
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-10 12:52 UTC
+Generato: 2026-07-10 13:12 UTC
 
 Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno quali orizzonti sono maturati.
 
@@ -13,12 +13,15 @@ La calibrazione ora controlla questi orizzonti:
 
 Moduli controllati:
 
-- Global Confluence
-- Scanner grezzo
-- Market regime
+- Global Confluence = benchmark dell'aggregato finale
+- **Famiglia statistica Scanner + Market Regime = modulo calibrabile reale**
+- Scanner grezzo = diagnostico, già incluso nella famiglia statistica
+- Market Regime grezzo = diagnostico, già incluso nella famiglia statistica
 - Struttura tecnica
 - Classic technical confirmation
 - Frattale SOL/BTC, solo per SOL
+
+Regola anti-doppio-conteggio: **Scanner e Market Regime continuano a essere misurati separatamente solo per diagnosi, ma non devono ricevere due modifiche di peso autonome**. La calibrazione dei pesi deve agire sulla Famiglia statistica.
 
 Nota: i controlli vengono aggiornati **ogni giorno**, ma i pesi del Global non devono cambiare automaticamente sotto 30 controlli. Prima si osserva, poi si calibra.
 
@@ -26,14 +29,14 @@ Segnali totali salvati: **6**.
 
 ## Ultimi segnali salvati
 
-| Data | Asset | Prezzo | Global | Scanner | Market | Tecnico | Classic | Frattale | Azione |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-07-10 | BTC | 64.297,16 | +4 | +3 | +3 | -1 | 0 | 0 | ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE |
-| 2026-07-10 | DOGE | 0.07402 | -8 | -3 | -3 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
-| 2026-07-10 | SOL | 78,96 | 0 | -1 | 0 | +1 | 0 | 0 | HOLD LEGGERO / ATTESA CONFERME |
-| 2026-07-09 | BTC | 63.234,86 | +6 | +3 | +3 | -1 | 0 | 0 | ACCUMULA SU PULLBACK / NO SHORT |
-| 2026-07-09 | DOGE | 0.07285 | -10 | -3 | -3 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
-| 2026-07-09 | SOL | 78,02 | +4 | -1 | +2 | +1 | 0 | +1 | HOLD / TRANCHE PICCOLE, NO LEVA |
+| Data | Asset | Prezzo | Global | Famiglia stat. | Scanner grezzo | Market grezzo | Tecnico | Classic | Frattale | Azione |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-07-10 | BTC | 64.202,60 | +4 | +4 | +3 | +3 | -1 | 0 | 0 | ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE |
+| 2026-07-10 | DOGE | 0.07397 | -8 | -4 | -3 | -3 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
+| 2026-07-10 | SOL | 78,83 | 0 | -1 | -1 | 0 | +1 | 0 | 0 | HOLD LEGGERO / ATTESA CONFERME |
+| 2026-07-09 | BTC | 63.234,86 | +6 | 0 | +3 | +3 | -1 | 0 | 0 | ACCUMULA SU PULLBACK / NO SHORT |
+| 2026-07-09 | DOGE | 0.07285 | -10 | 0 | -3 | -3 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
+| 2026-07-09 | SOL | 78,02 | +4 | 0 | -1 | +2 | +1 | 0 | +1 | HOLD / TRANCHE PICCOLE, NO LEVA |
 
 ## Stato controlli per orizzonte
 
@@ -91,25 +94,28 @@ Segnali totali salvati: **6**.
 
 ## Accuratezza direzionale per modulo
 
-| Asset | Orizzonte | Modulo | Controlli | Accuratezza direzione | Return medio | Return corretto direzione | Drawdown medio | Max gain medio | Stato |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 1g | Global confluence | 1 | 0,00% | -0,31% | -0,31% | -0,34% | -0,08% | FEEDBACK RAPIDO |
-| BTC | 1g | Scanner | 1 | 0,00% | -0,31% | -0,31% | -0,34% | -0,08% | FEEDBACK RAPIDO |
-| BTC | 1g | Market regime | 1 | 0,00% | -0,31% | -0,31% | -0,34% | -0,08% | FEEDBACK RAPIDO |
-| BTC | 1g | Tecnico | 1 | 100,00% | -0,31% | +0,31% | -0,34% | -0,08% | FEEDBACK RAPIDO |
-| DOGE | 1g | Global confluence | 1 | 100,00% | -0,11% | +0,11% | -0,13% | +0,04% | FEEDBACK RAPIDO |
-| DOGE | 1g | Scanner | 1 | 100,00% | -0,11% | +0,11% | -0,13% | +0,04% | FEEDBACK RAPIDO |
-| DOGE | 1g | Market regime | 1 | 100,00% | -0,11% | +0,11% | -0,13% | +0,04% | FEEDBACK RAPIDO |
-| DOGE | 1g | Tecnico | 1 | 100,00% | -0,11% | +0,11% | -0,13% | +0,04% | FEEDBACK RAPIDO |
-| DOGE | 1g | Classic technical | 1 | 100,00% | -0,11% | +0,11% | -0,13% | +0,04% | FEEDBACK RAPIDO |
-| SOL | 1g | Global confluence | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
-| SOL | 1g | Scanner | 1 | 100,00% | -0,10% | +0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
-| SOL | 1g | Market regime | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
-| SOL | 1g | Tecnico | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
-| SOL | 1g | Frattale SOL | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
+| Asset | Orizzonte | Modulo | Ruolo | Controlli | Accuratezza direzione | Return medio | Return corretto direzione | Drawdown medio | Max gain medio | Stato |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BTC | 1g | Global confluence | BENCHMARK | 1 | 0,00% | -0,31% | -0,31% | -0,34% | -0,08% | FEEDBACK RAPIDO |
+| BTC | 1g | Scanner grezzo | DIAGNOSTICO | 1 | 0,00% | -0,31% | -0,31% | -0,34% | -0,08% | FEEDBACK RAPIDO |
+| BTC | 1g | Market regime grezzo | DIAGNOSTICO | 1 | 0,00% | -0,31% | -0,31% | -0,34% | -0,08% | FEEDBACK RAPIDO |
+| BTC | 1g | Tecnico | CALIBRABILE | 1 | 100,00% | -0,31% | +0,31% | -0,34% | -0,08% | FEEDBACK RAPIDO |
+| DOGE | 1g | Global confluence | BENCHMARK | 1 | 100,00% | -0,11% | +0,11% | -0,13% | +0,04% | FEEDBACK RAPIDO |
+| DOGE | 1g | Scanner grezzo | DIAGNOSTICO | 1 | 100,00% | -0,11% | +0,11% | -0,13% | +0,04% | FEEDBACK RAPIDO |
+| DOGE | 1g | Market regime grezzo | DIAGNOSTICO | 1 | 100,00% | -0,11% | +0,11% | -0,13% | +0,04% | FEEDBACK RAPIDO |
+| DOGE | 1g | Tecnico | CALIBRABILE | 1 | 100,00% | -0,11% | +0,11% | -0,13% | +0,04% | FEEDBACK RAPIDO |
+| DOGE | 1g | Classic technical | CALIBRABILE | 1 | 100,00% | -0,11% | +0,11% | -0,13% | +0,04% | FEEDBACK RAPIDO |
+| SOL | 1g | Global confluence | BENCHMARK | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
+| SOL | 1g | Scanner grezzo | DIAGNOSTICO | 1 | 100,00% | -0,10% | +0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
+| SOL | 1g | Market regime grezzo | DIAGNOSTICO | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
+| SOL | 1g | Tecnico | CALIBRABILE | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
+| SOL | 1g | Frattale SOL | CALIBRABILE | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
 
 ## Come leggerlo
 
+- **CALIBRABILE** = modulo reale sul quale, con dati maturi, si può valutare una modifica di peso.
+- **DIAGNOSTICO** = resta misurato, ma è già incluso in una famiglia e il suo peso separato deve restare 0.
+- **BENCHMARK** = risultato complessivo del Global; serve per confrontare l'aggregato, non è un peso interno.
 - **Controlli** = segnali non neutrali già verificati su quell'orizzonte.
 - **Accuratezza direzione** = quante volte un segnale positivo ha avuto return positivo o un segnale negativo ha avuto return negativo.
 - **Return medio** = rendimento reale medio dell'asset su quell'orizzonte.
@@ -124,6 +130,6 @@ Regole operative:
 - Da **60 controlli**: lettura più utile.
 - Da **100+ controlli**: possibile revisione più seria dei pesi.
 
-Questo report non cambia ancora automaticamente i pesi del Global Confluence. Serve prima a capire quali moduli funzionano davvero sui vari orizzonti.
+Questo report non cambia ancora automaticamente i pesi del Global Confluence. Produce però i metadati `calibratable` e `calibration_role`, così il report di calibrazione può escludere Scanner e Market dalle proposte di peso separate.
 
 Nota tecnica: le colonne data sono forzate come testo, quindi non deve più apparire l'errore `Invalid value 'YYYY-MM-DD' for dtype 'float64'`.
