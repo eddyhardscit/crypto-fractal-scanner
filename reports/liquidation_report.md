@@ -1,7 +1,7 @@
 # Report semplice futures / liquidazioni BTC / SOL / DOGE
 
-Generato: **2026-07-10 14:20:38 CEST**  
-UTC: **2026-07-10 12:20:38 UTC**
+Generato: **2026-07-10 14:38:21 CEST**  
+UTC: **2026-07-10 12:38:21 UTC**
 
 Fonte dati: **OKX Futures pubblici**.  
 Questo report non è la vera heatmap CoinGlass. Serve a capire se il mercato futures è carico di long, short o leva.
@@ -18,9 +18,9 @@ Questo report non è la vera heatmap CoinGlass. Serve a capire se il mercato fut
 
 | Asset | Prezzo | Prezzo 24h | Funding | Open Interest | OI 24h | Long/Short |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | $64,389 | +2.63% | +0.0054% | $2.02B | -0.38% | 1.94 |
-| SOL | $79.20 | +2.02% | +0.0015% | $244.84M | -21.95% | 2.67 |
-| DOGE | $0.07423 | +2.58% | +0.0100% | $71.27M | -1.57% | 3.08 |
+| BTC | $64,413 | +2.40% | +0.0048% | $2.02B | -0.38% | 1.94 |
+| SOL | $79.20 | +1.40% | +0.0013% | $244.56M | -21.95% | 2.67 |
+| DOGE | $0.07414 | +2.32% | +0.0100% | $71.21M | -1.57% | 3.08 |
 
 ## Spiegazione rapida dei termini
 
@@ -55,9 +55,9 @@ BTC: i futures non danno una lettura chiara. Non si vede uno sbilanciamento fort
 
 | Dato | Valore | Traduzione |
 | --- | --- | --- |
-| Prezzo | $64,389 | prezzo futures/mark usato come riferimento |
-| Prezzo 24h | +2.63% | movimento dell'ultimo giorno |
-| Funding | +0.0054% | positivo = long pagano; negativo = short pagano |
+| Prezzo | $64,413 | prezzo futures/mark usato come riferimento |
+| Prezzo 24h | +2.40% | movimento dell'ultimo giorno |
+| Funding | +0.0048% | positivo = long pagano; negativo = short pagano |
 | Prossimo funding | 2026-07-10 18:00 | prossimo aggiornamento funding |
 | Open Interest stimato | $2.02B | leva aperta stimata in dollari |
 | Open Interest 24h | -0.38% | leva entrata o uscita nelle ultime 24h |
@@ -69,10 +69,10 @@ Questi NON sono la vera heatmap. Sono solo una stima semplice: se una posizione 
 
 | Leva | Long liquidato circa sotto | Short liquidato circa sopra |
 | --- | --- | --- |
-| 5x | $51,511 | $77,267 |
-| 10x | $57,950 | $70,828 |
-| 20x | $61,170 | $67,609 |
-| 50x | $63,101 | $65,677 |
+| 5x | $51,530 | $77,295 |
+| 10x | $57,971 | $70,854 |
+| 20x | $61,192 | $67,633 |
+| 50x | $63,124 | $65,701 |
 
 ### Note tecniche usate dallo score
 
@@ -102,10 +102,10 @@ SOL: i futures non danno una lettura chiara. Non si vede uno sbilanciamento fort
 | Dato | Valore | Traduzione |
 | --- | --- | --- |
 | Prezzo | $79.20 | prezzo futures/mark usato come riferimento |
-| Prezzo 24h | +2.02% | movimento dell'ultimo giorno |
-| Funding | +0.0015% | positivo = long pagano; negativo = short pagano |
+| Prezzo 24h | +1.40% | movimento dell'ultimo giorno |
+| Funding | +0.0013% | positivo = long pagano; negativo = short pagano |
 | Prossimo funding | 2026-07-10 18:00 | prossimo aggiornamento funding |
-| Open Interest stimato | $244.84M | leva aperta stimata in dollari |
+| Open Interest stimato | $244.56M | leva aperta stimata in dollari |
 | Open Interest 24h | -21.95% | leva entrata o uscita nelle ultime 24h |
 | Long/Short ratio | 2.67 | sopra 1 = più long; sotto 1 = più short |
 
@@ -148,11 +148,11 @@ DOGE: i futures sembrano più vulnerabili verso una discesa improvvisa. Non sign
 
 | Dato | Valore | Traduzione |
 | --- | --- | --- |
-| Prezzo | $0.07423 | prezzo futures/mark usato come riferimento |
-| Prezzo 24h | +2.58% | movimento dell'ultimo giorno |
+| Prezzo | $0.07414 | prezzo futures/mark usato come riferimento |
+| Prezzo 24h | +2.32% | movimento dell'ultimo giorno |
 | Funding | +0.0100% | positivo = long pagano; negativo = short pagano |
 | Prossimo funding | 2026-07-10 18:00 | prossimo aggiornamento funding |
-| Open Interest stimato | $71.27M | leva aperta stimata in dollari |
+| Open Interest stimato | $71.21M | leva aperta stimata in dollari |
 | Open Interest 24h | -1.57% | leva entrata o uscita nelle ultime 24h |
 | Long/Short ratio | 3.08 | sopra 1 = più long; sotto 1 = più short |
 
@@ -162,10 +162,10 @@ Questi NON sono la vera heatmap. Sono solo una stima semplice: se una posizione 
 
 | Leva | Long liquidato circa sotto | Short liquidato circa sopra |
 | --- | --- | --- |
-| 5x | $0.05938 | $0.08908 |
-| 10x | $0.06681 | $0.08165 |
-| 20x | $0.07052 | $0.07794 |
-| 50x | $0.07275 | $0.07571 |
+| 5x | $0.05931 | $0.08897 |
+| 10x | $0.06673 | $0.08155 |
+| 20x | $0.07043 | $0.07785 |
+| 50x | $0.07266 | $0.07562 |
 
 ### Note tecniche usate dallo score
 
