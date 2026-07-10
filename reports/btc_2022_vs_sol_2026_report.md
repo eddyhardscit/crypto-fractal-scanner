@@ -1,7 +1,7 @@
 # Frattale mirato: BTC novembre 2022 vs SOL giugno 2026
 
-Generato: **2026-07-10 02:30:32 CEST**  
-UTC: **2026-07-10 00:30:32 UTC**
+Generato: **2026-07-10 02:57:05 CEST**  
+UTC: **2026-07-10 00:57:05 UTC**
 
 Ultima candela SOL usata: **10 luglio 2026**
 

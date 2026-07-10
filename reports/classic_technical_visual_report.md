@@ -1,6 +1,6 @@
 # Classic technical visual report
 
-Generato: 2026-07-10 00:30 UTC
+Generato: 2026-07-10 00:57 UTC
 
 Questo report crea grafici visivi dei pattern tecnici principali. Serve per vedere il grafico, non per aggiungere automaticamente punteggio al Global.
 
@@ -19,9 +19,9 @@ Pattern controllati:
 
 | Asset | Prezzo | Pattern principale | Stato | Famiglia | Prezzo | Supporto | Resistenza |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 63.032 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 62.553 $ | 65.544 $ |
+| BTC | 63.018 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 62.553 $ | 65.544 $ |
 | SOL | 77,95 $ | Testa e spalle | CONFERMATO | ribassista | NEL RANGE | 76,82 $ | 83,81 $ |
-| DOGE | 0.07275 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 0.06961 $ | 0.07923 $ |
+| DOGE | 0.07279 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 0.06961 $ | 0.07923 $ |
 
 ## BTC
 
@@ -37,11 +37,11 @@ Pattern controllati:
 - Resistenza: **65.544 $**
 - Breakout 60g: **82.792 $**
 - Breakdown 60g: **57.748 $**
-- RSI14: **49.54**
+- RSI14: **49.48**
 - ATR14: **3,10%**
-- Volume ratio 20g: **0.92**
-- Rendimento 30g: **+2,25%**
-- Rendimento 90g: **-13,63%**
+- Volume ratio 20g: **0.93**
+- Rendimento 30g: **+2,23%**
+- Rendimento 90g: **-13,65%**
 
 ### Pattern trovati
 
@@ -93,11 +93,11 @@ Pattern controllati:
 - Resistenza: **0.07923 $**
 - Breakout 60g: **0.11825 $**
 - Breakdown 60g: **0.06961 $**
-- RSI14: **33.00**
+- RSI14: **33.14**
 - ATR14: **4,03%**
-- Volume ratio 20g: **0.76**
-- Rendimento 30g: **-14,20%**
-- Rendimento 90g: **-22,39%**
+- Volume ratio 20g: **0.77**
+- Rendimento 30g: **-14,15%**
+- Rendimento 90g: **-22,34%**
 
 ### Pattern trovati
 

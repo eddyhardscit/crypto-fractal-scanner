@@ -1,7 +1,7 @@
 # RSI top-cycle warning - SOL
 
-Generato: **2026-07-10 02:30:36 CEST**  
-UTC: **2026-07-10 00:30:36 UTC**
+Generato: **2026-07-10 02:57:09 CEST**  
+UTC: **2026-07-10 00:57:09 UTC**
 
 Questo report non usa l'RSI come segnale di entrata. Lo usa come filtro di esaurimento ciclo: quando RSI weekly/monthly torna vicino alla trendline alta, il rischio di top o distribuzione aumenta.
 
