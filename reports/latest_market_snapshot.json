@@ -1,40 +1,40 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-07-10T23:20:52Z",
+  "generated_at_utc": "2026-07-10T23:38:30Z",
   "source": "Yahoo Finance daily shared snapshot",
   "assets": {
     "BTC": {
       "asset": "BTC",
       "ticker": "BTC-USD",
       "candle_date_utc": "2026-07-10",
-      "price": 64082.03125,
+      "price": 64165.05078125,
       "open": 63184.80078125,
       "high": 64524.44140625,
       "low": 62913.3046875,
-      "close": 64082.03125,
-      "volume": 27309815808.0
+      "close": 64165.05078125,
+      "volume": 26963390464.0
     },
     "SOL": {
       "asset": "SOL",
       "ticker": "SOL-USD",
       "candle_date_utc": "2026-07-10",
-      "price": 77.97000122070312,
+      "price": 78.01000213623047,
       "open": 78.03601837158203,
       "high": 79.52308654785156,
       "low": 77.34200286865234,
-      "close": 77.97000122070312,
-      "volume": 2140383104.0
+      "close": 78.01000213623047,
+      "volume": 2138102912.0
     },
     "DOGE": {
       "asset": "DOGE",
       "ticker": "DOGE-USD",
       "candle_date_utc": "2026-07-10",
-      "price": 0.0740400031208992,
+      "price": 0.07406000047922134,
       "open": 0.07285591959953308,
       "high": 0.07452653348445892,
       "low": 0.07271995395421982,
-      "close": 0.0740400031208992,
-      "volume": 490004032.0
+      "close": 0.07406000047922134,
+      "volume": 489386848.0
     }
   }
 }
