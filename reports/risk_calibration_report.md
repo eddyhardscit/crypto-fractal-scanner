@@ -1,6 +1,6 @@
 # Calibrazione rischio spot / leva
 
-Generato: **2026-07-09 23:44 UTC**
+Generato: **2026-07-10 00:30 UTC**
 
 Questo report controlla se le zone di rischio previste dallo scanner vengono davvero toccate nei 30 giorni successivi.
 
@@ -22,19 +22,19 @@ Questo file **non modifica ancora il Decision Report**. Per ora salva dati e mis
 
 ## Ultima lettura rischio salvata
 
-| Asset   | Prezzo    | Direzione scanner                    | Drawdown normale    | Drawdown brutto     | Max gain normale   | Rischio spot   | Rischio leva   |
-|:--------|:----------|:-------------------------------------|:--------------------|:--------------------|:-------------------|:---------------|:---------------|
-| BTC     | 241,08 $  | Direzione più probabile a 30 giorni: | 729,59 $ / -3,97%   | 302,94 $ / -9,39%   | 810,13 $ / 16,71%  | BASSO          | MEDIO          |
-| SOL     | 78,03 $   | Direzione più probabile a 30 giorni: | 69,92 $ / -10,39%   | 59,65 $ / -23,56%   | 84,11 $ / 7,79%    | ALTO           | MOLTO ALTO     |
-| DOGE    | 0.07000 $ | Direzione più probabile a 30 giorni: | 0.05000 $ / -28,61% | 0.05000 $ / -37,60% | 0.08000 $ / 4,88%  | MOLTO ALTO     | MOLTO ALTO     |
+| Asset   | Prezzo    | Direzione scanner   | Drawdown normale    | Drawdown brutto     | Max gain normale   | Rischio spot   | Rischio leva   |
+|:--------|:----------|:--------------------|:--------------------|:--------------------|:-------------------|:---------------|:---------------|
+| BTC     | 28,51 $   |                     | 547,09 $ / -3,94%   | 110,33 $ / -9,39%   | 704,34 $ / 16,94%  | BASSO          | MEDIO          |
+| SOL     | 77,87 $   |                     | 69,78 $ / -10,39%   | 59,52 $ / -23,56%   | 83,93 $ / 7,79%    | ALTO           | MOLTO ALTO     |
+| DOGE    | 0.07000 $ |                     | 0.05000 $ / -28,61% | 0.05000 $ / -37,60% | 0.08000 $ / 4,88%  | MOLTO ALTO     | MOLTO ALTO     |
 
 ## Stato calibrazione rischio
 
 | Asset   |   Snapshot |   Controlli 30g |   In attesa | Stato         | DD normale hit   | DD brutto hit   | DD molto brutto hit   | Bias rischio   |
 |:--------|-----------:|----------------:|------------:|:--------------|:-----------------|:----------------|:----------------------|:---------------|
-| BTC     |          1 |               0 |           1 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
-| SOL     |          1 |               0 |           1 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
-| DOGE    |          1 |               0 |           1 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
+| BTC     |          2 |               0 |           2 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
+| SOL     |          2 |               0 |           2 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
+| DOGE    |          2 |               0 |           2 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
 
 ## Come leggerlo
 

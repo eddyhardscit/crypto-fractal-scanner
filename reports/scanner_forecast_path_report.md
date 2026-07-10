@@ -1,6 +1,6 @@
 # Scanner forecast path / cono probabilistico
 
-Generato: 2026-07-09 23:44 UTC
+Generato: 2026-07-10 00:30 UTC
 
 Questo report trasforma lo scanner dei 40 casi simili in un grafico a percorso.
 
@@ -15,11 +15,11 @@ Serve a vedere se il prezzo reale sta camminando dentro il percorso previsto dal
 
 ## Ultimo cono previsionale salvato
 
-| Asset   | Data       | Prezzo iniziale   | Direzione scanner   | Casi positivi   | P10 30g     | P25 30g     | P50 30g     | P75 30g     | P90 30g     |
-|:--------|:-----------|:------------------|:--------------------|:----------------|:------------|:------------|:------------|:------------|:------------|
-| BTC     | 2026-07-09 | 63.241,08 $       | SALITA              | 70,00%          | 48.800,84 $ | 62.194,84 $ | 67.598,14 $ | 77.506,76 $ | 90.909,01 $ |
-| SOL     | 2026-07-09 | 78,03 $           | INCERTO             | 42,50%          | 62,77 $     | 70,81 $     | 76,82 $     | 86,64 $     | 112,17 $    |
-| DOGE    | 2026-07-09 | 0.07000 $         | DISCESA             | 12,50%          | 0.05000 $   | 0.05000 $   | 0.06000 $   | 0.07000 $   | 0.08000 $   |
+| Asset   | Data       | Prezzo iniziale   | Direzione scanner   | Casi positivi   | P10 30g   | P25 30g   | P50 30g   | P75 30g   | P90 30g   |
+|:--------|:-----------|:------------------|:--------------------|:----------------|:----------|:----------|:----------|:----------|:----------|
+| BTC     | 2026-07-10 | 63.028,51 $       |                     | 12,50%          | n/a       | n/a       | n/a       | n/a       | n/a       |
+| SOL     | 2026-07-10 | 77,87 $           |                     | 12,50%          | n/a       | n/a       | n/a       | n/a       | n/a       |
+| DOGE    | 2026-07-10 | 0.07000 $         |                     | 12,50%          | n/a       | n/a       | n/a       | n/a       | n/a       |
 
 ## Grafici
 
@@ -39,17 +39,17 @@ Serve a vedere se il prezzo reale sta camminando dentro il percorso previsto dal
 
 | Asset   | Giorno   |   Controlli | Dentro p10-p90   | Dentro p25-p75   | Errore medio abs vs p50   | Errore medio vs p50   |
 |:--------|:---------|------------:|:-----------------|:-----------------|:--------------------------|:----------------------|
-| BTC     | 1g       |           1 | 100,00%          | 100,00%          | 0,18%                     | -0,18%                |
+| BTC     | 1g       |           2 | 100,00%          | 50,00%           | 0,36%                     | -0,36%                |
 | BTC     | 3g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | BTC     | 7g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | BTC     | 14g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | BTC     | 30g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| SOL     | 1g       |           1 | 100,00%          | 100,00%          | 0,21%                     | 0,21%                 |
+| SOL     | 1g       |           2 | 100,00%          | 100,00%          | 0,14%                     | 0,07%                 |
 | SOL     | 3g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | SOL     | 7g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | SOL     | 14g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | SOL     | 30g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| DOGE    | 1g       |           1 | 0,00%            | 0,00%            | 3,55%                     | 3,55%                 |
+| DOGE    | 1g       |           2 | 0,00%            | 0,00%            | 4,00%                     | 4,00%                 |
 | DOGE    | 3g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | DOGE    | 7g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
 | DOGE    | 14g      |           0 | n/a              | n/a              | n/a                       | n/a                   |

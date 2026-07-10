@@ -1,94 +1,95 @@
 # Calibrazione pesi Global Confluence
 
-Generato: **2026-07-09 23:44 UTC**
+Generato: 2026-07-10 00:30 UTC
 
-Questo report prepara la calibrazione futura dei pesi del Global Confluence.
+Report completo: [global_weight_calibration_report.md](global_weight_calibration_report.md)
 
-Non modifica ancora i pesi dello scanner. Per ora legge l'accuratezza dei moduli e stabilisce quando ci saranno abbastanza dati per fidarsi.
+Questo blocco controlla se, col tempo, i moduli del Global Confluence meritano più peso, meno peso o peso invariato.
 
-## Regola prudente
+Ora legge il nuovo `module_signal_tracker_metrics.csv`, quindi include anche i nuovi orizzonti **1g / 2g / 3g / 5g / 7g / 10g / 14g / 21g / 30g / 45g / 60g** e il modulo **Classic technical**.
 
-- Sotto **30** controlli: solo raccolta dati.
-- Da **30** a **59** controlli: osservazione iniziale, non applicare.
-- Da **60** a **99** controlli: suggerimento leggero.
-- Da **100+** controlli: dati sufficienti per valutare una modifica prudente dei pesi.
+Regola principale:
 
-Fonte dati letta: **module_accuracy_metrics.csv**
+- sotto **30 controlli**: osservazione, nessuna modifica pesi
+- da **30 controlli**: prima calibrazione leggera
+- da **60 controlli**: lettura utile
+- da **100+ controlli**: possibile proposta prudente di modifica pesi
 
-## Sintesi stato calibrazione pesi
+## Sintesi per asset
 
-| Asset   |   Moduli monitorati |   Controlli max |   Controlli min | Stato generale   |   Moduli con 60+ |   Moduli con 100+ | Lettura                                       |
-|:--------|--------------------:|----------------:|----------------:|:-----------------|-----------------:|------------------:|:----------------------------------------------|
-| BTC     |                   8 |               0 |               0 | RACCOLTA DATI    |                0 |                 0 | troppi pochi controlli: non modificare i pesi |
-| DOGE    |                   8 |               0 |               0 | RACCOLTA DATI    |                0 |                 0 | troppi pochi controlli: non modificare i pesi |
-| SOL     |                  10 |               0 |               0 | RACCOLTA DATI    |                0 |                 0 | troppi pochi controlli: non modificare i pesi |
+| Asset | Segnali salvati | Stato | Controlli max | Righe 30+ | Righe 60+ | Righe 100+ | Miglior modulo attuale | Orizzonte | Accuratezza | Return corretto direzione | Lettura |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BTC | 2 | FEEDBACK RAPIDO | 1 | 0 | 0 | 0 | Tecnico | 1g | 100,00% | +0,31% | feedback rapido: utile da osservare, non da pesare |
+| SOL | 2 | FEEDBACK RAPIDO | 1 | 0 | 0 | 0 | Scanner | 1g | 100,00% | +0,10% | feedback rapido: utile da osservare, non da pesare |
+| DOGE | 2 | FEEDBACK RAPIDO | 1 | 0 | 0 | 0 | Global confluence | 1g | 100,00% | +0,11% | feedback rapido: utile da osservare, non da pesare |
 
-## Dettaglio moduli
+## Raccomandazioni moduli con controlli maturati
 
-| Asset   | Modulo            | Orizzonte   |   Controlli | Accuracy   | Return medio   | Drawdown medio   | Max gain medio   | Stato         | Delta peso   | Suggerimento        |
-|:--------|:------------------|:------------|------------:|:-----------|:---------------|:-----------------|:-----------------|:--------------|:-------------|:--------------------|
-| BTC     | Global confluence | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| BTC     | Market regime     | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| BTC     | Scanner           | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| BTC     | Tecnico           | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| BTC     | Global confluence | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| BTC     | Market regime     | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| BTC     | Scanner           | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| BTC     | Tecnico           | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| SOL     | Frattale SOL      | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| SOL     | Global confluence | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| SOL     | Market regime     | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| SOL     | Scanner           | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| SOL     | Tecnico           | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| SOL     | Frattale SOL      | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| SOL     | Global confluence | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| SOL     | Market regime     | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| SOL     | Scanner           | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| SOL     | Tecnico           | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| DOGE    | Global confluence | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| DOGE    | Market regime     | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| DOGE    | Scanner           | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| DOGE    | Tecnico           | 30g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| DOGE    | Global confluence | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| DOGE    | Market regime     | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| DOGE    | Scanner           | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
-| DOGE    | Tecnico           | 60g         |           0 | n/a        | n/a            | n/a              | n/a              | RACCOLTA DATI | 0,00         | nessun suggerimento |
+| Asset | Orizzonte | Famiglia | Modulo | Controlli | Accuratezza | Return corretto direzione | Return medio | Drawdown medio | Max gain medio | Raccomandazione | Δ peso suggerito | Confidenza |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BTC | 1g | BREVE | Global confluence | 1 | 0,00% | -0,31% | -0,31% | -0,34% | -0,08% | OSSERVA | 0,0 | BASSA |
+| BTC | 1g | BREVE | Scanner | 1 | 0,00% | -0,31% | -0,31% | -0,34% | -0,08% | OSSERVA | 0,0 | BASSA |
+| BTC | 1g | BREVE | Market regime | 1 | 0,00% | -0,31% | -0,31% | -0,34% | -0,08% | OSSERVA | 0,0 | BASSA |
+| BTC | 1g | BREVE | Tecnico | 1 | 100,00% | +0,31% | -0,31% | -0,34% | -0,08% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Global confluence | 1 | 100,00% | +0,11% | -0,11% | -0,13% | +0,04% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Scanner | 1 | 100,00% | +0,11% | -0,11% | -0,13% | +0,04% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Market regime | 1 | 100,00% | +0,11% | -0,11% | -0,13% | +0,04% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Tecnico | 1 | 100,00% | +0,11% | -0,11% | -0,13% | +0,04% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Classic technical | 1 | 100,00% | +0,11% | -0,11% | -0,13% | +0,04% | OSSERVA | 0,0 | BASSA |
+| SOL | 1g | BREVE | Global confluence | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | OSSERVA | 0,0 | BASSA |
+| SOL | 1g | BREVE | Scanner | 1 | 100,00% | +0,10% | -0,10% | -0,21% | +0,02% | OSSERVA | 0,0 | BASSA |
+| SOL | 1g | BREVE | Market regime | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | OSSERVA | 0,0 | BASSA |
+| SOL | 1g | BREVE | Tecnico | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | OSSERVA | 0,0 | BASSA |
+| SOL | 1g | BREVE | Frattale SOL | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | OSSERVA | 0,0 | BASSA |
 
-## Pesi / score attuali letti dal Global Confluence
+## Sintesi per famiglia temporale
 
-Questa tabella mostra gli score attuali. La calibrazione qui sotto non li modifica ancora.
+| Asset | Famiglia | Modulo | Controlli totali | Accuratezza media | Return corretto direzione |
+| --- | --- | --- | --- | --- | --- |
+| BTC | BREVE | Global confluence | 1 | 0,00% | -0,31% |
+| BTC | BREVE | Scanner | 1 | 0,00% | -0,31% |
+| BTC | BREVE | Market regime | 1 | 0,00% | -0,31% |
+| BTC | BREVE | Tecnico | 1 | 100,00% | +0,31% |
+| DOGE | BREVE | Global confluence | 1 | 100,00% | +0,11% |
+| DOGE | BREVE | Scanner | 1 | 100,00% | +0,11% |
+| DOGE | BREVE | Market regime | 1 | 100,00% | +0,11% |
+| DOGE | BREVE | Tecnico | 1 | 100,00% | +0,11% |
+| DOGE | BREVE | Classic technical | 1 | 100,00% | +0,11% |
+| SOL | BREVE | Global confluence | 1 | 0,00% | -0,10% |
+| SOL | BREVE | Scanner | 1 | 100,00% | +0,10% |
+| SOL | BREVE | Market regime | 1 | 0,00% | -0,10% |
+| SOL | BREVE | Tecnico | 1 | 0,00% | -0,10% |
+| SOL | BREVE | Frattale SOL | 1 | 0,00% | -0,10% |
 
-| Asset   | Modulo       | Score attuale   |
-|:--------|:-------------|:----------------|
-| BTC     | Daily change | +1,00           |
-| BTC     | Fractal path | 0,00            |
-| BTC     | Futures      | 0,00            |
-| BTC     | Scanner      | +3,00           |
-| BTC     | Scanner path | 0,00            |
-| BTC     | Totale       | +6,00           |
-| SOL     | Daily change | 0,00            |
-| SOL     | Fractal path | 0,00            |
-| SOL     | Futures      | 0,00            |
-| SOL     | Scanner      | -1,00           |
-| SOL     | Scanner path | 0,00            |
-| SOL     | Totale       | +4,00           |
-| DOGE    | Daily change | 0,00            |
-| DOGE    | Fractal path | 0,00            |
-| DOGE    | Futures      | 0,00            |
-| DOGE    | Scanner      | -3,00           |
-| DOGE    | Scanner path | 0,00            |
-| DOGE    | Totale       | -10,00          |
+## Aree ancora in attesa
 
-## Lettura operativa
+| Asset | Famiglia | Righe senza controlli | Stato |
+| --- | --- | --- | --- |
+| BTC | BREVE | 14 | in attesa di controlli maturati |
+| BTC | SETTIMANALE | 18 | in attesa di controlli maturati |
+| BTC | SWING | 12 | in attesa di controlli maturati |
+| BTC | MEDIO | 18 | in attesa di controlli maturati |
+| DOGE | BREVE | 13 | in attesa di controlli maturati |
+| DOGE | SETTIMANALE | 18 | in attesa di controlli maturati |
+| DOGE | SWING | 12 | in attesa di controlli maturati |
+| DOGE | MEDIO | 18 | in attesa di controlli maturati |
+| SOL | BREVE | 13 | in attesa di controlli maturati |
+| SOL | SETTIMANALE | 18 | in attesa di controlli maturati |
+| SOL | SWING | 12 | in attesa di controlli maturati |
+| SOL | MEDIO | 18 | in attesa di controlli maturati |
 
-- Stato attuale: **RACCOLTA DATI**.
-- Nessun modulo ha ancora abbastanza controlli per suggerire modifiche ai pesi.
-- Il Global Confluence deve continuare a usare i pesi attuali.
+## Come leggere le raccomandazioni
 
-## Regola anti-autoinganno
+- **OSSERVA**: ci sono pochi controlli, quindi il dato è rumore utile solo da monitorare.
+- **PESO OK**: il modulo sta aiutando, ma non abbastanza da aumentare peso.
+- **MANTIENI / OSSERVA**: risultato vicino al neutro.
+- **NON AUMENTARE**: il modulo non sta ancora dimostrando abbastanza utilità.
+- **POSSIBILE AUMENTO LEGGERO**: modulo buono, ma la modifica resta prudente.
+- **POSSIBILE RIDUZIONE PESO**: modulo debole su quell’orizzonte, da ridurre solo con dati maturi.
 
-- Non aumentare il peso di un modulo solo perché ha funzionato per pochi giorni.
-- Non ridurre il peso di un modulo solo per una piccola serie negativa.
-- La modifica dei pesi deve partire solo quando ci sono abbastanza controlli e quando 30g e 60g non si contraddicono troppo.
-- Questo report serve a evitare che il modello si auto-saboti con pochi dati.
+Nota importante: questo file **non modifica automaticamente** `global_confluence_report.py`.
+Produce solo una raccomandazione leggibile. La modifica reale dei pesi va fatta a mano, dopo abbastanza dati.
 
+## Stato attuale
+
+Ci sono già alcuni controlli brevi, ma siamo ancora in feedback rapido. Non bisogna modificare pesi del Global.

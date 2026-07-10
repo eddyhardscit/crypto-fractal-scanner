@@ -1,7 +1,7 @@
 # RSI top-cycle warning - SOL
 
-Generato: **2026-07-10 01:43:54 CEST**  
-UTC: **2026-07-09 23:43:54 UTC**
+Generato: **2026-07-10 02:30:36 CEST**  
+UTC: **2026-07-10 00:30:36 UTC**
 
 Questo report non usa l'RSI come segnale di entrata. Lo usa come filtro di esaurimento ciclo: quando RSI weekly/monthly torna vicino alla trendline alta, il rischio di top o distribuzione aumenta.
 
@@ -9,15 +9,15 @@ Questo report non usa l'RSI come segnale di entrata. Lo usa come filtro di esaur
 
 | Voce | RSI attuale | Top-line RSI stimata | Distanza | Stato | Qualita linea |
 | --- | --- | --- | --- | --- | --- |
-| Weekly RSI | 40,60 | 56,32 | 15,72 | LONTANO DALLA TOP-LINE | normale |
-| Monthly RSI | 41,40 | 48,69 | 7,29 | IN AVVICINAMENTO | troppo ripida per proiezione 2029 |
+| Weekly RSI | 40,58 | 56,32 | 15,74 | LONTANO DALLA TOP-LINE | normale |
+| Monthly RSI | 41,39 | 48,69 | 7,30 | IN AVVICINAMENTO | troppo ripida per proiezione 2029 |
 
 ## Confluenza con target ciclo SOL
 
 | Voce | Valore |
 | --- | --- |
-| Prezzo SOL attuale | 77,99 $ |
-| Target ciclo base | 577,49 $ |
+| Prezzo SOL attuale | 77,95 $ |
+| Target ciclo base | 577,20 $ |
 | Avanzamento verso target base | +13,50% |
 | Fase prezzo | inizio ciclo / lontano dal target macro |
 | Rischio top-cycle RSI | BASSO |
@@ -36,8 +36,8 @@ Questo report non usa l'RSI come segnale di entrata. Lo usa come filtro di esaur
 
 | Periodo | Ancora 1 data | Ancora 1 RSI | Prezzo ancora 1 | Ancora 2 data | Ancora 2 RSI | Prezzo ancora 2 | Top-line RSI alla data ciclo | Qualita linea |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Weekly | 2023-12-24 | 87,36 | 112,49 $ | 2025-09-14 | 66,36 | 240,56 $ | 22,51 | normale |
-| Monthly | 2024-03-31 | 79,35 | 202,87 $ | 2025-09-30 | 59,63 | 208,74 $ | 12,89 | troppo ripida per proiezione 2029 |
+| Weekly | 2023-12-24 | 87,36 | 112,49 $ | 2025-09-14 | 66,36 | 240,56 $ | 22,48 | normale |
+| Monthly | 2024-03-31 | 79,35 | 202,87 $ | 2025-09-30 | 59,63 | 208,74 $ | 12,85 | troppo ripida per proiezione 2029 |
 
 Nota: la trendline RSI e stimata automaticamente sui pivot alti recenti dell'RSI, da 2023 in poi. Non e una certezza matematica; serve come filtro visivo e operativo.
 
