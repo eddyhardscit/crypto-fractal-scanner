@@ -1,0 +1,49 @@
+name: Apply Three Final Corrections Once
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-corrections:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply three final corrections
+        run: python apply_three_final_corrections.py
+
+      - name: Compile corrected files
+        run: |
+          python -m py_compile \
+            scanner_forecast_tracker.py \
+            price_coherence_sync.py \
+            classic_technical_visual_report.py \
+            data_quality_coherence_report.py
+
+      - name: Commit corrected files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            scanner_forecast_tracker.py \
+            price_coherence_sync.py \
+            classic_technical_visual_report.py \
+            data_quality_coherence_report.py
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da committare: correzioni già presenti."
+          else
+            git commit -m "Fix shared forecast price, Classic score table and Fibonacci label"
+            git push
+          fi
