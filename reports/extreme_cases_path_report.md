@@ -1,6 +1,6 @@
 # Extreme cases path report
 
-Generato: 2026-07-10 04:16 UTC
+Generato: 2026-07-10 04:34 UTC
 
 Questo report si attiva quando i casi positivi o negativi sono almeno **80%**.
 
@@ -71,26 +71,26 @@ La sigla `g7` sopra una barra significa che il massimo rialzo è avvenuto al gio
 
 | Asset storico   | End        | Similarity   | Spike prima del minimo   |   Giorno spike | Minimo 30g   |   Giorno minimo | Dump dal picco   | Return 30g   | Sequenza                      |
 |:----------------|:-----------|:-------------|:-------------------------|---------------:|:-------------|----------------:|:-----------------|:-------------|:------------------------------|
-| WAVES-USD       | 2022-05-30 | +83,42%      | +28,83%                  |              4 | -42,96%      |              17 | -55,72%          | -29,04%      | SPIKE PRIMA DEL DUMP          |
+| WAVES-USD       | 2022-05-30 | +83,41%      | +28,83%                  |              4 | -42,96%      |              17 | -55,72%          | -29,04%      | SPIKE PRIMA DEL DUMP          |
 | LINK-USD        | 2022-05-30 | +84,16%      | +24,39%                  |             10 | -21,06%      |              14 | -36,54%          | -16,73%      | SPIKE PRIMA DEL DUMP          |
 | OP-USD          | 2026-03-11 | +85,08%      | +14,28%                  |              5 | -15,36%      |              18 | -25,94%          | -4,42%       | SPIKE PRIMA DEL DUMP          |
-| AVAX-USD        | 2025-11-21 | +85,86%      | +12,94%                  |              6 | -14,04%      |              27 | -23,89%          | -8,75%       | SPIKE PRIMA DEL DUMP          |
-| ADA-USD         | 2022-05-30 | +85,22%      | +12,55%                  |              9 | -19,98%      |              19 | -28,90%          | -18,34%      | SPIKE PRIMA DEL DUMP          |
-| LTC-USD         | 2022-05-28 | +84,23%      | +10,92%                  |              2 | -30,51%      |              16 | -37,36%          | -10,25%      | SPIKE PRIMA DEL DUMP          |
-| BTC-USD         | 2022-05-28 | +83,58%      | +10,33%                  |              3 | -34,00%      |              21 | -40,18%          | -28,04%      | SPIKE PRIMA DEL DUMP          |
+| AVAX-USD        | 2025-11-21 | +85,89%      | +12,94%                  |              6 | -14,04%      |              27 | -23,89%          | -8,75%       | SPIKE PRIMA DEL DUMP          |
+| ADA-USD         | 2022-05-30 | +85,21%      | +12,55%                  |              9 | -19,98%      |              19 | -28,90%          | -18,34%      | SPIKE PRIMA DEL DUMP          |
+| LTC-USD         | 2022-05-28 | +84,24%      | +10,92%                  |              2 | -30,51%      |              16 | -37,36%          | -10,25%      | SPIKE PRIMA DEL DUMP          |
+| BTC-USD         | 2022-05-28 | +83,59%      | +10,33%                  |              3 | -34,00%      |              21 | -40,18%          | -28,04%      | SPIKE PRIMA DEL DUMP          |
 | BAT-USD         | 2018-12-27 | +84,84%      | +10,32%                  |             13 | -6,08%       |              17 | -14,87%          | -1,76%       | PERCORSO RIBASSISTA MISTO     |
-| ICP-USD         | 2023-06-22 | +83,79%      | +7,92%                   |             11 | -2,60%       |              17 | -9,75%           | -0,40%       | PERCORSO RIBASSISTA MISTO     |
-| DOT-USD         | 2023-09-22 | +83,50%      | +6,01%                   |              9 | -9,22%       |              27 | -14,37%          | -1,36%       | PERCORSO RIBASSISTA MISTO     |
-| CHZ-USD         | 2022-06-03 | +86,18%      | +5,97%                   |              3 | -28,71%      |              15 | -32,73%          | -19,17%      | RIALZO MODESTO PRIMA DEL DUMP |
-| ZEC-USD         | 2019-08-24 | +87,23%      | +5,15%                   |             25 | -11,71%      |              30 | -16,03%          | -11,71%      | RIALZO MODESTO PRIMA DEL DUMP |
+| ICP-USD         | 2023-06-22 | +83,78%      | +7,92%                   |             11 | -2,60%       |              17 | -9,75%           | -0,40%       | PERCORSO RIBASSISTA MISTO     |
+| DOT-USD         | 2023-09-22 | +83,51%      | +6,01%                   |              9 | -9,22%       |              27 | -14,37%          | -1,36%       | PERCORSO RIBASSISTA MISTO     |
+| CHZ-USD         | 2022-06-03 | +86,17%      | +5,97%                   |              3 | -28,71%      |              15 | -32,73%          | -19,17%      | RIALZO MODESTO PRIMA DEL DUMP |
+| ZEC-USD         | 2019-08-24 | +87,24%      | +5,15%                   |             25 | -11,71%      |              30 | -16,03%          | -11,71%      | RIALZO MODESTO PRIMA DEL DUMP |
 | ENJ-USD         | 2022-06-04 | +85,77%      | +5,00%                   |              2 | -33,46%      |              14 | -36,63%          | -16,55%      | RIALZO MODESTO PRIMA DEL DUMP |
-| XLM-USD         | 2022-05-30 | +84,29%      | +4,76%                   |              1 | -25,70%      |              14 | -29,08%          | -23,40%      | RIALZO MODESTO PRIMA DEL DUMP |
-| VET-USD         | 2022-06-01 | +87,42%      | +4,39%                   |              8 | -29,00%      |              17 | -31,99%          | -27,52%      | RIALZO MODESTO PRIMA DEL DUMP |
-| XTZ-USD         | 2026-03-15 | +86,04%      | +4,26%                   |              5 | -12,14%      |              14 | -15,73%          | -10,41%      | RIALZO MODESTO PRIMA DEL DUMP |
+| XLM-USD         | 2022-05-30 | +84,28%      | +4,76%                   |              1 | -25,70%      |              14 | -29,08%          | -23,40%      | RIALZO MODESTO PRIMA DEL DUMP |
+| VET-USD         | 2022-06-01 | +87,41%      | +4,39%                   |              8 | -29,00%      |              17 | -31,99%          | -27,52%      | RIALZO MODESTO PRIMA DEL DUMP |
+| XTZ-USD         | 2026-03-15 | +86,02%      | +4,26%                   |              5 | -12,14%      |              14 | -15,73%          | -10,41%      | RIALZO MODESTO PRIMA DEL DUMP |
 | BCH-USD         | 2022-05-30 | +85,31%      | +3,48%                   |              1 | -47,58%      |              29 | -49,34%          | -46,95%      | RIALZO MODESTO PRIMA DEL DUMP |
-| NEO-USD         | 2022-05-30 | +85,25%      | +3,34%                   |              7 | -27,65%      |              19 | -29,99%          | -26,97%      | RIALZO MODESTO PRIMA DEL DUMP |
-| INJ-USD         | 2022-06-01 | +85,18%      | +3,20%                   |              1 | -42,93%      |              30 | -44,70%          | -42,93%      | RIALZO MODESTO PRIMA DEL DUMP |
-| ETH-USD         | 2022-06-04 | +85,30%      | +3,20%                   |              2 | -44,85%      |              14 | -46,56%          | -36,11%      | RIALZO MODESTO PRIMA DEL DUMP |
+| NEO-USD         | 2022-05-30 | +85,24%      | +3,34%                   |              7 | -27,65%      |              19 | -29,99%          | -26,97%      | RIALZO MODESTO PRIMA DEL DUMP |
+| INJ-USD         | 2022-06-01 | +85,19%      | +3,20%                   |              1 | -42,93%      |              30 | -44,70%          | -42,93%      | RIALZO MODESTO PRIMA DEL DUMP |
+| ETH-USD         | 2022-06-04 | +85,31%      | +3,20%                   |              2 | -44,85%      |              14 | -46,56%          | -36,11%      | RIALZO MODESTO PRIMA DEL DUMP |
 
 ## Come leggerlo
 
