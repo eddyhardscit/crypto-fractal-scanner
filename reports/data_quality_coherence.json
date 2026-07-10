@@ -1,57 +1,36 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-07-10 13:12 UTC",
-  "overall_status": "WARN",
+  "generated_at_utc": "2026-07-10 13:27 UTC",
+  "overall_status": "OK",
   "critical_issues": [],
-  "warnings": [
-    "Il report contiene ancora caratteri corrotti: verificare sorgente e scrittura UTF-8."
-  ],
+  "warnings": [],
   "snapshot_available": true,
   "scanner_summary_available": true,
   "price_checks": [
     {
       "asset": "BTC",
       "status": "OK",
-      "scanner_price": 64250.28125,
-      "snapshot_price": 64250.28125,
+      "scanner_price": 64201.12890625,
+      "snapshot_price": 64201.12890625,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "SOL",
       "status": "OK",
-      "scanner_price": 78.87000274658203,
-      "snapshot_price": 78.87000274658203,
+      "scanner_price": 78.91000366210938,
+      "snapshot_price": 78.91000366210938,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "DOGE",
       "status": "OK",
-      "scanner_price": 0.0739699974656105,
-      "snapshot_price": 0.0739699974656105,
-      "difference_pct": 0.0,
+      "scanner_price": 0.0740199983119964,
+      "snapshot_price": 0.07401999831199646,
+      "difference_pct": -7.771561172376096e-14,
       "message": "Prezzi coerenti."
     }
   ],
-  "mojibake": [
-    {
-      "token": "Ã",
-      "count": 8,
-      "examples": [
-        {
-          "line": 9,
-          "text": "Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal Global Confluence; long, short e rischio restano filtri separati e piÃ¹ prudenti."
-        },
-        {
-          "line": 67,
-          "text": "- **Zona alta storica** = zona dove non inseguire troppo; puÃ² essere zona da prendere profitto."
-        },
-        {
-          "line": 68,
-          "text": "- **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lÃ¬ vicino."
-        }
-      ]
-    }
-  ]
+  "mojibake": []
 }

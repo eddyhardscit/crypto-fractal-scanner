@@ -1,10 +1,10 @@
 # Decisione operativa sintetica
 
-Generato: 2026-07-10 13:12 UTC
+Generato: 2026-07-10 13:27 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 
-Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal Global Confluence; long, short e rischio restano filtri separati e piÃ¹ prudenti.
+Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal Global Confluence; long, short e rischio restano filtri separati e più prudenti.
 
 | Asset | Global | Direzione | Spot | Long leva | Short leva | Max long | Max short | Rischio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -43,8 +43,8 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - Long leva: **NO LONG A LEVA**
 - Short leva: **NO SHORT**
 - Rischio: **MOLTO ALTO**
-- Conferme: Conferma tecnica sopra 83,81; milestone analogiche 82,75 / 116,18, che non valgono come conferma operativa senza rientro del gap.
-- Invalidazioni: Allarmi sotto 74,87 / 64,42 / 62,19.
+- Conferme: Conferma tecnica sopra 83,81; milestone analogiche 82,79 / 116,24, che non valgono come conferma operativa senza rientro del gap.
+- Invalidazioni: Allarmi sotto 74,91 / 64,42 / 62,19.
 
 ### DOGE
 
@@ -62,9 +62,9 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 ## Nota semplice
 
 - **Spot** = usa la stessa azione del Global Confluence, senza una seconda mappatura che possa produrre frasi diverse.
-- **Zona alta storica** = zona dove non inseguire troppo; puÃ² essere zona da prendere profitto.
-- **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lÃ¬ vicino.
-- **BTC leva** = nessun long a leva finchÃ© il prezzo snapshot non supera **67.248 $**; sotto quella soglia resta solo l'azione spot indicata dal Global.
-- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 5; EMA200 circa 113,52 $; upside verso EMA200 +44,06%. Non autorizza leva e non aggiunge punti automatici.
-- **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro Ã¨ bearish o se lo spike viene spesso scaricato.
-- Per SOL, se il Global Ã¨ da **+3 in su**, la decisione non deve diventare bearish solo perchÃ© lo scanner grezzo a 30 giorni Ã¨ incerto.
+- **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.
+- **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.
+- **BTC leva** = nessun long a leva finché il prezzo snapshot non supera **67.248 $**; sotto quella soglia resta solo l'azione spot indicata dal Global.
+- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 5; EMA200 circa 113,52 $; upside verso EMA200 +43,99%. Non autorizza leva e non aggiunge punti automatici.
+- **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.
+- Per SOL, se il Global è da **+3 in su**, la decisione non deve diventare bearish solo perché lo scanner grezzo a 30 giorni è incerto.
