@@ -823,9 +823,9 @@ def build_key_levels(sol_current_price, sol_anchor_price, projections):
     highs_60 = [x for x in highs_60 if x is not None]
     lows_30 = [x for x in lows_30 if x is not None]
 
-    # Prima conferma piÃ¹ vicina e pratica: almeno +5% o massimo del primo tratto breve.
+    # Milestone analogica breve (prima conferma) piÃ¹ vicina e pratica: almeno +5% o massimo del primo tratto breve.
     confirm_1 = max([sol_current_price * 1.05] + highs_14)
-    # Seconda conferma: rottura piÃ¹ importante del percorso 30/60g.
+    # Milestone analogica estesa (seconda conferma): rottura piÃ¹ importante del percorso 30/60g.
     confirm_2 = max([sol_current_price * 1.12] + highs_30 + highs_60)
     projected_low_30 = min(lows_30) if lows_30 else sol_current_price * 0.98
     soft_invalid = min(projected_low_30, sol_current_price * 0.95)
@@ -876,7 +876,7 @@ def current_phase(sol_current_price, key_levels, verdict):
     if soft_invalid is not None and price <= soft_invalid:
         return {"label": "SOTTO PRESSIONE", "text": "Il setup si indebolisce e richiede recupero.", "risk": "ALTO"}
     if confirm_1 is not None and price < confirm_1:
-        return {"label": "FASE ANTICIPATA", "text": "Prima conferma non ancora superata.", "risk": "MEDIO / ALTO"}
+        return {"label": "FASE ANTICIPATA", "text": "Milestone analogica breve (prima conferma) non ancora superata.", "risk": "MEDIO / ALTO"}
     if confirm_2 is not None and price < confirm_2:
         return {"label": "CONFERMA INIZIALE", "text": "Il prezzo ha iniziato a confermare, ma manca la rottura principale.", "risk": "MEDIO"}
     return {
@@ -903,8 +903,8 @@ def build_operational_plan(sol_current_price, key_levels, verdict, phase, split_
             ["Uso operativo", "NO", "Il frattale vale 0 punti operativi finchÃ© il prezzo resta non aderente."],
             ["Aderenza live", fmt_pct(live_adherence), f"Errore medio live {fmt_pct(live_avg_gap)}."],
             ["Gap corrente", fmt_pct(phase_gap_pct), f"Deve rientrare circa entro Â±{GAP_REENTRY_THRESHOLD:.0f}%."],
-            ["Prima conferma prezzo", fmt_price(confirm_1), "Serve anche miglioramento del gap, non solo una candela sopra il livello."],
-            ["Seconda conferma", fmt_price(confirm_2), "Rende piÃ¹ credibile il percorso, ma non sostituisce l'aderenza."],
+            ["Milestone analogica breve (prima conferma)", fmt_price(confirm_1), "Serve anche miglioramento del gap, non solo una candela sopra il livello."],
+            ["Milestone analogica estesa (seconda conferma)", fmt_price(confirm_2), "Rende piÃ¹ credibile il percorso, ma non sostituisce l'aderenza."],
             ["Invalidazione soft", fmt_price(soft_invalid), "Sotto questa zona il quadro peggiora."],
             ["Invalidazione forte", fmt_price(hard_invalid), "Sotto il bottom il paragone Ã¨ quasi rotto."],
         ]
@@ -915,7 +915,7 @@ def build_operational_plan(sol_current_price, key_levels, verdict, phase, split_
         rows = [
             ["Spot anticipato", "SI, ma a tranche", "Forma e prezzo sono abbastanza aderenti."],
             ["Aggiunta", fmt_price(confirm_1), "Solo se rompe e tiene il livello."],
-            ["Seconda conferma", fmt_price(confirm_2), "Scenario piÃ¹ credibile."],
+            ["Milestone analogica estesa (seconda conferma)", fmt_price(confirm_2), "Scenario piÃ¹ credibile."],
             ["Invalidazione soft", fmt_price(soft_invalid), "Sotto questa zona il setup si indebolisce."],
             ["Invalidazione forte", fmt_price(hard_invalid), "Sotto questa zona il frattale Ã¨ quasi rotto."],
         ]
@@ -1240,8 +1240,8 @@ def generate_projection_chart(sol_path, projection_daily, key_levels, verdict):
         if current_price is not None:
             ax.scatter([current_date], [current_price], s=55, zorder=5)
         for label, value in [
-            ("Prima conferma", key_levels.get("confirm_1")),
-            ("Seconda conferma", key_levels.get("confirm_2")),
+            ("Milestone analogica breve (prima conferma)", key_levels.get("confirm_1")),
+            ("Milestone analogica estesa (seconda conferma)", key_levels.get("confirm_2")),
             ("Invalidazione soft", key_levels.get("soft_invalid")),
             ("Invalidazione forte", key_levels.get("hard_invalid")),
         ]:
@@ -1411,8 +1411,8 @@ def build_verdict_block(verdict, structural, split_alignment, key_levels, phase,
             ["Livello", "Prezzo / soglia", "Significato"],
             [
                 ["Rientro gap", f"entro Â±{key_levels.get('gap_reentry_threshold', GAP_REENTRY_THRESHOLD):.0f}%", "Condizione necessaria per tornare operativo."],
-                ["Prima conferma prezzo", fmt_price(key_levels.get("confirm_1")), "Rottura iniziale, da accompagnare al rientro del gap."],
-                ["Seconda conferma", fmt_price(key_levels.get("confirm_2")), "Scenario piÃ¹ credibile."],
+                ["Milestone analogica breve (prima conferma)", fmt_price(key_levels.get("confirm_1")), "Rottura iniziale, da accompagnare al rientro del gap."],
+                ["Milestone analogica estesa (seconda conferma)", fmt_price(key_levels.get("confirm_2")), "Scenario piÃ¹ credibile."],
                 ["Invalidazione soft", fmt_price(key_levels.get("soft_invalid")), "Il setup si indebolisce."],
                 ["Invalidazione forte", fmt_price(key_levels.get("hard_invalid")), "Il paragone Ã¨ quasi rotto."],
             ],
@@ -1684,8 +1684,8 @@ def build_main_report_block(
                 ["Livello", "Prezzo / soglia", "Lettura"],
                 [
                     ["Rientro gap", f"entro Â±{GAP_REENTRY_THRESHOLD:.0f}%", "Condizione necessaria per tornare operativo."],
-                    ["Prima conferma", fmt_price(key_levels.get("confirm_1")), "Deve accompagnarsi al rientro del gap."],
-                    ["Seconda conferma", fmt_price(key_levels.get("confirm_2")), "Scenario piÃ¹ credibile."],
+                    ["Milestone analogica breve (prima conferma)", fmt_price(key_levels.get("confirm_1")), "Deve accompagnarsi al rientro del gap."],
+                    ["Milestone analogica estesa (seconda conferma)", fmt_price(key_levels.get("confirm_2")), "Scenario piÃ¹ credibile."],
                     ["Invalidazione soft", fmt_price(key_levels.get("soft_invalid")), "Il frattale si indebolisce."],
                     ["Invalidazione forte", fmt_price(key_levels.get("hard_invalid")), "Il paragone si rompe."],
                 ],
