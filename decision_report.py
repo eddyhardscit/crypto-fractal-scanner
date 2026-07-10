@@ -13,6 +13,7 @@ METRICS_CSV_PATH = REPORTS_DIR / "decision_report_metrics.csv"
 GLOBAL_CONFLUENCE_METRICS_PATH = REPORTS_DIR / "global_confluence_metrics.csv"
 RISK_CALIBRATION_METRICS_PATH = REPORTS_DIR / "risk_calibration_metrics.csv"
 MARKET_SNAPSHOT_CSV_PATH = REPORTS_DIR / "latest_market_snapshot.csv"
+
 BTC_LONG_CONFIRMATION_PRICE = 67248.0
 
 START_MARKER = "<!-- DECISION_REPORT_START -->"
@@ -21,7 +22,7 @@ END_MARKER = "<!-- DECISION_REPORT_END -->"
 ASSETS = ["BTC", "SOL", "DOGE"]
 
 
-def now_utc_str():
+def now_utc_str() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
 
@@ -40,24 +41,24 @@ def clean_cell(value) -> str:
     if value is None:
         return ""
 
-    s = str(value).strip()
-    s = s.replace("**", "")
-    s = s.replace("`", "")
-    s = s.replace("\xa0", " ")
-    s = re.sub(r"\s+", " ", s)
-    return s.strip()
+    text = str(value).strip()
+    text = text.replace("**", "")
+    text = text.replace("`", "")
+    text = text.replace("\xa0", " ")
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
 
 
 def parse_number(value, default=None):
     if value is None:
         return default
 
-    s = str(value).strip()
+    text = str(value).strip()
 
-    if not s or s.lower() in {"n/a", "nan", "none", "null", "-"}:
+    if not text or text.lower() in {"n/a", "nan", "none", "null", "-"}:
         return default
 
-    match = re.search(r"[-+]?\d[\d\s.,]*", s)
+    match = re.search(r"[-+]?\d[\d\s.,]*", text)
     if not match:
         return default
 
@@ -77,20 +78,24 @@ def parse_number(value, default=None):
 
     try:
         return float(token)
-    except Exception:
+    except (TypeError, ValueError):
         return default
 
 
-def fmt_score(value):
+def fmt_score(value) -> str:
     try:
-        value = int(value)
-    except Exception:
-        value = 0
+        number = int(value)
+    except (TypeError, ValueError):
+        number = 0
 
-    if value > 0:
-        return f"+{value}"
+    if number > 0:
+        return f"+{number}"
 
-    return str(value)
+    return str(number)
+
+
+def fmt_btc_level(value: float) -> str:
+    return f"{value:,.0f}".replace(",", ".")
 
 
 def split_md_row(line: str):
@@ -99,12 +104,13 @@ def split_md_row(line: str):
     if not line.startswith("|") or not line.endswith("|"):
         return None
 
-    cells = [clean_cell(c) for c in line.strip("|").split("|")]
+    cells = [clean_cell(cell) for cell in line.strip("|").split("|")]
 
     if not cells:
         return None
 
-    if all(set(c.replace(":", "").strip()) <= {"-"} for c in cells if c.strip()):
+    non_empty = [cell for cell in cells if cell.strip()]
+    if non_empty and all(set(cell.replace(":", "").strip()) <= {"-"} for cell in non_empty):
         return None
 
     return cells
@@ -120,7 +126,6 @@ def extract_marker_block(text: str, marker_name: str) -> str:
     )
 
     match = pattern.search(text)
-
     if not match:
         return ""
 
@@ -145,39 +150,65 @@ def read_csv_rows(path: Path):
         return []
 
     try:
-        with path.open("r", encoding="utf-8", newline="") as f:
-            return list(csv.DictReader(f))
+        with path.open("r", encoding="utf-8", newline="") as file:
+            return list(csv.DictReader(file))
     except Exception:
         return []
 
 
 def read_snapshot_prices():
-    # Legge i prezzi coerenti creati da market_snapshot.py.
     rows = read_csv_rows(MARKET_SNAPSHOT_CSV_PATH)
-    out = {}
+    prices = {}
+
     for row in rows:
         asset = clean_cell(row.get("asset") or row.get("Asset")).upper()
         if asset not in ASSETS:
             continue
+
         price = parse_number(
             row.get("price")
             or row.get("close")
             or row.get("current_price"),
             None,
         )
+
         if price is not None:
-            out[asset] = float(price)
-    return out
+            prices[asset] = float(price)
+
+    return prices
+
+
+def empty_global_row(asset: str) -> dict:
+    return {
+        "asset": asset,
+        "score": 0,
+        "confluence": "",
+        "bias": "",
+        "reliability": "",
+        "action": "",
+        "confirmations": "",
+        "invalidations": "",
+        "scanner_score": 0,
+        "market_score": 0,
+        "technical_score_component": 0,
+        "sol_fractal_score": 0,
+        "fractal_path_score": 0,
+        "rsi_score": 0,
+        "lifecycle_score_component": 0,
+        "lifecycle_raw_score": None,
+        "lifecycle_ema200": None,
+        "lifecycle_upside": None,
+        "futures_score": 0,
+        "daily_change_score": 0,
+    }
 
 
 def read_global_from_csv():
     rows = read_csv_rows(GLOBAL_CONFLUENCE_METRICS_PATH)
-
-    out = {}
+    output = {}
 
     for row in rows:
         asset = clean_cell(row.get("asset") or row.get("Asset")).upper()
-
         if asset not in ASSETS:
             continue
 
@@ -189,47 +220,77 @@ def read_global_from_csv():
             0,
         )
 
-        out[asset] = {
-            "asset": asset,
-            "score": int(score or 0),
-            "confluence": clean_cell(row.get("confluence") or row.get("Confluenza")),
-            "bias": clean_cell(row.get("bias") or row.get("Bias")),
-            "reliability": clean_cell(row.get("reliability") or row.get("Affidabilità")),
-            "action": clean_cell(row.get("action") or row.get("Azione coerente")),
-            "confirmations": clean_cell(row.get("confirmations") or row.get("Conferme")),
-            "invalidations": clean_cell(row.get("invalidations") or row.get("Invalidazioni")),
-            "scanner_score": int(parse_number(row.get("scanner_score"), 0) or 0),
-            "market_score": int(parse_number(row.get("market_score"), 0) or 0),
-            "technical_score_component": int(parse_number(row.get("technical_score_component"), 0) or 0),
-            "sol_fractal_score": int(parse_number(row.get("sol_fractal_score"), 0) or 0),
-            "fractal_path_score": int(parse_number(row.get("fractal_path_score"), 0) or 0),
-            "rsi_score": int(parse_number(row.get("rsi_score"), 0) or 0),
-            "lifecycle_score_component": int(parse_number(row.get("lifecycle_score_component"), 0) or 0),
-            "lifecycle_raw_score": parse_number(row.get("lifecycle_raw_score"), None),
-            "lifecycle_ema200": parse_number(row.get("lifecycle_ema200"), None),
-            "lifecycle_upside": parse_number(row.get("lifecycle_upside"), None),
-            "futures_score": int(parse_number(row.get("futures_score"), 0) or 0),
-            "daily_change_score": int(parse_number(row.get("daily_change_score"), 0) or 0),
-        }
+        item = empty_global_row(asset)
+        item.update(
+            {
+                "score": int(score or 0),
+                "confluence": clean_cell(row.get("confluence") or row.get("Confluenza")),
+                "bias": clean_cell(row.get("bias") or row.get("Bias")),
+                "reliability": clean_cell(
+                    row.get("reliability") or row.get("AffidabilitÃ ")
+                ),
+                "action": clean_cell(row.get("action") or row.get("Azione coerente")),
+                "confirmations": clean_cell(
+                    row.get("confirmations") or row.get("Conferme")
+                ),
+                "invalidations": clean_cell(
+                    row.get("invalidations") or row.get("Invalidazioni")
+                ),
+                "scanner_score": int(parse_number(row.get("scanner_score"), 0) or 0),
+                "market_score": int(parse_number(row.get("market_score"), 0) or 0),
+                "technical_score_component": int(
+                    parse_number(row.get("technical_score_component"), 0) or 0
+                ),
+                "sol_fractal_score": int(
+                    parse_number(row.get("sol_fractal_score"), 0) or 0
+                ),
+                "fractal_path_score": int(
+                    parse_number(row.get("fractal_path_score"), 0) or 0
+                ),
+                "rsi_score": int(parse_number(row.get("rsi_score"), 0) or 0),
+                "lifecycle_score_component": int(
+                    parse_number(row.get("lifecycle_score_component"), 0) or 0
+                ),
+                "lifecycle_raw_score": parse_number(
+                    row.get("lifecycle_raw_score"), None
+                ),
+                "lifecycle_ema200": parse_number(
+                    row.get("lifecycle_ema200"), None
+                ),
+                "lifecycle_upside": parse_number(
+                    row.get("lifecycle_upside"), None
+                ),
+                "futures_score": int(
+                    parse_number(row.get("futures_score"), 0) or 0
+                ),
+                "daily_change_score": int(
+                    parse_number(row.get("daily_change_score"), 0) or 0
+                ),
+            }
+        )
 
-    return out
+        output[asset] = item
+
+    return output
 
 
 def read_global_from_latest(latest_text: str):
     block = extract_marker_block(latest_text, "GLOBAL_CONFLUENCE")
-    out = {}
+    output = {}
 
     if not block:
-        return out
+        return output
 
     in_summary = False
 
     for line in block.splitlines():
-        if line.strip().startswith("## Sintesi operativa"):
+        stripped = line.strip()
+
+        if stripped.startswith("## Sintesi operativa"):
             in_summary = True
             continue
 
-        if in_summary and line.strip().startswith("## "):
+        if in_summary and stripped.startswith("## "):
             break
 
         if not in_summary:
@@ -244,58 +305,55 @@ def read_global_from_latest(latest_text: str):
             continue
 
         asset = clean_cell(cells[0]).upper()
-
         if asset not in ASSETS:
             continue
 
-        score = parse_number(cells[1], 0)
+        item = empty_global_row(asset)
+        item.update(
+            {
+                "score": int(parse_number(cells[1], 0) or 0),
+                "confluence": cells[2],
+                "bias": cells[3],
+                "reliability": cells[4],
+                "action": cells[5],
+                "confirmations": cells[6],
+                "invalidations": cells[7],
+            }
+        )
+        output[asset] = item
 
-        out[asset] = {
-            "asset": asset,
-            "score": int(score or 0),
-            "confluence": cells[2],
-            "bias": cells[3],
-            "reliability": cells[4],
-            "action": cells[5],
-            "confirmations": cells[6],
-            "invalidations": cells[7],
-            "scanner_score": 0,
-            "market_score": 0,
-            "technical_score_component": 0,
-            "sol_fractal_score": 0,
-            "fractal_path_score": 0,
-            "rsi_score": 0,
-            "lifecycle_score_component": 0,
-            "lifecycle_raw_score": None,
-            "lifecycle_ema200": None,
-            "lifecycle_upside": None,
-            "futures_score": 0,
-            "daily_change_score": 0,
-        }
-
-    return out
+    return output
 
 
 def read_global_data(latest_text: str):
-    data = read_global_from_csv()
+    """
+    Il CSV strutturato Ã¨ la fonte principale.
+    Il blocco Markdown viene usato soltanto per completare eventuali asset mancanti.
+    """
+    csv_data = read_global_from_csv()
+    markdown_data = read_global_from_latest(latest_text)
 
-    if data:
-        return data
+    merged = {}
 
-    return read_global_from_latest(latest_text)
+    for asset in ASSETS:
+        if asset in csv_data:
+            merged[asset] = csv_data[asset]
+        elif asset in markdown_data:
+            merged[asset] = markdown_data[asset]
+
+    return merged
 
 
 def read_risk_calibration():
     rows = read_csv_rows(RISK_CALIBRATION_METRICS_PATH)
-    out = {}
+    output = {}
 
     for row in rows:
         asset = clean_cell(row.get("asset") or row.get("Asset")).upper()
-
         if asset not in ASSETS:
             continue
 
-        out[asset] = {
+        output[asset] = {
             "spot_risk": clean_cell(
                 row.get("spot_risk")
                 or row.get("Rischio spot")
@@ -309,14 +367,12 @@ def read_risk_calibration():
             "note": clean_cell(row.get("note") or row.get("Nota leva")),
         }
 
-    return out
+    return output
 
 
-def risk_from_global(asset: str, score: int, global_row: dict, risk_data: dict):
-    csv_risk = risk_data.get(asset, {})
-
-    spot_risk = clean_cell(csv_risk.get("spot_risk"))
-    leverage_risk = clean_cell(csv_risk.get("leverage_risk"))
+def risk_from_global(asset: str, score: int, risk_data: dict) -> str:
+    calibrated = risk_data.get(asset, {})
+    leverage_risk = clean_cell(calibrated.get("leverage_risk"))
 
     if leverage_risk:
         return leverage_risk.upper()
@@ -328,16 +384,13 @@ def risk_from_global(asset: str, score: int, global_row: dict, risk_data: dict):
             return "MEDIO / ALTO"
         return "ALTO"
 
-    if asset == "SOL":
-        return "MOLTO ALTO"
-
-    if asset == "DOGE":
+    if asset in {"SOL", "DOGE"}:
         return "MOLTO ALTO"
 
     return "MEDIO"
 
 
-def direction_from_global(asset: str, score: int, global_row: dict):
+def direction_from_global(asset: str, score: int, global_row: dict) -> str:
     confluence = clean_cell(global_row.get("confluence")).upper()
     bias = clean_cell(global_row.get("bias")).upper()
 
@@ -379,30 +432,27 @@ def direction_from_global(asset: str, score: int, global_row: dict):
     return "NEUTRALE / INCERTO"
 
 
-def spot_action(asset: str, score: int, direction: str, global_row: dict):
-    global_action = clean_cell(global_row.get("action")).upper()
-
+def fallback_spot_action(asset: str, score: int) -> str:
+    """
+    Viene usato soltanto se Global Confluence non ha scritto l'azione.
+    La regola normale Ã¨ copiare direttamente `action` dal Global.
+    """
     if asset == "BTC":
-        if score >= 7:
-            return "COMPRA / ACCUMULA"
         if score >= 3:
-            return "COMPRA / ACCUMULA"
+            return "ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE"
         if score >= 0:
-            return "HOLD / ACCUMULA SOLO SU PULLBACK"
+            return "HOLD / ATTESA CONFERME"
         if score >= -3:
-            return "RIDUCI RISCHIO / NON INSEGUIRE"
-        return "STAI FUORI / VENDI PARZIALE"
+            return "NON INSEGUIRE / RIDUCI RISCHIO"
+        return "STAI FUORI / SHORT SOLO DOPO ROTTURA"
 
     if asset == "SOL":
-        # Regola importante:
-        # SOL non deve più diventare bearish se il Global è +3 o superiore.
-        # Anche se lo scanner grezzo è incerto, il Global aggregato prevale.
         if score >= 7:
-            return "HOLD / ACCUMULA A TRANCHE, NO LEVA AGGRESSIVA"
+            return "HOLD / ACCUMULO A TRANCHE, NO LEVA AGGRESSIVA"
         if score >= 3:
             return "HOLD / TRANCHE PICCOLE, NO LEVA"
         if score >= 0:
-            return "HOLD LEGGERO / ASPETTA CONFERME"
+            return "HOLD LEGGERO / ATTESA CONFERME"
         if score >= -3:
             return "TAKE PROFIT SU SPIKE / NON INSEGUIRE"
         return "STAI FUORI / VENDI PARZIALE"
@@ -414,28 +464,45 @@ def spot_action(asset: str, score: int, direction: str, global_row: dict):
             return "STAI ALLA FINESTRA"
         if score >= -3:
             return "EVITA LONG / SOLO RIMBALZI VELOCI"
-        return "VENDI PARZIALE / STAI FUORI"
+        return "STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE"
 
-    return global_action or "n/a"
+    return "n/a"
 
 
-def long_action(asset: str, score: int, direction: str, risk: str, current_price=None):
-    risk_u = clean_cell(risk).upper()
+def spot_action(asset: str, score: int, global_row: dict) -> str:
+    """
+    Allineamento definitivo:
+    l'azione spot del Decision Report Ã¨ la stessa azione prodotta dal
+    Global Confluence. Non viene piÃ¹ ricalcolata con una seconda mappatura.
+    """
+    global_action = clean_cell(global_row.get("action"))
+
+    if global_action:
+        return global_action
+
+    return fallback_spot_action(asset, score)
+
+
+def long_action(asset: str, score: int, risk: str, current_price=None) -> str:
+    risk_upper = clean_cell(risk).upper()
 
     if asset == "BTC":
-        # Lo score statistico può giustificare accumulo spot, ma non basta
-        # per autorizzare leva durante Stage 4 / struttura non confermata.
         price = parse_number(current_price, None)
+
         if price is None:
             return "NO LONG A LEVA / SNAPSHOT NON DISPONIBILE"
+
         if price < BTC_LONG_CONFIRMATION_PRICE:
-            return "NO LONG A LEVA / ATTENDI SOPRA 67.248 $"
-        if score >= 3 and "MOLTO ALTO" not in risk_u:
+            level = fmt_btc_level(BTC_LONG_CONFIRMATION_PRICE)
+            return f"NO LONG A LEVA / ATTENDI SOPRA {level} $"
+
+        if score >= 3 and "MOLTO ALTO" not in risk_upper:
             return "LONG PRUDENTE"
+
         return "NO LONG A LEVA"
 
     if asset == "SOL":
-        if score >= 7 and risk_u not in {"MOLTO ALTO", "ALTO"}:
+        if score >= 7 and risk_upper not in {"MOLTO ALTO", "ALTO"}:
             return "LONG SOLO SU CONFERMA"
         return "NO LONG A LEVA"
 
@@ -445,20 +512,13 @@ def long_action(asset: str, score: int, direction: str, risk: str, current_price
     return "NO LONG A LEVA"
 
 
-def short_action(asset: str, score: int, direction: str):
-    if asset == "BTC":
-        if score <= -4:
-            return "SHORT SOLO DOPO ROTTURA"
-        return "NO SHORT"
-
-    if asset == "SOL":
+def short_action(asset: str, score: int) -> str:
+    if asset in {"BTC", "SOL"}:
         if score <= -4:
             return "SHORT SOLO DOPO ROTTURA"
         return "NO SHORT"
 
     if asset == "DOGE":
-        if score <= -4:
-            return "SHORT SOLO DOPO SPIKE"
         if score < 0:
             return "SHORT SOLO DOPO SPIKE"
         return "NO SHORT"
@@ -466,41 +526,36 @@ def short_action(asset: str, score: int, direction: str):
     return "NO SHORT"
 
 
-def max_long(asset: str, score: int, long_signal: str, risk: str):
-    risk_u = clean_cell(risk).upper()
+def max_long(asset: str, score: int, long_signal: str, risk: str) -> str:
+    risk_upper = clean_cell(risk).upper()
 
     if "NO LONG" in long_signal:
         return "nessuna"
 
     if asset == "BTC":
-        if score >= 7 and "ALTO" not in risk_u:
-            return "max 2x isolated"
-        if score >= 3:
+        if score >= 3 and "ALTO" not in risk_upper:
             return "max 2x isolated"
         return "nessuna"
 
     if asset == "SOL":
-        if score >= 7 and risk_u not in {"ALTO", "MOLTO ALTO"}:
+        if score >= 7 and risk_upper not in {"ALTO", "MOLTO ALTO"}:
             return "max 2x isolated"
         return "nessuna"
 
     return "nessuna"
 
 
-def max_short(asset: str, score: int, short_signal: str):
+def max_short(asset: str, short_signal: str) -> str:
     if short_signal == "NO SHORT":
         return "nessuna"
 
-    if asset == "DOGE":
-        return "max 1x-2x isolated"
-
-    if asset in {"BTC", "SOL"}:
+    if asset in {"BTC", "SOL", "DOGE"}:
         return "max 1x-2x isolated"
 
     return "nessuna"
 
 
-def lifecycle_note(global_data: dict):
+def lifecycle_note(global_data: dict) -> str:
     sol = global_data.get("SOL", {})
     raw_score = sol.get("lifecycle_raw_score")
     ema200 = sol.get("lifecycle_ema200")
@@ -508,8 +563,8 @@ def lifecycle_note(global_data: dict):
 
     if raw_score is None and ema200 is None:
         return (
-            "**Lifecycle EMA200** = resta come contesto per SOL, ma ora pesa 0 nel Global Confluence. "
-            "Non autorizza leva e non aggiunge punti automatici."
+            "**Lifecycle EMA200** = resta come contesto per SOL, ma pesa 0 nel "
+            "Global Confluence. Non autorizza leva e non aggiunge punti automatici."
         )
 
     parts = ["**Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0"]
@@ -518,12 +573,17 @@ def lifecycle_note(global_data: dict):
         parts.append(f"score interno {int(raw_score)}")
 
     if ema200 is not None:
-        parts.append(f"EMA200 circa {ema200:.2f} $".replace(".", ","))
+        formatted_ema = f"{ema200:.2f}".replace(".", ",")
+        parts.append(f"EMA200 circa {formatted_ema} $")
 
     if upside is not None:
-        parts.append(f"upside verso EMA200 {upside:+.2f}%".replace(".", ","))
+        formatted_upside = f"{upside:+.2f}%".replace(".", ",")
+        parts.append(f"upside verso EMA200 {formatted_upside}")
 
-    return "; ".join(parts) + ". Non autorizza leva e non aggiunge punti automatici."
+    return (
+        "; ".join(parts)
+        + ". Non autorizza leva e non aggiunge punti automatici."
+    )
 
 
 def build_decisions(global_data: dict, risk_data: dict):
@@ -532,33 +592,39 @@ def build_decisions(global_data: dict, risk_data: dict):
     snapshot_prices = read_snapshot_prices()
 
     for asset in ASSETS:
-        g = global_data.get(asset, {})
+        global_row = global_data.get(asset, empty_global_row(asset))
+        score = int(parse_number(global_row.get("score"), 0) or 0)
 
-        score = int(parse_number(g.get("score"), 0) or 0)
+        direction = direction_from_global(asset, score, global_row)
+        risk = risk_from_global(asset, score, risk_data)
 
-        direction = direction_from_global(asset, score, g)
-        risk = risk_from_global(asset, score, g, risk_data)
-        spot = spot_action(asset, score, direction, g)
-        long_sig = long_action(asset, score, direction, risk, snapshot_prices.get(asset))
-        short_sig = short_action(asset, score, direction)
-        max_l = max_long(asset, score, long_sig, risk)
-        max_s = max_short(asset, score, short_sig)
+        # Copia diretta dal Global Confluence.
+        spot = spot_action(asset, score, global_row)
+
+        # Leva e short restano decisioni separate e piÃ¹ prudenti.
+        long_signal = long_action(
+            asset,
+            score,
+            risk,
+            snapshot_prices.get(asset),
+        )
+        short_signal = short_action(asset, score)
 
         row = {
             "asset": asset,
             "score": score,
             "direction": direction,
             "spot": spot,
-            "long": long_sig,
-            "short": short_sig,
-            "max_long": max_l,
-            "max_short": max_s,
+            "long": long_signal,
+            "short": short_signal,
+            "max_long": max_long(asset, score, long_signal, risk),
+            "max_short": max_short(asset, short_signal),
             "risk": risk,
-            "global_action": g.get("action", ""),
-            "confluence": g.get("confluence", ""),
-            "bias": g.get("bias", ""),
-            "confirmations": g.get("confirmations", ""),
-            "invalidations": g.get("invalidations", ""),
+            "global_action": clean_cell(global_row.get("action")),
+            "confluence": clean_cell(global_row.get("confluence")),
+            "bias": clean_cell(global_row.get("bias")),
+            "confirmations": clean_cell(global_row.get("confirmations")),
+            "invalidations": clean_cell(global_row.get("invalidations")),
         }
 
         rows.append(row)
@@ -567,18 +633,18 @@ def build_decisions(global_data: dict, risk_data: dict):
     return rows, details
 
 
-def md_table(headers, rows):
-    out = []
-    out.append("| " + " | ".join(headers) + " |")
-    out.append("| " + " | ".join(["---"] * len(headers)) + " |")
+def md_table(headers, rows) -> str:
+    output = []
+    output.append("| " + " | ".join(headers) + " |")
+    output.append("| " + " | ".join(["---"] * len(headers)) + " |")
 
     for row in rows:
-        out.append("| " + " | ".join(str(x) for x in row) + " |")
+        output.append("| " + " | ".join(str(value) for value in row) + " |")
 
-    return "\n".join(out)
+    return "\n".join(output)
 
 
-def build_report(decision_rows, details, global_data):
+def build_report(decision_rows, details, global_data) -> str:
     generated = now_utc_str()
 
     table_rows = []
@@ -607,8 +673,8 @@ def build_report(decision_rows, details, global_data):
     lines.append("Report separato completo: [decision_report.md](decision_report.md)")
     lines.append("")
     lines.append(
-        "Sintesi automatica dello scanner: spot, long, short e rischio. "
-        "Ora segue il Global Confluence aggiornato e non assegna più punti automatici al Lifecycle EMA200."
+        "Sintesi automatica dello scanner: l'azione spot viene copiata direttamente "
+        "dal Global Confluence; long, short e rischio restano filtri separati e piÃ¹ prudenti."
     )
     lines.append("")
     lines.append(
@@ -632,13 +698,13 @@ def build_report(decision_rows, details, global_data):
     lines.append("")
 
     for asset in ASSETS:
-        d = details[asset]
+        detail = details[asset]
         lines.append(
-            f"- **{asset}**: Global = **{fmt_score(d['score'])}**, "
-            f"spot = **{d['spot']}**, "
-            f"long = **{d['long']}**, "
-            f"short = **{d['short']}**, "
-            f"rischio = **{d['risk']}**."
+            f"- **{asset}**: Global = **{fmt_score(detail['score'])}**, "
+            f"spot = **{detail['spot']}**, "
+            f"long = **{detail['long']}**, "
+            f"short = **{detail['short']}**, "
+            f"rischio = **{detail['risk']}**."
         )
 
     lines.append("")
@@ -646,40 +712,62 @@ def build_report(decision_rows, details, global_data):
     lines.append("")
 
     for asset in ASSETS:
-        d = details[asset]
+        detail = details[asset]
+
         lines.append(f"### {asset}")
         lines.append("")
-        lines.append(f"- Global Confluence: **{fmt_score(d['score'])}**")
-        lines.append(f"- Confluenza: **{d['confluence'] or 'n/a'}**")
-        lines.append(f"- Bias Global: **{d['bias'] or 'n/a'}**")
-        lines.append(f"- Direzione decisionale: **{d['direction']}**")
-        lines.append(f"- Azione spot: **{d['spot']}**")
-        lines.append(f"- Long leva: **{d['long']}**")
-        lines.append(f"- Short leva: **{d['short']}**")
-        lines.append(f"- Rischio: **{d['risk']}**")
+        lines.append(f"- Global Confluence: **{fmt_score(detail['score'])}**")
+        lines.append(f"- Confluenza: **{detail['confluence'] or 'n/a'}**")
+        lines.append(f"- Bias Global: **{detail['bias'] or 'n/a'}**")
+        lines.append(f"- Direzione decisionale: **{detail['direction']}**")
+        lines.append(f"- Azione spot dal Global: **{detail['spot']}**")
+        lines.append(f"- Long leva: **{detail['long']}**")
+        lines.append(f"- Short leva: **{detail['short']}**")
+        lines.append(f"- Rischio: **{detail['risk']}**")
 
-        if d["confirmations"]:
-            lines.append(f"- Conferme: {d['confirmations']}")
+        if detail["confirmations"]:
+            lines.append(f"- Conferme: {detail['confirmations']}")
 
-        if d["invalidations"]:
-            lines.append(f"- Invalidazioni: {d['invalidations']}")
+        if detail["invalidations"]:
+            lines.append(f"- Invalidazioni: {detail['invalidations']}")
 
         lines.append("")
+
+    btc_level = fmt_btc_level(BTC_LONG_CONFIRMATION_PRICE)
 
     lines.append("## Nota semplice")
     lines.append("")
-    lines.append("- **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.")
-    lines.append("- **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.")
-    lines.append("- **BTC leva** = nessun long a leva finché il prezzo snapshot non supera **67.248 $**; sotto quella soglia resta solo accumulo spot prudente.")
+    lines.append(
+        "- **Spot** = usa la stessa azione del Global Confluence, senza una seconda "
+        "mappatura che possa produrre frasi diverse."
+    )
+    lines.append(
+        "- **Zona alta storica** = zona dove non inseguire troppo; puÃ² essere zona "
+        "da prendere profitto."
+    )
+    lines.append(
+        "- **Zona bassa storica** = zona di rischio; con leva la liquidazione non "
+        "dovrebbe stare lÃ¬ vicino."
+    )
+    lines.append(
+        f"- **BTC leva** = nessun long a leva finchÃ© il prezzo snapshot non supera "
+        f"**{btc_level} $**; sotto quella soglia resta solo l'azione spot indicata dal Global."
+    )
     lines.append(f"- {lifecycle_note(global_data)}")
-    lines.append("- **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.")
-    lines.append("- Per SOL, se il Global è da **+3 in su**, la decisione non deve diventare bearish solo perché lo scanner grezzo a 30 giorni è incerto.")
+    lines.append(
+        "- **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso "
+        "solo se il quadro Ã¨ bearish o se lo spike viene spesso scaricato."
+    )
+    lines.append(
+        "- Per SOL, se il Global Ã¨ da **+3 in su**, la decisione non deve diventare "
+        "bearish solo perchÃ© lo scanner grezzo a 30 giorni Ã¨ incerto."
+    )
     lines.append("")
 
     return "\n".join(lines).rstrip() + "\n"
 
 
-def write_metrics_csv(decision_rows):
+def write_metrics_csv(decision_rows) -> None:
     METRICS_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
 
     fieldnames = [
@@ -702,8 +790,8 @@ def write_metrics_csv(decision_rows):
 
     generated = datetime.now(timezone.utc).isoformat()
 
-    with METRICS_CSV_PATH.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+    with METRICS_CSV_PATH.open("w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
 
         for row in decision_rows:
@@ -728,17 +816,19 @@ def write_metrics_csv(decision_rows):
             )
 
 
-def main():
+def main() -> None:
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     latest_text = read_text(LATEST_REPORT_PATH)
-
     global_data = read_global_data(latest_text)
 
-    if not global_data:
+    missing_assets = [asset for asset in ASSETS if asset not in global_data]
+
+    if missing_assets:
+        missing = ", ".join(missing_assets)
         raise RuntimeError(
-            "Decision Report: impossibile leggere Global Confluence. "
-            "Esegui prima global_confluence_report.py."
+            "Decision Report: dati Global Confluence mancanti per "
+            f"{missing}. Esegui prima global_confluence_report.py."
         )
 
     risk_data = read_risk_calibration()
@@ -759,7 +849,8 @@ def main():
     for row in decision_rows:
         print(
             f"{row['asset']}: Global {fmt_score(row['score'])} | "
-            f"{row['direction']} | Spot {row['spot']} | Long {row['long']} | Short {row['short']}"
+            f"{row['direction']} | Spot {row['spot']} | "
+            f"Long {row['long']} | Short {row['short']}"
         )
 
 
