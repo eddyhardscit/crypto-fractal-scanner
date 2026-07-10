@@ -2,15 +2,25 @@ name: Daily crypto scanner
 
 on:
   schedule:
-    - cron: "45 23 * * *"
+    - cron: "12 7 * * *"
+      timezone: "Europe/Rome"
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: daily-crypto-scanner
+  cancel-in-progress: false
+
 jobs:
   run-daily-scanner:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
 
     steps:
       - name: Checkout repository
@@ -25,6 +35,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install numpy pandas yfinance scipy tabulate matplotlib requests
+
+      - name: Validate upgrade files
+        run: |
+          test -f market_snapshot.py
+          test -f scanner_signal_reader.py
+          test -f data_quality_coherence_report.py
+
+          python -m py_compile \
+            scanner.py \
+            market_snapshot.py \
+            scanner_signal_reader.py \
+            data_quality_coherence_report.py
+
+      - name: Run shared market snapshot
+        run: python market_snapshot.py
 
       - name: Run scanner
         run: python scanner.py
@@ -95,6 +120,9 @@ jobs:
 
       - name: Run calibration status report
         run: python calibration_status_report.py
+
+      - name: Run data quality coherence report
+        run: python data_quality_coherence_report.py
 
       - name: Commit reports
         run: |
