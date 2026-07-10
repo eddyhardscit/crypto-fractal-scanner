@@ -1,6 +1,6 @@
 # Classic technical visual report
 
-Generato: 2026-07-10 00:57 UTC
+Generato: 2026-07-10 01:12 UTC
 
 Questo report crea grafici visivi dei pattern tecnici principali. Serve per vedere il grafico, non per aggiungere automaticamente punteggio al Global.
 
@@ -19,9 +19,9 @@ Pattern controllati:
 
 | Asset | Prezzo | Pattern principale | Stato | Famiglia | Prezzo | Supporto | Resistenza |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 63.018 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 62.553 $ | 65.544 $ |
-| SOL | 77,95 $ | Testa e spalle | CONFERMATO | ribassista | NEL RANGE | 76,82 $ | 83,81 $ |
-| DOGE | 0.07279 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 0.06961 $ | 0.07923 $ |
+| BTC | 63.024 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 62.553 $ | 65.544 $ |
+| SOL | 78,10 $ | Testa e spalle | CONFERMATO | ribassista | NEL RANGE | 76,82 $ | 83,81 $ |
+| DOGE | 0.07286 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 0.06961 $ | 0.07923 $ |
 
 ## BTC
 
@@ -37,11 +37,11 @@ Pattern controllati:
 - Resistenza: **65.544 $**
 - Breakout 60g: **82.792 $**
 - Breakdown 60g: **57.748 $**
-- RSI14: **49.48**
+- RSI14: **49.51**
 - ATR14: **3,10%**
-- Volume ratio 20g: **0.93**
-- Rendimento 30g: **+2,23%**
-- Rendimento 90g: **-13,65%**
+- Volume ratio 20g: **0.92**
+- Rendimento 30g: **+2,24%**
+- Rendimento 90g: **-13,64%**
 
 ### Pattern trovati
 
@@ -59,17 +59,17 @@ Pattern controllati:
 - Stato pattern: **CONFERMATO**
 - Famiglia: **ribassista**
 - Dettaglio: Spalla sinistra 88,05 $, testa 98,27 $, spalla destra 87,79 $. Neckline circa 82,57 $.
-- Candela più recente: **Nessuna candela forte**
+- Candela più recente: **Hammer / rejection basso**
 - Stato prezzo: **NEL RANGE**
 - Supporto: **76,82 $**
 - Resistenza: **83,81 $**
 - Breakout 60g: **98,27 $**
 - Breakdown 60g: **60,41 $**
-- RSI14: **54.31**
-- ATR14: **4,69%**
-- Volume ratio 20g: **0.66**
-- Rendimento 30g: **+19,99%**
-- Rendimento 90g: **-8,11%**
+- RSI14: **54.60**
+- ATR14: **4,68%**
+- Volume ratio 20g: **0.65**
+- Rendimento 30g: **+20,22%**
+- Rendimento 90g: **-7,93%**
 
 ### Pattern trovati
 
@@ -87,17 +87,17 @@ Pattern controllati:
 - Stato pattern: **CONFERMATO**
 - Famiglia: **ribassista**
 - Dettaglio: Due massimi simili a 0.09772 $ e 0.09169 $. Neckline circa 0.07809 $.
-- Candela più recente: **Nessuna candela forte**
+- Candela più recente: **Doji / indecisione**
 - Stato prezzo: **NEL RANGE**
 - Supporto: **0.06961 $**
 - Resistenza: **0.07923 $**
 - Breakout 60g: **0.11825 $**
 - Breakdown 60g: **0.06961 $**
-- RSI14: **33.14**
+- RSI14: **33.38**
 - ATR14: **4,03%**
 - Volume ratio 20g: **0.77**
-- Rendimento 30g: **-14,15%**
-- Rendimento 90g: **-22,34%**
+- Rendimento 30g: **-14,07%**
+- Rendimento 90g: **-22,27%**
 
 ### Pattern trovati
 

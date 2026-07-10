@@ -1,0 +1,4 @@
+asset,target,trigger,direction,side,positive_pct,negative_pct,trigger_pct,matches_available,trigger_cases
+BTC,BTC-USD,False,NESSUNO,,72.5,27.5,72.5,40,0
+SOL,SOL-USD,False,NESSUNO,,42.5,57.5,57.5,40,0
+DOGE,DOGE-USD,True,NEGATIVO / RIBASSISTA,negative,12.5,87.5,87.5,40,35

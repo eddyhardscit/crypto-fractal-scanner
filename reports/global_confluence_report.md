@@ -1,6 +1,6 @@
 # Sintesi finale di confluenza
 
-Generato: 2026-07-10 00:57 UTC
+Generato: 2026-07-10 01:13 UTC
 
 Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.
 
@@ -27,7 +27,7 @@ Nota nuovo modulo: **Classic technical confirmation pesa massimo ±1** perché �
 | Asset | Punteggio | Confluenza | Bias | Affidabilità | Azione coerente | Conferme | Invalidazioni |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | BTC | +2 | MISTA / PARZIALE | Neutrale / misto | BASSA / RACCOLTA DATI | HOLD / ATTESA CONFERME | Sopra 65.544 migliora; sopra la neckline tecnica successiva il recupero diventa più credibile. | Sotto 57.748 il quadro tecnico peggiora. |
-| SOL | +4 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA | HOLD / TRANCHE PICCOLE, NO LEVA | Conferme sopra 83,81 / 106,11 / 114,88. | Allarmi sotto 74,05 / 64,42 / 62,19. |
+| SOL | +4 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA | HOLD / TRANCHE PICCOLE, NO LEVA | Conferme sopra 83,81 / 106,33 / 115,11. | Allarmi sotto 74,20 / 64,42 / 62,19. |
 | DOGE | -10 | NEGATIVA | Ribassista | MEDIA / ALTA | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | Sopra 0.07923 migliora, ma resta asset debole finché scanner e struttura non girano. | Sotto 0.06961 il rischio ribassista aumenta. |
 
 ## Punteggi per modulo
@@ -84,17 +84,17 @@ Dettaglio moduli:
 - Scanner path: **0** — Raccolta dati. Controlli disponibili 0. Servono almeno 5 controlli prima di pesare il cono previsionale.
 - Market regime: **+2** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 19, positivi 30g 63,16%, return p50 +0,92%.
 - Tecnico: **+1** — Score tecnico 1/12, verdetto neutrale / misto, trend trend misto, struttura volatilità in espansione, divergenza nessuna, Wyckoff range / fase non chiara.
-- Classic technical: **0** — Score classico -2/12, verdetto DEBOLE / NON CONFERMATO, stage STAGE 4 / MARKDOWN, struttura VOLATILITÀ IN ESPANSIONE, Wyckoff RANGE / FASE NON CHIARA, rischio MEDIO. Peso Global limitato a ±1 perché è un filtro di conferma.
-- Frattale SOL: **+1** — Verdetto PARZIALMENTE SI, somiglianza +73,76%, tracking FRATTALE STABILE, fase FASE ANTICIPATA, rischio MEDIO / ALTO.
+- Classic technical: **0** — Score classico -1/12, verdetto NEUTRALE / MISTO, stage STAGE 4 / MARKDOWN, struttura VOLATILITÀ IN ESPANSIONE, Wyckoff RANGE / FASE NON CHIARA, rischio MEDIO. Peso Global limitato a ±1 perché è un filtro di conferma.
+- Frattale SOL: **+1** — Verdetto PARZIALMENTE SI, somiglianza +73,75%, tracking FRATTALE STABILE, fase FASE ANTICIPATA, rischio MEDIO / ALTO.
 - Fractal path: **0** — Tracking operativo, ma nessuna milestone settimanale ancora verificata. Il modulo non pesa finché non maturano abbastanza controlli.
 - RSI top-cycle: **+1** — Rischio top-cycle RSI: BASSO.
-- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 5, bias SQUEEZE SETUP FORTE, EMA200 113,51 $, upside EMA200 +45,58%, gap EMA50/EMA200 -1,22%, hit EMA200 12w +23,33%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
+- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 5, bias SQUEEZE SETUP FORTE, EMA200 113,51 $, upside EMA200 +45,34%, gap EMA50/EMA200 -1,21%, hit EMA200 12w +26,67%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
 - Futures: **0** — Lettura futures Misto, forza 1/5.
-- Daily change: **0** — SOL: nessun cambiamento forte in miglioramento rispetto a ieri.
+- Daily change: **0** — SOL: nessun cambiamento forte in misto rispetto a ieri.
 
-Conferme: Conferme sopra 83,81 / 106,11 / 114,88.
+Conferme: Conferme sopra 83,81 / 106,33 / 115,11.
 
-Invalidazioni: Allarmi sotto 74,05 / 64,42 / 62,19.
+Invalidazioni: Allarmi sotto 74,20 / 64,42 / 62,19.
 
 ### DOGE
 

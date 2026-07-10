@@ -1,7 +1,7 @@
 # Stato calibrazione scanner
 
-Generato: **2026-07-10 02:57:45 CEST**  
-UTC: **2026-07-10 00:57:45 UTC**
+Generato: **2026-07-10 03:13:34 CEST**  
+UTC: **2026-07-10 01:13:34 UTC**
 
 La calibrazione non serve a prevedere direttamente il prezzo.  
 Serve a capire se lo scanner, col tempo, è stato troppo ottimista, troppo pessimista o abbastanza preciso.
