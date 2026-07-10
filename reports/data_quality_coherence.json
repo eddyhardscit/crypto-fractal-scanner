@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-07-10 14:08 UTC",
+  "generated_at_utc": "2026-07-10 14:25 UTC",
   "overall_status": "OK",
   "critical_issues": [],
   "warnings": [],
@@ -10,25 +10,25 @@
     {
       "asset": "BTC",
       "status": "OK",
-      "scanner_price": 64307.890625,
-      "snapshot_price": 64307.890625,
+      "scanner_price": 63993.1484375,
+      "snapshot_price": 63993.1484375,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "SOL",
       "status": "OK",
-      "scanner_price": 78.56999969482422,
-      "snapshot_price": 78.56999969482422,
+      "scanner_price": 77.79000091552734,
+      "snapshot_price": 77.79000091552734,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "DOGE",
       "status": "OK",
-      "scanner_price": 0.0741200000047683,
-      "snapshot_price": 0.07412000000476837,
-      "difference_pct": -8.881784197001252e-14,
+      "scanner_price": 0.0737299993634224,
+      "snapshot_price": 0.0737299993634224,
+      "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     }
   ],
