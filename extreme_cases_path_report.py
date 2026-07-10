@@ -1,1040 +1,1232 @@
-import os
-import re
-from datetime import datetime
+from datetime import datetime, timezone
+from pathlib import Path
+import math
 
 import matplotlib
 matplotlib.use("Agg")
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import yfinance as yf
 
 
-REPORTS_DIR = "reports"
-MAIN_REPORT_PATH = os.path.join(REPORTS_DIR, "latest_report.md")
+REPORTS = Path("reports")
+MATCHES = REPORTS / "latest_scanner_matches.csv"
+LATEST = REPORTS / "latest_report.md"
+REPORT = REPORTS / "extreme_cases_path_report.md"
+METRICS = REPORTS / "extreme_cases_path_metrics.csv"
+CASES = REPORTS / "extreme_cases_path_cases.csv"
 
-START_MARKER = "<!-- EXTREME_CASES_PATH_START -->"
-END_MARKER = "<!-- EXTREME_CASES_PATH_END -->"
-
-REPORT_PATH = os.path.join(REPORTS_DIR, "extreme_cases_path_report.md")
-SUMMARY_CSV_PATH = os.path.join(REPORTS_DIR, "extreme_cases_summary.csv")
-TRIGGER_MATCHES_CSV_PATH = os.path.join(REPORTS_DIR, "extreme_cases_trigger_matches.csv")
-
-FULL_MATCHES_PATH = os.path.join(REPORTS_DIR, "latest_scanner_matches.csv")
-
-TARGETS = {
-    "BTC-USD": "BTC",
-    "SOL-USD": "SOL",
-    "DOGE-USD": "DOGE",
-}
+START = "<!-- EXTREME_CASES_PATH_START -->"
+END = "<!-- EXTREME_CASES_PATH_END -->"
 
 THRESHOLD = 80.0
-FORWARD_DAYS = 30
-MATCH_LIMIT = 40
-MAX_ASSET_LINES = 18
+HORIZON = 30
+ASSETS = ["BTC", "SOL", "DOGE"]
 
 
-def ensure_reports_dir():
-    os.makedirs(REPORTS_DIR, exist_ok=True)
-
-
-def asset_short(ticker):
-    return TARGETS.get(ticker, ticker.replace("-USD", ""))
-
-
-def asset_name(ticker):
-    names = {
-        "BTC-USD": "Bitcoin",
-        "SOL-USD": "Solana",
-        "DOGE-USD": "Dogecoin",
-    }
-    return names.get(ticker, ticker)
-
-
-def fmt_number_it(value, decimals=2):
+def sf(x):
     try:
-        if pd.isna(value):
-            return "n/a"
-        s = f"{float(value):,.{decimals}f}"
-        return s.replace(",", "X").replace(".", ",").replace("X", ".")
+        x = float(x)
+        return x if np.isfinite(x) else np.nan
     except Exception:
-        return "n/a"
+        return np.nan
 
 
-def fmt_pct(value, decimals=2):
-    if pd.isna(value):
-        return "n/a"
-    return f"{fmt_number_it(value, decimals)}%"
+def fp(x):
+    x = sf(x)
+    return "n/a" if np.isnan(x) else f"{x:+.2f}%".replace(".", ",")
 
 
-def safe_read_csv(path):
-    if not os.path.exists(path):
+def fm(x, d=0):
+    x = sf(x)
+    return "n/a" if np.isnan(x) else f"{x:.{d}f}".replace(".", ",")
+
+
+def md(df):
+    return "_Nessun dato._" if df.empty else df.to_markdown(index=False)
+
+
+def read_matches():
+    if not MATCHES.exists():
         return pd.DataFrame()
 
-    try:
-        return pd.read_csv(path)
-    except Exception as e:
-        print(f"Errore lettura CSV {path}: {e}")
-        return pd.DataFrame()
+    df = pd.read_csv(MATCHES)
 
+    for c in [
+        "similarity",
+        "return_30d",
+        "drawdown_30d",
+        "max_gain_30d",
+        "match_rank",
+    ]:
+        if c in df:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
 
-def load_matches_for_target(target):
-    all_matches = safe_read_csv(FULL_MATCHES_PATH)
-
-    if not all_matches.empty and "target" in all_matches.columns:
-        out = all_matches[all_matches["target"].astype(str) == target].copy()
-        if not out.empty:
-            if "similarity" in out.columns:
-                out["similarity"] = pd.to_numeric(out["similarity"], errors="coerce")
-                out = out.sort_values("similarity", ascending=False)
-            return out.head(MATCH_LIMIT).reset_index(drop=True)
-
-    short = asset_short(target)
-    fallback_path = os.path.join(REPORTS_DIR, f"{short}_matches.csv")
-    out = safe_read_csv(fallback_path)
-
-    if out.empty:
-        return out
-
-    out["target"] = target
-
-    if "similarity" in out.columns:
-        out["similarity"] = pd.to_numeric(out["similarity"], errors="coerce")
-        out = out.sort_values("similarity", ascending=False)
-
-    return out.head(MATCH_LIMIT).reset_index(drop=True)
-
-
-def normalize_yfinance_df(raw, ticker):
-    if raw is None or raw.empty:
-        return pd.DataFrame()
-
-    try:
-        if isinstance(raw.columns, pd.MultiIndex):
-            if ticker not in raw.columns.get_level_values(0):
-                return pd.DataFrame()
-            df = raw[ticker].copy()
-        else:
-            df = raw.copy()
-
-        df = df.dropna(how="all").copy()
-
-        if "Close" not in df.columns:
-            return pd.DataFrame()
-
-        df.index = pd.to_datetime(df.index)
-
-        if df.index.tz is not None:
-            df.index = df.index.tz_convert(None)
-
-        df = df.sort_index()
-        df = df[~df.index.duplicated(keep="last")]
-
-        return df
-    except Exception as e:
-        print(f"{ticker}: errore normalizzazione dati: {e}")
-        return pd.DataFrame()
-
-
-def download_price_data(tickers):
-    tickers = sorted(set([t for t in tickers if isinstance(t, str) and t.strip()]))
-
-    if not tickers:
-        return {}
-
-    print(f"Download prezzi per {len(tickers)} ticker...")
-
-    raw = yf.download(
-        tickers,
-        period="10y",
-        interval="1d",
-        auto_adjust=True,
-        progress=False,
-        group_by="ticker",
-        threads=True,
+    df["target_asset"] = (
+        df["target_asset"]
+        .astype(str)
+        .str.upper()
+        .str.replace("-USD", "", regex=False)
     )
 
-    data = {}
+    df["similar_asset"] = df["similar_asset"].astype(str).str.upper()
+    df["start_date"] = pd.to_datetime(df["start_date"], errors="coerce")
+    df["end_date"] = pd.to_datetime(df["end_date"], errors="coerce")
 
-    for ticker in tickers:
-        df = normalize_yfinance_df(raw, ticker)
-
-        if not df.empty and len(df) > FORWARD_DAYS + 5:
-            data[ticker] = df
-            print(f"{ticker}: OK {df.index[0].date()} -> {df.index[-1].date()}")
-        else:
-            print(f"{ticker}: dati insufficienti")
-
-    return data
-
-
-def position_on_or_after(df, date_value):
-    if df.empty:
-        return None
-
-    dt = pd.to_datetime(date_value, errors="coerce")
-
-    if pd.isna(dt):
-        return None
-
-    idx = pd.DatetimeIndex(df.index)
-
-    if idx.tz is not None:
-        idx = idx.tz_convert(None)
-
-    idx_norm = idx.normalize()
-    dt_norm = dt.normalize()
-
-    positions = np.where(idx_norm >= dt_norm)[0]
-
-    if len(positions) == 0:
-        return None
-
-    return int(positions[0])
+    return df.dropna(
+        subset=[
+            "target_asset",
+            "similar_asset",
+            "end_date",
+            "return_30d",
+        ]
+    ).copy()
 
 
-def build_paths(matches, data):
-    rows = []
+def trigger_info(g):
+    if g.empty:
+        return "NESSUNO", False, np.nan, "Nessun match"
 
-    if matches.empty:
+    pos = (g["return_30d"] > 0).mean() * 100
+    neg = (g["return_30d"] < 0).mean() * 100
+
+    if pos >= THRESHOLD:
+        return (
+            "POSITIVO / RIALZISTA",
+            True,
+            pos,
+            f"Casi positivi {pos:.2f}% >= {THRESHOLD:.0f}%",
+        )
+
+    if neg >= THRESHOLD:
+        return (
+            "NEGATIVO / RIBASSISTA",
+            True,
+            neg,
+            f"Casi negativi {neg:.2f}% >= {THRESHOLD:.0f}%",
+        )
+
+    return (
+        "NESSUNO",
+        False,
+        max(pos, neg),
+        "Nessun lato sopra soglia estrema",
+    )
+
+
+def norm(df):
+    if df is None or df.empty:
         return pd.DataFrame()
 
-    required = {"similar_asset", "end_date"}
+    out = df.copy()
 
-    if not required.issubset(matches.columns):
+    if isinstance(out.columns, pd.MultiIndex):
+        out.columns = [c[0] for c in out.columns]
+
+    if "Close" not in out:
         return pd.DataFrame()
 
-    for _, row in matches.iterrows():
-        similar_asset = str(row.get("similar_asset", "")).strip()
+    out.index = pd.to_datetime(out.index)
 
-        if similar_asset not in data:
-            continue
+    try:
+        out.index = out.index.tz_localize(None)
+    except TypeError:
+        pass
 
-        df = data[similar_asset].copy()
-        pos = position_on_or_after(df, row.get("end_date"))
-
-        if pos is None:
-            continue
-
-        if pos + FORWARD_DAYS >= len(df):
-            continue
-
-        base_price = float(df["Close"].iloc[pos])
-
-        if base_price <= 0 or pd.isna(base_price):
-            continue
-
-        future = df["Close"].iloc[pos:pos + FORWARD_DAYS + 1].astype(float)
-        pct_path = (future / base_price - 1.0) * 100.0
-
-        if len(pct_path) < FORWARD_DAYS + 1:
-            continue
-
-        out = {
-            "target": row.get("target", ""),
-            "similar_asset": similar_asset,
-            "start_date": row.get("start_date", ""),
-            "end_date": row.get("end_date", ""),
-            "similarity": pd.to_numeric(row.get("similarity", np.nan), errors="coerce"),
-            "return_30d_report": pd.to_numeric(row.get("return_30d", np.nan), errors="coerce"),
-            "drawdown_30d_report": pd.to_numeric(row.get("drawdown_30d", np.nan), errors="coerce"),
-            "max_gain_30d_report": pd.to_numeric(row.get("max_gain_30d", np.nan), errors="coerce"),
-        }
-
-        for d in range(FORWARD_DAYS + 1):
-            out[f"day_{d}"] = float(pct_path.iloc[d])
-
-        out["return_path_30d"] = out[f"day_{FORWARD_DAYS}"]
-        out["drawdown_path"] = min(out[f"day_{d}"] for d in range(FORWARD_DAYS + 1))
-        out["max_gain_path"] = max(out[f"day_{d}"] for d in range(FORWARD_DAYS + 1))
-
-        rows.append(out)
-
-    return pd.DataFrame(rows)
+    return out[
+        ~out.index.duplicated(keep="last")
+    ].sort_index()
 
 
-def trigger_info(matches):
-    if matches.empty or "return_30d" not in matches.columns:
-        return {
-            "trigger": False,
-            "direction": "NESSUNO",
-            "side": None,
-            "positive_pct": np.nan,
-            "negative_pct": np.nan,
-            "trigger_pct": np.nan,
-            "reason": "Dati insufficienti",
-        }
+def load_prices(tickers, start, end):
+    prices = {}
 
-    returns = pd.to_numeric(matches["return_30d"], errors="coerce").dropna()
+    for t in sorted(set(tickers)):
+        try:
+            df = yf.download(
+                t,
+                start=(
+                    pd.Timestamp(start) - pd.Timedelta(days=7)
+                ).strftime("%Y-%m-%d"),
+                end=(
+                    pd.Timestamp(end)
+                    + pd.Timedelta(days=HORIZON + 10)
+                ).strftime("%Y-%m-%d"),
+                interval="1d",
+                auto_adjust=False,
+                progress=False,
+                threads=False,
+            )
 
-    if len(returns) == 0:
-        return {
-            "trigger": False,
-            "direction": "NESSUNO",
-            "side": None,
-            "positive_pct": np.nan,
-            "negative_pct": np.nan,
-            "trigger_pct": np.nan,
-            "reason": "Dati insufficienti",
-        }
+            df = norm(df)
 
-    positive_pct = (returns > 0).mean() * 100.0
-    negative_pct = 100.0 - positive_pct
+            if not df.empty:
+                prices[t] = df
 
-    if positive_pct >= THRESHOLD:
-        return {
-            "trigger": True,
-            "direction": "POSITIVO / RIALZISTA",
-            "side": "positive",
-            "positive_pct": positive_pct,
-            "negative_pct": negative_pct,
-            "trigger_pct": positive_pct,
-            "reason": f"Casi positivi {fmt_pct(positive_pct)} >= {fmt_pct(THRESHOLD)}",
-        }
+        except Exception:
+            pass
 
-    if negative_pct >= THRESHOLD:
-        return {
-            "trigger": True,
-            "direction": "NEGATIVO / RIBASSISTA",
-            "side": "negative",
-            "positive_pct": positive_pct,
-            "negative_pct": negative_pct,
-            "trigger_pct": negative_pct,
-            "reason": f"Casi negativi {fmt_pct(negative_pct)} >= {fmt_pct(THRESHOLD)}",
-        }
+    return prices
 
-    return {
-        "trigger": False,
-        "direction": "NESSUNO",
-        "side": None,
-        "positive_pct": positive_pct,
-        "negative_pct": negative_pct,
-        "trigger_pct": max(positive_pct, negative_pct),
-        "reason": "Nessun lato sopra soglia estrema",
+
+def build_case(row, prices):
+    t = row["similar_asset"]
+
+    if t not in prices:
+        return None, None
+
+    df = prices[t]
+    end_date = pd.Timestamp(row["end_date"]).normalize()
+
+    eligible = df.index[df.index <= end_date]
+
+    if len(eligible) == 0:
+        return None, None
+
+    anchor = eligible[-1]
+    pos = df.index.get_loc(anchor)
+
+    if not isinstance(pos, (int, np.integer)):
+        return None, None
+
+    close = pd.to_numeric(
+        df.iloc[pos:pos + HORIZON + 1]["Close"],
+        errors="coerce",
+    ).dropna()
+
+    if len(close) < 2:
+        return None, None
+
+    base = sf(close.iloc[0])
+
+    if np.isnan(base) or base <= 0:
+        return None, None
+
+    r = ((close / base) - 1) * 100
+
+    path = pd.Series(
+        index=range(HORIZON + 1),
+        dtype=float,
+    )
+
+    path.iloc[:len(r)] = r.values
+    path = path.interpolate(limit_direction="forward")
+
+    max_gain = sf(path.max())
+    max_day = int(path.idxmax())
+
+    min_ret = sf(path.min())
+    min_day = int(path.idxmin())
+
+    final_ret = sf(path.iloc[-1])
+
+    # Massimo rialzo raggiunto prima del minimo principale.
+    before_low = path.loc[:min_day]
+    spike = sf(before_low.max())
+    spike_day = int(before_low.idxmax())
+
+    # Minimo successivo allo spike.
+    after_peak = path.loc[spike_day:]
+    post_low = sf(after_peak.min())
+    post_low_day = int(after_peak.idxmin())
+
+    # Calo reale dal picco al minimo successivo.
+    peak_factor = 1 + spike / 100
+    low_factor = 1 + post_low / 100
+
+    dump_from_peak = (
+        (low_factor / peak_factor - 1) * 100
+        if peak_factor > 0
+        else np.nan
+    )
+
+    if (
+        spike >= 8
+        and min_ret <= -10
+        and spike_day < min_day
+    ):
+        sequence = "SPIKE PRIMA DEL DUMP"
+
+    elif (
+        spike >= 3
+        and min_ret <= -10
+        and spike_day < min_day
+    ):
+        sequence = "RIALZO MODESTO PRIMA DEL DUMP"
+
+    elif min_day <= 5 and spike < 3:
+        sequence = "DISCESA QUASI IMMEDIATA"
+
+    elif final_ret < 0:
+        sequence = "PERCORSO RIBASSISTA MISTO"
+
+    else:
+        sequence = "ECCEZIONE POSITIVA"
+
+    rec = {
+        "target_asset": row["target_asset"],
+        "similar_asset": t,
+        "end_date": end_date.date().isoformat(),
+        "similarity": sf(row.get("similarity")),
+        "return_30d": final_ret,
+        "drawdown_30d": min_ret,
+        "max_gain_30d": max_gain,
+        "spike_before_low_pct": spike,
+        "spike_day": spike_day,
+        "low_day": min_day,
+        "post_peak_low_pct": post_low,
+        "post_peak_low_day": post_low_day,
+        "dump_from_peak_pct": dump_from_peak,
+        "sequence": sequence,
     }
 
-
-def filter_trigger_paths(paths, side):
-    if paths.empty:
-        return paths
-
-    if side == "positive":
-        return paths[pd.to_numeric(paths["return_path_30d"], errors="coerce") > 0].copy()
-
-    if side == "negative":
-        return paths[pd.to_numeric(paths["return_path_30d"], errors="coerce") <= 0].copy()
-
-    return pd.DataFrame()
+    return rec, path.to_numpy(dtype=float)
 
 
-def matrix_from_paths(paths):
-    day_cols = [f"day_{d}" for d in range(FORWARD_DAYS + 1)]
-    return paths[day_cols].apply(pd.to_numeric, errors="coerce").to_numpy(dtype=float)
-
-
-def path_quantiles(paths):
-    if paths.empty:
-        return pd.DataFrame()
-
-    matrix = matrix_from_paths(paths)
-    rows = []
-
-    for d in range(FORWARD_DAYS + 1):
-        values = matrix[:, d]
-        values = values[~np.isnan(values)]
-
-        if len(values) == 0:
-            continue
-
-        rows.append({
-            "day": d,
-            "p10": np.percentile(values, 10),
-            "p25": np.percentile(values, 25),
-            "p50": np.percentile(values, 50),
-            "p75": np.percentile(values, 75),
-            "p90": np.percentile(values, 90),
-            "mean": np.mean(values),
-        })
-
-    return pd.DataFrame(rows)
-
-
-def plot_clean_bands(target, side, paths):
-    short = asset_short(target)
-    suffix = "positive" if side == "positive" else "negative"
-    out_path = os.path.join(REPORTS_DIR, f"extreme_cases_{short}_{suffix}_clean_bands.png")
-
-    q = path_quantiles(paths)
-
-    if q.empty:
-        return None
+def plot_bands(asset, matrix, out):
+    x = np.arange(matrix.shape[1])
 
     fig, ax = plt.subplots(figsize=(12, 6))
 
-    x = q["day"]
-
-    ax.fill_between(x, q["p10"], q["p90"], alpha=0.16, label="Banda p10-p90")
-    ax.fill_between(x, q["p25"], q["p75"], alpha=0.28, label="Banda p25-p75")
-    ax.plot(x, q["p50"], linewidth=3, label="Mediana p50")
-    ax.plot(x, q["mean"], linestyle="--", linewidth=2, label="Media")
-
-    ax.axhline(0, linewidth=1, linestyle=":")
-    ax.axvline(7, linewidth=1, linestyle=":", alpha=0.7)
-    ax.axvline(14, linewidth=1, linestyle=":", alpha=0.7)
-    ax.axvline(30, linewidth=1, linestyle=":", alpha=0.7)
-
-    title_side = "rialzisti" if side == "positive" else "ribassisti"
-    ax.set_title(f"{short} — percorso pulito dei casi storici {title_side}")
-    ax.set_xlabel("Giorni dopo il match")
-    ax.set_ylabel("Return dal giorno 0")
-    ax.grid(True, alpha=0.25)
-    ax.legend(loc="best")
-
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=160)
-    plt.close(fig)
-
-    return out_path
-
-
-def asset_median_table(paths):
-    if paths.empty:
-        return pd.DataFrame()
-
-    rows = []
-
-    for asset, group in paths.groupby("similar_asset"):
-        group = group.copy()
-
-        row = {
-            "similar_asset": asset,
-            "cases": len(group),
-            "best_similarity": pd.to_numeric(group["similarity"], errors="coerce").max(),
-            "return_7d_median": pd.to_numeric(group["day_7"], errors="coerce").median(),
-            "return_14d_median": pd.to_numeric(group["day_14"], errors="coerce").median(),
-            "return_30d_median": pd.to_numeric(group["day_30"], errors="coerce").median(),
-            "drawdown_median": pd.to_numeric(group["drawdown_path"], errors="coerce").median(),
-            "max_gain_median": pd.to_numeric(group["max_gain_path"], errors="coerce").median(),
-        }
-
-        rows.append(row)
-
-    out = pd.DataFrame(rows)
-
-    if out.empty:
-        return out
-
-    out = out.sort_values(
-        ["cases", "best_similarity"],
-        ascending=[False, False]
+    ax.fill_between(
+        x,
+        np.nanpercentile(matrix, 10, axis=0),
+        np.nanpercentile(matrix, 90, axis=0),
+        alpha=.18,
+        label="p10-p90",
     )
 
-    return out
-
-
-def plot_asset_medians(target, side, paths):
-    short = asset_short(target)
-    suffix = "positive" if side == "positive" else "negative"
-    out_path = os.path.join(REPORTS_DIR, f"extreme_cases_{short}_{suffix}_asset_medians.png")
-
-    if paths.empty:
-        return None
-
-    table = asset_median_table(paths)
-
-    if table.empty:
-        return None
-
-    top_assets = table["similar_asset"].head(MAX_ASSET_LINES).tolist()
-
-    fig, ax = plt.subplots(figsize=(13, 7))
-
-    cmap = plt.get_cmap("tab20")
-    x = np.arange(FORWARD_DAYS + 1)
-
-    for i, asset in enumerate(top_assets):
-        group = paths[paths["similar_asset"] == asset].copy()
-        matrix = matrix_from_paths(group)
-        median_path = np.nanmedian(matrix, axis=0)
-
-        label = asset.replace("-USD", "")
-        ax.plot(
-            x,
-            median_path,
-            linewidth=2,
-            color=cmap(i % 20),
-            label=label,
-        )
-
-    other = paths[~paths["similar_asset"].isin(top_assets)].copy()
-
-    if not other.empty:
-        other_matrix = matrix_from_paths(other)
-        other_median = np.nanmedian(other_matrix, axis=0)
-
-        ax.plot(
-            x,
-            other_median,
-            linewidth=3,
-            linestyle="--",
-            color="black",
-            label="ALTRI aggregati",
-        )
-
-    total_matrix = matrix_from_paths(paths)
-    total_median = np.nanmedian(total_matrix, axis=0)
+    ax.fill_between(
+        x,
+        np.nanpercentile(matrix, 25, axis=0),
+        np.nanpercentile(matrix, 75, axis=0),
+        alpha=.30,
+        label="p25-p75",
+    )
 
     ax.plot(
         x,
-        total_median,
-        linewidth=4,
-        color="dimgray",
+        np.nanmedian(matrix, axis=0),
+        linewidth=3,
+        label="Mediana",
+    )
+
+    ax.plot(
+        x,
+        np.nanmean(matrix, axis=0),
+        linewidth=2,
+        linestyle="--",
+        label="Media",
+    )
+
+    ax.axhline(
+        0,
+        linewidth=1,
+        linestyle=":",
+    )
+
+    for d in [7, 14, 30]:
+        ax.axvline(
+            d,
+            linewidth=.8,
+            linestyle=":",
+        )
+
+    ax.set_title(
+        f"{asset} — percorso pulito dei casi estremi"
+    )
+
+    ax.set_xlabel("Giorni dopo il match")
+    ax.set_ylabel("Return dal giorno 0 (%)")
+    ax.grid(alpha=.2)
+    ax.legend()
+
+    fig.tight_layout()
+    fig.savefig(out, dpi=160)
+    plt.close(fig)
+
+
+def plot_asset_lines(asset, cases, matrix, out):
+    tmp = cases.reset_index(drop=True).copy()
+    medians = {}
+
+    for t, g in tmp.groupby("similar_asset"):
+        medians[t] = np.nanmedian(
+            matrix[g.index.to_list()],
+            axis=0,
+        )
+
+    ranked = sorted(
+        medians,
+        key=lambda t: (
+            tmp[tmp["similar_asset"] == t].shape[0],
+            tmp.loc[
+                tmp["similar_asset"] == t,
+                "similarity",
+            ].max(),
+        ),
+        reverse=True,
+    )
+
+    keep = ranked[:18]
+    rest = ranked[18:]
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+
+    for t in keep:
+        ax.plot(
+            range(HORIZON + 1),
+            medians[t],
+            linewidth=1.7,
+            label=t.replace("-USD", ""),
+        )
+
+    if rest:
+        other = np.nanmedian(
+            np.vstack([medians[t] for t in rest]),
+            axis=0,
+        )
+
+        ax.plot(
+            range(HORIZON + 1),
+            other,
+            linewidth=2.6,
+            linestyle="--",
+            label="ALTRI aggregati",
+        )
+
+    ax.plot(
+        range(HORIZON + 1),
+        np.nanmedian(matrix, axis=0),
+        linewidth=3.4,
         label="MEDIANA totale",
     )
 
-    ax.axhline(0, linewidth=1, linestyle=":")
-    ax.axvline(7, linewidth=1, linestyle=":", alpha=0.7)
-    ax.axvline(14, linewidth=1, linestyle=":", alpha=0.7)
-    ax.axvline(30, linewidth=1, linestyle=":", alpha=0.7)
+    ax.axhline(
+        0,
+        linewidth=1,
+        linestyle=":",
+    )
 
-    title_side = "rialzisti" if side == "positive" else "ribassisti"
-    ax.set_title(f"{short} — linee colorate per asset storico nei casi {title_side}")
+    for d in [7, 14, 30]:
+        ax.axvline(
+            d,
+            linewidth=.8,
+            linestyle=":",
+        )
+
+    ax.set_title(
+        f"{asset} — linee colorate per asset storico"
+    )
+
     ax.set_xlabel("Giorni dopo il match")
-    ax.set_ylabel("Return dal giorno 0")
-    ax.grid(True, alpha=0.25)
-    ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), fontsize=8)
+    ax.set_ylabel("Return dal giorno 0 (%)")
+    ax.grid(alpha=.2)
 
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=160)
+    ax.legend(
+        bbox_to_anchor=(1.02, 1),
+        loc="upper left",
+        fontsize=8,
+    )
+
+    fig.tight_layout()
+    fig.savefig(
+        out,
+        dpi=160,
+        bbox_inches="tight",
+    )
+
     plt.close(fig)
 
-    return out_path
 
-
-def plot_ranked_returns(target, side, paths):
-    short = asset_short(target)
-    suffix = "positive" if side == "positive" else "negative"
-    out_path = os.path.join(REPORTS_DIR, f"extreme_cases_{short}_{suffix}_ranked_returns.png")
-
-    if paths.empty:
-        return None
-
-    p = paths.copy()
-    p["return_path_30d"] = pd.to_numeric(p["return_path_30d"], errors="coerce")
-    p = p.dropna(subset=["return_path_30d"]).sort_values("return_path_30d")
-
-    if p.empty:
-        return None
+def plot_spikes(asset, cases, out):
+    g = cases.sort_values(
+        [
+            "spike_before_low_pct",
+            "similarity",
+        ],
+        ascending=[
+            False,
+            False,
+        ],
+    ).copy()
 
     labels = [
-        f"{a.replace('-USD', '')}\n{str(d)[:10]}"
-        for a, d in zip(p["similar_asset"], p["end_date"])
+        f"{r.similar_asset.replace('-USD', '')}\n{r.end_date}"
+        for r in g.itertuples()
     ]
 
-    values = p["return_path_30d"].to_numpy(dtype=float)
+    vals = g["spike_before_low_pct"].to_numpy()
 
-    fig, ax = plt.subplots(figsize=(14, 6))
+    fig, ax = plt.subplots(
+        figsize=(
+            max(12, len(g) * .36),
+            6.5,
+        )
+    )
 
-    colors = ["tab:red" if v < 0 else "tab:green" for v in values]
-    ax.bar(range(len(values)), values, color=colors, alpha=0.75)
+    bars = ax.bar(
+        range(len(vals)),
+        vals,
+    )
 
-    ax.axhline(0, linewidth=1, color="black")
-    ax.axhline(np.median(values), linestyle="--", linewidth=2, label="Mediana")
-    ax.axhline(np.mean(values), linestyle=":", linewidth=2, label="Media")
+    for bar, day, val in zip(
+        bars,
+        g["spike_day"],
+        vals,
+    ):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            val + .25,
+            f"g{int(day)}",
+            ha="center",
+            va="bottom",
+            fontsize=7,
+            rotation=90,
+        )
 
-    ax.set_title(f"{short} — return 30g ordinato dei casi estremi")
-    ax.set_ylabel("Return 30 giorni")
-    ax.set_xticks(range(len(values)))
-    ax.set_xticklabels(labels, rotation=75, ha="right", fontsize=7)
-    ax.grid(True, axis="y", alpha=0.25)
-    ax.legend(loc="best")
+    ax.axhline(
+        5,
+        linestyle=":",
+        linewidth=1.2,
+        label="+5%",
+    )
 
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=160)
+    ax.axhline(
+        10,
+        linestyle="--",
+        linewidth=1.2,
+        label="+10%",
+    )
+
+    ax.set_xticks(range(len(labels)))
+
+    ax.set_xticklabels(
+        labels,
+        rotation=75,
+        ha="right",
+        fontsize=7,
+    )
+
+    ax.set_ylabel(
+        "Massimo rialzo prima del minimo (%)"
+    )
+
+    ax.set_title(
+        f"{asset} — spike massimo prima della discesa principale"
+    )
+
+    ax.grid(
+        axis="y",
+        alpha=.2,
+    )
+
+    ax.legend()
+
+    fig.tight_layout()
+
+    fig.savefig(
+        out,
+        dpi=160,
+        bbox_inches="tight",
+    )
+
     plt.close(fig)
 
-    return out_path
+
+def plot_spike_vs_low(asset, cases, out):
+    fig, ax = plt.subplots(
+        figsize=(9.5, 6.5)
+    )
+
+    ax.scatter(
+        cases["spike_before_low_pct"],
+        cases["drawdown_30d"],
+        s=60,
+        alpha=.8,
+    )
+
+    for r in cases.itertuples():
+        ax.annotate(
+            r.similar_asset.replace("-USD", ""),
+            (
+                r.spike_before_low_pct,
+                r.drawdown_30d,
+            ),
+            fontsize=7,
+            xytext=(3, 3),
+            textcoords="offset points",
+        )
+
+    ax.axvline(
+        5,
+        linestyle=":",
+        linewidth=1,
+    )
+
+    ax.axvline(
+        10,
+        linestyle="--",
+        linewidth=1,
+    )
+
+    ax.axhline(
+        -10,
+        linestyle=":",
+        linewidth=1,
+    )
+
+    ax.axhline(
+        -20,
+        linestyle="--",
+        linewidth=1,
+    )
+
+    ax.set_xlabel(
+        "Rialzo massimo prima del minimo (%)"
+    )
+
+    ax.set_ylabel(
+        "Minimo raggiunto nei 30 giorni (%)"
+    )
+
+    ax.set_title(
+        f"{asset} — quanto è salito prima e quanto è sceso dopo"
+    )
+
+    ax.grid(alpha=.2)
+
+    fig.tight_layout()
+    fig.savefig(out, dpi=160)
+    plt.close(fig)
 
 
-def distribution_table(paths):
-    values = pd.to_numeric(paths["return_path_30d"], errors="coerce").dropna()
+def plot_ranked(asset, cases, out):
+    g = cases.sort_values("return_30d")
 
-    if values.empty:
-        return pd.DataFrame()
-
-    rows = [{
-        "P10": fmt_pct(np.percentile(values, 10)),
-        "P25": fmt_pct(np.percentile(values, 25)),
-        "P50": fmt_pct(np.percentile(values, 50)),
-        "P75": fmt_pct(np.percentile(values, 75)),
-        "P90": fmt_pct(np.percentile(values, 90)),
-    }]
-
-    return pd.DataFrame(rows)
-
-
-def trigger_summary_row(target, info, matches, trigger_paths):
-    return {
-        "Asset": asset_short(target),
-        "Direzione": info["direction"],
-        "Trigger": "SI" if info["trigger"] else "NO",
-        "Percentuale": fmt_pct(info["trigger_pct"]),
-        "Motivo": info["reason"],
-        "Match disponibili": len(matches),
-        "Casi usati nel grafico": len(trigger_paths) if info["trigger"] else 0,
-    }
-
-
-def raw_summary_csv_row(target, info, matches, trigger_paths):
-    return {
-        "asset": asset_short(target),
-        "target": target,
-        "trigger": info["trigger"],
-        "direction": info["direction"],
-        "side": info["side"],
-        "positive_pct": info["positive_pct"],
-        "negative_pct": info["negative_pct"],
-        "trigger_pct": info["trigger_pct"],
-        "matches_available": len(matches),
-        "trigger_cases": len(trigger_paths) if info["trigger"] else 0,
-    }
-
-
-def format_matches_table(paths, limit=20):
-    if paths.empty:
-        return pd.DataFrame()
-
-    cols = [
-        "similar_asset",
-        "start_date",
-        "end_date",
-        "similarity",
-        "return_30d_report",
-        "drawdown_30d_report",
-        "max_gain_30d_report",
-        "return_path_30d",
+    labels = [
+        f"{r.similar_asset.replace('-USD', '')}\n{r.end_date}"
+        for r in g.itertuples()
     ]
 
-    available = [c for c in cols if c in paths.columns]
-    out = paths[available].copy()
+    vals = g["return_30d"].to_numpy()
 
-    if "similarity" in out.columns:
-        out["similarity"] = pd.to_numeric(out["similarity"], errors="coerce")
-        out = out.sort_values("similarity", ascending=False)
-
-    out = out.head(limit)
-
-    rename = {
-        "similar_asset": "Asset storico",
-        "start_date": "Start",
-        "end_date": "End",
-        "similarity": "Similarity",
-        "return_30d_report": "Return 30g report",
-        "drawdown_30d_report": "Drawdown report",
-        "max_gain_30d_report": "Max gain report",
-        "return_path_30d": "Return path calcolato",
-    }
-
-    out = out.rename(columns=rename)
-
-    for c in [
-        "Similarity",
-        "Return 30g report",
-        "Drawdown report",
-        "Max gain report",
-        "Return path calcolato",
-    ]:
-        if c in out.columns:
-            out[c] = pd.to_numeric(out[c], errors="coerce").map(lambda x: fmt_pct(x) if not pd.isna(x) else "n/a")
-
-    return out
-
-
-def contrary_cases_table(all_paths, side):
-    if all_paths.empty:
-        return pd.DataFrame()
-
-    p = all_paths.copy()
-    p["return_path_30d"] = pd.to_numeric(p["return_path_30d"], errors="coerce")
-
-    if side == "negative":
-        contrary = p[p["return_path_30d"] > 0].copy()
-    elif side == "positive":
-        contrary = p[p["return_path_30d"] <= 0].copy()
-    else:
-        return pd.DataFrame()
-
-    if contrary.empty:
-        return pd.DataFrame()
-
-    contrary = contrary.sort_values("return_path_30d", ascending=False)
-
-    out = contrary[[
-        "similar_asset",
-        "end_date",
-        "similarity",
-        "return_path_30d",
-        "drawdown_path",
-        "max_gain_path",
-    ]].head(10).copy()
-
-    out = out.rename(columns={
-        "similar_asset": "Asset storico",
-        "end_date": "End",
-        "similarity": "Similarity",
-        "return_path_30d": "Return 30g",
-        "drawdown_path": "Drawdown",
-        "max_gain_path": "Max gain",
-    })
-
-    for c in ["Similarity", "Return 30g", "Drawdown", "Max gain"]:
-        out[c] = pd.to_numeric(out[c], errors="coerce").map(lambda x: fmt_pct(x) if not pd.isna(x) else "n/a")
-
-    return out
-
-
-def format_asset_medians_for_report(paths):
-    table = asset_median_table(paths)
-
-    if table.empty:
-        return table
-
-    table = table.head(MAX_ASSET_LINES).copy()
-
-    table = table.rename(columns={
-        "similar_asset": "Asset storico",
-        "cases": "Casi",
-        "best_similarity": "Best similarity",
-        "return_7d_median": "Return mediano 7g",
-        "return_14d_median": "Return mediano 14g",
-        "return_30d_median": "Return mediano 30g",
-        "drawdown_median": "Drawdown mediano",
-        "max_gain_median": "Max gain mediano",
-    })
-
-    for c in [
-        "Best similarity",
-        "Return mediano 7g",
-        "Return mediano 14g",
-        "Return mediano 30g",
-        "Drawdown mediano",
-        "Max gain mediano",
-    ]:
-        table[c] = pd.to_numeric(table[c], errors="coerce").map(lambda x: fmt_pct(x) if not pd.isna(x) else "n/a")
-
-    return table
-
-
-def build_report(generated_at, summaries, trigger_sections):
-    lines = []
-
-    lines.append(START_MARKER)
-    lines.append("# Extreme cases path report")
-    lines.append("")
-    lines.append(f"Generato: {generated_at} UTC")
-    lines.append("")
-    lines.append(
-        "Questo report crea grafici solo quando lo scanner mostra una percentuale estrema: "
-        f"casi positivi o negativi almeno pari a **{fmt_pct(THRESHOLD, 0)}**."
-    )
-    lines.append("")
-    lines.append(
-        "Obiettivo: non guardare solo la percentuale finale, ma vedere **come si sono mossi dopo** "
-        "i casi storici simili."
-    )
-    lines.append("")
-    lines.append("Fonte match: **CSV completo: latest_scanner_matches.csv**, con fallback sui file `BTC_matches.csv`, `SOL_matches.csv`, `DOGE_matches.csv`.")
-    lines.append("")
-    lines.append("## Trigger estremi")
-    lines.append("")
-
-    summary_table = pd.DataFrame(summaries)
-
-    if summary_table.empty:
-        lines.append("Nessun dato disponibile.")
-    else:
-        lines.append(summary_table.to_markdown(index=False))
-
-    lines.append("")
-
-    if not trigger_sections:
-        lines.append("## Nessun caso estremo attivo")
-        lines.append("")
-        lines.append(
-            "Oggi nessun asset ha casi positivi o negativi sopra la soglia estrema. "
-            "Il report non crea grafici extra."
+    fig, ax = plt.subplots(
+        figsize=(
+            max(12, len(g) * .34),
+            6.5,
         )
-        lines.append(END_MARKER)
-        return "\n".join(lines)
+    )
 
-    for section in trigger_sections:
-        target = section["target"]
-        short = asset_short(target)
-        side = section["side"]
-        paths = section["trigger_paths"]
-        all_paths = section["all_paths"]
-        info = section["info"]
+    ax.bar(
+        range(len(vals)),
+        vals,
+    )
 
-        title_side = "rialzisti" if side == "positive" else "ribassisti"
+    ax.axhline(
+        np.nanmedian(vals),
+        linestyle="--",
+        label="Mediana",
+    )
 
-        lines.append(f"## {short} — casi {title_side}")
-        lines.append("")
-        lines.append(f"- Trigger: **{info['reason']}**")
-        lines.append(f"- Casi disponibili: **{len(section['matches'])}**")
-        lines.append(f"- Casi usati nei grafici: **{len(paths)}**")
-        lines.append("")
+    ax.axhline(
+        np.nanmean(vals),
+        linestyle=":",
+        label="Media",
+    )
 
-        if paths.empty:
-            lines.append("Dati insufficienti per costruire i percorsi.")
-            lines.append("")
-            continue
+    ax.set_xticks(range(len(labels)))
 
-        values_7 = pd.to_numeric(paths["day_7"], errors="coerce")
-        values_14 = pd.to_numeric(paths["day_14"], errors="coerce")
-        values_30 = pd.to_numeric(paths["day_30"], errors="coerce")
-        drawdowns = pd.to_numeric(paths["drawdown_path"], errors="coerce")
-        max_gains = pd.to_numeric(paths["max_gain_path"], errors="coerce")
+    ax.set_xticklabels(
+        labels,
+        rotation=75,
+        ha="right",
+        fontsize=7,
+    )
 
-        lines.append(f"- Return mediano 7g: **{fmt_pct(values_7.median())}**")
-        lines.append(f"- Return mediano 14g: **{fmt_pct(values_14.median())}**")
-        lines.append(f"- Return mediano 30g: **{fmt_pct(values_30.median())}**")
-        lines.append(f"- Return medio 30g: **{fmt_pct(values_30.mean())}**")
-        lines.append(f"- Drawdown mediano durante il percorso: **{fmt_pct(drawdowns.median())}**")
-        lines.append(f"- Max gain mediano durante il percorso: **{fmt_pct(max_gains.median())}**")
-        lines.append("")
+    ax.set_ylabel(
+        "Return 30 giorni (%)"
+    )
 
-        lines.append("### Distribuzione 30 giorni")
-        lines.append("")
+    ax.set_title(
+        f"{asset} — return 30g ordinato"
+    )
 
-        dist = distribution_table(paths)
+    ax.grid(
+        axis="y",
+        alpha=.2,
+    )
 
-        if not dist.empty:
-            lines.append(dist.to_markdown(index=False))
-            lines.append("")
+    ax.legend()
 
-        clean_img = section.get("clean_img")
-        asset_img = section.get("asset_img")
-        ranked_img = section.get("ranked_img")
+    fig.tight_layout()
 
-        lines.append("### Grafico pulito: bande + mediana")
-        lines.append("")
-        if clean_img:
-            lines.append(f"![Extreme clean {short}]({clean_img})")
-        else:
-            lines.append("Grafico non disponibile.")
-        lines.append("")
+    fig.savefig(
+        out,
+        dpi=160,
+        bbox_inches="tight",
+    )
 
-        lines.append("### Grafico asset per asset")
-        lines.append("")
-        lines.append(
-            "Qui non vengono più mostrate 40 linee casuali tutte insieme. "
-            "Ogni linea colorata rappresenta la mediana di un asset storico. "
-            "Se gli asset sono troppi, i meno importanti vengono aggregati in `ALTRI`."
+    plt.close(fig)
+
+
+def inject(section):
+    if not LATEST.exists():
+        return
+
+    old = LATEST.read_text(
+        encoding="utf-8"
+    )
+
+    block = (
+        START
+        + "\n"
+        + section.strip()
+        + "\n"
+        + END
+    )
+
+    if START in old and END in old:
+        a = old.find(START)
+        b = old.find(END) + len(END)
+
+        new = (
+            old[:a]
+            + block
+            + old[b:]
         )
-        lines.append("")
-        if asset_img:
-            lines.append(f"![Extreme asset medians {short}]({asset_img})")
-        else:
-            lines.append("Grafico non disponibile.")
-        lines.append("")
 
-        lines.append("### Grafico casi ordinati per risultato finale")
-        lines.append("")
-        if ranked_img:
-            lines.append(f"![Extreme ranked {short}]({ranked_img})")
-        else:
-            lines.append("Grafico non disponibile.")
-        lines.append("")
+    else:
+        anchor = (
+            "<!-- SCANNER_FORECAST_TRACKER_END -->"
+        )
 
-        lines.append("### Tabella asset storici aggregati")
-        lines.append("")
-        asset_table = format_asset_medians_for_report(paths)
-
-        if not asset_table.empty:
-            lines.append(asset_table.to_markdown(index=False))
-        else:
-            lines.append("Nessun dato aggregabile.")
-        lines.append("")
-
-        contrary = contrary_cases_table(all_paths, side)
-
-        lines.append("### Casi contrari da non ignorare")
-        lines.append("")
-
-        if contrary.empty:
-            lines.append(
-                "Non ci sono casi contrari rilevanti dentro i 40 match usati."
+        if anchor in old:
+            p = (
+                old.find(anchor)
+                + len(anchor)
             )
+
+            new = (
+                old[:p]
+                + "\n\n"
+                + block
+                + old[p:]
+            )
+
         else:
-            if side == "negative":
-                lines.append(
-                    "Questi sono i casi che, nonostante il trigger ribassista, finirono positivi. "
-                    "Sono le eccezioni da guardare per capire perché alcune linee salivano nel vecchio grafico."
-                )
-            else:
-                lines.append(
-                    "Questi sono i casi che, nonostante il trigger rialzista, finirono negativi. "
-                    "Sono le eccezioni da guardare per capire il rischio."
-                )
-            lines.append("")
-            lines.append(contrary.to_markdown(index=False))
+            new = (
+                old.rstrip()
+                + "\n\n"
+                + block
+                + "\n"
+            )
 
-        lines.append("")
-
-        lines.append("### Match individuali usati")
-        lines.append("")
-        match_table = format_matches_table(paths, limit=20)
-
-        if match_table.empty:
-            lines.append("Nessun match individuale disponibile.")
-        else:
-            lines.append(match_table.to_markdown(index=False))
-
-        lines.append("")
-
-    lines.append("## Come leggerlo")
-    lines.append("")
-    lines.append("- **Grafico pulito**: guarda prima questo. Ti dice la traiettoria centrale senza casino.")
-    lines.append("- **Grafico asset per asset**: mostra se la discesa/salita è comune a più asset o dipende solo da pochi casi.")
-    lines.append("- **Grafico casi ordinati**: mostra quanto sono dispersi i risultati finali a 30 giorni.")
-    lines.append("- **Casi contrari**: sono le eccezioni. Servono per non trasformare una statistica forte in una certezza falsa.")
-    lines.append("")
-    lines.append(
-        "Nota: questo report è visivo e diagnostico. Non modifica il Global Confluence e non autorizza leva."
+    LATEST.write_text(
+        new,
+        encoding="utf-8",
     )
-    lines.append(END_MARKER)
-
-    return "\n".join(lines)
-
-
-def update_marked_block(text, block):
-    pattern = re.compile(
-        re.escape(START_MARKER) + r".*?" + re.escape(END_MARKER),
-        flags=re.DOTALL,
-    )
-
-    if pattern.search(text):
-        return pattern.sub(block, text)
-
-    preferred_anchors = [
-        "<!-- SCANNER_FORECAST_TRACKER_END -->",
-        "<!-- BOUNCE_AFTER_DRAWDOWN_END -->",
-        "<!-- DAILY_CHANGE_END -->",
-    ]
-
-    for anchor in preferred_anchors:
-        pos = text.find(anchor)
-        if pos != -1:
-            insert_pos = pos + len(anchor)
-            return text[:insert_pos] + "\n\n" + block + "\n\n" + text[insert_pos:]
-
-    return text.rstrip() + "\n\n" + block + "\n"
-
-
-def update_latest_report(block):
-    if os.path.exists(MAIN_REPORT_PATH):
-        with open(MAIN_REPORT_PATH, "r", encoding="utf-8", errors="replace") as f:
-            text = f.read()
-    else:
-        text = ""
-
-    updated = update_marked_block(text, block)
-
-    with open(MAIN_REPORT_PATH, "w", encoding="utf-8") as f:
-        f.write(updated)
 
 
 def main():
-    ensure_reports_dir()
+    REPORTS.mkdir(exist_ok=True)
 
-    generated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    df = read_matches()
 
-    matches_by_target = {}
-    all_tickers = set()
+    lines = [
+        "# Extreme cases path report",
+        "",
+        (
+            "Generato: "
+            + datetime.now(timezone.utc).strftime(
+                "%Y-%m-%d %H:%M UTC"
+            )
+        ),
+        "",
+        (
+            "Questo report si attiva quando i casi "
+            f"positivi o negativi sono almeno **{THRESHOLD:.0f}%**."
+        ),
+        "",
+        (
+            "Ora misura anche il **rialzo massimo prima "
+            "della discesa principale**, quindi distingue "
+            "uno spike iniziale da una discesa quasi immediata."
+        ),
+        "",
+    ]
 
-    for target in TARGETS:
-        matches = load_matches_for_target(target)
-        matches_by_target[target] = matches
+    if df.empty:
+        lines += [
+            (
+                "Nessun match disponibile. "
+                "Esegui prima `scanner.py`."
+            )
+        ]
 
-        if not matches.empty and "similar_asset" in matches.columns:
-            all_tickers.update(matches["similar_asset"].dropna().astype(str).tolist())
+        text = "\n".join(lines)
 
-    data = download_price_data(all_tickers)
-
-    summaries = []
-    raw_summary_rows = []
-    trigger_sections = []
-    all_trigger_rows = []
-
-    for target, matches in matches_by_target.items():
-        print(f"Controllo casi estremi {asset_short(target)}...")
-
-        info = trigger_info(matches)
-        all_paths = build_paths(matches, data)
-
-        trigger_paths = pd.DataFrame()
-
-        if info["trigger"]:
-            trigger_paths = filter_trigger_paths(all_paths, info["side"])
-
-        summaries.append(
-            trigger_summary_row(target, info, matches, trigger_paths)
+        REPORT.write_text(
+            text + "\n",
+            encoding="utf-8",
         )
-        raw_summary_rows.append(
-            raw_summary_csv_row(target, info, matches, trigger_paths)
+
+        inject(text)
+        return
+
+    trigger_rows = []
+    info = {}
+
+    for asset in ASSETS:
+        g = df[
+            df["target_asset"] == asset
+        ]
+
+        direction, active, pct, reason = trigger_info(g)
+
+        info[asset] = (
+            direction,
+            active,
+            pct,
+            reason,
         )
 
-        if not trigger_paths.empty:
-            side = info["side"]
+        trigger_rows.append({
+            "Asset": asset,
+            "Direzione": direction,
+            "Trigger": "SI" if active else "NO",
+            "Percentuale": fp(pct),
+            "Motivo": reason,
+            "Match disponibili": len(g),
+        })
 
-            clean_path = plot_clean_bands(target, side, trigger_paths)
-            asset_path = plot_asset_medians(target, side, trigger_paths)
-            ranked_path = plot_ranked_returns(target, side, trigger_paths)
+    lines += [
+        "## Trigger estremi",
+        "",
+        md(pd.DataFrame(trigger_rows)),
+        "",
+    ]
 
-            clean_img = os.path.basename(clean_path) if clean_path else None
-            asset_img = os.path.basename(asset_path) if asset_path else None
-            ranked_img = os.path.basename(ranked_path) if ranked_path else None
+    all_cases = []
+    metric_rows = []
 
-            temp = trigger_paths.copy()
-            temp["target"] = target
-            temp["asset"] = asset_short(target)
-            temp["trigger_side"] = side
-            all_trigger_rows.append(temp)
+    for asset in ASSETS:
+        direction, active, pct, reason = info[asset]
 
-            trigger_sections.append({
-                "target": target,
-                "side": side,
-                "info": info,
-                "matches": matches,
-                "all_paths": all_paths,
-                "trigger_paths": trigger_paths,
-                "clean_img": clean_img,
-                "asset_img": asset_img,
-                "ranked_img": ranked_img,
-            })
+        if not active:
+            continue
 
-    pd.DataFrame(raw_summary_rows).to_csv(SUMMARY_CSV_PATH, index=False)
+        g = df[
+            df["target_asset"] == asset
+        ].copy()
 
-    if all_trigger_rows:
-        pd.concat(all_trigger_rows, ignore_index=True).to_csv(
-            TRIGGER_MATCHES_CSV_PATH,
+        if direction.startswith("POSITIVO"):
+            selected = g[
+                g["return_30d"] > 0
+            ]
+        else:
+            selected = g[
+                g["return_30d"] < 0
+            ]
+
+        prices = load_prices(
+            selected["similar_asset"],
+            selected["end_date"].min(),
+            selected["end_date"].max(),
+        )
+
+        records = []
+        paths = []
+
+        for _, row in selected.sort_values(
+            "similarity",
+            ascending=False,
+        ).iterrows():
+
+            rec, path = build_case(
+                row,
+                prices,
+            )
+
+            if rec is not None:
+                records.append(rec)
+                paths.append(path)
+
+        cases = pd.DataFrame(records)
+
+        if cases.empty:
+            lines += [
+                f"## {asset}",
+                "",
+                (
+                    "Trigger presente, ma percorsi "
+                    "non ricostruibili."
+                ),
+                "",
+            ]
+            continue
+
+        matrix = np.vstack(paths)
+        all_cases.append(cases)
+
+        base = (
+            "positive"
+            if direction.startswith("POSITIVO")
+            else "negative"
+        )
+
+        f_bands = REPORTS / (
+            f"extreme_cases_{asset}_{base}_clean_bands.png"
+        )
+
+        f_lines = REPORTS / (
+            f"extreme_cases_{asset}_{base}_asset_medians.png"
+        )
+
+        f_spike = REPORTS / (
+            f"extreme_cases_{asset}_{base}_spike_before_dump.png"
+        )
+
+        f_scatter = REPORTS / (
+            f"extreme_cases_{asset}_{base}_spike_vs_low.png"
+        )
+
+        f_ranked = REPORTS / (
+            f"extreme_cases_{asset}_{base}_ranked_returns.png"
+        )
+
+        plot_bands(
+            asset,
+            matrix,
+            f_bands,
+        )
+
+        plot_asset_lines(
+            asset,
+            cases,
+            matrix,
+            f_lines,
+        )
+
+        plot_spikes(
+            asset,
+            cases,
+            f_spike,
+        )
+
+        plot_spike_vs_low(
+            asset,
+            cases,
+            f_scatter,
+        )
+
+        plot_ranked(
+            asset,
+            cases,
+            f_ranked,
+        )
+
+        med_spike = (
+            cases["spike_before_low_pct"].median()
+        )
+
+        mean_spike = (
+            cases["spike_before_low_pct"].mean()
+        )
+
+        p75_spike = (
+            cases["spike_before_low_pct"].quantile(.75)
+        )
+
+        med_spike_day = (
+            cases["spike_day"].median()
+        )
+
+        med_low_day = (
+            cases["low_day"].median()
+        )
+
+        med_dump = (
+            cases["dump_from_peak_pct"].median()
+        )
+
+        rate5 = (
+            cases["spike_before_low_pct"] >= 5
+        ).mean() * 100
+
+        rate10 = (
+            cases["spike_before_low_pct"] >= 10
+        ).mean() * 100
+
+        rate15 = (
+            cases["spike_before_low_pct"] >= 15
+        ).mean() * 100
+
+        immediate = (
+            (
+                cases["low_day"] <= 5
+            )
+            &
+            (
+                cases["spike_before_low_pct"] < 3
+            )
+        ).mean() * 100
+
+        metric_rows.append({
+            "asset": asset,
+            "direction": direction,
+            "trigger_pct": pct,
+            "cases_used": len(cases),
+            "median_spike_before_low_pct": med_spike,
+            "mean_spike_before_low_pct": mean_spike,
+            "p75_spike_before_low_pct": p75_spike,
+            "median_spike_day": med_spike_day,
+            "median_low_day": med_low_day,
+            "median_dump_from_peak_pct": med_dump,
+            "spike_5_rate": rate5,
+            "spike_10_rate": rate10,
+            "spike_15_rate": rate15,
+            "immediate_drop_rate": immediate,
+        })
+
+        p = np.nanpercentile(
+            cases["return_30d"],
+            [10, 25, 50, 75, 90],
+        )
+
+        spike_table = cases.sort_values(
+            [
+                "spike_before_low_pct",
+                "similarity",
+            ],
+            ascending=[
+                False,
+                False,
+            ],
+        ).head(20)[[
+            "similar_asset",
+            "end_date",
+            "similarity",
+            "spike_before_low_pct",
+            "spike_day",
+            "drawdown_30d",
+            "low_day",
+            "dump_from_peak_pct",
+            "return_30d",
+            "sequence",
+        ]].copy()
+
+        spike_table.columns = [
+            "Asset storico",
+            "End",
+            "Similarity",
+            "Spike prima del minimo",
+            "Giorno spike",
+            "Minimo 30g",
+            "Giorno minimo",
+            "Dump dal picco",
+            "Return 30g",
+            "Sequenza",
+        ]
+
+        for c in [
+            "Similarity",
+            "Spike prima del minimo",
+            "Minimo 30g",
+            "Dump dal picco",
+            "Return 30g",
+        ]:
+            spike_table[c] = (
+                spike_table[c].map(fp)
+            )
+
+        lines += [
+            (
+                f"## {asset} — "
+                + (
+                    "casi rialzisti"
+                    if direction.startswith("POSITIVO")
+                    else "casi ribassisti"
+                )
+            ),
+            "",
+            f"- Trigger: **{reason}**",
+            (
+                "- Casi usati nei grafici: "
+                f"**{len(cases)}**"
+            ),
+            (
+                "- Return mediano 7g: "
+                f"**{fp(np.nanmedian(matrix[:, 7]))}**"
+            ),
+            (
+                "- Return mediano 14g: "
+                f"**{fp(np.nanmedian(matrix[:, 14]))}**"
+            ),
+            (
+                "- Return mediano 30g: "
+                f"**{fp(np.nanmedian(matrix[:, 30]))}**"
+            ),
+            (
+                "- Drawdown mediano: "
+                f"**{fp(cases['drawdown_30d'].median())}**"
+            ),
+            (
+                "- Max gain mediano: "
+                f"**{fp(cases['max_gain_30d'].median())}**"
+            ),
+            "",
+            "### Quanto salivano prima di scendere",
+            "",
+            (
+                "- Spike massimo mediano prima del minimo: "
+                f"**{fp(med_spike)}**"
+            ),
+            (
+                "- Spike massimo medio prima del minimo: "
+                f"**{fp(mean_spike)}**"
+            ),
+            (
+                "- Spike p75 prima del minimo: "
+                f"**{fp(p75_spike)}**"
+            ),
+            (
+                "- Giorno mediano dello spike: "
+                f"**giorno {fm(med_spike_day)}**"
+            ),
+            (
+                "- Giorno mediano del minimo: "
+                f"**giorno {fm(med_low_day)}**"
+            ),
+            (
+                "- Scarico mediano dal picco al minimo: "
+                f"**{fp(med_dump)}**"
+            ),
+            (
+                "- Casi con almeno +5% prima del minimo: "
+                f"**{fp(rate5)}**"
+            ),
+            (
+                "- Casi con almeno +10% prima del minimo: "
+                f"**{fp(rate10)}**"
+            ),
+            (
+                "- Casi con almeno +15% prima del minimo: "
+                f"**{fp(rate15)}**"
+            ),
+            (
+                "- Discesa quasi immediata: "
+                f"**{fp(immediate)}**"
+            ),
+            "",
+            (
+                "Un segnale ribassista a 30 giorni non "
+                "significa necessariamente discesa immediata: "
+                "alcuni casi fanno prima uno spike e poi scaricano."
+            ),
+            "",
+            "### Distribuzione 30 giorni",
+            "",
+            md(pd.DataFrame([{
+                "P10": fp(p[0]),
+                "P25": fp(p[1]),
+                "P50": fp(p[2]),
+                "P75": fp(p[3]),
+                "P90": fp(p[4]),
+            }])),
+            "",
+            "### Grafico pulito: bande + mediana",
+            "",
+            f"![Extreme clean {asset}]({f_bands.name})",
+            "",
+            "### Grafico asset per asset",
+            "",
+            f"![Extreme asset medians {asset}]({f_lines.name})",
+            "",
+            "### Spike massimo prima della discesa",
+            "",
+            (
+                "La sigla `g7` sopra una barra significa "
+                "che il massimo rialzo è avvenuto al giorno 7."
+            ),
+            "",
+            f"![Extreme spike before dump {asset}]({f_spike.name})",
+            "",
+            "### Spike iniziale contro minimo successivo",
+            "",
+            f"![Extreme spike vs low {asset}]({f_scatter.name})",
+            "",
+            "### Casi ordinati per risultato finale",
+            "",
+            f"![Extreme ranked {asset}]({f_ranked.name})",
+            "",
+            "### Casi con spike maggiore prima del dump",
+            "",
+            md(spike_table),
+            "",
+        ]
+
+    lines += [
+        "## Come leggerlo",
+        "",
+        (
+            "- **Grafico pulito**: "
+            "mostra il percorso centrale."
+        ),
+        (
+            "- **Asset per asset**: "
+            "mostra le differenze tra gli analoghi storici."
+        ),
+        (
+            "- **Spike prima della discesa**: "
+            "risponde a quanto poteva salire prima di scendere."
+        ),
+        (
+            "- **Spike contro minimo**: "
+            "mostra quanto rialzo iniziale è stato poi "
+            "seguito da quale discesa."
+        ),
+        "",
+        (
+            "Questo report è diagnostico e "
+            "non modifica il Global Confluence."
+        ),
+    ]
+
+    text = "\n".join(lines).strip() + "\n"
+
+    REPORT.write_text(
+        text,
+        encoding="utf-8",
+    )
+
+    inject(text)
+
+    pd.DataFrame(
+        metric_rows
+    ).to_csv(
+        METRICS,
+        index=False,
+    )
+
+    if all_cases:
+        pd.concat(
+            all_cases,
+            ignore_index=True,
+        ).to_csv(
+            CASES,
             index=False,
         )
     else:
-        pd.DataFrame().to_csv(TRIGGER_MATCHES_CSV_PATH, index=False)
+        pd.DataFrame().to_csv(
+            CASES,
+            index=False,
+        )
 
-    report = build_report(generated_at, summaries, trigger_sections)
-
-    with open(REPORT_PATH, "w", encoding="utf-8") as f:
-        f.write(report)
-
-    update_latest_report(report)
-
-    print(report)
-    print(f"Report salvato in {REPORT_PATH}")
-    print(f"Summary salvato in {SUMMARY_CSV_PATH}")
-    print(f"Trigger matches salvati in {TRIGGER_MATCHES_CSV_PATH}")
+    print(f"Wrote {REPORT}")
+    print(f"Wrote {METRICS}")
+    print(f"Wrote {CASES}")
 
 
 if __name__ == "__main__":
