@@ -563,6 +563,64 @@ def load_history() -> pd.DataFrame:
     return ensure_history_columns(df)
 
 
+def backfill_prudent_statistical_family(history: pd.DataFrame):
+    """
+    Completa soltanto le vecchie righe create prima dell'introduzione della
+    Famiglia statistica.
+
+    Regola prudente:
+    - non modifica righe che hanno già source/reason della famiglia;
+    - non inventa il numero storico di match del Market Regime;
+    - usa quindi il solo Scanner grezzo, limitato a +/-3;
+    - Market resta diagnostico e non riceve un bonus retroattivo;
+    - conserva tutti i controlli 1g/2g/... già maturati.
+
+    Ritorna il DataFrame aggiornato e il numero di righe completate.
+    """
+    out = ensure_history_columns(history)
+
+    if out.empty:
+        return out, 0
+
+    backfilled = 0
+    updated = now_utc_iso()
+
+    for idx, row in out.iterrows():
+        source = safe_str(row.get("statistical_family_source")).strip()
+        reason = safe_str(row.get("statistical_family_reason")).strip()
+        existing_score = safe_float(row.get("statistical_family_score"), np.nan)
+
+        # Una riga già prodotta dal nuovo tracker non va mai reinterpretata.
+        if source or reason:
+            continue
+
+        # Se esiste già un punteggio storico esplicito non nullo, lo conserva
+        # e aggiunge soltanto i metadati mancanti.
+        if not pd.isna(existing_score) and int(existing_score) != 0:
+            preserved = max(-4, min(4, int(existing_score)))
+            out.at[idx, "statistical_family_score"] = preserved
+            out.at[idx, "statistical_family_reason"] = (
+                "Punteggio storico già presente: conservato senza ricalcolo retroattivo."
+            )
+            out.at[idx, "statistical_family_source"] = "BACKFILL_PRESERVED_EXISTING"
+            out.at[idx, "updated_utc"] = updated
+            backfilled += 1
+            continue
+
+        scanner = max(-3, min(3, safe_int(row.get("scanner_score"), 0)))
+
+        out.at[idx, "statistical_family_score"] = scanner
+        out.at[idx, "statistical_family_reason"] = (
+            "Backfill prudente: usato soltanto Scanner grezzo; numero storico "
+            "dei match Market Regime non disponibile, quindi nessun bonus retroattivo."
+        )
+        out.at[idx, "statistical_family_source"] = "BACKFILL_PRUDENTE_SCANNER_ONLY"
+        out.at[idx, "updated_utc"] = updated
+        backfilled += 1
+
+    return ensure_history_columns(out), backfilled
+
+
 def build_signal_rows(global_rows, price_data):
     created = now_utc_iso()
     out_rows = []
@@ -1120,6 +1178,27 @@ def build_report(history: pd.DataFrame, metrics: pd.DataFrame) -> str:
     lines.append(f"Segnali totali salvati: **{len(history)}**.")
     lines.append("")
 
+    backfill_count = 0
+    if "statistical_family_source" in history.columns:
+        backfill_count = int(
+            history["statistical_family_source"]
+            .astype(str)
+            .str.startswith("BACKFILL_")
+            .sum()
+        )
+
+    if backfill_count > 0:
+        lines.append(
+            f"Backfill prudente Famiglia statistica: **{backfill_count} righe storiche completate**. "
+            "Per queste righe è stato usato soltanto lo Scanner grezzo, senza inventare "
+            "un bonus Market Regime retroattivo."
+        )
+    else:
+        lines.append(
+            "Backfill prudente Famiglia statistica: nessuna vecchia riga da completare."
+        )
+    lines.append("")
+
     lines.append("## Ultimi segnali salvati")
     lines.append("")
 
@@ -1291,6 +1370,7 @@ def main():
     price_data = download_price_data()
 
     history = load_history()
+    history, backfilled_rows = backfill_prudent_statistical_family(history)
 
     new_rows = build_signal_rows(global_rows, price_data)
     history = upsert_today_signals(history, new_rows)
@@ -1319,6 +1399,7 @@ def main():
     print(f"Module signal tracker short report scritto in: {SHORT_REPORT_PATH}")
     print(f"History scritto in: {HISTORY_CSV_PATH}")
     print(f"Metrics scritto in: {METRICS_CSV_PATH}")
+    print(f"Backfill prudente Famiglia statistica: {backfilled_rows} righe aggiornate")
 
 
 if __name__ == "__main__":
