@@ -314,7 +314,7 @@ def read_csv_rows(path: Path):
         return []
 
 
-def parse_scanner_component(text: str, asset: str):
+def _parse_scanner_component_markdown_fallback(text: str, asset: str):
     quick = extract_quick_asset_section(text, asset)
     detailed = extract_detailed_asset_section(text, asset)
     source = quick + "\n" + detailed
@@ -419,6 +419,80 @@ def parse_scanner_component(text: str, asset: str):
         },
     )
 
+
+# STRUCTURED_SCANNER_PATCH_V1
+# Prima usa il riepilogo strutturato prodotto da scanner.py; il vecchio parser
+# Markdown resta disponibile come fallback per non interrompere il workflow.
+def parse_scanner_component(text: str, asset: str):
+    structured = None
+    try:
+        from scanner_signal_reader import scanner_signal
+        candidate = scanner_signal(asset)
+        if candidate and candidate.get("available"):
+            structured = candidate
+    except Exception:
+        structured = None
+
+    if not structured:
+        return _parse_scanner_component_markdown_fallback(text, asset)
+
+    direction = clean_cell(structured.get("direction_30d") or "").upper() or None
+    positive_rate = parse_number(structured.get("positive_cases_30d"))
+    negative_rate = parse_number(structured.get("negative_cases_30d"))
+    return_p50 = parse_number(structured.get("return_p50_pct"))
+    price = parse_number(structured.get("current_price"))
+
+    # Se il file strutturato esiste ma la riga è incompleta, non inventa dati:
+    # torna al parser precedente.
+    if positive_rate is None:
+        return _parse_scanner_component_markdown_fallback(text, asset)
+
+    if negative_rate is None:
+        negative_rate = 100.0 - positive_rate
+
+    score = 0
+    if positive_rate is not None and return_p50 is not None:
+        if positive_rate >= 65 and return_p50 > 0:
+            score = 3
+        elif positive_rate >= 58 and return_p50 >= 0:
+            score = 2
+        elif positive_rate >= 52 and return_p50 >= 0:
+            score = 1
+        elif positive_rate <= 20 and return_p50 < 0:
+            score = -3
+        elif positive_rate <= 35 and return_p50 < 0:
+            score = -2
+        elif positive_rate < 48 and return_p50 < 0:
+            score = -1
+    elif positive_rate is not None:
+        if positive_rate >= 65:
+            score = 1
+        elif positive_rate <= 20:
+            score = -3
+        elif positive_rate <= 35:
+            score = -2
+        elif positive_rate < 48:
+            score = -1
+
+    detail = (
+        f"Casi positivi {fmt_pct_plain(positive_rate)}, "
+        f"return centrale 30g {fmt_pct(return_p50)}. "
+        f"Direzione scanner: {direction or 'n/a'}. "
+        "Fonte: latest_scanner_summary strutturato."
+    )
+
+    return component_template(
+        score=score,
+        detail=detail,
+        data={
+            "direction": direction,
+            "positive_rate": positive_rate,
+            "negative_rate": negative_rate,
+            "return_p50": return_p50,
+            "price": price,
+            "structured_source": True,
+        },
+    )
 
 def parse_scanner_path_component(block: str, asset: str):
     accuracy_block = extract_heading_block(
@@ -680,7 +754,7 @@ def parse_classic_technical_component(block: str, asset: str):
         if m:
             action = clean_cell(m.group(1))
 
-        m = re.search(r"Rischio:\s*\*\*([^*]+)\*\*", asset_section, flags=re.IGNORECASE)
+        m = re.search(r"(?:Rischio|Volatilità tecnica locale|Volatilità locale):\s*\*\*([^*]+)\*\*", asset_section, flags=re.IGNORECASE)
         if m:
             risk = clean_cell(m.group(1))
 
@@ -726,7 +800,7 @@ def parse_classic_technical_component(block: str, asset: str):
         f"stage {stage or 'n/a'}, "
         f"struttura {structure or 'n/a'}, "
         f"Wyckoff {wyckoff or 'n/a'}, "
-        f"rischio {risk or 'n/a'}. "
+        f"volatilità locale {risk or 'n/a'}. "
         "Peso Global limitato a ±1 perché è un filtro di conferma."
     )
 

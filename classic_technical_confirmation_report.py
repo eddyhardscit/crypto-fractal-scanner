@@ -806,6 +806,9 @@ def score_price_confirmation(df: pd.DataFrame):
     }
 
 
+# CLASSIC_LOCAL_VOLATILITY_LABEL_PATCH_V1
+# Questa funzione misura solo volatilità ATR e distanza da supporto/resistenza.
+# Non rappresenta il rischio operativo complessivo dell'asset o della leva.
 def risk_label(asset: str, atr_pct, close, support, resistance):
     if atr_pct is None or pd.isna(atr_pct):
         return "n/a", "ATR non disponibile."
@@ -1089,7 +1092,7 @@ def build_report(results):
     lines.append("- OBV, CMF e volume relativo")
     lines.append("- candele principali")
     lines.append("- Wyckoff semplificato")
-    lines.append("- volatilità e rischio tramite ATR")
+    lines.append("- volatilità tecnica locale tramite ATR e distanza dai livelli")
     lines.append("")
     lines.append("## Sintesi")
     lines.append("")
@@ -1103,7 +1106,7 @@ def build_report(results):
                 "Stage",
                 "Struttura",
                 "Wyckoff",
-                "Rischio",
+                "Volatilità locale",
                 "Azione",
             ],
             summary_rows,
@@ -1164,7 +1167,7 @@ def build_report(results):
         lines.append(f"- Score classico: **{fmt_signed(r['score'])} / 12**")
         lines.append(f"- Verdetto: **{r['verdict']}**")
         lines.append(f"- Azione coerente: **{r['action']}**")
-        lines.append(f"- Rischio: **{r['risk']}** — {r['risk_detail']}")
+        lines.append(f"- Volatilità tecnica locale: **{r['risk']}** — {r['risk_detail']}")
         lines.append("")
         lines.append("Dettaglio:")
         lines.append("")
