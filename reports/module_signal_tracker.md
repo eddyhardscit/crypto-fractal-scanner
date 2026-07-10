@@ -1,6 +1,6 @@
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-10 11:50 UTC
+Generato: 2026-07-10 12:10 UTC
 
 Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno quali orizzonti sono maturati.
 
@@ -28,9 +28,9 @@ Segnali totali salvati: **6**.
 
 | Data | Asset | Prezzo | Global | Scanner | Market | Tecnico | Classic | Frattale | Azione |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-07-10 | BTC | 64.408,33 | +5 | +3 | +3 | -1 | 0 | 0 | ACCUMULA SU PULLBACK / NO SHORT |
-| 2026-07-10 | DOGE | 0.07425 | -10 | -3 | -3 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
-| 2026-07-10 | SOL | 79,35 | 0 | -1 | 0 | +1 | 0 | 0 | HOLD LEGGERO / ATTESA CONFERME |
+| 2026-07-10 | BTC | 64.366,37 | +6 | +3 | +3 | -1 | 0 | 0 | ACCUMULA SU PULLBACK / NO SHORT |
+| 2026-07-10 | DOGE | 0.07417 | -10 | -3 | -3 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
+| 2026-07-10 | SOL | 79,22 | 0 | -1 | 0 | +1 | 0 | 0 | HOLD LEGGERO / ATTESA CONFERME |
 | 2026-07-09 | BTC | 63.234,86 | +6 | +3 | +3 | -1 | 0 | 0 | ACCUMULA SU PULLBACK / NO SHORT |
 | 2026-07-09 | DOGE | 0.07285 | -10 | -3 | -3 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
 | 2026-07-09 | SOL | 78,02 | +4 | -1 | +2 | +1 | 0 | +1 | HOLD / TRANCHE PICCOLE, NO LEVA |

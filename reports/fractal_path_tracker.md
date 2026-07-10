@@ -1,7 +1,7 @@
 <!-- FRACTAL_PATH_TRACKER_START -->
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-10 11:49 UTC
+Generato: 2026-07-10 12:09 UTC
 
 Questo report controlla se SOL sta seguendo il percorso previsto dal frattale BTC 2022 vs SOL 2026.
 
@@ -20,9 +20,9 @@ Ora il controllo è diviso in cinque parti:
 - Bottom BTC 2022 equivalente: **2022-11-21**
 - Giorno BTC equivalente oggi: **2022-12-25**
 - Inizio programma/scanner rilevato: **2026-07-03**
-- Prezzo SOL corrente: **79,38 $**
+- Prezzo SOL corrente: **79,21 $**
 - Verdetto: **STRUTTURA ANALOGA, PREZZO NON ADERENTE**
-- Somiglianza: **+65,02%**
+- Somiglianza: **+65,04%**
 - Tracking: **STORICO INIZIALE**
 - Fase: **FRATTALE NON CONFERMATO DAL PREZZO**
 - Rischio fase: **ALTO**
@@ -32,9 +32,9 @@ Ora il controllo è diviso in cinque parti:
 - Giorni controllati dal bottom: **35**
 - Giorni controllati da inizio programma/scanner: **8**
 - Errore medio assoluto dal bottom: **9,59%**
-- Errore medio assoluto ultimi 7 giorni: **21,21%**
-- Errore medio assoluto da inizio programma/scanner: **21,64%**
-- Errore ultimo giorno: **+19,65%**
+- Errore medio assoluto ultimi 7 giorni: **21,17%**
+- Errore medio assoluto da inizio programma/scanner: **21,60%**
+- Errore ultimo giorno: **+19,39%**
 - Stato: **DEVIAZIONE MODERATA**
 
 ## Grafico completo: bottom, inizio programma e proiezione giornaliera
@@ -51,9 +51,9 @@ Ora il controllo è diviso in cinque parti:
 
 ### Lettura rapida gap
 
-- Ultimo gap: **+19,65%**
-- Media mobile 7g gap: **+21,21%**
-- Variazione recente gap: **-2,00%**
+- Ultimo gap: **+19,39%**
+- Media mobile 7g gap: **+21,17%**
+- Variazione recente gap: **-2,25%**
 - Stato gap: **SOPRA FRATTALE / MOLTO IN ANTICIPO**
 - Trend gap: **SOL resta sopra il frattale, ma sta perdendo anticipo e si sta riavvicinando al percorso BTC scalato**
 
@@ -78,30 +78,30 @@ Come leggerlo:
 |       31 | 2026-07-07 | 2022-12-22     | 80,65 $     | 66,30 $       | +21,64%  | da inizio programma |
 |       32 | 2026-07-08 | 2022-12-23     | 77,79 $     | 66,17 $       | +17,56%  | da inizio programma |
 |       33 | 2026-07-09 | 2022-12-24     | 78,05 $     | 66,37 $       | +17,60%  | da inizio programma |
-|       34 | 2026-07-10 | 2022-12-25     | 79,38 $     | 66,34 $       | +19,65%  | da inizio programma |
+|       34 | 2026-07-10 | 2022-12-25     | 79,21 $     | 66,34 $       | +19,39%  | da inizio programma |
 
 ## Proiezione futura salvata
 
 | Orizzonte   | Data target   | Base frattale   | Min percorso   | Max percorso   | Controllato   | Prezzo reale   | Errore   | Dentro banda   |
 |:------------|:--------------|:----------------|:---------------|:---------------|:--------------|:---------------|:---------|:---------------|
-| 7g          | 2026-07-17    | 78,36 $         | 77,99 $        | 79,75 $        | no            | n/a            | n/a      | n/a            |
-| 14g         | 2026-07-24    | 80,55 $         | 77,99 $        | 80,55 $        | no            | n/a            | n/a      | n/a            |
-| 21g         | 2026-07-31    | 98,42 $         | 77,99 $        | 98,87 $        | no            | n/a            | n/a      | n/a            |
-| 28g         | 2026-08-07    | 107,09 $        | 77,99 $        | 107,36 $       | no            | n/a            | n/a      | n/a            |
-| 35g         | 2026-08-14    | 112,05 $        | 77,99 $        | 112,05 $       | no            | n/a            | n/a      | n/a            |
-| 42g         | 2026-08-21    | 108,20 $        | 77,99 $        | 112,05 $       | no            | n/a            | n/a      | n/a            |
-| 49g         | 2026-08-28    | 102,69 $        | 77,99 $        | 112,05 $       | no            | n/a            | n/a      | n/a            |
-| 56g         | 2026-09-04    | 114,66 $        | 77,99 $        | 116,14 $       | no            | n/a            | n/a      | n/a            |
-| 63g         | 2026-09-11    | 111,05 $        | 77,99 $        | 117,03 $       | no            | n/a            | n/a      | n/a            |
-| 70g         | 2026-09-18    | 105,74 $        | 77,99 $        | 117,03 $       | no            | n/a            | n/a      | n/a            |
-| 77g         | 2026-09-25    | 104,46 $        | 77,99 $        | 117,03 $       | no            | n/a            | n/a      | n/a            |
-| 84g         | 2026-10-02    | 132,15 $        | 77,99 $        | 132,15 $       | no            | n/a            | n/a      | n/a            |
-| 91g         | 2026-10-09    | 131,94 $        | 77,99 $        | 133,54 $       | no            | n/a            | n/a      | n/a            |
-| 98g         | 2026-10-16    | 132,91 $        | 77,99 $        | 134,23 $       | no            | n/a            | n/a      | n/a            |
-| 105g        | 2026-10-23    | 133,54 $        | 77,99 $        | 134,23 $       | no            | n/a            | n/a      | n/a            |
-| 112g        | 2026-10-30    | 142,88 $        | 77,99 $        | 143,69 $       | no            | n/a            | n/a      | n/a            |
-| 119g        | 2026-11-06    | 130,04 $        | 77,99 $        | 143,69 $       | no            | n/a            | n/a      | n/a            |
-| 126g        | 2026-11-13    | 137,95 $        | 77,99 $        | 143,69 $       | no            | n/a            | n/a      | n/a            |
+| 7g          | 2026-07-17    | 78,19 $         | 77,82 $        | 79,58 $        | no            | n/a            | n/a      | n/a            |
+| 14g         | 2026-07-24    | 80,38 $         | 77,82 $        | 80,38 $        | no            | n/a            | n/a      | n/a            |
+| 21g         | 2026-07-31    | 98,21 $         | 77,82 $        | 98,65 $        | no            | n/a            | n/a      | n/a            |
+| 28g         | 2026-08-07    | 106,86 $        | 77,82 $        | 107,13 $       | no            | n/a            | n/a      | n/a            |
+| 35g         | 2026-08-14    | 111,81 $        | 77,82 $        | 111,81 $       | no            | n/a            | n/a      | n/a            |
+| 42g         | 2026-08-21    | 107,96 $        | 77,82 $        | 111,81 $       | no            | n/a            | n/a      | n/a            |
+| 49g         | 2026-08-28    | 102,47 $        | 77,82 $        | 111,81 $       | no            | n/a            | n/a      | n/a            |
+| 56g         | 2026-09-04    | 114,42 $        | 77,82 $        | 115,89 $       | no            | n/a            | n/a      | n/a            |
+| 63g         | 2026-09-11    | 110,81 $        | 77,82 $        | 116,77 $       | no            | n/a            | n/a      | n/a            |
+| 70g         | 2026-09-18    | 105,52 $        | 77,82 $        | 116,77 $       | no            | n/a            | n/a      | n/a            |
+| 77g         | 2026-09-25    | 104,24 $        | 77,82 $        | 116,77 $       | no            | n/a            | n/a      | n/a            |
+| 84g         | 2026-10-02    | 131,87 $        | 77,82 $        | 131,87 $       | no            | n/a            | n/a      | n/a            |
+| 91g         | 2026-10-09    | 131,66 $        | 77,82 $        | 133,26 $       | no            | n/a            | n/a      | n/a            |
+| 98g         | 2026-10-16    | 132,62 $        | 77,82 $        | 133,94 $       | no            | n/a            | n/a      | n/a            |
+| 105g        | 2026-10-23    | 133,25 $        | 77,82 $        | 133,94 $       | no            | n/a            | n/a      | n/a            |
+| 112g        | 2026-10-30    | 142,58 $        | 77,82 $        | 143,38 $       | no            | n/a            | n/a      | n/a            |
+| 119g        | 2026-11-06    | 129,77 $        | 77,82 $        | 143,38 $       | no            | n/a            | n/a      | n/a            |
+| 126g        | 2026-11-13    | 137,65 $        | 77,82 $        | 143,38 $       | no            | n/a            | n/a      | n/a            |
 
 Nota: la tabella sopra mostra le milestone settimanali principali. Il grafico invece usa la proiezione giornaliera del frattale BTC scalato su SOL.
 

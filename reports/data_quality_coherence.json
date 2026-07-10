@@ -1,71 +1,36 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-07-10 11:50 UTC",
-  "overall_status": "WARN",
+  "generated_at_utc": "2026-07-10 12:10 UTC",
+  "overall_status": "OK",
   "critical_issues": [],
-  "warnings": [
-    "Il report contiene ancora caratteri corrotti: verificare sorgente e scrittura UTF-8."
-  ],
+  "warnings": [],
   "snapshot_available": true,
   "scanner_summary_available": true,
   "price_checks": [
     {
       "asset": "BTC",
       "status": "OK",
-      "scanner_price": 64418.0703125,
-      "snapshot_price": 64418.0703125,
+      "scanner_price": 64335.3515625,
+      "snapshot_price": 64335.3515625,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "SOL",
       "status": "OK",
-      "scanner_price": 79.31999969482422,
-      "snapshot_price": 79.31999969482422,
+      "scanner_price": 79.13999938964844,
+      "snapshot_price": 79.13999938964844,
       "difference_pct": 0.0,
       "message": "Prezzi coerenti."
     },
     {
       "asset": "DOGE",
       "status": "OK",
-      "scanner_price": 0.0742200016975402,
-      "snapshot_price": 0.07422000169754028,
-      "difference_pct": -1.1102230246251565e-13,
+      "scanner_price": 0.0741399973630905,
+      "snapshot_price": 0.07413999736309052,
+      "difference_pct": -2.220446049250313e-14,
       "message": "Prezzi coerenti."
     }
   ],
-  "mojibake": [
-    {
-      "token": "Ã",
-      "count": 14,
-      "examples": [
-        {
-          "line": 495,
-          "text": "- **Sintesi:** La geometria ricorda BTC 2022, ma SOL Ã¨ troppo distante dal percorso scalato per usarlo come conferma operativa."
-        },
-        {
-          "line": 496,
-          "text": "- **SOL Ã¨ al giorno:** 34 dal bottom usato."
-        },
-        {
-          "line": 506,
-          "text": "- **Da inizio programma** = verifica live: Ã¨ la parte piÃ¹ importante per l'uso operativo."
-        }
-      ]
-    },
-    {
-      "token": "Â",
-      "count": 2,
-      "examples": [
-        {
-          "line": 524,
-          "text": "| Gap corrente | +19,65% | Deve rientrare circa entro Â±12%. |"
-        },
-        {
-          "line": 562,
-          "text": "| Rientro gap | entro Â±12% | Condizione necessaria per tornare operativo. |"
-        }
-      ]
-    }
-  ]
+  "mojibake": []
 }
