@@ -69,14 +69,8 @@ jobs:
       - name: Run market regime match report
         run: python market_regime_match_report.py
 
-      - name: Run technical structure report
-        run: python technical_structure_report.py
-
       - name: Run classic technical confirmation report
         run: python classic_technical_confirmation_report.py
-
-      - name: Run classic technical visual report
-        run: python classic_technical_visual_report.py
 
       - name: Run BTC 2022 vs SOL 2026 fractal report
         run: python btc_2022_vs_sol_2026_report.py
@@ -102,6 +96,15 @@ jobs:
           else
             echo "No liquidation report script found. Skipping liquidation report."
           fi
+
+      - name: Run technical structure report
+        run: python technical_structure_report.py
+
+      - name: Run classic technical visual report
+        run: python classic_technical_visual_report.py
+
+      - name: Synchronize shared market prices
+        run: python price_coherence_sync.py
 
       - name: Run global confluence report
         run: python global_confluence_report.py
