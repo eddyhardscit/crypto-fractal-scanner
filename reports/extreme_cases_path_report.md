@@ -1,34 +1,43 @@
-<!-- EXTREME_CASES_PATH_START -->
 # Extreme cases path report
 
-Generato: 2026-07-10 01:12:28 UTC
+Generato: 2026-07-10 01:34 UTC
 
-Questo report crea grafici solo quando lo scanner mostra una percentuale estrema: casi positivi o negativi almeno pari a **80%**.
+Questo report si attiva quando i casi positivi o negativi sono almeno **80%**.
 
-Obiettivo: non guardare solo la percentuale finale, ma vedere **come si sono mossi dopo** i casi storici simili.
-
-Fonte match: **CSV completo: latest_scanner_matches.csv**, con fallback sui file `BTC_matches.csv`, `SOL_matches.csv`, `DOGE_matches.csv`.
+Ora misura anche il **rialzo massimo prima della discesa principale**, quindi distingue uno spike iniziale da una discesa quasi immediata.
 
 ## Trigger estremi
 
-| Asset   | Direzione             | Trigger   | Percentuale   | Motivo                           |   Match disponibili |   Casi usati nel grafico |
-|:--------|:----------------------|:----------|:--------------|:---------------------------------|--------------------:|-------------------------:|
-| BTC     | NESSUNO               | NO        | 72,50%        | Nessun lato sopra soglia estrema |                  40 |                        0 |
-| SOL     | NESSUNO               | NO        | 57,50%        | Nessun lato sopra soglia estrema |                  40 |                        0 |
-| DOGE    | NEGATIVO / RIBASSISTA | SI        | 87,50%        | Casi negativi 87,50% >= 80,00%   |                  40 |                       35 |
+| Asset   | Direzione             | Trigger   | Percentuale   | Motivo                           |   Match disponibili |
+|:--------|:----------------------|:----------|:--------------|:---------------------------------|--------------------:|
+| BTC     | NESSUNO               | NO        | +72,50%       | Nessun lato sopra soglia estrema |                  40 |
+| SOL     | NESSUNO               | NO        | +57,50%       | Nessun lato sopra soglia estrema |                  40 |
+| DOGE    | NEGATIVO / RIBASSISTA | SI        | +87,50%       | Casi negativi 87.50% >= 80%      |                  40 |
 
 ## DOGE — casi ribassisti
 
-- Trigger: **Casi negativi 87,50% >= 80,00%**
-- Casi disponibili: **40**
+- Trigger: **Casi negativi 87.50% >= 80%**
 - Casi usati nei grafici: **35**
-
 - Return mediano 7g: **-4,77%**
 - Return mediano 14g: **-25,68%**
 - Return mediano 30g: **-25,05%**
-- Return medio 30g: **-22,14%**
-- Drawdown mediano durante il percorso: **-29,24%**
-- Max gain mediano durante il percorso: **4,26%**
+- Drawdown mediano: **-29,24%**
+- Max gain mediano: **+4,26%**
+
+### Quanto salivano prima di scendere
+
+- Spike massimo mediano prima del minimo: **+3,34%**
+- Spike massimo medio prima del minimo: **+5,39%**
+- Spike p75 prima del minimo: **+6,96%**
+- Giorno mediano dello spike: **giorno 2**
+- Giorno mediano del minimo: **giorno 18**
+- Scarico mediano dal picco al minimo: **-32,73%**
+- Casi con almeno +5% prima del minimo: **+37,14%**
+- Casi con almeno +10% prima del minimo: **+22,86%**
+- Casi con almeno +15% prima del minimo: **+5,71%**
+- Discesa quasi immediata: **+0,00%**
+
+Un segnale ribassista a 30 giorni non significa necessariamente discesa immediata: alcuni casi fanno prima uno spike e poi scaricano.
 
 ### Distribuzione 30 giorni
 
@@ -42,80 +51,52 @@ Fonte match: **CSV completo: latest_scanner_matches.csv**, con fallback sui file
 
 ### Grafico asset per asset
 
-Qui non vengono più mostrate 40 linee casuali tutte insieme. Ogni linea colorata rappresenta la mediana di un asset storico. Se gli asset sono troppi, i meno importanti vengono aggregati in `ALTRI`.
-
 ![Extreme asset medians DOGE](extreme_cases_DOGE_negative_asset_medians.png)
 
-### Grafico casi ordinati per risultato finale
+### Spike massimo prima della discesa
+
+La sigla `g7` sopra una barra significa che il massimo rialzo è avvenuto al giorno 7.
+
+![Extreme spike before dump DOGE](extreme_cases_DOGE_negative_spike_before_dump.png)
+
+### Spike iniziale contro minimo successivo
+
+![Extreme spike vs low DOGE](extreme_cases_DOGE_negative_spike_vs_low.png)
+
+### Casi ordinati per risultato finale
 
 ![Extreme ranked DOGE](extreme_cases_DOGE_negative_ranked_returns.png)
 
-### Tabella asset storici aggregati
+### Casi con spike maggiore prima del dump
 
-| Asset storico   |   Casi | Best similarity   | Return mediano 7g   | Return mediano 14g   | Return mediano 30g   | Drawdown mediano   | Max gain mediano   |
-|:----------------|-------:|:------------------|:--------------------|:---------------------|:---------------------|:-------------------|:-------------------|
-| AVAX-USD        |      2 | 86,00%            | 2,50%               | -18,92%              | -22,30%              | -28,90%            | 6,47%              |
-| BAT-USD         |      2 | 84,84%            | 1,37%               | -15,76%              | -3,16%               | -17,66%            | 9,33%              |
-| DOT-USD         |      2 | 84,63%            | -3,88%              | -15,82%              | -17,16%              | -21,09%            | 3,01%              |
-| DASH-USD        |      1 | 88,64%            | -4,77%              | -32,96%              | -29,45%              | -33,95%            | 2,32%              |
-| NEAR-USD        |      1 | 88,50%            | -36,88%             | -29,95%              | -25,05%              | -39,10%            | 0,00%              |
-| VET-USD         |      1 | 87,39%            | -0,81%              | -16,56%              | -27,52%              | -29,00%            | 4,39%              |
-| QTUM-USD        |      1 | 87,31%            | -2,78%              | -33,37%              | -31,65%              | -37,87%            | 0,00%              |
-| ZEC-USD         |      1 | 87,28%            | -10,86%             | -6,03%               | -11,71%              | -11,71%            | 5,15%              |
-| 1INCH-USD       |      1 | 86,51%            | -14,13%             | -34,05%              | -31,62%              | -42,19%            | 0,00%              |
-| OMG-USD         |      1 | 86,49%            | -6,66%              | -30,96%              | -32,46%              | -37,50%            | 0,00%              |
-| CHZ-USD         |      1 | 86,13%            | -6,74%              | -22,27%              | -19,17%              | -28,71%            | 5,97%              |
-| XTZ-USD         |      1 | 85,94%            | -2,08%              | -12,14%              | -10,41%              | -12,14%            | 4,26%              |
-| ENJ-USD         |      1 | 85,77%            | -13,64%             | -33,46%              | -16,55%              | -33,46%            | 5,00%              |
-| ETH-USD         |      1 | 85,35%            | -15,09%             | -44,85%              | -36,11%              | -44,85%            | 3,20%              |
-| BCH-USD         |      1 | 85,29%            | -5,60%              | -35,62%              | -46,95%              | -47,58%            | 3,48%              |
-| INJ-USD         |      1 | 85,21%            | -6,37%              | -27,66%              | -42,93%              | -42,93%            | 3,20%              |
-| NEO-USD         |      1 | 85,19%            | 3,34%               | -16,70%              | -26,97%              | -27,65%            | 3,34%              |
-| ADA-USD         |      1 | 85,15%            | 6,89%               | -18,76%              | -18,34%              | -19,98%            | 12,55%             |
-
-### Casi contrari da non ignorare
-
-Questi sono i casi che, nonostante il trigger ribassista, finirono positivi. Sono le eccezioni da guardare per capire perché alcune linee salivano nel vecchio grafico.
-
-| Asset storico   | End        | Similarity   | Return 30g   | Drawdown   | Max gain   |
-|:----------------|:-----------|:-------------|:-------------|:-----------|:-----------|
-| XLM-USD         | 2020-01-06 | 87,24%       | 39,92%       | -5,54%     | 39,92%     |
-| XRP-USD         | 2020-01-01 | 86,82%       | 24,17%       | -2,40%     | 26,46%     |
-| AVAX-USD        | 2023-09-23 | 84,30%       | 18,71%       | -1,26%     | 19,74%     |
-| KSM-USD         | 2024-05-07 | 84,23%       | 15,56%       | -3,55%     | 16,25%     |
-| THETA-USD       | 2022-06-03 | 86,09%       | 1,59%        | -8,56%     | 23,35%     |
-
-### Match individuali usati
-
-| Asset storico   | Start      | End        | Similarity   | Return 30g report   | Drawdown report   | Max gain report   | Return path calcolato   |
-|:----------------|:-----------|:-----------|:-------------|:--------------------|:------------------|:------------------|:------------------------|
-| DASH-USD        | 2022-02-20 | 2022-05-30 | 88,64%       | -29,45%             | -33,95%           | 2,32%             | -29,45%                 |
-| NEAR-USD        | 2022-03-02 | 2022-06-09 | 88,50%       | -25,05%             | -39,10%           | 0,00%             | -25,05%                 |
-| VET-USD         | 2022-02-22 | 2022-06-01 | 87,39%       | -27,52%             | -29,00%           | 4,39%             | -27,52%                 |
-| QTUM-USD        | 2022-02-20 | 2022-05-30 | 87,31%       | -31,65%             | -37,87%           | 0,00%             | -31,65%                 |
-| ZEC-USD         | 2019-05-17 | 2019-08-24 | 87,28%       | -11,71%             | -11,71%           | 5,15%             | -11,71%                 |
-| 1INCH-USD       | 2022-02-22 | 2022-06-01 | 86,51%       | -31,62%             | -42,19%           | 0,00%             | -31,62%                 |
-| OMG-USD         | 2022-02-20 | 2022-05-30 | 86,49%       | -32,46%             | -37,50%           | 0,00%             | -32,46%                 |
-| CHZ-USD         | 2022-02-24 | 2022-06-03 | 86,13%       | -19,17%             | -28,71%           | 5,97%             | -19,17%                 |
-| AVAX-USD        | 2025-08-14 | 2025-11-21 | 86,00%       | -8,75%              | -14,04%           | 12,94%            | -8,75%                  |
-| XTZ-USD         | 2025-12-06 | 2026-03-15 | 85,94%       | -10,41%             | -12,14%           | 4,26%             | -10,41%                 |
-| ENJ-USD         | 2022-02-25 | 2022-06-04 | 85,77%       | -16,55%             | -33,46%           | 5,00%             | -16,55%                 |
-| ETH-USD         | 2022-02-25 | 2022-06-04 | 85,35%       | -36,11%             | -44,85%           | 3,20%             | -36,11%                 |
-| BCH-USD         | 2022-02-20 | 2022-05-30 | 85,29%       | -46,95%             | -47,58%           | 3,48%             | -46,95%                 |
-| INJ-USD         | 2022-02-22 | 2022-06-01 | 85,21%       | -42,93%             | -42,93%           | 3,20%             | -42,93%                 |
-| NEO-USD         | 2022-02-20 | 2022-05-30 | 85,19%       | -26,97%             | -27,65%           | 3,34%             | -26,97%                 |
-| ADA-USD         | 2022-02-20 | 2022-05-30 | 85,15%       | -18,34%             | -19,98%           | 12,55%            | -18,34%                 |
-| OP-USD          | 2025-12-02 | 2026-03-11 | 85,07%       | -4,42%              | -15,36%           | 14,28%            | -4,42%                  |
-| HBAR-USD        | 2020-07-02 | 2020-10-09 | 84,96%       | -12,18%             | -17,30%           | 0,27%             | -12,18%                 |
-| SOL-USD         | 2022-02-28 | 2022-06-07 | 84,91%       | -2,33%              | -28,51%           | 7,34%             | -2,33%                  |
-| BAT-USD         | 2018-09-19 | 2018-12-27 | 84,84%       | -1,76%              | -6,08%            | 10,32%            | -1,76%                  |
+| Asset storico   | End        | Similarity   | Spike prima del minimo   |   Giorno spike | Minimo 30g   |   Giorno minimo | Dump dal picco   | Return 30g   | Sequenza                      |
+|:----------------|:-----------|:-------------|:-------------------------|---------------:|:-------------|----------------:|:-----------------|:-------------|:------------------------------|
+| WAVES-USD       | 2022-05-30 | +83,38%      | +28,83%                  |              4 | -42,96%      |              17 | -55,72%          | -29,04%      | SPIKE PRIMA DEL DUMP          |
+| LINK-USD        | 2022-05-30 | +84,14%      | +24,39%                  |             10 | -21,06%      |              14 | -36,54%          | -16,73%      | SPIKE PRIMA DEL DUMP          |
+| OP-USD          | 2026-03-11 | +85,08%      | +14,28%                  |              5 | -15,36%      |              18 | -25,94%          | -4,42%       | SPIKE PRIMA DEL DUMP          |
+| AVAX-USD        | 2025-11-21 | +85,96%      | +12,94%                  |              6 | -14,04%      |              27 | -23,89%          | -8,75%       | SPIKE PRIMA DEL DUMP          |
+| ADA-USD         | 2022-05-30 | +85,17%      | +12,55%                  |              9 | -19,98%      |              19 | -28,90%          | -18,34%      | SPIKE PRIMA DEL DUMP          |
+| LTC-USD         | 2022-05-28 | +84,28%      | +10,92%                  |              2 | -30,51%      |              16 | -37,36%          | -10,25%      | SPIKE PRIMA DEL DUMP          |
+| BTC-USD         | 2022-05-28 | +83,61%      | +10,33%                  |              3 | -34,00%      |              21 | -40,18%          | -28,04%      | SPIKE PRIMA DEL DUMP          |
+| BAT-USD         | 2018-12-27 | +84,84%      | +10,32%                  |             13 | -6,08%       |              17 | -14,87%          | -1,76%       | PERCORSO RIBASSISTA MISTO     |
+| ICP-USD         | 2023-06-22 | +83,77%      | +7,92%                   |             11 | -2,60%       |              17 | -9,75%           | -0,40%       | PERCORSO RIBASSISTA MISTO     |
+| DOT-USD         | 2023-09-22 | +83,53%      | +6,01%                   |              9 | -9,22%       |              27 | -14,37%          | -1,36%       | PERCORSO RIBASSISTA MISTO     |
+| CHZ-USD         | 2022-06-03 | +86,15%      | +5,97%                   |              3 | -28,71%      |              15 | -32,73%          | -19,17%      | RIALZO MODESTO PRIMA DEL DUMP |
+| ZEC-USD         | 2019-08-24 | +87,27%      | +5,15%                   |             25 | -11,71%      |              30 | -16,03%          | -11,71%      | RIALZO MODESTO PRIMA DEL DUMP |
+| ENJ-USD         | 2022-06-04 | +85,77%      | +5,00%                   |              2 | -33,46%      |              14 | -36,63%          | -16,55%      | RIALZO MODESTO PRIMA DEL DUMP |
+| XLM-USD         | 2022-05-30 | +84,23%      | +4,76%                   |              1 | -25,70%      |              14 | -29,08%          | -23,40%      | RIALZO MODESTO PRIMA DEL DUMP |
+| VET-USD         | 2022-06-01 | +87,40%      | +4,39%                   |              8 | -29,00%      |              17 | -31,99%          | -27,52%      | RIALZO MODESTO PRIMA DEL DUMP |
+| XTZ-USD         | 2026-03-15 | +85,97%      | +4,26%                   |              5 | -12,14%      |              14 | -15,73%          | -10,41%      | RIALZO MODESTO PRIMA DEL DUMP |
+| BCH-USD         | 2022-05-30 | +85,30%      | +3,48%                   |              1 | -47,58%      |              29 | -49,34%          | -46,95%      | RIALZO MODESTO PRIMA DEL DUMP |
+| NEO-USD         | 2022-05-30 | +85,21%      | +3,34%                   |              7 | -27,65%      |              19 | -29,99%          | -26,97%      | RIALZO MODESTO PRIMA DEL DUMP |
+| INJ-USD         | 2022-06-01 | +85,20%      | +3,20%                   |              1 | -42,93%      |              30 | -44,70%          | -42,93%      | RIALZO MODESTO PRIMA DEL DUMP |
+| ETH-USD         | 2022-06-04 | +85,34%      | +3,20%                   |              2 | -44,85%      |              14 | -46,56%          | -36,11%      | RIALZO MODESTO PRIMA DEL DUMP |
 
 ## Come leggerlo
 
-- **Grafico pulito**: guarda prima questo. Ti dice la traiettoria centrale senza casino.
-- **Grafico asset per asset**: mostra se la discesa/salita è comune a più asset o dipende solo da pochi casi.
-- **Grafico casi ordinati**: mostra quanto sono dispersi i risultati finali a 30 giorni.
-- **Casi contrari**: sono le eccezioni. Servono per non trasformare una statistica forte in una certezza falsa.
+- **Grafico pulito**: mostra il percorso centrale.
+- **Asset per asset**: mostra le differenze tra gli analoghi storici.
+- **Spike prima della discesa**: risponde a quanto poteva salire prima di scendere.
+- **Spike contro minimo**: mostra quanto rialzo iniziale è stato poi seguito da quale discesa.
 
-Nota: questo report è visivo e diagnostico. Non modifica il Global Confluence e non autorizza leva.
-<!-- EXTREME_CASES_PATH_END -->
+Questo report è diagnostico e non modifica il Global Confluence.
