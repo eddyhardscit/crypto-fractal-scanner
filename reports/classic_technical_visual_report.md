@@ -1,6 +1,6 @@
 # Classic technical visual report
 
-Generato: 2026-07-10 08:36 UTC
+Generato: 2026-07-10 11:39 UTC
 
 Questo report crea grafici visivi dei pattern tecnici principali. Serve per vedere il grafico, non per aggiungere automaticamente punteggio al Global.
 
@@ -19,9 +19,9 @@ Pattern controllati:
 
 | Asset | Prezzo | Pattern principale | Stato | Famiglia | Prezzo | Supporto | Resistenza |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 64.154 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 62.553 $ | 64.598 $ |
-| SOL | 79,24 $ | Testa e spalle | CONFERMATO | ribassista | NEL RANGE | 78,43 $ | 83,81 $ |
-| DOGE | 0.07423 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 0.06961 $ | 0.07923 $ |
+| BTC | 64.334 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 62.553 $ | 64.598 $ |
+| SOL | 79,20 $ | Testa e spalle | CONFERMATO | ribassista | NEL RANGE | 78,43 $ | 83,81 $ |
+| DOGE | 0.07415 $ | Doppio massimo | CONFERMATO | ribassista | NEL RANGE | 0.06961 $ | 0.07923 $ |
 
 ## BTC
 
@@ -37,11 +37,11 @@ Pattern controllati:
 - Resistenza: **64.598 $**
 - Breakout 60g: **82.430 $**
 - Breakdown 60g: **57.748 $**
-- RSI14: **53.89**
-- ATR14: **3,03%**
-- Volume ratio 20g: **0.96**
-- Rendimento 30g: **+4,40%**
-- Rendimento 90g: **-12,18%**
+- RSI14: **54.53**
+- ATR14: **3,04%**
+- Volume ratio 20g: **0.94**
+- Rendimento 30g: **+4,69%**
+- Rendimento 90g: **-11,94%**
 
 ### Pattern trovati
 
@@ -65,11 +65,11 @@ Pattern controllati:
 - Resistenza: **83,81 $**
 - Breakout 60g: **98,27 $**
 - Breakdown 60g: **60,41 $**
-- RSI14: **56.86**
-- ATR14: **4,17%**
-- Volume ratio 20g: **0.64**
-- Rendimento 30g: **+25,46%**
-- Rendimento 90g: **-6,72%**
+- RSI14: **56.78**
+- ATR14: **4,20%**
+- Volume ratio 20g: **0.66**
+- Rendimento 30g: **+25,39%**
+- Rendimento 90g: **-6,77%**
 
 ### Pattern trovati
 
@@ -93,11 +93,11 @@ Pattern controllati:
 - Resistenza: **0.07923 $**
 - Breakout 60g: **0.11825 $**
 - Breakdown 60g: **0.06961 $**
-- RSI14: **38.14**
-- ATR14: **3,84%**
-- Volume ratio 20g: **0.77**
-- Rendimento 30g: **-10,52%**
-- Rendimento 90g: **-20,28%**
+- RSI14: **37.88**
+- ATR14: **3,87%**
+- Volume ratio 20g: **0.79**
+- Rendimento 30g: **-10,61%**
+- Rendimento 90g: **-20,36%**
 
 ### Pattern trovati
 
