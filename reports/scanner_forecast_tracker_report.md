@@ -1,7 +1,7 @@
 <!-- SCANNER_FORECAST_TRACKER_START -->
 # Scanner forecast path / cono probabilistico
 
-Generato: 2026-07-10 18:23:22 UTC
+Generato: 2026-07-10 23:22:57 UTC
 
 Questo report trasforma i 40 casi simili dello scanner in un cono previsionale leggibile.
 
@@ -18,9 +18,9 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 | Asset   | Data       | Prezzo iniziale   | Direzione scanner   | Casi positivi   | P10 30g     | P25 30g     | P50 30g     | P75 30g     | P90 30g     |
 |:--------|:-----------|:------------------|:--------------------|:----------------|:------------|:------------|:------------|:------------|:------------|
-| BTC     | 2026-07-10 | 63.868,34 $       | SALITA              | 75,00%          | 49.569,34 $ | 64.541,18 $ | 69.620,86 $ | 78.275,52 $ | 91.810,69 $ |
-| SOL     | 2026-07-10 | 77,63 $           | DISCESA             | 40,00%          | 61,37 $     | 68,91 $     | 76,31 $     | 86,19 $     | 111,59 $    |
-| DOGE    | 2026-07-10 | 0.07396 $         | DISCESA             | 15,00%          | 0.04502 $   | 0.05057 $   | 0.05742 $   | 0.06826 $   | 0.07947 $   |
+| BTC | 2026-07-10 | 64.079,99 $ | SALITA | 77,50% | 51.798,26 $ | 65.737,66 $ | 69.851,57 $ | 78.534,91 $ | 92.114,94 $ |
+| SOL | 2026-07-10 | 77,99 $ | DISCESA | 37,50% | 61,65 $ | 69,23 $ | 76,39 $ | 85,05 $ | 112,11 $ |
+| DOGE | 2026-07-10 | 0.07405 $ | DISCESA | 15,00% | 0.04507 $ | 0.05063 $ | 0.05749 $ | 0.06835 $ | 0.07957 $ |
 
 ## Grafici
 
@@ -40,21 +40,21 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 | Asset   | Giorno   |   Controlli | Dentro p10-p90   | Dentro p25-p75   | Errore medio abs vs p50   | Errore medio vs p50   |
 |:--------|:---------|------------:|:-----------------|:-----------------|:--------------------------|:----------------------|
-| BTC     | 1g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| BTC     | 3g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| BTC     | 7g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| BTC     | 14g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| BTC     | 30g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| SOL     | 1g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| SOL     | 3g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| SOL     | 7g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| SOL     | 14g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| SOL     | 30g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| DOGE    | 1g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| DOGE    | 3g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| DOGE    | 7g       |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| DOGE    | 14g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
-| DOGE    | 30g      |           0 | n/a              | n/a              | n/a                       | n/a                   |
+| BTC | 1g | 0 | n/a | n/a | n/a | n/a |
+| BTC | 3g | 0 | n/a | n/a | n/a | n/a |
+| BTC | 7g | 0 | n/a | n/a | n/a | n/a |
+| BTC | 14g | 0 | n/a | n/a | n/a | n/a |
+| BTC | 30g | 0 | n/a | n/a | n/a | n/a |
+| SOL | 1g | 0 | n/a | n/a | n/a | n/a |
+| SOL | 3g | 0 | n/a | n/a | n/a | n/a |
+| SOL | 7g | 0 | n/a | n/a | n/a | n/a |
+| SOL | 14g | 0 | n/a | n/a | n/a | n/a |
+| SOL | 30g | 0 | n/a | n/a | n/a | n/a |
+| DOGE | 1g | 0 | n/a | n/a | n/a | n/a |
+| DOGE | 3g | 0 | n/a | n/a | n/a | n/a |
+| DOGE | 7g | 0 | n/a | n/a | n/a | n/a |
+| DOGE | 14g | 0 | n/a | n/a | n/a | n/a |
+| DOGE | 30g | 0 | n/a | n/a | n/a | n/a |
 
 ## Come leggerlo
 

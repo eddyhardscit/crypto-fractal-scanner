@@ -1,7 +1,7 @@
 # Mini report cambiamenti giornalieri
 
-Generato: **2026-07-10 20:23:15 CEST**  
-UTC: **2026-07-10 18:23:15 UTC**
+Generato: **2026-07-11 01:22:49 CEST**  
+UTC: **2026-07-10 23:22:49 UTC**
 
 Questo report confronta l'ultima previsione salvata con quella precedente, asset per asset.
 
@@ -9,8 +9,8 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 
 | Asset | Cambio | Tono | Verdetto oggi | Casi positivi oggi | Δ casi positivi | Δ return P50 | Δ drawdown P25 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | CAMBIAMENTO MEDIO | miglioramento | RIALZISTA | +75.00% | +5.00 punti | +2.12 punti | +0.41 punti |
-| SOL | NESSUN CAMBIAMENTO FORTE | peggioramento | NEUTRALE / INCERTO | +40.00% | -2.50 punti | -0.15 punti | -1.74 punti |
+| BTC | CAMBIAMENTO MEDIO | miglioramento | RIALZISTA | +77.50% | +7.50 punti | +2.12 punti | +0.41 punti |
+| SOL | NESSUN CAMBIAMENTO FORTE | peggioramento | NEUTRALE / INCERTO | +37.50% | -5.00 punti | -0.50 punti | -1.74 punti |
 | DOGE | NESSUN CAMBIAMENTO FORTE | miglioramento | RIBASSISTA | +15.00% | +2.50 punti | -2.12 punti | -0.58 punti |
 
 ## Come leggerlo
@@ -36,15 +36,15 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 | --- | --- | --- | --- |
 | Data previsione | 2026-07-09 | 2026-07-10 | - |
 | Verdetto | RIALZISTA | RIALZISTA | uguale |
-| Prezzo attuale | $63,241 | $63,852 | +0.97% |
-| Casi positivi 30d | +70.00% | +75.00% | +5.00 punti |
+| Prezzo attuale | $63,241 | $64,082 | +1.33% |
+| Casi positivi 30d | +70.00% | +77.50% | +7.50 punti |
 | Return 30d centrale P50 | +6.89% | +9.01% | +2.12 punti |
 | Drawdown brutto P25 | -9.39% | -8.98% | +0.41 punti |
 | Max gain buono P75 | +32.64% | +34.02% | +1.38 punti |
 
 ### Perché
 
-- Casi positivi cambiati: +5.00 punti
+- Casi positivi cambiati: +7.50 punti
 - Scenario centrale 30 giorni cambiato: +2.12 punti
 
 ---
@@ -62,15 +62,15 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 | --- | --- | --- | --- |
 | Data previsione | 2026-07-09 | 2026-07-10 | - |
 | Verdetto | NEUTRALE / INCERTO | NEUTRALE / INCERTO | uguale |
-| Prezzo attuale | $78.03 | $77.62 | -0.53% |
-| Casi positivi 30d | +42.50% | +40.00% | -2.50 punti |
-| Return 30d centrale P50 | -1.54% | -1.70% | -0.15 punti |
+| Prezzo attuale | $78.03 | $77.97 | -0.08% |
+| Casi positivi 30d | +42.50% | +37.50% | -5.00 punti |
+| Return 30d centrale P50 | -1.54% | -2.05% | -0.50 punti |
 | Drawdown brutto P25 | -23.56% | -25.30% | -1.74 punti |
 | Max gain buono P75 | +22.56% | +22.56% | 0.00 punti |
 
 ### Perché
 
-- Nessuna variazione importante rispetto alla previsione precedente.
+- Casi positivi cambiati: -5.00 punti
 
 ---
 
@@ -87,7 +87,7 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 | --- | --- | --- | --- |
 | Data previsione | 2026-07-09 | 2026-07-10 | - |
 | Verdetto | RIBASSISTA | RIBASSISTA | uguale |
-| Prezzo attuale | $0.07289 | $0.07394 | +1.44% |
+| Prezzo attuale | $0.07289 | $0.07404 | +1.58% |
 | Casi positivi 30d | +12.50% | +15.00% | +2.50 punti |
 | Return 30d centrale P50 | -20.25% | -22.37% | -2.12 punti |
 | Drawdown brutto P25 | -37.60% | -38.18% | -0.58 punti |

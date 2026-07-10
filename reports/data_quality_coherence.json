@@ -1,36 +1,208 @@
 {
-  "schema_version": 1,
-  "generated_at_utc": "2026-07-10 18:24 UTC",
+  "schema_version": 2,
+  "generated_at_utc": "2026-07-10 23:23 UTC",
   "overall_status": "OK",
   "critical_issues": [],
   "warnings": [],
-  "snapshot_available": true,
+  "snapshot_complete": true,
   "scanner_summary_available": true,
-  "price_checks": [
+  "price_sync_available": true,
+  "snapshot_metadata": {
+    "schema_version": 1,
+    "generated_at_utc": "2026-07-10T23:20:52Z",
+    "source": "Yahoo Finance daily shared snapshot",
+    "assets": {
+      "BTC": {
+        "asset": "BTC",
+        "ticker": "BTC-USD",
+        "candle_date_utc": "2026-07-10",
+        "price": 64082.03125,
+        "open": 63184.80078125,
+        "high": 64524.44140625,
+        "low": 62913.3046875,
+        "close": 64082.03125,
+        "volume": 27309815808.0,
+        "generated_at_utc": "2026-07-10T23:20:52Z",
+        "source": "Yahoo Finance daily shared snapshot"
+      },
+      "SOL": {
+        "asset": "SOL",
+        "ticker": "SOL-USD",
+        "candle_date_utc": "2026-07-10",
+        "price": 77.97000122070312,
+        "open": 78.03601837158203,
+        "high": 79.52308654785156,
+        "low": 77.34200286865234,
+        "close": 77.97000122070312,
+        "volume": 2140383104.0,
+        "generated_at_utc": "2026-07-10T23:20:52Z",
+        "source": "Yahoo Finance daily shared snapshot"
+      },
+      "DOGE": {
+        "asset": "DOGE",
+        "ticker": "DOGE-USD",
+        "candle_date_utc": "2026-07-10",
+        "price": 0.0740400031208992,
+        "open": 0.07285591959953308,
+        "high": 0.07452653348445892,
+        "low": 0.07271995395421982,
+        "close": 0.0740400031208992,
+        "volume": 490004032.0,
+        "generated_at_utc": "2026-07-10T23:20:52Z",
+        "source": "Yahoo Finance daily shared snapshot"
+      }
+    }
+  },
+  "module_price_checks": [
     {
+      "module": "Scanner",
       "asset": "BTC",
       "status": "OK",
-      "scanner_price": 63852.44140625,
-      "snapshot_price": 63852.44140625,
+      "module_price": 64082.03125,
+      "snapshot_price": 64082.03125,
       "difference_pct": 0.0,
-      "message": "Prezzi coerenti."
+      "field": "current_price"
     },
     {
-      "asset": "SOL",
-      "status": "OK",
-      "scanner_price": 77.62000274658203,
-      "snapshot_price": 77.62000274658203,
-      "difference_pct": 0.0,
-      "message": "Prezzi coerenti."
-    },
-    {
+      "module": "Scanner",
       "asset": "DOGE",
       "status": "OK",
-      "scanner_price": 0.0739400014281272,
-      "snapshot_price": 0.07394000142812729,
-      "difference_pct": -1.1102230246251565e-13,
-      "message": "Prezzi coerenti."
+      "module_price": 0.0740400031208992,
+      "snapshot_price": 0.0740400031208992,
+      "difference_pct": 0.0,
+      "field": "current_price"
+    },
+    {
+      "module": "Scanner",
+      "asset": "SOL",
+      "status": "OK",
+      "module_price": 77.97000122070312,
+      "snapshot_price": 77.97000122070312,
+      "difference_pct": 0.0,
+      "field": "current_price"
+    },
+    {
+      "module": "Technical Structure",
+      "asset": "BTC",
+      "status": "OK",
+      "module_price": 64082.03125,
+      "snapshot_price": 64082.03125,
+      "difference_pct": 0.0,
+      "field": "price"
+    },
+    {
+      "module": "Technical Structure",
+      "asset": "SOL",
+      "status": "OK",
+      "module_price": 77.97000122070312,
+      "snapshot_price": 77.97000122070312,
+      "difference_pct": 0.0,
+      "field": "price"
+    },
+    {
+      "module": "Technical Structure",
+      "asset": "DOGE",
+      "status": "OK",
+      "module_price": 0.0740400031208992,
+      "snapshot_price": 0.0740400031208992,
+      "difference_pct": 0.0,
+      "field": "price"
+    },
+    {
+      "module": "Classic Technical",
+      "asset": "BTC",
+      "status": "OK",
+      "module_price": 64082.03125,
+      "snapshot_price": 64082.03125,
+      "difference_pct": 0.0,
+      "field": "price"
+    },
+    {
+      "module": "Classic Technical",
+      "asset": "SOL",
+      "status": "OK",
+      "module_price": 77.97000122070312,
+      "snapshot_price": 77.97000122070312,
+      "difference_pct": 0.0,
+      "field": "price"
+    },
+    {
+      "module": "Classic Technical",
+      "asset": "DOGE",
+      "status": "OK",
+      "module_price": 0.0740400031208992,
+      "snapshot_price": 0.0740400031208992,
+      "difference_pct": 0.0,
+      "field": "price"
+    },
+    {
+      "module": "Classic Visual",
+      "asset": "BTC",
+      "status": "OK",
+      "module_price": 64082.03125,
+      "snapshot_price": 64082.03125,
+      "difference_pct": 0.0,
+      "field": "price"
+    },
+    {
+      "module": "Classic Visual",
+      "asset": "SOL",
+      "status": "OK",
+      "module_price": 77.97000122070312,
+      "snapshot_price": 77.97000122070312,
+      "difference_pct": 0.0,
+      "field": "price"
+    },
+    {
+      "module": "Classic Visual",
+      "asset": "DOGE",
+      "status": "OK",
+      "module_price": 0.0740400031208992,
+      "snapshot_price": 0.0740400031208992,
+      "difference_pct": 0.0,
+      "field": "price"
+    },
+    {
+      "module": "RSI top-cycle",
+      "asset": "SOL",
+      "status": "OK",
+      "module_price": 77.97000122070312,
+      "snapshot_price": 77.97000122070312,
+      "difference_pct": 0.0,
+      "field": "current_price"
+    },
+    {
+      "module": "RSI top-cycle",
+      "asset": "SOL",
+      "status": "OK",
+      "module_price": 77.97000122070312,
+      "snapshot_price": 77.97000122070312,
+      "difference_pct": 0.0,
+      "field": "current_price"
+    },
+    {
+      "module": "Frattale BTC/SOL",
+      "asset": "SOL",
+      "status": "OK",
+      "module_price": 77.97000122070312,
+      "snapshot_price": 77.97000122070312,
+      "difference_pct": 0.0,
+      "field": "sol_current_price"
+    },
+    {
+      "module": "Fractal path",
+      "asset": "SOL",
+      "status": "OK",
+      "module_price": 77.97000122070312,
+      "snapshot_price": 77.97000122070312,
+      "difference_pct": 0.0,
+      "field": "current_price"
     }
   ],
+  "technical_integrity": {
+    "fibonacci_available": true,
+    "candidate_progress_ok": true,
+    "classic_visual_authority_ok": true
+  },
   "mojibake": []
 }

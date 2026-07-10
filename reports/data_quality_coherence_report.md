@@ -1,18 +1,37 @@
 # Data quality / coherence check
 
-Generato: 2026-07-10 18:24 UTC
+Generato: 2026-07-10 23:23 UTC
 
-Questo controllo non modifica punteggi o decisioni. Segnala soltanto problemi tecnici, dati mancanti e ambiguità di lettura.
+Questo controllo non modifica punteggi o decisioni. Verifica che tutti i moduli usino lo stesso prezzo corrente e che le nuove regole Technical/Classic Visual siano integre.
 
 ## Stato finale: **OK**
 
-## Coerenza prezzi snapshot
+## Prezzo unico per modulo
 
-| Asset   | Stato   | Snapshot   | Scanner   | Differenza   |
-|:--------|:--------|:-----------|:----------|:-------------|
-| BTC     | OK      | 63.852 $   | 63.852 $  | +0,000%      |
-| SOL     | OK      | 77,62 $    | 77,62 $   | +0,000%      |
-| DOGE    | OK      | 0.07394 $  | 0.07394 $ | -0,000%      |
+| Modulo              | Asset   | Campo             | Stato   | Prezzo snapshot   | Prezzo modulo   | Differenza   |
+|:--------------------|:--------|:------------------|:--------|:------------------|:----------------|:-------------|
+| Scanner             | BTC     | current_price     | OK      | 64.082 $          | 64.082 $        | +0,0000%     |
+| Scanner             | DOGE    | current_price     | OK      | 0.07404 $         | 0.07404 $       | +0,0000%     |
+| Scanner             | SOL     | current_price     | OK      | 77,97 $           | 77,97 $         | +0,0000%     |
+| Technical Structure | BTC     | price             | OK      | 64.082 $          | 64.082 $        | +0,0000%     |
+| Technical Structure | SOL     | price             | OK      | 77,97 $           | 77,97 $         | +0,0000%     |
+| Technical Structure | DOGE    | price             | OK      | 0.07404 $         | 0.07404 $       | +0,0000%     |
+| Classic Technical   | BTC     | price             | OK      | 64.082 $          | 64.082 $        | +0,0000%     |
+| Classic Technical   | SOL     | price             | OK      | 77,97 $           | 77,97 $         | +0,0000%     |
+| Classic Technical   | DOGE    | price             | OK      | 0.07404 $         | 0.07404 $       | +0,0000%     |
+| Classic Visual      | BTC     | price             | OK      | 64.082 $          | 64.082 $        | +0,0000%     |
+| Classic Visual      | SOL     | price             | OK      | 77,97 $           | 77,97 $         | +0,0000%     |
+| Classic Visual      | DOGE    | price             | OK      | 0.07404 $         | 0.07404 $       | +0,0000%     |
+| RSI top-cycle       | SOL     | current_price     | OK      | 77,97 $           | 77,97 $         | +0,0000%     |
+| RSI top-cycle       | SOL     | current_price     | OK      | 77,97 $           | 77,97 $         | +0,0000%     |
+| Frattale BTC/SOL    | SOL     | sol_current_price | OK      | 77,97 $           | 77,97 $         | +0,0000%     |
+| Fractal path        | SOL     | current_price     | OK      | 77,97 $           | 77,97 $         | +0,0000%     |
+
+## Integrità Technical / Classic Visual
+
+- Fibonacci strutturato: **OK**
+- Candidati senza falso progresso target: **OK**
+- Classic Visual allineato al lifecycle Technical: **OK**
 
 ## Controllo codifica UTF-8
 
@@ -20,7 +39,8 @@ Nessun indicatore comune di mojibake trovato.
 
 ## File strutturati
 
-- Snapshot condiviso: **OK**
+- Snapshot condiviso completo: **OK**
 - Scanner summary: **OK**
+- Price coherence sync: **OK**
 
 Il workflow è tecnicamente coerente nei controlli disponibili.
