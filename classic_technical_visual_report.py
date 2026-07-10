@@ -1497,7 +1497,14 @@ def fibonacci_summary(result) -> str:
     level = result.get("fib_nearest_level")
     if ratio in (None, "") or pd.isna(safe_float(ratio)):
         return f"{state} ({score})"
-    return f"Fib {float(ratio):.1f}% {state} ({score}) @ {fmt_money(result['asset'], level)}"
+    # FIBONACCI_PERCENT_LABEL_PATCH_V1
+    ratio_value = float(ratio)
+    # Nei CSV il rapporto è normalmente 0.236, 0.382, 0.500, ecc.
+    # Se arriva già come 23.6 non viene moltiplicato una seconda volta.
+    if abs(ratio_value) <= 1.0:
+        ratio_value *= 100.0
+    ratio_text = f"{ratio_value:.1f}".replace(".", ",")
+    return f"Fib {ratio_text}% {state} ({score}) @ {fmt_money(result['asset'], level)}"
 
 
 def build_report(results):

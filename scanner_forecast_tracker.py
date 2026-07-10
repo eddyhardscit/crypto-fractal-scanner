@@ -11,6 +11,8 @@ import pandas as pd
 import yfinance as yf
 
 
+
+from shared_market_snapshot import snapshot_price
 REPORTS_DIR = "reports"
 MAIN_REPORT_PATH = os.path.join(REPORTS_DIR, "latest_report.md")
 
@@ -219,7 +221,18 @@ def close_on_or_after(df, date_value):
         return np.nan
 
 
+# SHARED_SNAPSHOT_PRICE_PATCH_V1
 def current_price_for_target(target, data):
+    """Usa lo stesso prezzo corrente di tutti gli altri moduli.
+
+    Il close scaricato da Yahoo resta soltanto un fallback. In questo modo il
+    cono, i percentili in dollari, il CSV latest e il report sono tutti ancorati
+    allo snapshot creato a inizio workflow.
+    """
+    asset = asset_short(target)
+    shared = pd.to_numeric(snapshot_price(asset, np.nan), errors="coerce")
+    if not pd.isna(shared) and float(shared) > 0:
+        return float(shared)
     if target in data and not data[target].empty:
         return float(data[target]["Close"].iloc[-1])
     return np.nan

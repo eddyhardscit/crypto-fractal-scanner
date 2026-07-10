@@ -78,7 +78,11 @@ CSV_SPECS: dict[str, dict[str, Any]] = {
         "asset_columns": ("asset", "ticker", "target"),
         "price_columns": ("current_price", "price"),
     },
-    "technical_structure_metrics.csv": {
+        "scanner_forecast_latest.csv": {
+        "asset_columns": ("asset", "target_ticker"),
+        "price_columns": ("current_price",),
+    },
+"technical_structure_metrics.csv": {
         "asset_columns": ("asset", "ticker"),
         "price_columns": ("price",),
     },
@@ -133,6 +137,9 @@ PRICE_HEADERS = {
     "prezzo",
     "price",
     "prezzo attuale",
+    "start price",
+    "initial price",
+    "prezzo iniziale",
     "current price",
     "current_price",
     "target_price",
@@ -418,6 +425,18 @@ def sync_markdown_text(
             norm_header = [normalise_header(cell) for cell in header]
             asset_idx = next((idx for idx, name in enumerate(norm_header) if name in ASSET_HEADERS), None)
             price_indexes = [idx for idx, name in enumerate(norm_header) if name in PRICE_HEADERS]
+            # PRICE_SCORE_TABLE_GUARD_V1
+            # Nel Classic Technical la colonna chiamata "Prezzo" è lo score
+            # della conferma prezzo, non il prezzo di mercato. Non va riscritta.
+            score_area_headers = {
+                "trend", "struttura", "momentum", "volume",
+                "candela", "wyckoff", "totale",
+            }
+            if score_area_headers.issubset(set(norm_header)):
+                price_indexes = [
+                    idx for idx in price_indexes
+                    if norm_header[idx] not in {"prezzo", "price"}
+                ]
 
             new_table = table_lines[:2]
             for row_no, row_line in enumerate(table_lines[2:], start=1):

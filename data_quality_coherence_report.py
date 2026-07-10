@@ -38,7 +38,8 @@ END_MARKER = "<!-- DATA_QUALITY_COHERENCE_END -->"
 
 ASSETS = ("BTC", "SOL", "DOGE")
 MOJIBAKE_TOKENS = ("Ã", "Â", "â€", "â†", "ðŸ", "�")
-PRICE_TOLERANCE_PCT = 0.02
+# STRICT_SHARED_PRICE_CHECK_V1
+PRICE_TOLERANCE_PCT = 0.000001
 
 MODULE_PRICE_SPECS: dict[str, dict[str, Any]] = {
     "Scanner": {
@@ -46,7 +47,12 @@ MODULE_PRICE_SPECS: dict[str, dict[str, Any]] = {
         "asset_columns": ("asset", "ticker"),
         "price_columns": ("current_price", "price"),
     },
-    "Technical Structure": {
+        "Scanner Forecast": {
+        "path": REPORTS_DIR / "scanner_forecast_latest.csv",
+        "asset_columns": ("asset", "target_ticker"),
+        "price_columns": ("current_price",),
+    },
+"Technical Structure": {
         "path": REPORTS_DIR / "technical_structure_metrics.csv",
         "asset_columns": ("asset", "ticker"),
         "price_columns": ("price",),
