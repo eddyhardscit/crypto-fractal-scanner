@@ -36,36 +36,67 @@ TICKERS = {
 # 30/45/60g = calibrazione più seria
 HORIZONS = [1, 2, 3, 5, 7, 10, 14, 21, 30, 45, 60]
 
+# Ruoli:
+# - benchmark: aggregato finale da osservare, non è un peso interno da modificare;
+# - calibratable: modulo reale il cui peso potrà essere valutato in futuro;
+# - diagnostic: dato utile per capire l'origine del segnale, ma già incluso
+#   in una famiglia e quindi non deve ricevere un peso separato.
 MODULES = [
     {
         "key": "global",
         "label": "Global confluence",
         "score_col": "global_score",
+        "role": "BENCHMARK",
+        "calibratable": False,
+        "parent_family": "",
+    },
+    {
+        "key": "statistical_family",
+        "label": "Famiglia statistica",
+        "score_col": "statistical_family_score",
+        "role": "CALIBRABILE",
+        "calibratable": True,
+        "parent_family": "",
     },
     {
         "key": "scanner",
-        "label": "Scanner",
+        "label": "Scanner grezzo",
         "score_col": "scanner_score",
+        "role": "DIAGNOSTICO",
+        "calibratable": False,
+        "parent_family": "statistical_family",
     },
     {
         "key": "market",
-        "label": "Market regime",
+        "label": "Market regime grezzo",
         "score_col": "market_score",
+        "role": "DIAGNOSTICO",
+        "calibratable": False,
+        "parent_family": "statistical_family",
     },
     {
         "key": "technical",
         "label": "Tecnico",
         "score_col": "technical_score_component",
+        "role": "CALIBRABILE",
+        "calibratable": True,
+        "parent_family": "",
     },
     {
         "key": "classic_technical",
         "label": "Classic technical",
         "score_col": "classic_technical_score_component",
+        "role": "CALIBRABILE",
+        "calibratable": True,
+        "parent_family": "",
     },
     {
         "key": "sol_fractal",
         "label": "Frattale SOL",
         "score_col": "sol_fractal_score",
+        "role": "CALIBRABILE",
+        "calibratable": True,
+        "parent_family": "",
     },
 ]
 
@@ -79,8 +110,12 @@ BASE_HISTORY_COLUMNS = [
     "bias",
     "reliability",
     "global_score",
+    "statistical_family_score",
+    "statistical_family_reason",
+    "statistical_family_source",
     "scanner_score",
     "market_score",
+    "market_matches",
     "technical_score_component",
     "classic_technical_score_component",
     "sol_fractal_score",
@@ -227,6 +262,113 @@ def md_table(headers, rows) -> str:
     return "\n".join(out)
 
 
+def first_present(row: dict, keys):
+    for key in keys:
+        value = row.get(key)
+        if value is None:
+            continue
+        if isinstance(value, str) and not value.strip():
+            continue
+        return value
+    return None
+
+
+def same_sign(a: int, b: int) -> bool:
+    return (a > 0 and b > 0) or (a < 0 and b < 0)
+
+
+def derive_statistical_family_score(scanner_score, market_score, market_matches=None):
+    """
+    Replica la logica prudente del Global Confluence:
+    - Scanner è il segnale principale;
+    - Market Regime può aggiungere al massimo 1 punto;
+    - il bonus richiede almeno 10 match e concordanza di segno;
+    - la famiglia resta limitata a ±4;
+    - Market non crea da solo un segnale se Scanner è neutro.
+    """
+    scanner = max(-3, min(3, safe_int(scanner_score, 0)))
+    market = max(-3, min(3, safe_int(market_score, 0)))
+
+    matches_value = safe_float(market_matches, np.nan)
+    matches = None if pd.isna(matches_value) else int(matches_value)
+
+    family = scanner
+
+    if scanner == 0:
+        reason = "Scanner neutro: Market Regime resta diagnostico e non crea da solo il segnale."
+    elif matches is None:
+        reason = "Match regime non disponibili: la famiglia usa soltanto il punteggio Scanner."
+    elif matches < 10:
+        reason = (
+            f"Match regime {matches}: sotto 10, quindi nessun bonus; "
+            "la famiglia usa il punteggio Scanner."
+        )
+    elif same_sign(scanner, market):
+        family += 1 if scanner > 0 else -1
+        reason = (
+            f"Scanner e Market Regime concordi con {matches} match: "
+            "bonus massimo di 1 punto."
+        )
+    elif market == 0:
+        reason = "Market Regime neutro: resta il punteggio Scanner."
+    else:
+        reason = "Scanner e Market Regime non concordi: nessun bonus alla famiglia statistica."
+
+    family = max(-4, min(4, family))
+    return family, reason
+
+
+def statistical_family_from_global_row(row: dict):
+    scanner_score = safe_int(row.get("scanner_score"), 0)
+    market_score = safe_int(row.get("market_score"), 0)
+
+    market_matches = first_present(
+        row,
+        [
+            "market_matches",
+            "market_regime_matches",
+            "statistical_family_market_matches",
+            "market_match_count",
+        ],
+    )
+
+    exact_score = first_present(
+        row,
+        [
+            "statistical_family_score",
+            "statistical_family_score_component",
+            "statistics_family_score",
+            "stat_family_score",
+            "family_statistical_score",
+        ],
+    )
+
+    exact_reason = first_present(
+        row,
+        [
+            "statistical_family_reason",
+            "statistics_family_reason",
+            "stat_family_reason",
+            "family_statistical_reason",
+        ],
+    )
+
+    if exact_score is not None:
+        return (
+            max(-4, min(4, safe_int(exact_score, 0))),
+            safe_str(exact_reason) or "Punteggio letto direttamente dal Global Confluence.",
+            "GLOBAL_METRICS",
+            safe_float(market_matches),
+        )
+
+    derived_score, derived_reason = derive_statistical_family_score(
+        scanner_score,
+        market_score,
+        market_matches,
+    )
+    return derived_score, derived_reason, "DERIVED_FALLBACK", safe_float(market_matches)
+
+
 def horizon_columns(h: int):
     suffix = f"{h}d"
     return [
@@ -289,8 +431,10 @@ def ensure_history_columns(df: pd.DataFrame) -> pd.DataFrame:
     numeric_base_cols = [
         "price",
         "global_score",
+        "statistical_family_score",
         "scanner_score",
         "market_score",
+        "market_matches",
         "technical_score_component",
         "classic_technical_score_component",
         "sol_fractal_score",
@@ -308,6 +452,11 @@ def ensure_history_columns(df: pd.DataFrame) -> pd.DataFrame:
         "asset",
         "ticker",
         "action",
+        "confluence",
+        "bias",
+        "reliability",
+        "statistical_family_reason",
+        "statistical_family_source",
         "created_utc",
         "updated_utc",
     ]:
@@ -437,6 +586,8 @@ def build_signal_rows(global_rows, price_data):
                 signal_date = datetime.now(timezone.utc).date().isoformat()
             price = np.nan
 
+        family_score, family_reason, family_source, market_matches = statistical_family_from_global_row(row)
+
         signal = {
             "signal_date": signal_date,
             "asset": asset,
@@ -447,8 +598,12 @@ def build_signal_rows(global_rows, price_data):
             "bias": safe_str(row.get("bias")),
             "reliability": safe_str(row.get("reliability")),
             "global_score": safe_int(row.get("global_score", row.get("score")), 0),
+            "statistical_family_score": family_score,
+            "statistical_family_reason": family_reason,
+            "statistical_family_source": family_source,
             "scanner_score": safe_int(row.get("scanner_score"), 0),
             "market_score": safe_int(row.get("market_score"), 0),
+            "market_matches": market_matches,
             "technical_score_component": safe_int(row.get("technical_score_component"), 0),
             "classic_technical_score_component": safe_int(row.get("classic_technical_score_component"), 0),
             "sol_fractal_score": safe_int(row.get("sol_fractal_score"), 0),
@@ -720,6 +875,9 @@ def build_metrics(history: pd.DataFrame) -> pd.DataFrame:
                         "horizon_family": horizon_family(h),
                         "module_key": module["key"],
                         "module": module["label"],
+                        "calibration_role": module["role"],
+                        "calibratable": bool(module["calibratable"]),
+                        "parent_family": module["parent_family"],
                         "controls": controls,
                         "correct": correct,
                         "accuracy_direction_pct": accuracy,
@@ -752,6 +910,7 @@ def compact_latest_signals(history: pd.DataFrame, n: int = 12):
                 asset,
                 fmt_price(asset, safe_float(r["price"])),
                 fmt_signed_int(safe_int(r["global_score"])),
+                fmt_signed_int(safe_int(r["statistical_family_score"])),
                 fmt_signed_int(safe_int(r["scanner_score"])),
                 fmt_signed_int(safe_int(r["market_score"])),
                 fmt_signed_int(safe_int(r["technical_score_component"])),
@@ -815,7 +974,7 @@ def global_horizon_rows(metrics: pd.DataFrame):
     return rows
 
 
-def module_rows_with_controls(metrics: pd.DataFrame, max_rows: int = 160):
+def module_rows_with_controls(metrics: pd.DataFrame, max_rows: int = 200):
     if metrics.empty:
         return []
 
@@ -842,6 +1001,7 @@ def module_rows_with_controls(metrics: pd.DataFrame, max_rows: int = 160):
                 r["asset"],
                 r["horizon"],
                 r["module"],
+                r["calibration_role"],
                 str(int(r["controls"])),
                 fmt_pct_plain(r["accuracy_direction_pct"]),
                 fmt_pct(r["avg_return_pct"]),
@@ -938,12 +1098,19 @@ def build_report(history: pd.DataFrame, metrics: pd.DataFrame) -> str:
     lines.append("")
     lines.append("Moduli controllati:")
     lines.append("")
-    lines.append("- Global Confluence")
-    lines.append("- Scanner grezzo")
-    lines.append("- Market regime")
+    lines.append("- Global Confluence = benchmark dell'aggregato finale")
+    lines.append("- **Famiglia statistica Scanner + Market Regime = modulo calibrabile reale**")
+    lines.append("- Scanner grezzo = diagnostico, già incluso nella famiglia statistica")
+    lines.append("- Market Regime grezzo = diagnostico, già incluso nella famiglia statistica")
     lines.append("- Struttura tecnica")
     lines.append("- Classic technical confirmation")
     lines.append("- Frattale SOL/BTC, solo per SOL")
+    lines.append("")
+    lines.append(
+        "Regola anti-doppio-conteggio: **Scanner e Market Regime continuano a essere misurati separatamente "
+        "solo per diagnosi, ma non devono ricevere due modifiche di peso autonome**. "
+        "La calibrazione dei pesi deve agire sulla Famiglia statistica."
+    )
     lines.append("")
     lines.append(
         "Nota: i controlli vengono aggiornati **ogni giorno**, ma i pesi del Global non devono "
@@ -964,8 +1131,9 @@ def build_report(history: pd.DataFrame, metrics: pd.DataFrame) -> str:
                     "Asset",
                     "Prezzo",
                     "Global",
-                    "Scanner",
-                    "Market",
+                    "Famiglia stat.",
+                    "Scanner grezzo",
+                    "Market grezzo",
                     "Tecnico",
                     "Classic",
                     "Frattale",
@@ -1034,6 +1202,7 @@ def build_report(history: pd.DataFrame, metrics: pd.DataFrame) -> str:
                     "Asset",
                     "Orizzonte",
                     "Modulo",
+                    "Ruolo",
                     "Controlli",
                     "Accuratezza direzione",
                     "Return medio",
@@ -1054,6 +1223,9 @@ def build_report(history: pd.DataFrame, metrics: pd.DataFrame) -> str:
     lines.append("")
     lines.append("## Come leggerlo")
     lines.append("")
+    lines.append("- **CALIBRABILE** = modulo reale sul quale, con dati maturi, si può valutare una modifica di peso.")
+    lines.append("- **DIAGNOSTICO** = resta misurato, ma è già incluso in una famiglia e il suo peso separato deve restare 0.")
+    lines.append("- **BENCHMARK** = risultato complessivo del Global; serve per confrontare l'aggregato, non è un peso interno.")
     lines.append("- **Controlli** = segnali non neutrali già verificati su quell'orizzonte.")
     lines.append("- **Accuratezza direzione** = quante volte un segnale positivo ha avuto return positivo o un segnale negativo ha avuto return negativo.")
     lines.append("- **Return medio** = rendimento reale medio dell'asset su quell'orizzonte.")
@@ -1070,7 +1242,8 @@ def build_report(history: pd.DataFrame, metrics: pd.DataFrame) -> str:
     lines.append("")
     lines.append(
         "Questo report non cambia ancora automaticamente i pesi del Global Confluence. "
-        "Serve prima a capire quali moduli funzionano davvero sui vari orizzonti."
+        "Produce però i metadati `calibratable` e `calibration_role`, così il report di calibrazione "
+        "può escludere Scanner e Market dalle proposte di peso separate."
     )
     lines.append("")
     lines.append(
@@ -1094,6 +1267,9 @@ def save_metrics(metrics: pd.DataFrame) -> None:
                 "horizon_family",
                 "module_key",
                 "module",
+                "calibration_role",
+                "calibratable",
+                "parent_family",
                 "controls",
                 "correct",
                 "accuracy_direction_pct",
