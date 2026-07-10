@@ -1,10 +1,20 @@
+# -*- coding: utf-8 -*-
+import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import yfinance as yf
 from scipy.spatial.distance import cosine
+
+from market_snapshot import (
+    get_snapshot_candle_date,
+    get_snapshot_price,
+    load_market_snapshot,
+    write_snapshot_from_asset_data,
+)
 
 
 WINDOW = 100
@@ -35,6 +45,8 @@ PREDICTION_LOG_PATH = "reports/prediction_log.csv"
 ACCURACY_REPORT_PATH = "reports/accuracy_report.csv"
 CALIBRATION_REPORT_PATH = "reports/calibration_report.csv"
 LATEST_SCANNER_MATCHES_PATH = "reports/latest_scanner_matches.csv"
+LATEST_SCANNER_SUMMARY_CSV_PATH = "reports/latest_scanner_summary.csv"
+LATEST_SCANNER_SUMMARY_JSON_PATH = "reports/latest_scanner_summary.json"
 
 MIN_CALIBRATION_EVALS = 30
 STRONG_CALIBRATION_EVALS = 60
@@ -285,21 +297,21 @@ def signal_strength(positive_cases):
 def simple_direction_sentence(direction, strength):
     if direction == "SALITA":
         return (
-            f"La lettura principale Ã¨ rialzista, con segnale {strength}. "
+            f"La lettura principale è rialzista, con segnale {strength}. "
             "Nei casi storici simili, il prezzo ha chiuso sopra dopo 30 giorni "
-            "piÃ¹ spesso di quanto abbia chiuso sotto."
+            "più spesso di quanto abbia chiuso sotto."
         )
 
     if direction == "DISCESA":
         return (
-            f"La lettura principale Ã¨ ribassista, con segnale {strength}. "
+            f"La lettura principale è ribassista, con segnale {strength}. "
             "Nei casi storici simili, il prezzo ha chiuso sotto dopo 30 giorni "
-            "piÃ¹ spesso di quanto abbia chiuso sopra."
+            "più spesso di quanto abbia chiuso sopra."
         )
 
     return (
-        f"La lettura principale Ã¨ incerta, con segnale {strength}. "
-        "Nei casi storici simili non c'Ã¨ stato un vantaggio chiaro nÃ© per salita nÃ© per discesa."
+        f"La lettura principale è incerta, con segnale {strength}. "
+        "Nei casi storici simili non c'è stato un vantaggio chiaro né per salita né per discesa."
     )
 
 
@@ -376,10 +388,10 @@ def pct_to_price(current_price, pct_value):
 
 def semaforo(verdict_value):
     if verdict_value == "RIALZISTA":
-        return "ð¢ VERDE / Favorevole"
+        return "🟢 VERDE / Favorevole"
     if verdict_value == "RIBASSISTA":
-        return "ð´ ROSSO / Prudenza"
-    return "ð¡ GIALLO / Incerto"
+        return "🔴 ROSSO / Prudenza"
+    return "🟡 GIALLO / Incerto"
 
 
 def asset_name(target):
@@ -398,21 +410,21 @@ def simple_verdict_text(target, verdict_value):
     if verdict_value == "RIALZISTA":
         return (
             f"{name} ha un segnale favorevole. "
-            "La statistica dei casi simili indica piÃ¹ possibilitÃ  di salita che di discesa, "
-            "ma resta comunque una probabilitÃ , non una certezza."
+            "La statistica dei casi simili indica più possibilità di salita che di discesa, "
+            "ma resta comunque una probabilità, non una certezza."
         )
 
     if verdict_value == "RIBASSISTA":
         return (
             f"{name} richiede prudenza. "
-            "La statistica dei casi simili indica piÃ¹ possibilitÃ  di discesa che di salita. "
-            "Con leva, il rischio principale Ã¨ il drawdown durante il percorso."
+            "La statistica dei casi simili indica più possibilità di discesa che di salita. "
+            "Con leva, il rischio principale è il drawdown durante il percorso."
         )
 
     return (
-        f"{name} Ã¨ in una situazione incerta. "
-        "Lo scanner non vede un vantaggio chiaro nÃ© per la salita nÃ© per la discesa. "
-        "In questi casi Ã¨ meglio non forzare la previsione."
+        f"{name} è in una situazione incerta. "
+        "Lo scanner non vede un vantaggio chiaro né per la salita né per la discesa. "
+        "In questi casi è meglio non forzare la previsione."
     )
 
 
@@ -434,19 +446,19 @@ def get_percentile_price(percentiles, metric, q):
 def percentile_explanation(metric, q):
     if metric == "return_30d":
         explanations = {
-            10: "Percentile 10: se va molto male, fra 30 giorni il prezzo puÃ² stare circa in questa zona.",
-            25: "Percentile 25: se va male, fra 30 giorni il prezzo puÃ² stare circa in questa zona.",
-            50: "Percentile 50: scenario normale. Ã il valore principale da guardare per il prezzo fra 30 giorni.",
-            75: "Percentile 75: se va bene, fra 30 giorni il prezzo puÃ² stare circa in questa zona.",
-            90: "Percentile 90: se va molto bene, fra 30 giorni il prezzo puÃ² arrivare circa in questa zona.",
+            10: "Percentile 10: se va molto male, fra 30 giorni il prezzo può stare circa in questa zona.",
+            25: "Percentile 25: se va male, fra 30 giorni il prezzo può stare circa in questa zona.",
+            50: "Percentile 50: scenario normale. È il valore principale da guardare per il prezzo fra 30 giorni.",
+            75: "Percentile 75: se va bene, fra 30 giorni il prezzo può stare circa in questa zona.",
+            90: "Percentile 90: se va molto bene, fra 30 giorni il prezzo può arrivare circa in questa zona.",
         }
         return explanations[q]
 
     if metric == "drawdown_30d":
         explanations = {
-            10: "Percentile 10: rischio molto brutto. Durante i 30 giorni il prezzo puÃ² scendere fino a questa zona o peggio.",
-            25: "Percentile 25: rischio brutto. Durante i 30 giorni il prezzo puÃ² scendere fino a questa zona.",
-            50: "Percentile 50: discesa normale durante il mese. Ã il drawdown centrale.",
+            10: "Percentile 10: rischio molto brutto. Durante i 30 giorni il prezzo può scendere fino a questa zona o peggio.",
+            25: "Percentile 25: rischio brutto. Durante i 30 giorni il prezzo può scendere fino a questa zona.",
+            50: "Percentile 50: discesa normale durante il mese. È il drawdown centrale.",
             75: "Percentile 75: discesa contenuta. Scenario abbastanza tranquillo.",
             90: "Percentile 90: discesa molto contenuta. Scenario molto tranquillo.",
         }
@@ -454,9 +466,9 @@ def percentile_explanation(metric, q):
 
     if metric == "max_gain_30d":
         explanations = {
-            10: "Percentile 10: rialzo scarso. Durante i 30 giorni il prezzo Ã¨ salito poco.",
+            10: "Percentile 10: rialzo scarso. Durante i 30 giorni il prezzo è salito poco.",
             25: "Percentile 25: rialzo modesto. Durante i 30 giorni il prezzo ha fatto poca strada verso l'alto.",
-            50: "Percentile 50: rialzo normale. Ã lo spike centrale piÃ¹ realistico.",
+            50: "Percentile 50: rialzo normale. È lo spike centrale più realistico.",
             75: "Percentile 75: rialzo buono. Zona interessante per possibile take profit.",
             90: "Percentile 90: rialzo molto forte. Possibile, ma meno comune.",
         }
@@ -483,7 +495,7 @@ def percentile_lines(percentiles, metric):
             continue
 
         lines.append(
-            f"- **Percentile {labels[q]}**: {fmt_pct(percent_value)} â **{fmt_price(price_level)}**"
+            f"- **Percentile {labels[q]}**: {fmt_pct(percent_value)} → **{fmt_price(price_level)}**"
         )
         lines.append(f"  - {percentile_explanation(metric, q)}")
 
@@ -492,7 +504,7 @@ def percentile_lines(percentiles, metric):
 
 def load_prediction_log():
     if os.path.exists(PREDICTION_LOG_PATH):
-        return pd.read_csv(PREDICTION_LOG_PATH)
+        return pd.read_csv(PREDICTION_LOG_PATH, encoding="utf-8")
 
     return pd.DataFrame()
 
@@ -799,24 +811,24 @@ def bias_sentence(metric, bias):
 
     if metric == "return":
         if bias > 2:
-            return "Lo scanner Ã¨ stato troppo pessimista sul prezzo finale."
+            return "Lo scanner è stato troppo pessimista sul prezzo finale."
         if bias < -2:
-            return "Lo scanner Ã¨ stato troppo ottimista sul prezzo finale."
-        return "Lo scanner Ã¨ stato abbastanza centrato sul prezzo finale."
+            return "Lo scanner è stato troppo ottimista sul prezzo finale."
+        return "Lo scanner è stato abbastanza centrato sul prezzo finale."
 
     if metric == "drawdown":
         if bias < -2:
-            return "Lo scanner ha sottostimato il rischio: nella realtÃ  il prezzo Ã¨ sceso piÃ¹ del previsto."
+            return "Lo scanner ha sottostimato il rischio: nella realtà il prezzo è sceso più del previsto."
         if bias > 2:
-            return "Lo scanner Ã¨ stato troppo prudente: nella realtÃ  il prezzo Ã¨ sceso meno del previsto."
-        return "Lo scanner Ã¨ stato abbastanza centrato sul drawdown."
+            return "Lo scanner è stato troppo prudente: nella realtà il prezzo è sceso meno del previsto."
+        return "Lo scanner è stato abbastanza centrato sul drawdown."
 
     if metric == "max_gain":
         if bias > 2:
-            return "Lo scanner ha sottostimato gli spike: nella realtÃ  il prezzo Ã¨ salito piÃ¹ del previsto."
+            return "Lo scanner ha sottostimato gli spike: nella realtà il prezzo è salito più del previsto."
         if bias < -2:
-            return "Lo scanner ha sovrastimato gli spike: nella realtÃ  il prezzo Ã¨ salito meno del previsto."
-        return "Lo scanner Ã¨ stato abbastanza centrato sul max gain."
+            return "Lo scanner ha sovrastimato gli spike: nella realtà il prezzo è salito meno del previsto."
+        return "Lo scanner è stato abbastanza centrato sul max gain."
 
     return ""
 
@@ -934,13 +946,13 @@ def append_accuracy_section(lines, prediction_log):
     lines.append(
         "Questa sezione controlla se lo scanner sta funzionando davvero. "
         "Ogni giorno viene salvata una previsione. Dopo 30 giorni, lo scanner confronta "
-        "quella previsione con quello che Ã¨ successo realmente."
+        "quella previsione con quello che è successo realmente."
     )
     lines.append("")
     lines.append("## Come leggerla")
     lines.append("")
     lines.append(
-        "- **Previsioni giÃ  controllate** = quante vecchie previsioni hanno giÃ  compiuto 30 giorni."
+        "- **Previsioni già controllate** = quante vecchie previsioni hanno già compiuto 30 giorni."
     )
     lines.append(
         "- **Direzione corretta** = quante volte lo scanner ha indovinato salita o discesa finale a 30 giorni."
@@ -949,10 +961,10 @@ def append_accuracy_section(lines, prediction_log):
         "- **Errore medio scenario centrale** = quanto era distante il prezzo reale dal prezzo centrale previsto."
     )
     lines.append(
-        "- **Zona rischio toccata** = quante volte il prezzo Ã¨ sceso fino alla zona di rischio prevista."
+        "- **Zona rischio toccata** = quante volte il prezzo è sceso fino alla zona di rischio prevista."
     )
     lines.append(
-        "- **Zona rialzo toccata** = quante volte il prezzo Ã¨ salito fino alla zona rialzo prevista."
+        "- **Zona rialzo toccata** = quante volte il prezzo è salito fino alla zona rialzo prevista."
     )
     lines.append("")
 
@@ -963,7 +975,7 @@ def append_accuracy_section(lines, prediction_log):
             "Per ora non ci sono ancora previsioni vecchie di 30 giorni da controllare."
         )
         lines.append(
-            "Il controllo vero inizierÃ  automaticamente dopo il primo mese di utilizzo."
+            "Il controllo vero inizierà automaticamente dopo il primo mese di utilizzo."
         )
         lines.append("")
         return
@@ -977,7 +989,7 @@ def append_accuracy_section(lines, prediction_log):
         lines.append(f"### {name}")
         lines.append("")
         lines.append(
-            f"- Previsioni giÃ  controllate: **{int(row['evaluated_predictions'])}**"
+            f"- Previsioni già controllate: **{int(row['evaluated_predictions'])}**"
         )
 
         if not np.isnan(row["directional_accuracy_pct"]):
@@ -986,7 +998,7 @@ def append_accuracy_section(lines, prediction_log):
             )
         else:
             lines.append(
-                "- Direzione corretta: non ancora calcolabile, perchÃ© molti segnali erano neutrali."
+                "- Direzione corretta: non ancora calcolabile, perché molti segnali erano neutrali."
             )
 
         if not np.isnan(row["avg_central_error_pct"]):
@@ -1012,9 +1024,9 @@ def append_accuracy_section(lines, prediction_log):
         lines.append("")
 
     lines.append(
-        "Spiegazione semplice: se col tempo la direzione corretta Ã¨ bassa o l'errore medio Ã¨ alto, "
-        "lo scanner va preso con piÃ¹ cautela. Se invece molte previsioni finiscono dentro i livelli "
-        "previsti, allora lo scanner sta diventando piÃ¹ affidabile."
+        "Spiegazione semplice: se col tempo la direzione corretta è bassa o l'errore medio è alto, "
+        "lo scanner va preso con più cautela. Se invece molte previsioni finiscono dentro i livelli "
+        "previsti, allora lo scanner sta diventando più affidabile."
     )
     lines.append("")
 
@@ -1023,7 +1035,7 @@ def append_calibration_section(lines, prediction_log, all_results):
     lines.append("# Scanner autocalibrato")
     lines.append("")
     lines.append(
-        "Questa Ã¨ una sezione separata dalla previsione storica grezza. "
+        "Questa è una sezione separata dalla previsione storica grezza. "
         "La previsione grezza resta quella basata sui pattern storici. "
         "Qui invece lo scanner guarda i propri errori passati e prova a correggere leggermente la lettura."
     )
@@ -1031,12 +1043,12 @@ def append_calibration_section(lines, prediction_log, all_results):
     lines.append("## Come funziona")
     lines.append("")
     lines.append(
-        "Lo scanner confronta le sue vecchie previsioni con la realtÃ  dopo 30 giorni."
+        "Lo scanner confronta le sue vecchie previsioni con la realtà dopo 30 giorni."
     )
     lines.append("")
-    lines.append("- Se in passato Ã¨ stato troppo ottimista, abbassa la stima.")
-    lines.append("- Se in passato Ã¨ stato troppo pessimista, alza la stima.")
-    lines.append("- Se ha sottostimato il drawdown, rende la zona rischio piÃ¹ prudente.")
+    lines.append("- Se in passato è stato troppo ottimista, abbassa la stima.")
+    lines.append("- Se in passato è stato troppo pessimista, alza la stima.")
+    lines.append("- Se ha sottostimato il drawdown, rende la zona rischio più prudente.")
     lines.append("- Se ha sovrastimato gli spike, riduce la zona rialzo calibrata.")
     lines.append("")
     lines.append(
@@ -1082,7 +1094,7 @@ def append_calibration_section(lines, prediction_log, all_results):
             lines.append("")
             lines.append(
                 "Per ora si usa solo lo scanner storico grezzo. "
-                "Quando ci saranno abbastanza previsioni controllate, qui apparirÃ  la lettura autocalibrata."
+                "Quando ci saranno abbastanza previsioni controllate, qui apparirà la lettura autocalibrata."
             )
             lines.append("")
             continue
@@ -1120,7 +1132,7 @@ def append_calibration_section(lines, prediction_log, all_results):
 
         lines.append(f"- Previsioni controllate: **{n}**")
         lines.append(f"- Previsioni usate per la calibrazione recente: **{int(cal['used_predictions'])}**")
-        lines.append(f"- AffidabilitÃ  direzionale storica: **{cal['reliability']}**")
+        lines.append(f"- Affidabilità direzionale storica: **{cal['reliability']}**")
         if not pd.isna(cal["directional_accuracy_pct"]):
             lines.append(f"- Direzione indovinata in passato: **{fmt_pct(cal['directional_accuracy_pct'])}**")
         lines.append("")
@@ -1131,27 +1143,27 @@ def append_calibration_section(lines, prediction_log, all_results):
         lines.append(f"- Direzione calibrata oggi: **{final_direction}**")
         lines.append("")
 
-        lines.append("### Return 30d â prezzo finale fra 30 giorni")
+        lines.append("### Return 30d — prezzo finale fra 30 giorni")
         lines.append("")
-        lines.append(f"- Grezzo: **{fmt_pct(raw_return_p50)}** â **{fmt_price(raw_return_p50_price)}**")
+        lines.append(f"- Grezzo: **{fmt_pct(raw_return_p50)}** → **{fmt_price(raw_return_p50_price)}**")
         lines.append(f"- Correzione imparata dagli errori: **{fmt_pct(return_bias)}**")
-        lines.append(f"- Calibrato: **{fmt_pct(calibrated_return)}** â **{fmt_price(calibrated_return_price)}**")
+        lines.append(f"- Calibrato: **{fmt_pct(calibrated_return)}** → **{fmt_price(calibrated_return_price)}**")
         lines.append(f"- Lettura: {bias_sentence('return', return_bias)}")
         lines.append("")
 
-        lines.append("### Drawdown 30d â rischio di discesa durante il mese")
+        lines.append("### Drawdown 30d — rischio di discesa durante il mese")
         lines.append("")
-        lines.append(f"- Grezzo: **{fmt_pct(raw_drawdown_p50)}** â **{fmt_price(raw_drawdown_p50_price)}**")
+        lines.append(f"- Grezzo: **{fmt_pct(raw_drawdown_p50)}** → **{fmt_price(raw_drawdown_p50_price)}**")
         lines.append(f"- Correzione imparata dagli errori: **{fmt_pct(drawdown_bias)}**")
-        lines.append(f"- Calibrato: **{fmt_pct(calibrated_drawdown)}** â **{fmt_price(calibrated_drawdown_price)}**")
+        lines.append(f"- Calibrato: **{fmt_pct(calibrated_drawdown)}** → **{fmt_price(calibrated_drawdown_price)}**")
         lines.append(f"- Lettura: {bias_sentence('drawdown', drawdown_bias)}")
         lines.append("")
 
-        lines.append("### Max gain 30d â rialzo/spike durante il mese")
+        lines.append("### Max gain 30d — rialzo/spike durante il mese")
         lines.append("")
-        lines.append(f"- Grezzo: **{fmt_pct(raw_max_gain_p50)}** â **{fmt_price(raw_max_gain_p50_price)}**")
+        lines.append(f"- Grezzo: **{fmt_pct(raw_max_gain_p50)}** → **{fmt_price(raw_max_gain_p50_price)}**")
         lines.append(f"- Correzione imparata dagli errori: **{fmt_pct(max_gain_bias)}**")
-        lines.append(f"- Calibrato: **{fmt_pct(calibrated_max_gain)}** â **{fmt_price(calibrated_max_gain_price)}**")
+        lines.append(f"- Calibrato: **{fmt_pct(calibrated_max_gain)}** → **{fmt_price(calibrated_max_gain_price)}**")
         lines.append(f"- Lettura: {bias_sentence('max_gain', max_gain_bias)}")
         lines.append("")
 
@@ -1160,7 +1172,7 @@ def append_calibration_section(lines, prediction_log, all_results):
         lines.append(
             "La parte grezza ti dice cosa mostrano i vecchi pattern storici. "
             "La parte calibrata ti dice come cambia quella lettura dopo aver visto se lo scanner, "
-            "nel mercato reale, Ã¨ stato troppo ottimista o troppo pessimista."
+            "nel mercato reale, è stato troppo ottimista o troppo pessimista."
         )
         lines.append("")
 
@@ -1170,14 +1182,14 @@ def add_how_to_read_report(lines):
     lines.append("")
     lines.append("Leggilo sempre in questo ordine:")
     lines.append("")
-    lines.append("1. **Direzione piÃ¹ probabile**: ti dice se storicamente era piÃ¹ facile salita, discesa o incertezza.")
+    lines.append("1. **Direzione più probabile**: ti dice se storicamente era più facile salita, discesa o incertezza.")
     lines.append("2. **Casi positivi / negativi**: ti dice la percentuale storica di salita o discesa dopo 30 giorni.")
     lines.append("3. **Return 30d**: ti dice dove potrebbe stare il prezzo fra 30 giorni.")
     lines.append("4. **Drawdown 30d**: ti dice quanto potrebbe scendere durante quei 30 giorni.")
     lines.append("5. **Max gain 30d**: ti dice quanto potrebbe salire durante quei 30 giorni.")
-    lines.append("6. **Scanner autocalibrato**: dopo abbastanza dati, confronta previsione e realtÃ  e corregge la lettura.")
+    lines.append("6. **Scanner autocalibrato**: dopo abbastanza dati, confronta previsione e realtà e corregge la lettura.")
     lines.append("")
-    lines.append("La frase piÃ¹ importante Ã¨ questa:")
+    lines.append("La frase più importante è questa:")
     lines.append("")
     lines.append("> **Return = prezzo finale dopo 30 giorni. Drawdown = discesa durante il mese. Max gain = rialzo durante il mese.**")
     lines.append("")
@@ -1197,7 +1209,7 @@ def add_percentile_cheatsheet(lines):
     lines.append("")
     lines.append("- **Percentile 10%** = molto male / scenario brutto.")
     lines.append("- **Percentile 25%** = male / scenario negativo.")
-    lines.append("- **Percentile 50%** = normale / scenario centrale. Ã il piÃ¹ importante.")
+    lines.append("- **Percentile 50%** = normale / scenario centrale. È il più importante.")
     lines.append("- **Percentile 75%** = bene / scenario buono.")
     lines.append("- **Percentile 90%** = molto bene / scenario molto forte.")
     lines.append("")
@@ -1217,11 +1229,11 @@ def add_percentile_cheatsheet(lines):
     lines.append("")
     lines.append("Se SOL oggi vale 82 $ e il report dice:")
     lines.append("")
-    lines.append("- **Return 50% â 81 $**: fra 30 giorni lo scenario normale Ã¨ circa 81 $.")
-    lines.append("- **Drawdown 50% â 77 $**: durante il mese puÃ² scendere normalmente verso 77 $.")
-    lines.append("- **Max gain 50% â 92 $**: durante il mese puÃ² fare uno spike normale verso 92 $.")
+    lines.append("- **Return 50% → 81 $**: fra 30 giorni lo scenario normale è circa 81 $.")
+    lines.append("- **Drawdown 50% → 77 $**: durante il mese può scendere normalmente verso 77 $.")
+    lines.append("- **Max gain 50% → 92 $**: durante il mese può fare uno spike normale verso 92 $.")
     lines.append("")
-    lines.append("Quindi puÃ² salire e scendere durante il mese, ma il **return** guarda solo dove finisce dopo 30 giorni.")
+    lines.append("Quindi può salire e scendere durante il mese, ma il **return** guarda solo dove finisce dopo 30 giorni.")
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -1251,33 +1263,33 @@ def add_asset_simple_map(lines, target, result):
     max_gain_p75, max_gain_p75_price = get_percentile_price(percentiles, "max_gain_30d", 75)
     max_gain_p90, max_gain_p90_price = get_percentile_price(percentiles, "max_gain_30d", 90)
 
-    lines.append(f"# {name} â mappa semplice dei prossimi 30 giorni")
+    lines.append(f"# {name} — mappa semplice dei prossimi 30 giorni")
     lines.append("")
     lines.append(f"**Semaforo:** {semaforo(verdict_value)}")
     lines.append(f"**Prezzo attuale:** {fmt_price(prices['current_price'])}")
     lines.append("")
-    lines.append(f"**Direzione piÃ¹ probabile a 30 giorni:** **{direction}**")
-    lines.append(f"- ProbabilitÃ  storica di salita: **{fmt_pct(up_prob)}**")
-    lines.append(f"- ProbabilitÃ  storica di discesa: **{fmt_pct(down_prob)}**")
-    lines.append(f"- Quanto Ã¨ netto il segnale: **{strength}**")
+    lines.append(f"**Direzione più probabile a 30 giorni:** **{direction}**")
+    lines.append(f"- Probabilità storica di salita: **{fmt_pct(up_prob)}**")
+    lines.append(f"- Probabilità storica di discesa: **{fmt_pct(down_prob)}**")
+    lines.append(f"- Quanto è netto il segnale: **{strength}**")
     lines.append("")
     lines.append("## Come leggere questa parte")
     lines.append("")
     lines.append(
-        "- **ProbabilitÃ  storica di salita** = su 40 casi simili, quanti hanno chiuso sopra dopo 30 giorni."
+        "- **Probabilità storica di salita** = su 40 casi simili, quanti hanno chiuso sopra dopo 30 giorni."
     )
     lines.append(
-        "- **ProbabilitÃ  storica di discesa** = su 40 casi simili, quanti hanno chiuso sotto dopo 30 giorni."
+        "- **Probabilità storica di discesa** = su 40 casi simili, quanti hanno chiuso sotto dopo 30 giorni."
     )
     lines.append(
-        "- **Quanto Ã¨ netto il segnale** = quanto Ã¨ grande la differenza tra salita e discesa. "
-        "Non vuol dire certezza, vuol dire solo che il risultato storico non Ã¨ vicino al 50/50."
+        "- **Quanto è netto il segnale** = quanto è grande la differenza tra salita e discesa. "
+        "Non vuol dire certezza, vuol dire solo che il risultato storico non è vicino al 50/50."
     )
     lines.append("")
     lines.append(simple_direction_sentence(direction, strength))
     lines.append("")
 
-    lines.append("## 1. Return 30d â prezzo fra 30 giorni")
+    lines.append("## 1. Return 30d — prezzo fra 30 giorni")
     lines.append("")
     lines.append(
         "**Return** significa rendimento finale. Qui guardiamo dove potrebbe stare il prezzo "
@@ -1293,11 +1305,11 @@ def add_asset_simple_map(lines, target, result):
     lines.append("**Come leggerlo:** se vuoi sapere dove potrebbe trovarsi il prezzo fra 30 giorni, guarda soprattutto lo **scenario normale**.")
     lines.append("")
 
-    lines.append("## 2. Drawdown 30d â discesa durante i 30 giorni")
+    lines.append("## 2. Drawdown 30d — discesa durante i 30 giorni")
     lines.append("")
     lines.append(
         "**Drawdown** significa la discesa massima durante il periodo. "
-        "Non Ã¨ il prezzo finale: Ã¨ il punto piÃ¹ basso che il prezzo puÃ² toccare durante il mese."
+        "Non è il prezzo finale: è il punto più basso che il prezzo può toccare durante il mese."
     )
     lines.append("")
     lines.append(f"- Discesa normale: **{fmt_price(drawdown_p50_price)}** ({fmt_pct(drawdown_p50)})")
@@ -1305,16 +1317,16 @@ def add_asset_simple_map(lines, target, result):
     lines.append(f"- Discesa molto brutta: **{fmt_price(drawdown_p10_price)}** ({fmt_pct(drawdown_p10)})")
     lines.append("")
     lines.append(
-        "**Come leggerlo:** se usi leva, questa Ã¨ la parte piÃ¹ importante. "
-        "Anche se dopo 30 giorni il prezzo recupera, durante il mese puÃ² prima scendere qui."
+        "**Come leggerlo:** se usi leva, questa è la parte più importante. "
+        "Anche se dopo 30 giorni il prezzo recupera, durante il mese può prima scendere qui."
     )
     lines.append("")
 
-    lines.append("## 3. Max gain 30d â rialzo durante i 30 giorni")
+    lines.append("## 3. Max gain 30d — rialzo durante i 30 giorni")
     lines.append("")
     lines.append(
         "**Max gain** significa il massimo rialzo toccato durante il mese. "
-        "Non Ã¨ il prezzo finale: puÃ² essere anche solo uno spike temporaneo."
+        "Non è il prezzo finale: può essere anche solo uno spike temporaneo."
     )
     lines.append("")
     lines.append(f"- Rialzo normale: **{fmt_price(max_gain_p50_price)}** ({fmt_pct(max_gain_p50)})")
@@ -1323,7 +1335,7 @@ def add_asset_simple_map(lines, target, result):
     lines.append("")
     lines.append(
         "**Come leggerlo:** questa parte serve per capire possibili zone di take profit. "
-        "Il rialzo normale Ã¨ piÃ¹ realistico; il rialzo molto forte Ã¨ possibile ma meno comune."
+        "Il rialzo normale è più realistico; il rialzo molto forte è possibile ma meno comune."
     )
     lines.append("")
 
@@ -1339,26 +1351,26 @@ def add_asset_simple_map(lines, target, result):
 
     if direction == "DISCESA":
         lines.append(
-            f"La chiusura a 30 giorni era piÃ¹ spesso negativa: salita {fmt_pct(up_prob)}, "
-            f"discesa {fmt_pct(down_prob)}. Quindi la lettura principale Ã¨ prudente/debole."
+            f"La chiusura a 30 giorni era più spesso negativa: salita {fmt_pct(up_prob)}, "
+            f"discesa {fmt_pct(down_prob)}. Quindi la lettura principale è prudente/debole."
         )
     elif direction == "SALITA":
         lines.append(
-            f"La chiusura a 30 giorni era piÃ¹ spesso positiva: salita {fmt_pct(up_prob)}, "
-            f"discesa {fmt_pct(down_prob)}. Quindi la lettura principale Ã¨ favorevole."
+            f"La chiusura a 30 giorni era più spesso positiva: salita {fmt_pct(up_prob)}, "
+            f"discesa {fmt_pct(down_prob)}. Quindi la lettura principale è favorevole."
         )
     else:
         lines.append(
-            f"La chiusura a 30 giorni Ã¨ incerta: salita {fmt_pct(up_prob)}, "
-            f"discesa {fmt_pct(down_prob)}. Non c'Ã¨ un vantaggio netto."
+            f"La chiusura a 30 giorni è incerta: salita {fmt_pct(up_prob)}, "
+            f"discesa {fmt_pct(down_prob)}. Non c'è un vantaggio netto."
         )
 
     lines.append("")
 
     if target == "BTC-USD":
         lines.append(
-            "Nota leva BTC: se la liquidazione Ã¨ vicina a 51.000 $, guarda soprattutto "
-            "la discesa brutta e molto brutta. Il prezzo puÃ² recuperare dopo, ma la leva puÃ² saltare prima."
+            "Nota leva BTC: se la liquidazione è vicina a 51.000 $, guarda soprattutto "
+            "la discesa brutta e molto brutta. Il prezzo può recuperare dopo, ma la leva può saltare prima."
         )
         lines.append("")
 
@@ -1379,8 +1391,8 @@ def build_markdown_report(all_results, generated_at, prediction_log):
     )
     lines.append("")
     lines.append(
-        "Non Ã¨ una previsione certa. Ã uno scanner statistico: "
-        "guarda situazioni simili giÃ  successe e mostra cosa accadde dopo nei 30 giorni successivi."
+        "Non è una previsione certa. È uno scanner statistico: "
+        "guarda situazioni simili già successe e mostra cosa accadde dopo nei 30 giorni successivi."
     )
     lines.append("")
 
@@ -1390,7 +1402,7 @@ def build_markdown_report(all_results, generated_at, prediction_log):
     lines.append("# Lettura velocissima")
     lines.append("")
     lines.append(
-        "Questa Ã¨ la parte da leggere per prima. Ti dice subito se lo scenario Ã¨ piÃ¹ da salita, discesa o incertezza."
+        "Questa è la parte da leggere per prima. Ti dice subito se lo scenario è più da salita, discesa o incertezza."
     )
     lines.append("")
 
@@ -1410,10 +1422,10 @@ def build_markdown_report(all_results, generated_at, prediction_log):
         max_gain_p75, max_gain_p75_price = get_percentile_price(percentiles, "max_gain_30d", 75)
 
         lines.append(f"## {name}")
-        lines.append(f"- Direzione piÃ¹ probabile a 30 giorni: **{direction}**")
+        lines.append(f"- Direzione più probabile a 30 giorni: **{direction}**")
         lines.append(f"- Casi positivi / salita storica: **{fmt_pct(up_prob)}**")
         lines.append(f"- Casi negativi / discesa storica: **{fmt_pct(down_prob)}**")
-        lines.append(f"- Quanto Ã¨ netto il segnale: **{strength}**")
+        lines.append(f"- Quanto è netto il segnale: **{strength}**")
         lines.append(f"- Prezzo attuale: **{fmt_price(prices['current_price'])}**")
         lines.append(f"- Return normale fra 30 giorni: **{fmt_price(return_p50_price)}** ({fmt_pct(return_p50)})")
         lines.append(f"- Drawdown normale durante il mese: **{fmt_price(drawdown_p50_price)}** ({fmt_pct(drawdown_p50)})")
@@ -1422,7 +1434,7 @@ def build_markdown_report(all_results, generated_at, prediction_log):
         lines.append(f"- Max gain buono / take profit ottimistico: **{fmt_price(max_gain_p75_price)}** ({fmt_pct(max_gain_p75)})")
         lines.append("")
         lines.append(
-            "**Come leggerlo:** casi positivi/negativi ti dicono la direzione piÃ¹ probabile. "
+            "**Come leggerlo:** casi positivi/negativi ti dicono la direzione più probabile. "
             "Return ti dice il prezzo finale fra 30 giorni. Drawdown ti dice il rischio di discesa durante il mese. "
             "Max gain ti dice il possibile rialzo durante il mese."
         )
@@ -1438,18 +1450,18 @@ def build_markdown_report(all_results, generated_at, prediction_log):
 
     if directions.count("DISCESA") >= 2:
         lines.append(
-            "Il quadro generale oggi Ã¨ prudente/debole. "
-            "Lo scanner vede piÃ¹ rischio di discesa che salita pulita su piÃ¹ asset."
+            "Il quadro generale oggi è prudente/debole. "
+            "Lo scanner vede più rischio di discesa che salita pulita su più asset."
         )
     elif directions.count("SALITA") >= 2:
         lines.append(
-            "Il quadro generale oggi Ã¨ piÃ¹ favorevole. "
-            "Lo scanner vede piÃ¹ possibilitÃ  di salita su piÃ¹ asset."
+            "Il quadro generale oggi è più favorevole. "
+            "Lo scanner vede più possibilità di salita su più asset."
         )
     else:
         lines.append(
-            "Il quadro generale oggi Ã¨ misto. "
-            "Alcuni asset possono avere lettura diversa, quindi Ã¨ meglio valutare asset per asset."
+            "Il quadro generale oggi è misto. "
+            "Alcuni asset possono avere lettura diversa, quindi è meglio valutare asset per asset."
         )
 
     lines.append("")
@@ -1465,7 +1477,7 @@ def build_markdown_report(all_results, generated_at, prediction_log):
     lines.append("# Come leggere correttamente i 30 giorni")
     lines.append("")
     lines.append(
-        "Ogni report giornaliero Ã¨ una previsione statistica sui **prossimi 30 giorni**."
+        "Ogni report giornaliero è una previsione statistica sui **prossimi 30 giorni**."
     )
     lines.append("")
     lines.append("Ci sono tre dati diversi:")
@@ -1475,8 +1487,8 @@ def build_markdown_report(all_results, generated_at, prediction_log):
     lines.append("3. **Max gain 30d** = quanto potrebbe salire al massimo durante quei 30 giorni.")
     lines.append("")
     lines.append(
-        "Il prezzo puÃ² salire durante il mese e poi chiudere sotto, oppure scendere prima e poi recuperare. "
-        "Per chi usa leva, il drawdown Ã¨ spesso piÃ¹ importante del prezzo finale."
+        "Il prezzo può salire durante il mese e poi chiudere sotto, oppure scendere prima e poi recuperare. "
+        "Per chi usa leva, il drawdown è spesso più importante del prezzo finale."
     )
     lines.append("")
 
@@ -1496,7 +1508,7 @@ def build_markdown_report(all_results, generated_at, prediction_log):
 
         lines.append("---")
         lines.append("")
-        lines.append(f"# Approfondimento tecnico â {name} ({target})")
+        lines.append(f"# Approfondimento tecnico — {name} ({target})")
         lines.append("")
         lines.append(f"## Semaforo: {semaforo(verdict_value)}")
         lines.append("")
@@ -1512,12 +1524,12 @@ def build_markdown_report(all_results, generated_at, prediction_log):
         lines.append("")
         lines.append(
             "**Come leggerli:** questi numeri dicono quante volte, nei 40 casi storici simili, "
-            "il prezzo ha chiuso sopra o sotto dopo 30 giorni. Sono la parte piÃ¹ semplice per capire "
-            "se storicamente era piÃ¹ probabile salita o discesa."
+            "il prezzo ha chiuso sopra o sotto dopo 30 giorni. Sono la parte più semplice per capire "
+            "se storicamente era più probabile salita o discesa."
         )
         lines.append("")
 
-        lines.append("## Cosa dicono i 40 casi storici piÃ¹ simili")
+        lines.append("## Cosa dicono i 40 casi storici più simili")
         lines.append("")
         lines.append(f"- Somiglianza media dei pattern: **{fmt_pct(summary['similarity_avg'])}**")
         lines.append(f"- Rendimento medio dopo 30 giorni: **{fmt_pct(summary['return_30d_avg'])}**")
@@ -1540,12 +1552,12 @@ def build_markdown_report(all_results, generated_at, prediction_log):
         lines.append(f"- Zona di rialzo media: **{fmt_price(prices['max_gain_avg_30d'])}**")
         lines.append("")
         lines.append(
-            "**Come leggerli:** scenario centrale = prezzo finale piÃ¹ normale a 30 giorni. "
-            "Zona rischio = dove puÃ² scendere durante il mese. Zona rialzo = dove puÃ² arrivare durante uno spike."
+            "**Come leggerli:** scenario centrale = prezzo finale più normale a 30 giorni. "
+            "Zona rischio = dove può scendere durante il mese. Zona rialzo = dove può arrivare durante uno spike."
         )
         lines.append("")
 
-        lines.append("## Percentili return â prezzo fra 30 giorni")
+        lines.append("## Percentili return — prezzo fra 30 giorni")
         lines.append("")
         lines.append(
             "**Return** significa prezzo finale dopo 30 giorni rispetto al prezzo di oggi."
@@ -1554,19 +1566,19 @@ def build_markdown_report(all_results, generated_at, prediction_log):
         lines.extend(percentile_lines(percentiles, "return_30d"))
         lines.append("")
 
-        lines.append("## Percentili drawdown â discesa durante i 30 giorni")
+        lines.append("## Percentili drawdown — discesa durante i 30 giorni")
         lines.append("")
         lines.append(
-            "**Drawdown** significa quanto puÃ² scendere il prezzo durante il mese, anche se poi recupera."
+            "**Drawdown** significa quanto può scendere il prezzo durante il mese, anche se poi recupera."
         )
         lines.append("")
         lines.extend(percentile_lines(percentiles, "drawdown_30d"))
         lines.append("")
 
-        lines.append("## Percentili max gain â rialzo durante i 30 giorni")
+        lines.append("## Percentili max gain — rialzo durante i 30 giorni")
         lines.append("")
         lines.append(
-            "**Max gain** significa il massimo rialzo che il prezzo puÃ² toccare durante il mese, anche solo temporaneamente."
+            "**Max gain** significa il massimo rialzo che il prezzo può toccare durante il mese, anche solo temporaneamente."
         )
         lines.append("")
         lines.extend(percentile_lines(percentiles, "max_gain_30d"))
@@ -1576,7 +1588,7 @@ def build_markdown_report(all_results, generated_at, prediction_log):
         lines.append("")
         lines.append(
             "Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. "
-            "Non Ã¨ obbligatorio leggerla ogni giorno."
+            "Non è obbligatorio leggerla ogni giorno."
         )
         lines.append("")
 
@@ -1670,7 +1682,7 @@ def export_latest_scanner_matches(all_results, generated_at):
 
     if not rows:
         empty = pd.DataFrame()
-        empty.to_csv(LATEST_SCANNER_MATCHES_PATH, index=False)
+        empty.to_csv(LATEST_SCANNER_MATCHES_PATH, index=False, encoding="utf-8", lineterminator="\n")
         return empty
 
     out = pd.DataFrame(rows)
@@ -1711,16 +1723,125 @@ def export_latest_scanner_matches(all_results, generated_at):
     remaining_columns = [c for c in out.columns if c not in existing_columns]
 
     out = out[existing_columns + remaining_columns]
-    out.to_csv(LATEST_SCANNER_MATCHES_PATH, index=False)
+    out.to_csv(LATEST_SCANNER_MATCHES_PATH, index=False, encoding="utf-8", lineterminator="\n")
 
     return out
 
 
+
+def _atomic_write_text(path, text):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(text, encoding="utf-8", newline="\n")
+    tmp.replace(path)
+
+
+def _json_clean(value):
+    if isinstance(value, dict):
+        return {str(k): _json_clean(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_clean(v) for v in value]
+    if isinstance(value, (np.integer,)):
+        return int(value)
+    if isinstance(value, (np.floating, float)):
+        return None if pd.isna(value) else float(value)
+    if pd.isna(value) if not isinstance(value, str) else False:
+        return None
+    return value
+
+
+def export_latest_scanner_summary(all_results, generated_at, snapshot=None):
+    """Esporta una riga strutturata per asset, pronta per il Global Confluence.
+
+    Questo elimina la necessità di estrarre direzione e percentili dal Markdown.
+    I file prodotti sono:
+    - reports/latest_scanner_summary.csv
+    - reports/latest_scanner_summary.json
+    """
+    Path(LATEST_SCANNER_SUMMARY_CSV_PATH).parent.mkdir(parents=True, exist_ok=True)
+    rows = []
+
+    for target, result in all_results.items():
+        asset = target_asset_code(target)
+        summary = result["summary"]
+        prices = result["prices"]
+        percentiles = result["percentiles"]
+        direction, up_prob, down_prob = direction_label(summary["positive_cases_30d"])
+
+        row = {
+            "generated_at_utc": generated_at,
+            "snapshot_generated_at_utc": (snapshot or {}).get("generated_at_utc"),
+            "snapshot_candle_date_utc": get_snapshot_candle_date(snapshot or {}, target),
+            "asset": asset,
+            "ticker": target,
+            "current_price": to_float(prices.get("current_price")),
+            "verdict": result.get("verdict"),
+            "direction_30d": direction,
+            "signal_strength": signal_strength(up_prob),
+            "match_count": int(summary.get("match_count", 0)),
+            "positive_cases_30d": to_float(up_prob),
+            "negative_cases_30d": to_float(down_prob),
+            "similarity_avg": to_float(summary.get("similarity_avg")),
+            "similarity_median": to_float(summary.get("similarity_median")),
+            "return_30d_avg": to_float(summary.get("return_30d_avg")),
+            "return_30d_median": to_float(summary.get("return_30d_median")),
+            "drawdown_30d_avg": to_float(summary.get("drawdown_30d_avg")),
+            "max_gain_30d_avg": to_float(summary.get("max_gain_30d_avg")),
+            "scenario_avg_30d_price": to_float(prices.get("scenario_avg_30d")),
+            "scenario_median_30d_price": to_float(prices.get("scenario_median_30d")),
+            "drawdown_avg_30d_price": to_float(prices.get("drawdown_avg_30d")),
+            "max_gain_avg_30d_price": to_float(prices.get("max_gain_avg_30d")),
+        }
+
+        for metric, prefix in [
+            ("return_30d", "return"),
+            ("drawdown_30d", "drawdown"),
+            ("max_gain_30d", "max_gain"),
+        ]:
+            for q in [10, 25, 50, 75, 90]:
+                pct, price = get_percentile_price(percentiles, metric, q)
+                row[f"{prefix}_p{q}_pct"] = to_float(pct)
+                row[f"{prefix}_p{q}_price"] = to_float(price)
+
+        rows.append(row)
+
+    out = pd.DataFrame(rows).sort_values("asset").reset_index(drop=True)
+    out.to_csv(
+        LATEST_SCANNER_SUMMARY_CSV_PATH,
+        index=False,
+        encoding="utf-8",
+        lineterminator="\n",
+    )
+
+    payload = {
+        "schema_version": 1,
+        "generated_at_utc": generated_at,
+        "snapshot_generated_at_utc": (snapshot or {}).get("generated_at_utc"),
+        "assets": {row["asset"]: row for row in rows},
+    }
+    _atomic_write_text(
+        LATEST_SCANNER_SUMMARY_JSON_PATH,
+        json.dumps(_json_clean(payload), ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+    )
+    return out
+
 def main():
-    generated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    generated_at_iso = generated_at.replace(" ", "T") + "Z"
     os.makedirs("reports", exist_ok=True)
 
     data = download_data()
+
+    # Preferisce lo snapshot già creato dal workflow. Se manca o è vecchio,
+    # lo ricrea usando esattamente i dati appena scaricati dallo scanner.
+    snapshot = load_market_snapshot(max_age_hours=24)
+    required_assets = {target_asset_code(t) for t in TARGETS}
+    if not snapshot or not required_assets.issubset(set(snapshot.get("assets", {}))):
+        snapshot = write_snapshot_from_asset_data(
+            data, generated_at_utc=generated_at_iso
+        )
+
     all_results = {}
 
     for target in TARGETS:
@@ -1732,7 +1853,9 @@ def main():
         matches_raw = find_similar_patterns(target, data)
         matches_clean = deoverlap_matches(matches_raw)
 
-        current_price = data[target]["Close"].iloc[-1]
+        current_price = get_snapshot_price(snapshot, target)
+        if current_price is None:
+            current_price = float(data[target]["Close"].iloc[-1])
 
         all_results[target] = {
             "matches": matches_clean,
@@ -1743,30 +1866,39 @@ def main():
         }
 
         safe_target = target.replace("-USD", "")
-        matches_clean.to_csv(f"reports/{safe_target}_matches.csv", index=False)
+        matches_clean.to_csv(
+            f"reports/{safe_target}_matches.csv",
+            index=False,
+            encoding="utf-8",
+            lineterminator="\n",
+        )
 
         all_results[target]["percentiles"].to_csv(
             f"reports/{safe_target}_percentiles.csv",
-            index=False
+            index=False,
+            encoding="utf-8",
+            lineterminator="\n",
         )
 
     latest_matches = export_latest_scanner_matches(all_results, generated_at)
+    latest_summary = export_latest_scanner_summary(
+        all_results, generated_at, snapshot=snapshot
+    )
 
     prediction_log = load_prediction_log()
     prediction_log = update_prediction_log(prediction_log, all_results, generated_at)
     prediction_log = evaluate_prediction_log(prediction_log, data)
-    prediction_log.to_csv(PREDICTION_LOG_PATH, index=False)
+    prediction_log.to_csv(PREDICTION_LOG_PATH, index=False, encoding="utf-8", lineterminator="\n")
 
     accuracy = accuracy_summary(prediction_log)
-    accuracy.to_csv(ACCURACY_REPORT_PATH, index=False)
+    accuracy.to_csv(ACCURACY_REPORT_PATH, index=False, encoding="utf-8", lineterminator="\n")
 
     calibration = calibration_summary(prediction_log)
-    calibration.to_csv(CALIBRATION_REPORT_PATH, index=False)
+    calibration.to_csv(CALIBRATION_REPORT_PATH, index=False, encoding="utf-8", lineterminator="\n")
 
     report_md = build_markdown_report(all_results, generated_at, prediction_log)
 
-    with open("reports/latest_report.md", "w", encoding="utf-8") as f:
-        f.write(report_md)
+    _atomic_write_text("reports/latest_report.md", report_md.rstrip() + "\n")
 
     print(report_md)
     print("Report saved in reports/latest_report.md")
@@ -1775,6 +1907,9 @@ def main():
     print("Calibration report saved in reports/calibration_report.csv")
     print(f"Latest scanner matches saved in {LATEST_SCANNER_MATCHES_PATH}")
     print(f"Latest scanner matches rows: {len(latest_matches)}")
+    print(f"Latest scanner summary saved in {LATEST_SCANNER_SUMMARY_CSV_PATH}")
+    print(f"Latest scanner summary JSON saved in {LATEST_SCANNER_SUMMARY_JSON_PATH}")
+    print(f"Latest scanner summary rows: {len(latest_summary)}")
 
 
 if __name__ == "__main__":
