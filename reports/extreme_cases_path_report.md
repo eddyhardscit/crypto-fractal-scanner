@@ -1,6 +1,6 @@
 # Extreme cases path report
 
-Generato: 2026-07-10 18:13 UTC
+Generato: 2026-07-10 18:23 UTC
 
 Questo report si attiva quando i casi positivi o negativi sono almeno **80%**.
 
@@ -11,7 +11,7 @@ Ora misura anche il **rialzo massimo prima della discesa principale**, quindi di
 | Asset   | Direzione             | Trigger   | Percentuale   | Motivo                           |   Match disponibili |
 |:--------|:----------------------|:----------|:--------------|:---------------------------------|--------------------:|
 | BTC     | NESSUNO               | NO        | +75,00%       | Nessun lato sopra soglia estrema |                  40 |
-| SOL     | NESSUNO               | NO        | +62,50%       | Nessun lato sopra soglia estrema |                  40 |
+| SOL     | NESSUNO               | NO        | +60,00%       | Nessun lato sopra soglia estrema |                  40 |
 | DOGE    | NEGATIVO / RIBASSISTA | SI        | +85,00%       | Casi negativi 85.00% >= 80%      |                  40 |
 
 ## DOGE — casi ribassisti
@@ -82,9 +82,9 @@ La sigla `g7` sopra una barra significa che il massimo rialzo è avvenuto al gio
 | CHZ-USD         | 2022-06-03 | +86,76%      | +5,97%                   |              3 | -28,71%      |              15 | -32,73%          | -19,17%      | RIALZO MODESTO PRIMA DEL DUMP |
 | ZEC-USD         | 2019-08-24 | +86,89%      | +5,15%                   |             25 | -11,71%      |              30 | -16,03%          | -11,71%      | RIALZO MODESTO PRIMA DEL DUMP |
 | ENJ-USD         | 2022-06-04 | +86,27%      | +5,00%                   |              2 | -33,46%      |              14 | -36,63%          | -16,55%      | RIALZO MODESTO PRIMA DEL DUMP |
-| XLM-USD         | 2022-05-30 | +83,79%      | +4,76%                   |              1 | -25,70%      |              14 | -29,08%          | -23,40%      | RIALZO MODESTO PRIMA DEL DUMP |
+| XLM-USD         | 2022-05-30 | +83,80%      | +4,76%                   |              1 | -25,70%      |              14 | -29,08%          | -23,40%      | RIALZO MODESTO PRIMA DEL DUMP |
 | VET-USD         | 2022-06-01 | +86,54%      | +4,39%                   |              8 | -29,00%      |              17 | -31,99%          | -27,52%      | RIALZO MODESTO PRIMA DEL DUMP |
-| XTZ-USD         | 2026-03-15 | +87,28%      | +4,26%                   |              5 | -12,14%      |              14 | -15,73%          | -10,41%      | RIALZO MODESTO PRIMA DEL DUMP |
+| XTZ-USD         | 2026-03-15 | +87,29%      | +4,26%                   |              5 | -12,14%      |              14 | -15,73%          | -10,41%      | RIALZO MODESTO PRIMA DEL DUMP |
 | BCH-USD         | 2022-05-30 | +85,04%      | +3,48%                   |              1 | -47,58%      |              29 | -49,34%          | -46,95%      | RIALZO MODESTO PRIMA DEL DUMP |
 | NEO-USD         | 2022-05-30 | +85,50%      | +3,34%                   |              7 | -27,65%      |              19 | -29,99%          | -26,97%      | RIALZO MODESTO PRIMA DEL DUMP |
 | INJ-USD         | 2022-06-01 | +85,97%      | +3,20%                   |              1 | -42,93%      |              30 | -44,70%          | -42,93%      | RIALZO MODESTO PRIMA DEL DUMP |

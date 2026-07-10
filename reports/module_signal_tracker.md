@@ -1,6 +1,6 @@
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-10 18:14 UTC
+Generato: 2026-07-10 18:24 UTC
 
 Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno quali orizzonti sono maturati.
 
@@ -27,7 +27,9 @@ Nota: i controlli vengono aggiornati **ogni giorno**, ma i pesi del Global non d
 
 Segnali totali salvati: **6**.
 
-Backfill prudente Famiglia statistica: **3 righe storiche completate**. Per queste righe è stato usato soltanto lo Scanner grezzo, senza inventare un bonus Market Regime retroattivo.
+Backfill storico Famiglia statistica: **3 righe totali già completate nel diario**; righe completate in questa esecuzione: **0**. Per le righe retroattive è stato usato soltanto lo Scanner grezzo, senza inventare un bonus Market Regime storico.
+
+Politica snapshot giornaliero: **la prima fotografia per data e asset resta congelata**. Un rerun nello stesso giorno non sovrascrive prezzo, punteggi o azione; può soltanto completare campi realmente mancanti.
 
 ## Ultimi segnali salvati
 
