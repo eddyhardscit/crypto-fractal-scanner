@@ -1,977 +1,863 @@
-from pathlib import Path
-from datetime import datetime, timezone
+import csv
 import re
+from datetime import datetime, timezone
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 
 REPORTS_DIR = Path("reports")
-LATEST_REPORT = REPORTS_DIR / "latest_report.md"
 
-OUTPUT_REPORT = REPORTS_DIR / "global_weight_calibration_report.md"
-OUTPUT_METRICS = REPORTS_DIR / "global_weight_calibration_metrics.csv"
+LATEST_REPORT_PATH = REPORTS_DIR / "latest_report.md"
 
-GLOBAL_CONFLUENCE_METRICS = REPORTS_DIR / "global_confluence_metrics.csv"
+MODULE_METRICS_PATH = REPORTS_DIR / "module_signal_tracker_metrics.csv"
+MODULE_HISTORY_PATH = REPORTS_DIR / "module_signal_tracker_history.csv"
 
-MODULE_ACCURACY_CANDIDATES = [
-    REPORTS_DIR / "module_signal_accuracy_metrics.csv",
-    REPORTS_DIR / "module_accuracy_metrics.csv",
-    REPORTS_DIR / "module_signal_tracker_metrics.csv",
-    REPORTS_DIR / "module_signal_metrics.csv",
-]
+REPORT_PATH = REPORTS_DIR / "global_weight_calibration_report.md"
+SUMMARY_CSV_PATH = REPORTS_DIR / "global_weight_calibration_metrics.csv"
 
 START_MARKER = "<!-- GLOBAL_WEIGHT_CALIBRATION_START -->"
 END_MARKER = "<!-- GLOBAL_WEIGHT_CALIBRATION_END -->"
 
-MIN_OBSERVATION_CHECKS = 30
-MIN_LIGHT_SUGGESTION_CHECKS = 60
-MIN_AUTO_WEIGHT_CHECKS = 100
+ASSETS = ["BTC", "SOL", "DOGE"]
 
-FOCUS_HORIZONS = [30, 60]
+HORIZON_ORDER = [1, 2, 3, 5, 7, 10, 14, 21, 30, 45, 60]
+
+MODULE_ORDER = [
+    "global",
+    "scanner",
+    "market",
+    "technical",
+    "classic_technical",
+    "sol_fractal",
+]
+
+MODULE_LABELS = {
+    "global": "Global Confluence",
+    "scanner": "Scanner",
+    "market": "Market regime",
+    "technical": "Tecnico",
+    "classic_technical": "Classic technical",
+    "sol_fractal": "Frattale SOL",
+}
+
+FAMILY_ORDER = {
+    "BREVE": 1,
+    "SETTIMANALE": 2,
+    "SWING": 3,
+    "MEDIO": 4,
+}
+
+MIN_FIRST_CALIBRATION = 30
+MIN_USEFUL = 60
+MIN_MATURE = 100
 
 
-def utc_now():
-    return datetime.now(timezone.utc)
+def now_utc_str() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
 
-def read_text(path):
+def now_utc_iso() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def read_text(path: Path) -> str:
     if not path.exists():
         return ""
+    return path.read_text(encoding="utf-8")
+
+
+def write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
+def replace_or_insert_block(text: str, block: str) -> str:
+    full_block = f"{START_MARKER}\n{block.rstrip()}\n{END_MARKER}"
+
+    if START_MARKER in text and END_MARKER in text:
+        pattern = re.compile(
+            re.escape(START_MARKER) + r".*?" + re.escape(END_MARKER),
+            flags=re.DOTALL,
+        )
+        return pattern.sub(full_block, text)
+
+    risk_start = "<!-- RISK_CALIBRATION_START -->"
+    if risk_start in text:
+        return text.replace(risk_start, full_block + "\n\n" + risk_start, 1)
+
+    module_end = "<!-- MODULE_ACCURACY_END -->"
+    if module_end in text:
+        return text.replace(module_end, module_end + "\n\n" + full_block, 1)
+
+    global_end = "<!-- GLOBAL_CONFLUENCE_END -->"
+    if global_end in text:
+        return text.replace(global_end, global_end + "\n\n" + full_block, 1)
+
+    return text.rstrip() + "\n\n" + full_block + "\n"
+
+
+def safe_str(value, default="") -> str:
+    if value is None:
+        return default
 
     try:
-        return path.read_text(encoding="utf-8")
+        if pd.isna(value):
+            return default
     except Exception:
-        return ""
+        pass
+
+    return str(value)
 
 
-def safe_float(x):
+def safe_float(value, default=np.nan):
     try:
-        if pd.isna(x):
-            return np.nan
-        return float(x)
+        if value is None:
+            return default
+
+        if isinstance(value, str):
+            s = value.strip()
+            if not s or s.lower() in {"nan", "none", "n/a", "null", "-"}:
+                return default
+
+            s = s.replace("%", "")
+            s = s.replace("$", "")
+            s = s.replace(" ", "")
+
+            if "," in s:
+                s = s.replace(".", "")
+                s = s.replace(",", ".")
+
+            return float(s)
+
+        if pd.isna(value):
+            return default
+
+        return float(value)
+
     except Exception:
-        return np.nan
+        return default
 
 
-def parse_number(value):
-    if value is None:
-        return np.nan
-
-    s = str(value).strip()
-
-    if not s or s.lower() in ["nan", "none", "null", "n/a", "nd", "n/d"]:
-        return np.nan
-
-    s = s.replace("%", "")
-    s = s.replace("$", "")
-    s = s.replace("€", "")
-    s = s.replace("+", "")
-    s = s.replace("−", "-")
-    s = s.replace(" ", "")
-
-    if "," in s and "." in s:
-        s = s.replace(".", "").replace(",", ".")
-    elif "," in s:
-        s = s.replace(",", ".")
-
-    s = re.sub(r"[^0-9.\-]", "", s)
-
-    if not s or s in ["-", ".", "-."]:
-        return np.nan
-
-    try:
-        return float(s)
-    except Exception:
-        return np.nan
+def safe_int(value, default=0) -> int:
+    v = safe_float(value, np.nan)
+    if pd.isna(v):
+        return default
+    return int(v)
 
 
-def parse_int(value):
-    x = parse_number(value)
-
-    if pd.isna(x):
-        return 0
-
-    return int(round(x))
+def fmt_pct(value, decimals: int = 2) -> str:
+    if value is None or pd.isna(value):
+        return "n/a"
+    return f"{float(value):+.{decimals}f}%".replace(".", ",")
 
 
-def parse_horizon(value):
-    if value is None:
-        return np.nan
-
-    s = str(value).strip().lower()
-    m = re.search(r"([0-9]+)", s)
-
-    if not m:
-        return np.nan
-
-    return int(m.group(1))
+def fmt_pct_plain(value, decimals: int = 2) -> str:
+    if value is None or pd.isna(value):
+        return "n/a"
+    return f"{float(value):.{decimals}f}%".replace(".", ",")
 
 
-def clean_text(value):
-    if value is None:
-        return ""
-
-    s = str(value)
-    s = s.replace("**", "")
-    s = s.replace("__", "")
-    s = s.replace("`", "")
-    s = s.replace("|", " ")
-    s = re.sub(r"\s+", " ", s)
-
-    return s.strip()
-
-
-def fmt_pct(value):
-    x = safe_float(value)
-
-    if pd.isna(x):
+def fmt_signed(value, decimals: int = 2) -> str:
+    if value is None or pd.isna(value):
         return "n/a"
 
-    return f"{x:.2f}%".replace(".", ",")
+    v = float(value)
 
+    if decimals == 0:
+        iv = int(round(v))
+        if iv > 0:
+            return f"+{iv}"
+        return str(iv)
 
-def fmt_num(value, decimals=2):
-    x = safe_float(value)
+    if v > 0:
+        return f"+{v:.{decimals}f}".replace(".", ",")
 
-    if pd.isna(x):
-        return "n/a"
+    return f"{v:.{decimals}f}".replace(".", ",")
 
-    return f"{x:.{decimals}f}".replace(".", ",")
 
+def md_table(headers, rows) -> str:
+    out = []
+    out.append("| " + " | ".join(headers) + " |")
+    out.append("| " + " | ".join(["---"] * len(headers)) + " |")
 
-def fmt_int(value):
-    try:
-        return str(int(value))
-    except Exception:
-        return "0"
+    for row in rows:
+        out.append("| " + " | ".join(str(x) for x in row) + " |")
 
+    return "\n".join(out)
 
-def fmt_delta(value):
-    x = safe_float(value)
 
-    if pd.isna(x):
-        return "n/a"
-
-    if x > 0:
-        return f"+{x:.2f}".replace(".", ",")
-
-    return f"{x:.2f}".replace(".", ",")
-
-
-def df_to_markdown(df):
-    if df is None or df.empty:
-        return "_Nessun dato disponibile._"
-
-    try:
-        return df.to_markdown(index=False)
-    except Exception:
-        return "```csv\n" + df.to_csv(index=False) + "\n```"
-
-
-def normalize_col_name(col):
-    s = str(col).strip().lower()
-    s = s.replace("%", "pct")
-    s = s.replace("/", "_")
-    s = s.replace("-", "_")
-    s = s.replace(" ", "_")
-    s = re.sub(r"[^a-z0-9_àèéìòù]", "", s)
-    s = re.sub(r"_+", "_", s)
-
-    return s.strip("_")
-
-
-def canonical_module_name(value):
-    s = clean_text(value)
-    low = s.lower()
-
-    if "global" in low:
-        return "Global confluence"
-
-    if "market" in low or "regime" in low:
-        return "Market regime"
-
-    if "scanner" in low and "path" in low:
-        return "Scanner path"
-
-    if "scanner" in low:
-        return "Scanner"
-
-    if "tecnico" in low or "technical" in low or "struttura" in low:
-        return "Tecnico"
-
-    if "frattale" in low or "fractal" in low:
-        if "path" in low or "tracker" in low:
-            return "Fractal path"
-        return "Frattale SOL"
-
-    if "rsi" in low:
-        return "RSI top-cycle"
-
-    if "lifecycle" in low or "ema" in low:
-        return "Lifecycle EMA"
-
-    if "future" in low or "liquid" in low:
-        return "Futures"
-
-    if "daily" in low or "giornal" in low:
-        return "Daily change"
-
-    return s if s else "n/d"
-
-
-def canonical_asset(value):
-    s = clean_text(value).upper()
-
-    if "BTC" in s:
-        return "BTC"
-
-    if "SOL" in s:
-        return "SOL"
-
-    if "DOGE" in s:
-        return "DOGE"
-
-    return s.replace("-USD", "")
-
-
-def find_col(df, names):
-    if df is None or df.empty:
-        return None
-
-    norm_map = {normalize_col_name(c): c for c in df.columns}
-
-    for name in names:
-        n = normalize_col_name(name)
-        if n in norm_map:
-            return norm_map[n]
-
-    return None
-
-
-def parse_markdown_table_after_heading(section, heading_text):
-    lines = section.splitlines()
-    start = None
-
-    for i, line in enumerate(lines):
-        if heading_text.lower() in line.lower():
-            start = i
-            break
-
-    if start is None:
-        return pd.DataFrame()
-
-    table_lines = []
-    found_table = False
-
-    for line in lines[start + 1:]:
-        if line.strip().startswith("|"):
-            found_table = True
-            table_lines.append(line.strip())
-        elif found_table:
-            break
-
-    if len(table_lines) < 3:
-        return pd.DataFrame()
-
-    header = [clean_text(c) for c in table_lines[0].strip("|").split("|")]
-    data_lines = table_lines[2:]
-
-    rows = []
-
-    for line in data_lines:
-        cells = [clean_text(c) for c in line.strip("|").split("|")]
-
-        if len(cells) != len(header):
-            continue
-
-        rows.append(dict(zip(header, cells)))
-
-    return pd.DataFrame(rows)
-
-
-def extract_section(text, start_marker, end_marker):
-    if not text:
-        return ""
-
-    if start_marker not in text or end_marker not in text:
-        return ""
-
-    start = text.find(start_marker)
-    end = text.find(end_marker)
-
-    if start == -1 or end == -1 or end <= start:
-        return ""
-
-    return text[start:end]
-
-
-def load_module_accuracy_from_csv():
-    for path in MODULE_ACCURACY_CANDIDATES:
-        if not path.exists():
-            continue
-
-        try:
-            df = pd.read_csv(path)
-        except Exception:
-            continue
-
-        if df is not None and not df.empty:
-            return df, path.name
-
-    return pd.DataFrame(), ""
-
-
-def load_module_accuracy_from_latest_report():
-    latest = read_text(LATEST_REPORT)
-
-    if not latest:
-        return pd.DataFrame(), ""
-
-    section = extract_section(
-        latest,
-        "<!-- MODULE_ACCURACY_START -->",
-        "<!-- MODULE_ACCURACY_END -->",
-    )
-
-    if not section:
-        return pd.DataFrame(), ""
-
-    df = parse_markdown_table_after_heading(section, "Accuratezza direzionale per modulo")
-
-    if df.empty:
-        return pd.DataFrame(), ""
-
-    return df, "latest_report.md / MODULE_ACCURACY"
-
-
-def normalize_module_accuracy(df):
-    if df is None or df.empty:
-        return pd.DataFrame()
-
-    out = df.copy()
-
-    asset_col = find_col(out, ["asset", "Asset", "target"])
-    horizon_col = find_col(out, ["horizon_days", "Orizzonte", "Giorno", "Horizon"])
-    module_col = find_col(out, ["module", "Modulo", "Signal", "Componente"])
-    checks_col = find_col(out, ["checks", "checked", "Controlli", "checked_signals", "Segnali controllati"])
-    acc_col = find_col(out, ["direction_accuracy_pct", "Accuratezza direzione", "Accuracy", "accuracy_pct"])
-    return_col = find_col(out, ["avg_return_pct", "Return medio", "Rendimento medio"])
-    drawdown_col = find_col(out, ["avg_drawdown_pct", "Drawdown medio", "Discesa media"])
-    max_gain_col = find_col(out, ["avg_max_gain_pct", "Max gain medio", "Rialzo medio"])
-    status_col = find_col(out, ["status", "Stato"])
-
-    normalized = pd.DataFrame()
-
-    if asset_col:
-        normalized["asset"] = out[asset_col].map(canonical_asset)
-    else:
-        normalized["asset"] = "n/d"
-
-    if horizon_col:
-        normalized["horizon_days"] = out[horizon_col].map(parse_horizon)
-    else:
-        normalized["horizon_days"] = np.nan
-
-    if module_col:
-        normalized["module"] = out[module_col].map(canonical_module_name)
-    else:
-        normalized["module"] = "n/d"
-
-    if checks_col:
-        normalized["checked"] = out[checks_col].map(parse_int)
-    else:
-        normalized["checked"] = 0
-
-    if acc_col:
-        normalized["direction_accuracy_pct"] = out[acc_col].map(parse_number)
-    else:
-        normalized["direction_accuracy_pct"] = np.nan
-
-    if return_col:
-        normalized["avg_return_pct"] = out[return_col].map(parse_number)
-    else:
-        normalized["avg_return_pct"] = np.nan
-
-    if drawdown_col:
-        normalized["avg_drawdown_pct"] = out[drawdown_col].map(parse_number)
-    else:
-        normalized["avg_drawdown_pct"] = np.nan
-
-    if max_gain_col:
-        normalized["avg_max_gain_pct"] = out[max_gain_col].map(parse_number)
-    else:
-        normalized["avg_max_gain_pct"] = np.nan
-
-    if status_col:
-        normalized["source_status"] = out[status_col].map(clean_text)
-    else:
-        normalized["source_status"] = ""
-
-    normalized = normalized.dropna(subset=["horizon_days"])
-    normalized["horizon_days"] = normalized["horizon_days"].astype(int)
-
-    normalized = normalized[
-        (normalized["asset"] != "") &
-        (normalized["module"] != "") &
-        (normalized["module"] != "n/d")
-    ].copy()
-
-    return normalized
-
-
-def load_module_accuracy():
-    df, source = load_module_accuracy_from_csv()
-
-    if df.empty:
-        df, source = load_module_accuracy_from_latest_report()
-
-    normalized = normalize_module_accuracy(df)
-
-    return normalized, source
-
-
-def load_current_global_scores():
-    if not GLOBAL_CONFLUENCE_METRICS.exists():
+def read_module_metrics() -> pd.DataFrame:
+    if not MODULE_METRICS_PATH.exists():
         return pd.DataFrame()
 
     try:
-        df = pd.read_csv(GLOBAL_CONFLUENCE_METRICS)
+        df = pd.read_csv(MODULE_METRICS_PATH)
     except Exception:
         return pd.DataFrame()
 
     if df.empty:
-        return pd.DataFrame()
+        return df
 
-    out = df.copy()
+    required_cols = [
+        "asset",
+        "horizon_days",
+        "horizon",
+        "horizon_family",
+        "module_key",
+        "module",
+        "controls",
+        "correct",
+        "accuracy_direction_pct",
+        "avg_return_pct",
+        "avg_direction_adjusted_return_pct",
+        "avg_drawdown_pct",
+        "avg_max_gain_pct",
+        "status",
+    ]
 
-    asset_col = find_col(out, ["asset", "Asset"])
-    if not asset_col:
-        return pd.DataFrame()
+    for col in required_cols:
+        if col not in df.columns:
+            df[col] = np.nan
 
-    out["asset"] = out[asset_col].map(canonical_asset)
+    df["asset"] = df["asset"].astype(str).str.upper().str.strip()
+    df["module_key"] = df["module_key"].astype(str).str.strip()
+    df["module"] = df["module"].fillna(df["module_key"]).astype(str)
+    df["horizon_family"] = df["horizon_family"].fillna("").astype(str).str.upper().str.strip()
 
-    score_columns = {
-        "scanner_score": "Scanner",
-        "scanner_path_score": "Scanner path",
-        "market_regime_score": "Market regime",
-        "technical_score": "Tecnico",
-        "fractal_score": "Frattale SOL",
-        "fractal_path_score": "Fractal path",
-        "rsi_top_cycle_score": "RSI top-cycle",
-        "lifecycle_squeeze_score": "Lifecycle EMA",
-        "futures_score": "Futures",
-        "daily_change_score": "Daily change",
-        "total_score": "Totale",
-        "score": "Totale",
+    numeric_cols = [
+        "horizon_days",
+        "controls",
+        "correct",
+        "accuracy_direction_pct",
+        "avg_return_pct",
+        "avg_direction_adjusted_return_pct",
+        "avg_drawdown_pct",
+        "avg_max_gain_pct",
+    ]
+
+    for col in numeric_cols:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    df["controls"] = df["controls"].fillna(0).astype(int)
+    df["horizon_days"] = df["horizon_days"].fillna(0).astype(int)
+
+    df = df[df["asset"].isin(ASSETS)].copy()
+
+    return df
+
+
+def read_history_counts():
+    counts = {asset: 0 for asset in ASSETS}
+
+    if not MODULE_HISTORY_PATH.exists():
+        return counts
+
+    try:
+        df = pd.read_csv(MODULE_HISTORY_PATH, dtype=str)
+    except Exception:
+        return counts
+
+    if df.empty or "asset" not in df.columns:
+        return counts
+
+    df["asset"] = df["asset"].astype(str).str.upper().str.strip()
+
+    for asset in ASSETS:
+        counts[asset] = int((df["asset"] == asset).sum())
+
+    return counts
+
+
+def maturity_status(max_controls: int) -> str:
+    if max_controls >= MIN_MATURE:
+        return "MATURO"
+    if max_controls >= MIN_USEFUL:
+        return "UTILE"
+    if max_controls >= MIN_FIRST_CALIBRATION:
+        return "PRIMA CALIBRAZIONE"
+    if max_controls > 0:
+        return "FEEDBACK RAPIDO"
+    return "RACCOLTA DATI"
+
+
+def maturity_explanation(max_controls: int) -> str:
+    if max_controls >= MIN_MATURE:
+        return "abbastanza controlli per valutare modifiche prudenti ai pesi"
+    if max_controls >= MIN_USEFUL:
+        return "lettura utile, ma modifica pesi ancora prudente"
+    if max_controls >= MIN_FIRST_CALIBRATION:
+        return "prima calibrazione leggera possibile, senza automatismi"
+    if max_controls > 0:
+        return "feedback rapido: utile da osservare, non da pesare"
+    return "nessun controllo maturato: non modificare i pesi"
+
+
+def recommendation_for_row(row) -> dict:
+    controls = safe_int(row.get("controls"), 0)
+    accuracy = safe_float(row.get("accuracy_direction_pct"))
+    adjusted_return = safe_float(row.get("avg_direction_adjusted_return_pct"))
+    avg_return = safe_float(row.get("avg_return_pct"))
+
+    if controls <= 0:
+        return {
+            "recommendation": "NESSUN DATO",
+            "suggested_weight_change": 0.0,
+            "confidence": "NULLA",
+            "reason": "nessun controllo maturato",
+        }
+
+    if controls < MIN_FIRST_CALIBRATION:
+        return {
+            "recommendation": "OSSERVA",
+            "suggested_weight_change": 0.0,
+            "confidence": "BASSA",
+            "reason": "meno di 30 controlli: feedback rapido, non calibrazione",
+        }
+
+    if pd.isna(accuracy) or pd.isna(adjusted_return):
+        return {
+            "recommendation": "MANTIENI",
+            "suggested_weight_change": 0.0,
+            "confidence": "BASSA",
+            "reason": "metriche incomplete",
+        }
+
+    confidence = "MEDIA"
+    if controls >= MIN_MATURE:
+        confidence = "ALTA"
+    elif controls >= MIN_USEFUL:
+        confidence = "MEDIA / BUONA"
+
+    if accuracy >= 65 and adjusted_return > 0.75:
+        change = 0.5 if controls < MIN_MATURE else 1.0
+        return {
+            "recommendation": "POSSIBILE AUMENTO LEGGERO",
+            "suggested_weight_change": change,
+            "confidence": confidence,
+            "reason": "accuratezza alta e return corretto direzione positivo",
+        }
+
+    if accuracy >= 58 and adjusted_return > 0:
+        return {
+            "recommendation": "PESO OK",
+            "suggested_weight_change": 0.0,
+            "confidence": confidence,
+            "reason": "modulo utile, ma non abbastanza forte per aumentare il peso",
+        }
+
+    if 48 <= accuracy < 58:
+        return {
+            "recommendation": "MANTIENI / OSSERVA",
+            "suggested_weight_change": 0.0,
+            "confidence": confidence,
+            "reason": "risultato vicino al neutro",
+        }
+
+    if accuracy < 45 and adjusted_return < 0:
+        change = -0.5 if controls < MIN_MATURE else -1.0
+        return {
+            "recommendation": "POSSIBILE RIDUZIONE PESO",
+            "suggested_weight_change": change,
+            "confidence": confidence,
+            "reason": "bassa accuratezza e return corretto direzione negativo",
+        }
+
+    if accuracy < 50:
+        return {
+            "recommendation": "NON AUMENTARE",
+            "suggested_weight_change": 0.0,
+            "confidence": confidence,
+            "reason": "accuratezza sotto 50%, ma prova ancora non decisiva",
+        }
+
+    return {
+        "recommendation": "MANTIENI",
+        "suggested_weight_change": 0.0,
+        "confidence": confidence,
+        "reason": "nessun segnale chiaro per cambiare peso",
     }
 
+
+def enrich_metrics(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty:
+        return df
+
+    out = df.copy()
+
+    recommendations = []
+    weight_changes = []
+    confidences = []
+    reasons = []
+
+    for _, row in out.iterrows():
+        r = recommendation_for_row(row)
+        recommendations.append(r["recommendation"])
+        weight_changes.append(r["suggested_weight_change"])
+        confidences.append(r["confidence"])
+        reasons.append(r["reason"])
+
+    out["weight_recommendation"] = recommendations
+    out["suggested_weight_change"] = weight_changes
+    out["recommendation_confidence"] = confidences
+    out["recommendation_reason"] = reasons
+
+    out["module_order"] = out["module_key"].map(
+        {k: i for i, k in enumerate(MODULE_ORDER)}
+    ).fillna(999).astype(int)
+
+    out["horizon_order"] = out["horizon_days"].map(
+        {h: i for i, h in enumerate(HORIZON_ORDER)}
+    ).fillna(999).astype(int)
+
+    out["family_order"] = out["horizon_family"].map(FAMILY_ORDER).fillna(999).astype(int)
+
+    return out
+
+
+def build_asset_summary(metrics: pd.DataFrame, history_counts: dict):
     rows = []
 
-    for _, r in out.iterrows():
-        asset = canonical_asset(r.get("asset", ""))
+    for asset in ASSETS:
+        asset_df = metrics[metrics["asset"] == asset].copy()
 
-        for col, module in score_columns.items():
-            if col not in out.columns:
-                continue
+        if asset_df.empty:
+            max_controls = 0
+            modules_30 = 0
+            modules_60 = 0
+            modules_100 = 0
+            best_module = "n/a"
+            best_horizon = "n/a"
+            best_accuracy = np.nan
+            best_adj_return = np.nan
+        else:
+            max_controls = int(asset_df["controls"].max())
+            modules_30 = int(len(asset_df[asset_df["controls"] >= MIN_FIRST_CALIBRATION]))
+            modules_60 = int(len(asset_df[asset_df["controls"] >= MIN_USEFUL]))
+            modules_100 = int(len(asset_df[asset_df["controls"] >= MIN_MATURE]))
 
-            value = safe_float(r.get(col, np.nan))
+            usable = asset_df[asset_df["controls"] > 0].copy()
 
-            if pd.isna(value):
-                continue
+            if usable.empty:
+                best_module = "n/a"
+                best_horizon = "n/a"
+                best_accuracy = np.nan
+                best_adj_return = np.nan
+            else:
+                usable["rank_score"] = (
+                    usable["controls"].clip(upper=100) * 0.25
+                    + usable["accuracy_direction_pct"].fillna(0) * 0.50
+                    + usable["avg_direction_adjusted_return_pct"].fillna(0).clip(lower=-20, upper=20) * 2.0
+                )
 
-            rows.append({
-                "asset": asset,
-                "module": module,
-                "current_score": value,
-            })
+                best = usable.sort_values("rank_score", ascending=False).iloc[0]
+                best_module = safe_str(best["module"])
+                best_horizon = safe_str(best["horizon"])
+                best_accuracy = safe_float(best["accuracy_direction_pct"])
+                best_adj_return = safe_float(best["avg_direction_adjusted_return_pct"])
 
-    return pd.DataFrame(rows)
+        status = maturity_status(max_controls)
+        explanation = maturity_explanation(max_controls)
 
+        rows.append(
+            [
+                asset,
+                str(history_counts.get(asset, 0)),
+                status,
+                str(max_controls),
+                str(modules_30),
+                str(modules_60),
+                str(modules_100),
+                best_module,
+                best_horizon,
+                fmt_pct_plain(best_accuracy),
+                fmt_pct(best_adj_return),
+                explanation,
+            ]
+        )
 
-def stage_from_checks(checked):
-    checked = int(checked or 0)
-
-    if checked < MIN_OBSERVATION_CHECKS:
-        return "RACCOLTA DATI"
-
-    if checked < MIN_LIGHT_SUGGESTION_CHECKS:
-        return "OSSERVAZIONE 30+"
-
-    if checked < MIN_AUTO_WEIGHT_CHECKS:
-        return "SUGGERIMENTO LEGGERO"
-
-    return "PRONTO PER PESI"
-
-
-def stage_description(stage):
-    if stage == "RACCOLTA DATI":
-        return "troppi pochi controlli: non modificare i pesi"
-
-    if stage == "OSSERVAZIONE 30+":
-        return "dati iniziali: osservare, ma non applicare"
-
-    if stage == "SUGGERIMENTO LEGGERO":
-        return "può suggerire piccole correzioni, senza automatismi forti"
-
-    if stage == "PRONTO PER PESI":
-        return "dati sufficienti per valutare una modifica prudente dei pesi"
-
-    return ""
-
-
-def reliability_from_checks(checked):
-    checked = int(checked or 0)
-
-    if checked < MIN_OBSERVATION_CHECKS:
-        return "INSUFFICIENTE"
-
-    if checked < MIN_LIGHT_SUGGESTION_CHECKS:
-        return "BASSA"
-
-    if checked < MIN_AUTO_WEIGHT_CHECKS:
-        return "MEDIA"
-
-    return "ALTA"
+    return rows
 
 
-def suggest_weight_delta(checked, accuracy_pct, avg_return_pct):
-    """
-    Suggerisce una correzione futura del peso del modulo.
-
-    Importante:
-    - sotto 60 controlli ritorna sempre 0;
-    - tra 60 e 99 dà solo suggerimenti leggeri;
-    - da 100 controlli può dare un suggerimento più deciso;
-    - questo file NON applica i pesi, li misura soltanto.
-    """
-    checked = int(checked or 0)
-    acc = safe_float(accuracy_pct)
-    avg_ret = safe_float(avg_return_pct)
-
-    if checked < MIN_LIGHT_SUGGESTION_CHECKS:
-        return 0.0
-
-    if pd.isna(acc):
-        return 0.0
-
-    strong_data = checked >= MIN_AUTO_WEIGHT_CHECKS
-
-    if strong_data:
-        if acc >= 70:
-            return 1.0
-        if acc >= 60:
-            return 0.5
-        if acc <= 35:
-            return -1.0
-        if acc <= 45:
-            return -0.5
-        return 0.0
-
-    if acc >= 70:
-        return 0.5
-
-    if acc <= 40:
-        return -0.5
-
-    return 0.0
-
-
-def suggestion_label(delta, checked):
-    delta = safe_float(delta)
-    checked = int(checked or 0)
-
-    if checked < MIN_LIGHT_SUGGESTION_CHECKS:
-        return "nessun suggerimento"
-
-    if pd.isna(delta) or delta == 0:
-        return "mantieni peso"
-
-    if delta > 0:
-        return "valuta aumento peso"
-
-    return "valuta riduzione peso"
-
-
-def build_weight_calibration_metrics(module_accuracy):
-    if module_accuracy is None or module_accuracy.empty:
-        return pd.DataFrame()
-
-    rows = []
-
-    for _, r in module_accuracy.iterrows():
-        asset = canonical_asset(r.get("asset", ""))
-        module = canonical_module_name(r.get("module", ""))
-        horizon = parse_horizon(r.get("horizon_days", np.nan))
-        checked = parse_int(r.get("checked", 0))
-
-        accuracy = safe_float(r.get("direction_accuracy_pct", np.nan))
-        avg_return = safe_float(r.get("avg_return_pct", np.nan))
-        avg_drawdown = safe_float(r.get("avg_drawdown_pct", np.nan))
-        avg_max_gain = safe_float(r.get("avg_max_gain_pct", np.nan))
-
-        stage = stage_from_checks(checked)
-        reliability = reliability_from_checks(checked)
-        delta = suggest_weight_delta(checked, accuracy, avg_return)
-
-        rows.append({
-            "asset": asset,
-            "module": module,
-            "horizon_days": horizon,
-            "checked": checked,
-            "direction_accuracy_pct": accuracy,
-            "avg_return_pct": avg_return,
-            "avg_drawdown_pct": avg_drawdown,
-            "avg_max_gain_pct": avg_max_gain,
-            "calibration_stage": stage,
-            "reliability": reliability,
-            "suggested_weight_delta": delta,
-            "suggestion": suggestion_label(delta, checked),
-            "can_apply_to_global": checked >= MIN_AUTO_WEIGHT_CHECKS,
-            "note": stage_description(stage),
-        })
-
-    metrics = pd.DataFrame(rows)
-
+def build_action_rows(metrics: pd.DataFrame):
     if metrics.empty:
-        return metrics
+        return []
 
-    metrics = metrics.sort_values(
-        ["asset", "horizon_days", "module"],
-        ascending=[True, True, True],
+    active = metrics[metrics["controls"] > 0].copy()
+
+    if active.empty:
+        return []
+
+    active = active.sort_values(
+        [
+            "asset",
+            "controls",
+            "horizon_order",
+            "module_order",
+        ],
+        ascending=[True, False, True, True],
     )
 
-    return metrics
+    rows = []
+
+    for _, r in active.iterrows():
+        rows.append(
+            [
+                r["asset"],
+                safe_str(r["horizon"]),
+                safe_str(r["horizon_family"]),
+                safe_str(r["module"]),
+                str(int(r["controls"])),
+                fmt_pct_plain(r["accuracy_direction_pct"]),
+                fmt_pct(r["avg_direction_adjusted_return_pct"]),
+                fmt_pct(r["avg_return_pct"]),
+                fmt_pct(r["avg_drawdown_pct"]),
+                fmt_pct(r["avg_max_gain_pct"]),
+                safe_str(r["weight_recommendation"]),
+                fmt_signed(r["suggested_weight_change"], decimals=1),
+                safe_str(r["recommendation_confidence"]),
+            ]
+        )
+
+    return rows
 
 
-def summarize_asset_stage(metrics):
-    if metrics is None or metrics.empty:
-        return pd.DataFrame()
+def build_zero_control_rows(metrics: pd.DataFrame):
+    if metrics.empty:
+        return []
 
-    focus = metrics[metrics["horizon_days"].isin(FOCUS_HORIZONS)].copy()
+    zero = metrics[metrics["controls"] == 0].copy()
 
-    if focus.empty:
-        focus = metrics.copy()
+    if zero.empty:
+        return []
+
+    grouped = (
+        zero.groupby(["asset", "horizon_family"], dropna=False)
+        .agg(rows=("module_key", "count"))
+        .reset_index()
+    )
+
+    grouped["family_order"] = grouped["horizon_family"].map(FAMILY_ORDER).fillna(999)
+    grouped = grouped.sort_values(["asset", "family_order"])
 
     rows = []
 
-    for asset, d in focus.groupby("asset"):
-        checked_values = pd.to_numeric(d["checked"], errors="coerce").fillna(0)
+    for _, r in grouped.iterrows():
+        rows.append(
+            [
+                r["asset"],
+                r["horizon_family"],
+                str(int(r["rows"])),
+                "in attesa di controlli maturati",
+            ]
+        )
 
-        max_checked = int(checked_values.max()) if len(checked_values) else 0
-        min_checked = int(checked_values.min()) if len(checked_values) else 0
-
-        if max_checked < MIN_OBSERVATION_CHECKS:
-            general_stage = "RACCOLTA DATI"
-        elif max_checked < MIN_LIGHT_SUGGESTION_CHECKS:
-            general_stage = "OSSERVAZIONE 30+"
-        elif max_checked < MIN_AUTO_WEIGHT_CHECKS:
-            general_stage = "SUGGERIMENTO LEGGERO"
-        else:
-            general_stage = "PRONTO PER PESI"
-
-        usable = int((pd.to_numeric(d["checked"], errors="coerce").fillna(0) >= MIN_AUTO_WEIGHT_CHECKS).sum())
-        light = int((pd.to_numeric(d["checked"], errors="coerce").fillna(0) >= MIN_LIGHT_SUGGESTION_CHECKS).sum())
-
-        rows.append({
-            "Asset": asset,
-            "Moduli monitorati": len(d),
-            "Controlli max": max_checked,
-            "Controlli min": min_checked,
-            "Stato generale": general_stage,
-            "Moduli con 60+": light,
-            "Moduli con 100+": usable,
-            "Lettura": stage_description(general_stage),
-        })
-
-    return pd.DataFrame(rows)
+    return rows
 
 
-def build_focus_table(metrics):
-    if metrics is None or metrics.empty:
-        return pd.DataFrame()
+def build_family_summary(metrics: pd.DataFrame):
+    if metrics.empty:
+        return []
 
-    focus = metrics[metrics["horizon_days"].isin(FOCUS_HORIZONS)].copy()
+    active = metrics[metrics["controls"] > 0].copy()
 
-    if focus.empty:
-        focus = metrics.copy()
+    if active.empty:
+        return []
 
     rows = []
 
-    for _, r in focus.iterrows():
-        rows.append({
-            "Asset": r["asset"],
-            "Modulo": r["module"],
-            "Orizzonte": f"{int(r['horizon_days'])}g",
-            "Controlli": int(r["checked"]),
-            "Accuracy": fmt_pct(r["direction_accuracy_pct"]),
-            "Return medio": fmt_pct(r["avg_return_pct"]),
-            "Drawdown medio": fmt_pct(r["avg_drawdown_pct"]),
-            "Max gain medio": fmt_pct(r["avg_max_gain_pct"]),
-            "Stato": r["calibration_stage"],
-            "Delta peso": fmt_delta(r["suggested_weight_delta"]),
-            "Suggerimento": r["suggestion"],
-        })
+    for (asset, family, module_key, module), g in active.groupby(
+        ["asset", "horizon_family", "module_key", "module"], dropna=False
+    ):
+        total_controls = int(g["controls"].sum())
 
-    table = pd.DataFrame(rows)
-
-    if table.empty:
-        return table
-
-    order = {"BTC": 0, "SOL": 1, "DOGE": 2}
-    table["_asset_order"] = table["Asset"].map(order).fillna(9)
-    table["_horizon_order"] = table["Orizzonte"].str.extract(r"([0-9]+)").astype(float)
-
-    table = table.sort_values(["_asset_order", "_horizon_order", "Modulo"])
-    table = table.drop(columns=["_asset_order", "_horizon_order"])
-
-    return table
-
-
-def build_current_score_table(current_scores):
-    if current_scores is None or current_scores.empty:
-        return pd.DataFrame()
-
-    rows = []
-
-    for _, r in current_scores.iterrows():
-        module = r.get("module", "")
-        score = safe_float(r.get("current_score", np.nan))
-
-        if pd.isna(score):
+        if total_controls <= 0:
             continue
 
-        rows.append({
-            "Asset": r.get("asset", ""),
-            "Modulo": module,
-            "Score attuale": fmt_delta(score),
-        })
+        weights = g["controls"].replace(0, np.nan)
+
+        accuracy = np.average(
+            g["accuracy_direction_pct"].fillna(0),
+            weights=g["controls"].clip(lower=1),
+        )
+
+        adj_return = np.average(
+            g["avg_direction_adjusted_return_pct"].fillna(0),
+            weights=g["controls"].clip(lower=1),
+        )
+
+        rows.append(
+            {
+                "asset": asset,
+                "family": family,
+                "module": module,
+                "module_key": module_key,
+                "controls": total_controls,
+                "accuracy": accuracy,
+                "adj_return": adj_return,
+            }
+        )
+
+    if not rows:
+        return []
 
     out = pd.DataFrame(rows)
+    out["family_order"] = out["family"].map(FAMILY_ORDER).fillna(999)
+    out["module_order"] = out["module_key"].map(
+        {k: i for i, k in enumerate(MODULE_ORDER)}
+    ).fillna(999)
 
-    if out.empty:
-        return out
+    out = out.sort_values(["asset", "family_order", "module_order"])
 
-    order = {"BTC": 0, "SOL": 1, "DOGE": 2}
-    out["_asset_order"] = out["Asset"].map(order).fillna(9)
+    table_rows = []
 
-    return out.sort_values(["_asset_order", "Modulo"]).drop(columns=["_asset_order"])
+    for _, r in out.iterrows():
+        table_rows.append(
+            [
+                r["asset"],
+                r["family"],
+                r["module"],
+                str(int(r["controls"])),
+                fmt_pct_plain(r["accuracy"]),
+                fmt_pct(r["adj_return"]),
+            ]
+        )
+
+    return table_rows
 
 
-def render_report(metrics, source_name, current_scores):
-    now = utc_now().strftime("%Y-%m-%d %H:%M UTC")
+def build_report(metrics: pd.DataFrame, history_counts: dict) -> str:
+    generated = now_utc_str()
+
+    asset_rows = build_asset_summary(metrics, history_counts)
+    active_rows = build_action_rows(metrics)
+    zero_rows = build_zero_control_rows(metrics)
+    family_rows = build_family_summary(metrics)
 
     lines = []
 
     lines.append("# Calibrazione pesi Global Confluence")
     lines.append("")
-    lines.append(f"Generato: **{now}**")
-    lines.append("")
-    lines.append("Questo report prepara la calibrazione futura dei pesi del Global Confluence.")
-    lines.append("")
-    lines.append("Non modifica ancora i pesi dello scanner. Per ora legge l'accuratezza dei moduli e stabilisce quando ci saranno abbastanza dati per fidarsi.")
-    lines.append("")
-    lines.append("## Regola prudente")
-    lines.append("")
-    lines.append(f"- Sotto **{MIN_OBSERVATION_CHECKS}** controlli: solo raccolta dati.")
-    lines.append(f"- Da **{MIN_OBSERVATION_CHECKS}** a **{MIN_LIGHT_SUGGESTION_CHECKS - 1}** controlli: osservazione iniziale, non applicare.")
-    lines.append(f"- Da **{MIN_LIGHT_SUGGESTION_CHECKS}** a **{MIN_AUTO_WEIGHT_CHECKS - 1}** controlli: suggerimento leggero.")
-    lines.append(f"- Da **{MIN_AUTO_WEIGHT_CHECKS}+** controlli: dati sufficienti per valutare una modifica prudente dei pesi.")
-    lines.append("")
-
-    if source_name:
-        lines.append(f"Fonte dati letta: **{source_name}**")
-    else:
-        lines.append("Fonte dati letta: **nessuna fonte disponibile**")
-
-    lines.append("")
-
-    if metrics is None or metrics.empty:
-        lines.append("## Stato")
-        lines.append("")
-        lines.append("_Nessun dato di accuratezza modulo disponibile._")
-        lines.append("")
-        lines.append("Il file si attiverà quando sarà presente un report di accuratezza moduli, per esempio `module_signal_accuracy_metrics.csv` oppure il blocco `MODULE_ACCURACY` nel `latest_report.md`.")
-        lines.append("")
-        return "\n".join(lines) + "\n"
-
-    summary = summarize_asset_stage(metrics)
-
-    lines.append("## Sintesi stato calibrazione pesi")
-    lines.append("")
-    lines.append(df_to_markdown(summary))
-    lines.append("")
-
-    focus_table = build_focus_table(metrics)
-
-    lines.append("## Dettaglio moduli")
-    lines.append("")
-    lines.append(df_to_markdown(focus_table))
-    lines.append("")
-
-    if current_scores is not None and not current_scores.empty:
-        lines.append("## Pesi / score attuali letti dal Global Confluence")
-        lines.append("")
-        lines.append("Questa tabella mostra gli score attuali. La calibrazione qui sotto non li modifica ancora.")
-        lines.append("")
-        lines.append(df_to_markdown(build_current_score_table(current_scores)))
-        lines.append("")
-
-    usable = metrics[pd.to_numeric(metrics["checked"], errors="coerce").fillna(0) >= MIN_AUTO_WEIGHT_CHECKS].copy()
-    light = metrics[pd.to_numeric(metrics["checked"], errors="coerce").fillna(0) >= MIN_LIGHT_SUGGESTION_CHECKS].copy()
-
-    lines.append("## Lettura operativa")
-    lines.append("")
-
-    if usable.empty and light.empty:
-        lines.append("- Stato attuale: **RACCOLTA DATI**.")
-        lines.append("- Nessun modulo ha ancora abbastanza controlli per suggerire modifiche ai pesi.")
-        lines.append("- Il Global Confluence deve continuare a usare i pesi attuali.")
-    elif usable.empty:
-        lines.append("- Stato attuale: **SUGGERIMENTI LEGGERI POSSIBILI**, ma non ancora abbastanza forti per modificare automaticamente il Global.")
-        lines.append("- I moduli con 60+ controlli possono essere osservati, ma non vanno ancora usati per cambiare in modo deciso i pesi.")
-    else:
-        lines.append("- Stato attuale: alcuni moduli hanno **100+ controlli**.")
-        lines.append("- Da questo punto si può valutare una modifica prudente dei pesi, ma solo se il suggerimento è stabile anche a 30g e 60g.")
-
-    lines.append("")
-    lines.append("## Regola anti-autoinganno")
-    lines.append("")
-    lines.append("- Non aumentare il peso di un modulo solo perché ha funzionato per pochi giorni.")
-    lines.append("- Non ridurre il peso di un modulo solo per una piccola serie negativa.")
-    lines.append("- La modifica dei pesi deve partire solo quando ci sono abbastanza controlli e quando 30g e 60g non si contraddicono troppo.")
-    lines.append("- Questo report serve a evitare che il modello si auto-saboti con pochi dati.")
-    lines.append("")
-
-    return "\n".join(lines) + "\n"
-
-
-def render_latest_block(metrics):
-    lines = []
-
-    lines.append("# Calibrazione pesi Global Confluence")
+    lines.append(f"Generato: {generated}")
     lines.append("")
     lines.append("Report completo: [global_weight_calibration_report.md](global_weight_calibration_report.md)")
     lines.append("")
-    lines.append("Questo blocco controlla se, col tempo, i moduli del Global Confluence meritano più peso, meno peso o peso invariato.")
+    lines.append(
+        "Questo blocco controlla se, col tempo, i moduli del Global Confluence meritano più peso, "
+        "meno peso o peso invariato."
+    )
+    lines.append("")
+    lines.append(
+        "Ora legge il nuovo `module_signal_tracker_metrics.csv`, quindi include anche i nuovi orizzonti "
+        "**1g / 2g / 3g / 5g / 7g / 10g / 14g / 21g / 30g / 45g / 60g** "
+        "e il modulo **Classic technical**."
+    )
+    lines.append("")
+    lines.append("Regola principale:")
+    lines.append("")
+    lines.append("- sotto **30 controlli**: osservazione, nessuna modifica pesi")
+    lines.append("- da **30 controlli**: prima calibrazione leggera")
+    lines.append("- da **60 controlli**: lettura utile")
+    lines.append("- da **100+ controlli**: possibile proposta prudente di modifica pesi")
+    lines.append("")
+    lines.append("## Sintesi per asset")
+    lines.append("")
+    lines.append(
+        md_table(
+            [
+                "Asset",
+                "Segnali salvati",
+                "Stato",
+                "Controlli max",
+                "Righe 30+",
+                "Righe 60+",
+                "Righe 100+",
+                "Miglior modulo attuale",
+                "Orizzonte",
+                "Accuratezza",
+                "Return corretto direzione",
+                "Lettura",
+            ],
+            asset_rows,
+        )
+    )
+
+    lines.append("")
+    lines.append("## Raccomandazioni moduli con controlli maturati")
     lines.append("")
 
-    if metrics is None or metrics.empty:
-        lines.append("_Dati ancora non disponibili._")
-        lines.append("")
-        return "\n".join(lines)
-
-    summary = summarize_asset_stage(metrics)
-
-    if summary.empty:
-        lines.append("_Dati ancora insufficienti._")
-        lines.append("")
-        return "\n".join(lines)
-
-    latest_rows = []
-
-    for _, r in summary.iterrows():
-        latest_rows.append({
-            "Asset": r["Asset"],
-            "Stato": r["Stato generale"],
-            "Controlli max": r["Controlli max"],
-            "Moduli 60+": r["Moduli con 60+"],
-            "Moduli 100+": r["Moduli con 100+"],
-            "Lettura": r["Lettura"],
-        })
-
-    lines.append(df_to_markdown(pd.DataFrame(latest_rows)))
-    lines.append("")
-    lines.append("Regola: sotto 60 controlli il report osserva soltanto; da 100+ controlli può suggerire modifiche prudenti ai pesi.")
-    lines.append("")
-
-    return "\n".join(lines)
-
-
-def inject_into_latest_report(section_md):
-    if not LATEST_REPORT.exists():
-        return
-
-    old = read_text(LATEST_REPORT)
-
-    if not old:
-        return
-
-    clean = section_md.strip()
-    new_section = START_MARKER + "\n" + clean + "\n" + END_MARKER
-
-    if START_MARKER in old and END_MARKER in old:
-        start = old.find(START_MARKER)
-        end = old.find(END_MARKER)
-
-        if start != -1 and end != -1 and end > start:
-            end = end + len(END_MARKER)
-            new = old[:start] + new_section + old[end:]
-        else:
-            new = old.rstrip() + "\n\n" + new_section + "\n"
+    if active_rows:
+        lines.append(
+            md_table(
+                [
+                    "Asset",
+                    "Orizzonte",
+                    "Famiglia",
+                    "Modulo",
+                    "Controlli",
+                    "Accuratezza",
+                    "Return corretto direzione",
+                    "Return medio",
+                    "Drawdown medio",
+                    "Max gain medio",
+                    "Raccomandazione",
+                    "Δ peso suggerito",
+                    "Confidenza",
+                ],
+                active_rows,
+            )
+        )
     else:
-        anchors = [
-            "<!-- MODULE_ACCURACY_END -->",
-            "<!-- CALIBRATION_READABLE_END -->",
-            "<!-- GLOBAL_CONFLUENCE_END -->",
-        ]
+        lines.append(
+            "Nessun controllo modulo ancora maturato. È normale al primo run: "
+            "i controlli 1g iniziano dal giorno successivo."
+        )
 
-        inserted = False
-        new = old
+    lines.append("")
+    lines.append("## Sintesi per famiglia temporale")
+    lines.append("")
 
-        for anchor in anchors:
-            if anchor in old:
-                idx = old.find(anchor) + len(anchor)
-                new = old[:idx] + "\n\n" + new_section + old[idx:]
-                inserted = True
-                break
+    if family_rows:
+        lines.append(
+            md_table(
+                [
+                    "Asset",
+                    "Famiglia",
+                    "Modulo",
+                    "Controlli totali",
+                    "Accuratezza media",
+                    "Return corretto direzione",
+                ],
+                family_rows,
+            )
+        )
+    else:
+        lines.append("Nessuna famiglia temporale ha ancora controlli maturati.")
 
-        if not inserted:
-            new = old.rstrip() + "\n\n" + new_section + "\n"
+    lines.append("")
+    lines.append("## Aree ancora in attesa")
+    lines.append("")
 
-    LATEST_REPORT.write_text(new, encoding="utf-8")
+    if zero_rows:
+        lines.append(
+            md_table(
+                ["Asset", "Famiglia", "Righe senza controlli", "Stato"],
+                zero_rows,
+            )
+        )
+    else:
+        lines.append("Tutte le aree hanno almeno un controllo maturato.")
+
+    lines.append("")
+    lines.append("## Come leggere le raccomandazioni")
+    lines.append("")
+    lines.append("- **OSSERVA**: ci sono pochi controlli, quindi il dato è rumore utile solo da monitorare.")
+    lines.append("- **PESO OK**: il modulo sta aiutando, ma non abbastanza da aumentare peso.")
+    lines.append("- **MANTIENI / OSSERVA**: risultato vicino al neutro.")
+    lines.append("- **NON AUMENTARE**: il modulo non sta ancora dimostrando abbastanza utilità.")
+    lines.append("- **POSSIBILE AUMENTO LEGGERO**: modulo buono, ma la modifica resta prudente.")
+    lines.append("- **POSSIBILE RIDUZIONE PESO**: modulo debole su quell’orizzonte, da ridurre solo con dati maturi.")
+    lines.append("")
+    lines.append("Nota importante: questo file **non modifica automaticamente** `global_confluence_report.py`.")
+    lines.append("Produce solo una raccomandazione leggibile. La modifica reale dei pesi va fatta a mano, dopo abbastanza dati.")
+    lines.append("")
+    lines.append("## Stato attuale")
+    lines.append("")
+
+    max_controls_all = 0
+    if not metrics.empty:
+        max_controls_all = int(metrics["controls"].max())
+
+    if max_controls_all == 0:
+        lines.append(
+            "Per ora il sistema è ancora in **raccolta dati**. Il nuovo tracker ha salvato i segnali, "
+            "ma nessun orizzonte è ancora maturato. Dal prossimo run giornaliero dovrebbero iniziare i controlli 1g."
+        )
+    elif max_controls_all < MIN_FIRST_CALIBRATION:
+        lines.append(
+            "Ci sono già alcuni controlli brevi, ma siamo ancora in feedback rapido. "
+            "Non bisogna modificare pesi del Global."
+        )
+    elif max_controls_all < MIN_USEFUL:
+        lines.append(
+            "È iniziata la prima calibrazione. Le raccomandazioni sono utili, ma ancora leggere."
+        )
+    elif max_controls_all < MIN_MATURE:
+        lines.append(
+            "La calibrazione è utile. Le modifiche ai pesi possono essere considerate, ma con prudenza."
+        )
+    else:
+        lines.append(
+            "La calibrazione è matura. Le proposte di modifica peso possono essere valutate seriamente."
+        )
+
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def write_summary_csv(metrics: pd.DataFrame) -> None:
+    SUMMARY_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    fieldnames = [
+        "generated_utc",
+        "asset",
+        "horizon_days",
+        "horizon",
+        "horizon_family",
+        "module_key",
+        "module",
+        "controls",
+        "correct",
+        "accuracy_direction_pct",
+        "avg_return_pct",
+        "avg_direction_adjusted_return_pct",
+        "avg_drawdown_pct",
+        "avg_max_gain_pct",
+        "status",
+        "weight_recommendation",
+        "suggested_weight_change",
+        "recommendation_confidence",
+        "recommendation_reason",
+    ]
+
+    generated = now_utc_iso()
+
+    rows = []
+
+    if not metrics.empty:
+        for _, r in metrics.iterrows():
+            row = {k: r.get(k, "") for k in fieldnames}
+            row["generated_utc"] = generated
+            rows.append(row)
+
+    with SUMMARY_CSV_PATH.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 def main():
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    module_accuracy, source_name = load_module_accuracy()
-    metrics = build_weight_calibration_metrics(module_accuracy)
-    current_scores = load_current_global_scores()
+    raw_metrics = read_module_metrics()
+    metrics = enrich_metrics(raw_metrics)
 
-    if metrics is not None and not metrics.empty:
-        metrics.to_csv(OUTPUT_METRICS, index=False)
+    history_counts = read_history_counts()
+
+    report_md = build_report(metrics, history_counts)
+
+    write_text(REPORT_PATH, report_md)
+    write_summary_csv(metrics)
+
+    latest_text = read_text(LATEST_REPORT_PATH)
+    if latest_text:
+        updated = replace_or_insert_block(latest_text, report_md)
+        write_text(LATEST_REPORT_PATH, updated)
     else:
-        pd.DataFrame(columns=[
-            "asset",
-            "module",
-            "horizon_days",
-            "checked",
-            "direction_accuracy_pct",
-            "avg_return_pct",
-            "avg_drawdown_pct",
-            "avg_max_gain_pct",
-            "calibration_stage",
-            "reliability",
-            "suggested_weight_delta",
-            "suggestion",
-            "can_apply_to_global",
-            "note",
-        ]).to_csv(OUTPUT_METRICS, index=False)
+        write_text(LATEST_REPORT_PATH, f"{START_MARKER}\n{report_md}{END_MARKER}\n")
 
-    report_md = render_report(metrics, source_name, current_scores)
-    OUTPUT_REPORT.write_text(report_md, encoding="utf-8")
-
-    latest_block = render_latest_block(metrics)
-    inject_into_latest_report(latest_block)
-
-    print(f"Creato {OUTPUT_REPORT}")
-    print(f"Creato {OUTPUT_METRICS}")
-
-    if source_name:
-        print(f"Fonte dati calibrazione pesi: {source_name}")
-    else:
-        print("Nessuna fonte dati disponibile per calibrazione pesi.")
+    print(f"Global weight calibration report scritto in: {REPORT_PATH}")
+    print(f"Metriche global weight calibration scritte in: {SUMMARY_CSV_PATH}")
 
 
 if __name__ == "__main__":
