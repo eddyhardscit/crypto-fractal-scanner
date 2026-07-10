@@ -1,7 +1,7 @@
 # RSI top-cycle warning - SOL
 
-Generato: **2026-07-10 03:35:00 CEST**  
-UTC: **2026-07-10 01:35:00 UTC**
+Generato: **2026-07-10 05:11:32 CEST**  
+UTC: **2026-07-10 03:11:32 UTC**
 
 Questo report non usa l'RSI come segnale di entrata. Lo usa come filtro di esaurimento ciclo: quando RSI weekly/monthly torna vicino alla trendline alta, il rischio di top o distribuzione aumenta.
 
@@ -9,16 +9,16 @@ Questo report non usa l'RSI come segnale di entrata. Lo usa come filtro di esaur
 
 | Voce | RSI attuale | Top-line RSI stimata | Distanza | Stato | Qualita linea |
 | --- | --- | --- | --- | --- | --- |
-| Weekly RSI | 40,73 | 56,32 | 15,59 | LONTANO DALLA TOP-LINE | normale |
-| Monthly RSI | 41,46 | 48,69 | 7,23 | IN AVVICINAMENTO | troppo ripida per proiezione 2029 |
+| Weekly RSI | 40,96 | 56,32 | 15,36 | LONTANO DALLA TOP-LINE | normale |
+| Monthly RSI | 41,57 | 48,69 | 7,12 | IN AVVICINAMENTO | troppo ripida per proiezione 2029 |
 
 ## Confluenza con target ciclo SOL
 
 | Voce | Valore |
 | --- | --- |
-| Prezzo SOL attuale | 78,26 $ |
-| Target ciclo base | 579,64 $ |
-| Avanzamento verso target base | +13,50% |
+| Prezzo SOL attuale | 78,77 $ |
+| Target ciclo base | 583,19 $ |
+| Avanzamento verso target base | +13,51% |
 | Fase prezzo | inizio ciclo / lontano dal target macro |
 | Rischio top-cycle RSI | BASSO |
 
