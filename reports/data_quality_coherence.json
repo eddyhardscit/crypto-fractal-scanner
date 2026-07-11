@@ -1,11 +1,9 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-07-11 03:03 UTC",
-  "overall_status": "WARN",
+  "generated_at_utc": "2026-07-11 04:14 UTC",
+  "overall_status": "OK",
   "critical_issues": [],
-  "warnings": [
-    "3 campi prezzo non coincidono con lo snapshot entro 0.00%."
-  ],
+  "warnings": [],
   "snapshot_complete": true,
   "scanner_summary_available": true,
   "price_sync_available": true,
@@ -13,46 +11,46 @@
   "exchange_missing_files": [],
   "snapshot_metadata": {
     "schema_version": 1,
-    "generated_at_utc": "2026-07-11T02:59:21Z",
+    "generated_at_utc": "2026-07-11T04:09:37Z",
     "source": "Yahoo Finance daily shared snapshot",
     "assets": {
       "BTC": {
         "asset": "BTC",
         "ticker": "BTC-USD",
         "candle_date_utc": "2026-07-11",
-        "price": 64115.390625,
+        "price": 64049.80859375,
         "open": 64125.90234375,
         "high": 64198.29296875,
         "low": 63964.97265625,
-        "close": 64115.390625,
-        "volume": 25032802304.0,
-        "generated_at_utc": "2026-07-11T02:59:21Z",
+        "close": 64049.80859375,
+        "volume": 24505733120.0,
+        "generated_at_utc": "2026-07-11T04:09:37Z",
         "source": "Yahoo Finance daily shared snapshot"
       },
       "SOL": {
         "asset": "SOL",
         "ticker": "SOL-USD",
         "candle_date_utc": "2026-07-11",
-        "price": 77.72000122070312,
+        "price": 77.62999725341797,
         "open": 78.06102752685547,
         "high": 78.06102752685547,
         "low": 77.53446197509766,
-        "close": 77.72000122070312,
-        "volume": 2049306496.0,
-        "generated_at_utc": "2026-07-11T02:59:21Z",
+        "close": 77.62999725341797,
+        "volume": 1998558848.0,
+        "generated_at_utc": "2026-07-11T04:09:37Z",
         "source": "Yahoo Finance daily shared snapshot"
       },
       "DOGE": {
         "asset": "DOGE",
         "ticker": "DOGE-USD",
         "candle_date_utc": "2026-07-11",
-        "price": 0.0741799995303154,
+        "price": 0.07427000254392624,
         "open": 0.07404529303312302,
-        "high": 0.07428629696369171,
+        "high": 0.07430936396121979,
         "low": 0.07393752038478851,
-        "close": 0.0741799995303154,
-        "volume": 447573088.0,
-        "generated_at_utc": "2026-07-11T02:59:21Z",
+        "close": 0.07427000254392624,
+        "volume": 442000480.0,
+        "generated_at_utc": "2026-07-11T04:09:37Z",
         "source": "Yahoo Finance daily shared snapshot"
       }
     }
@@ -62,199 +60,221 @@
       "module": "Scanner",
       "asset": "BTC",
       "status": "OK",
-      "module_price": 64115.390625,
-      "snapshot_price": 64115.390625,
+      "module_price": 64049.80859375,
+      "snapshot_price": 64049.80859375,
       "difference_pct": 0.0,
-      "field": "current_price"
+      "field": "current_price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Scanner",
       "asset": "DOGE",
       "status": "OK",
-      "module_price": 0.0741799995303154,
-      "snapshot_price": 0.0741799995303154,
-      "difference_pct": 0.0,
-      "field": "current_price"
+      "module_price": 0.0742700025439262,
+      "snapshot_price": 0.07427000254392624,
+      "difference_pct": -5.551115123125783e-14,
+      "field": "current_price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Scanner",
       "asset": "SOL",
       "status": "OK",
-      "module_price": 77.72000122070312,
-      "snapshot_price": 77.72000122070312,
+      "module_price": 77.62999725341797,
+      "snapshot_price": 77.62999725341797,
       "difference_pct": 0.0,
-      "field": "current_price"
+      "field": "current_price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Scanner Forecast",
       "asset": "BTC",
       "status": "OK",
-      "module_price": 64115.390625,
-      "snapshot_price": 64115.390625,
+      "module_price": 64049.80859375,
+      "snapshot_price": 64049.80859375,
       "difference_pct": 0.0,
-      "field": "current_price"
+      "field": "current_price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Scanner Forecast",
       "asset": "SOL",
       "status": "OK",
-      "module_price": 77.72000122070312,
-      "snapshot_price": 77.72000122070312,
+      "module_price": 77.62999725341797,
+      "snapshot_price": 77.62999725341797,
       "difference_pct": 0.0,
-      "field": "current_price"
+      "field": "current_price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Scanner Forecast",
       "asset": "DOGE",
       "status": "OK",
-      "module_price": 0.0741799995303154,
-      "snapshot_price": 0.0741799995303154,
-      "difference_pct": 0.0,
-      "field": "current_price"
+      "module_price": 0.0742700025439262,
+      "snapshot_price": 0.07427000254392624,
+      "difference_pct": -5.551115123125783e-14,
+      "field": "current_price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Technical Structure",
       "asset": "BTC",
       "status": "OK",
-      "module_price": 64115.390625,
-      "snapshot_price": 64115.390625,
+      "module_price": 64049.80859375,
+      "snapshot_price": 64049.80859375,
       "difference_pct": 0.0,
-      "field": "price"
+      "field": "price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Technical Structure",
       "asset": "SOL",
       "status": "OK",
-      "module_price": 77.72000122070312,
-      "snapshot_price": 77.72000122070312,
+      "module_price": 77.62999725341797,
+      "snapshot_price": 77.62999725341797,
       "difference_pct": 0.0,
-      "field": "price"
+      "field": "price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Technical Structure",
       "asset": "DOGE",
       "status": "OK",
-      "module_price": 0.0741799995303154,
-      "snapshot_price": 0.0741799995303154,
-      "difference_pct": 0.0,
-      "field": "price"
+      "module_price": 0.0742700025439262,
+      "snapshot_price": 0.07427000254392624,
+      "difference_pct": -5.551115123125783e-14,
+      "field": "price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Classic Technical",
       "asset": "BTC",
       "status": "OK",
-      "module_price": 64115.390625,
-      "snapshot_price": 64115.390625,
+      "module_price": 64049.80859375,
+      "snapshot_price": 64049.80859375,
       "difference_pct": 0.0,
-      "field": "price"
+      "field": "price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Classic Technical",
       "asset": "SOL",
       "status": "OK",
-      "module_price": 77.72000122070312,
-      "snapshot_price": 77.72000122070312,
+      "module_price": 77.62999725341797,
+      "snapshot_price": 77.62999725341797,
       "difference_pct": 0.0,
-      "field": "price"
+      "field": "price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Classic Technical",
       "asset": "DOGE",
       "status": "OK",
-      "module_price": 0.0741799995303154,
-      "snapshot_price": 0.0741799995303154,
-      "difference_pct": 0.0,
-      "field": "price"
+      "module_price": 0.0742700025439262,
+      "snapshot_price": 0.07427000254392624,
+      "difference_pct": -5.551115123125783e-14,
+      "field": "price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Classic Visual",
       "asset": "BTC",
       "status": "OK",
-      "module_price": 64115.390625,
-      "snapshot_price": 64115.390625,
+      "module_price": 64049.80859375,
+      "snapshot_price": 64049.80859375,
       "difference_pct": 0.0,
-      "field": "price"
+      "field": "price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Classic Visual",
       "asset": "SOL",
       "status": "OK",
-      "module_price": 77.72000122070312,
-      "snapshot_price": 77.72000122070312,
+      "module_price": 77.62999725341797,
+      "snapshot_price": 77.62999725341797,
       "difference_pct": 0.0,
-      "field": "price"
+      "field": "price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Classic Visual",
       "asset": "DOGE",
       "status": "OK",
-      "module_price": 0.0741799995303154,
-      "snapshot_price": 0.0741799995303154,
-      "difference_pct": 0.0,
-      "field": "price"
+      "module_price": 0.0742700025439262,
+      "snapshot_price": 0.07427000254392624,
+      "difference_pct": -5.551115123125783e-14,
+      "field": "price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Exchange Microstructure",
       "asset": "BTC",
-      "status": "WARN",
-      "module_price": 64152.135,
-      "snapshot_price": 64115.390625,
-      "difference_pct": 0.05730975767568314,
-      "field": "price"
+      "status": "OK",
+      "module_price": 64090.4,
+      "snapshot_price": 64049.80859375,
+      "difference_pct": 0.06337475027826667,
+      "field": "price",
+      "tolerance_pct": 0.2
     },
     {
       "module": "Exchange Microstructure",
       "asset": "SOL",
-      "status": "WARN",
-      "module_price": 77.767,
-      "snapshot_price": 77.72000122070312,
-      "difference_pct": 0.06047192300397963,
-      "field": "price"
+      "status": "OK",
+      "module_price": 77.62950000000001,
+      "snapshot_price": 77.62999725341797,
+      "difference_pct": -0.0006405428771838473,
+      "field": "price",
+      "tolerance_pct": 0.2
     },
     {
       "module": "Exchange Microstructure",
       "asset": "DOGE",
-      "status": "WARN",
-      "module_price": 0.074225,
-      "snapshot_price": 0.0741799995303154,
-      "difference_pct": 0.060663885103173776,
-      "field": "price"
+      "status": "OK",
+      "module_price": 0.07425,
+      "snapshot_price": 0.07427000254392624,
+      "difference_pct": -0.026932197712548067,
+      "field": "price",
+      "tolerance_pct": 0.2
     },
     {
       "module": "RSI top-cycle",
       "asset": "SOL",
       "status": "OK",
-      "module_price": 77.72000122070312,
-      "snapshot_price": 77.72000122070312,
+      "module_price": 77.62999725341797,
+      "snapshot_price": 77.62999725341797,
       "difference_pct": 0.0,
-      "field": "current_price"
+      "field": "current_price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "RSI top-cycle",
       "asset": "SOL",
       "status": "OK",
-      "module_price": 77.72000122070312,
-      "snapshot_price": 77.72000122070312,
+      "module_price": 77.62999725341797,
+      "snapshot_price": 77.62999725341797,
       "difference_pct": 0.0,
-      "field": "current_price"
+      "field": "current_price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Frattale BTC/SOL",
       "asset": "SOL",
       "status": "OK",
-      "module_price": 77.72000122070312,
-      "snapshot_price": 77.72000122070312,
+      "module_price": 77.62999725341797,
+      "snapshot_price": 77.62999725341797,
       "difference_pct": 0.0,
-      "field": "sol_current_price"
+      "field": "sol_current_price",
+      "tolerance_pct": 1e-06
     },
     {
       "module": "Fractal path",
       "asset": "SOL",
       "status": "OK",
-      "module_price": 77.72000122070312,
-      "snapshot_price": 77.72000122070312,
+      "module_price": 77.62999725341797,
+      "snapshot_price": 77.62999725341797,
       "difference_pct": 0.0,
-      "field": "current_price"
+      "field": "current_price",
+      "tolerance_pct": 1e-06
     }
   ],
   "technical_integrity": {

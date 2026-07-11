@@ -1,6 +1,6 @@
 # Accuratezza dati exchange e microstruttura
 
-Generato: 2026-07-11 03:03 UTC
+Generato: 2026-07-11 04:13 UTC
 
 Questo tracker verifica se il segnale candidato exchange ±1 anticipa correttamente la direzione del prezzo a 1/3/7/14/30 giorni.
 Il peso Global resta 0 finché l'orizzonte 7g non ha almeno 30 controlli, accuratezza almeno 55% e return corretto direzione positivo. L'overlay a 30g ha un gate separato.
@@ -9,7 +9,11 @@ Controlli maturati completati in questa esecuzione: **0**.
 
 ## Ultime fotografie giornaliere
 
-_Nessuna fotografia exchange ancora salvata._
+| Data | Asset | Prezzo | Candidato | Peso Global | Score raw | Confidenza | Taker 4h | OI 24h | Book 0,5% |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-07-11 | BTC | 64152.134999999995 | 0 | 0 | -1.5 | BASSA | 0.05850572783882044 | 1.7164414892924196 | 0.028436978902559074 |
+| 2026-07-11 | DOGE | 0.074225 | 0 | 0 | 1.375 | BASSA | 1.1414563836247114 | -7.6762981428607935 | 0.04976433519245147 |
+| 2026-07-11 | SOL | 77.767 | 0 | 0 | -3.0 | BASSA | 0.41435053613481826 | 17.814469638293517 | -0.0971885314273313 |
 
 ## Accuratezza direzionale
 

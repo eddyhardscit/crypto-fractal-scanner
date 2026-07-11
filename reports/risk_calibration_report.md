@@ -1,6 +1,6 @@
 # Calibrazione rischio spot / leva
 
-Generato: **2026-07-11 03:03 UTC**
+Generato: **2026-07-11 04:14 UTC**
 
 Questo report controlla se le zone di rischio previste dallo scanner vengono davvero toccate nei 30 giorni successivi.
 
@@ -24,8 +24,8 @@ Questo file **non modifica ancora il Decision Report**. Per ora salva dati e mis
 
 | Asset   | Prezzo    | Direzione scanner                    | Drawdown normale    | Drawdown brutto     | Max gain normale   | Rischio spot   | Rischio leva   |
 |:--------|:----------|:-------------------------------------|:--------------------|:--------------------|:-------------------|:---------------|:---------------|
-| BTC     | 115,39 $  | Direzione più probabile a 30 giorni: | 81,57 $ / -3,17%    | 355,77 $ / -8,98%   | 879,57 $ / 18,35%  | BASSO          | MEDIO          |
-| SOL     | 77,72 $   | Direzione più probabile a 30 giorni: | 68,41 $ / -11,98%   | 58,06 $ / -25,30%   | 83,77 $ / 7,79%    | ALTO           | MOLTO ALTO     |
+| BTC     | 49,81 $   | Direzione più probabile a 30 giorni: | 18,07 $ / -3,17%    | 296,08 $ / -8,98%   | 801,96 $ / 18,35%  | BASSO          | MEDIO          |
+| SOL     | 77,63 $   | Direzione più probabile a 30 giorni: | 68,33 $ / -11,98%   | 57,99 $ / -25,30%   | 85,00 $ / 9,50%    | ALTO           | MOLTO ALTO     |
 | DOGE    | 0.07000 $ | Direzione più probabile a 30 giorni: | 0.05000 $ / -28,67% | 0.05000 $ / -38,18% | 0.08000 $ / 4,57%  | MOLTO ALTO     | MOLTO ALTO     |
 
 ## Stato calibrazione rischio
