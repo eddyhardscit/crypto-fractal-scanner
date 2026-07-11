@@ -204,11 +204,29 @@ def _strip_wrapper(text: str, key: str) -> str:
 
 
 def strip_existing_compaction(text: str) -> str:
+    """Rimuove anche wrapper compatti malformati o annidati male.
+
+    La prima versione usava una regex per ogni sezione. Con wrapper HTML
+    accidentalmente incrociati, quella strategia poteva lasciare marker orfani.
+    Qui eliminiamo soltanto le righe generate dalla vista compatta, conservando
+    integralmente il contenuto reale del report.
+    """
     text = _strip_header(text)
-    for key, *_ in MARKER_SECTIONS:
-        text = _strip_wrapper(text, key)
-    text = _strip_wrapper(text, "scanner_full_detail")
-    return text.strip() + "\n"
+    cleaned_lines = []
+    compact_marker = re.compile(r"^<!-- COMPACT_SECTION_(?:START|END):[^>]+ -->$")
+    generated_summary = re.compile(r"^<summary><strong>.*</strong></summary>$")
+
+    for line in text.splitlines():
+        stripped = line.strip()
+        if compact_marker.fullmatch(stripped):
+            continue
+        if stripped in {"<details>", "<details open>", "</details>"}:
+            continue
+        if generated_summary.fullmatch(stripped):
+            continue
+        cleaned_lines.append(line)
+
+    return "\n".join(cleaned_lines).strip() + "\n"
 
 
 def _details_block(key: str, summary: str, content: str, open_by_default: bool) -> str:
@@ -272,8 +290,58 @@ def _header() -> str:
     )
 
 
+def validate_compact_structure(text: str) -> None:
+    """Blocca la scrittura se i wrapper risultano incrociati o incompleti."""
+    token_re = re.compile(r"<!-- COMPACT_SECTION_(START|END):([^>]+) -->")
+    stack: list[str] = []
+    seen_start: set[str] = set()
+    seen_end: set[str] = set()
+
+    for match in token_re.finditer(text):
+        kind, key = match.group(1), match.group(2)
+        if kind == "START":
+            if key in seen_start:
+                raise RuntimeError(f"Wrapper compatto duplicato: {key}")
+            seen_start.add(key)
+            stack.append(key)
+        else:
+            seen_end.add(key)
+            if not stack:
+                raise RuntimeError(f"Chiusura compatta senza apertura: {key}")
+            current = stack.pop()
+            if current != key:
+                raise RuntimeError(
+                    f"Wrapper compatti incrociati: attesa chiusura {current}, trovata {key}"
+                )
+
+    if stack:
+        raise RuntimeError(f"Wrapper compatti non chiusi: {', '.join(stack)}")
+    if seen_start != seen_end:
+        missing = sorted(seen_start.symmetric_difference(seen_end))
+        raise RuntimeError(f"Marker compatti incompleti: {', '.join(missing)}")
+
+    for key, start_marker, end_marker, *_ in MARKER_SECTIONS:
+        wrapper_start = SECTION_START.format(key=key)
+        wrapper_end = SECTION_END.format(key=key)
+        if start_marker not in text or end_marker not in text:
+            continue
+        ws = text.find(wrapper_start)
+        we = text.find(wrapper_end, ws)
+        ms = text.find(start_marker)
+        me = text.find(end_marker, ms)
+        if min(ws, we, ms, me) < 0 or not (ws < ms < me < we):
+            raise RuntimeError(
+                f"Sezione compatta {key} non contiene correttamente i propri marker."
+            )
+
+
 def compact_text(text: str) -> str:
     text = strip_existing_compaction(text)
+
+    # Prima separiamo il lungo corpo statistico. Va fatto PRIMA di avvolgere
+    # Market Regime, altrimenti l'apertura del wrapper Market può finire dentro
+    # Scanner Full Detail e produrre tag HTML incrociati.
+    text = _wrap_scanner_full_detail(text)
 
     for key, start, end, summary, open_by_default in MARKER_SECTIONS:
         text = _wrap_between_markers(
@@ -285,10 +353,9 @@ def compact_text(text: str) -> str:
             open_by_default,
         )
 
-    # Questa porzione non ha marker dedicati ed è la parte più lunga del report.
-    text = _wrap_scanner_full_detail(text)
-
-    return _header() + "\n\n" + text.strip() + "\n"
+    compacted = _header() + "\n\n" + text.strip() + "\n"
+    validate_compact_structure(compacted)
+    return compacted
 
 
 def compact_latest_report(path: Path = DEFAULT_REPORT_PATH) -> bool:

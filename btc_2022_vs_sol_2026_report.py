@@ -236,6 +236,43 @@ def normalize_path(df, anchor_date, anchor_price):
     return path
 
 
+def calendarize_path(path):
+    """Rende il percorso realmente giornaliero, colmando eventuali buchi Yahoo.
+
+    BTC e SOL trattano i giorni del frattale come giorni di calendario. Se Yahoo
+    salta una candela, usare semplicemente ``len(path) - 1`` crea uno
+    sfalsamento di un giorno tra report principale e tracker. Il forward-fill è
+    coerente con la logica ``close on or before`` già usata dal tracker.
+    """
+    if path is None or path.empty:
+        return pd.DataFrame()
+
+    out = path.copy()
+    out.index = pd.to_datetime(out.index, errors="coerce")
+    try:
+        out.index = out.index.tz_convert(None)
+    except Exception:
+        try:
+            out.index = out.index.tz_localize(None)
+        except Exception:
+            pass
+
+    out.index = out.index.normalize()
+    out = out[~out.index.duplicated(keep="last")].sort_index()
+    full_index = pd.date_range(out.index.min(), out.index.max(), freq="D")
+    out = out.reindex(full_index)
+
+    if "Volume" in out.columns:
+        out["Volume"] = out["Volume"].fillna(0)
+
+    other_cols = [col for col in out.columns if col != "Volume"]
+    if other_cols:
+        out[other_cols] = out[other_cols].ffill()
+
+    out.index.name = path.index.name
+    return out
+
+
 def to_numeric_series(values):
     return pd.to_numeric(pd.Series(values).reset_index(drop=True), errors="coerce")
 
@@ -1795,8 +1832,8 @@ def main():
     if btc_anchor_date is None or sol_anchor_date is None:
         raise RuntimeError("Anchor BTC/SOL non trovati.")
 
-    btc_path = normalize_path(btc, btc_anchor_date, btc_anchor_price)
-    sol_path = normalize_path(sol, sol_anchor_date, sol_anchor_price)
+    btc_path = calendarize_path(normalize_path(btc, btc_anchor_date, btc_anchor_price))
+    sol_path = calendarize_path(normalize_path(sol, sol_anchor_date, sol_anchor_price))
     if btc_path.empty or sol_path.empty:
         raise RuntimeError("Percorsi normalizzati non disponibili.")
 
@@ -1805,6 +1842,12 @@ def main():
     sol_elapsed_days = len(sol_path) - 1
     btc_equiv_idx = min(sol_elapsed_days, len(btc_path) - 1)
     btc_equiv_date = btc_path.index[btc_equiv_idx]
+    expected_btc_equiv_date = pd.to_datetime(btc_anchor_date).normalize() + pd.Timedelta(days=sol_elapsed_days)
+    if pd.to_datetime(btc_equiv_date).normalize() != expected_btc_equiv_date:
+        raise RuntimeError(
+            "Allineamento frattale incoerente: la data BTC equivalente non "
+            "corrisponde ai giorni di calendario dal bottom SOL."
+        )
     btc_norm_equiv = safe_float(btc_path["norm"].iloc[btc_equiv_idx])
     sol_norm_now = safe_float(sol_path["norm"].iloc[-1])
 

@@ -258,6 +258,8 @@ def build_metadata(latest_text: str, btc_report_text: str) -> dict[str, Any]:
             "phase": clean_md(structured.get("phase_label")) or "n/a",
             "risk": clean_md(structured.get("phase_risk")) or "n/a",
             "sol_day_from_report": int(safe_float(structured.get("sol_elapsed_days"), 0) or 0),
+            "sol_current_date_from_report": parse_date_any(structured.get("sol_current_date")),
+            "sol_current_price_from_report": safe_float(structured.get("sol_current_price")),
             "btc_equiv_from_report": btc_equiv,
             "sol_bottom_date": pd.Timestamp(sol_bottom).normalize(),
             "btc_bottom_date": pd.Timestamp(btc_bottom).normalize(),
@@ -294,6 +296,8 @@ def build_metadata(latest_text: str, btc_report_text: str) -> dict[str, Any]:
         "phase": clean_md(phase),
         "risk": clean_md(risk),
         "sol_day_from_report": sol_day,
+        "sol_current_date_from_report": None,
+        "sol_current_price_from_report": np.nan,
         "btc_equiv_from_report": btc_equiv,
         "sol_bottom_date": DEFAULT_SOL_BOTTOM_DATE,
         "btc_bottom_date": pd.Timestamp(btc_bottom).normalize(),
@@ -395,10 +399,18 @@ def build_tracking_dataframe(sol_df: pd.DataFrame, btc_df: pd.DataFrame, metadat
     if pd.isna(sol_bottom_price) or pd.isna(btc_bottom_price) or btc_bottom_price == 0:
         raise RuntimeError("Impossibile calcolare la scala del frattale: bottom mancanti.")
 
-    latest_sol_date = available_date_on_or_before(sol_df, sol_df.index.max())
+    report_current_date = metadata.get("sol_current_date_from_report")
+    if report_current_date is not None:
+        latest_sol_date = available_date_on_or_before(sol_df, report_current_date)
+    else:
+        latest_sol_date = available_date_on_or_before(sol_df, sol_df.index.max())
+
     if latest_sol_date is None:
         raise RuntimeError("Nessuna data SOL disponibile.")
 
+    # Il giorno del frattale è sempre una distanza di calendario dal bottom.
+    # Non va ricavato dal numero di righe scaricate, perché Yahoo può saltare
+    # una candela e creare uno sfalsamento di un giorno.
     day_count = int((latest_sol_date - sol_bottom_date).days)
     rows = []
 
@@ -407,6 +419,11 @@ def build_tracking_dataframe(sol_df: pd.DataFrame, btc_df: pd.DataFrame, metadat
         btc_date = btc_bottom_date + pd.Timedelta(days=day)
         sol_price = close_on_or_before(sol_df, sol_date)
         btc_price = close_on_or_before(btc_df, btc_date)
+
+        if day == day_count:
+            report_price = safe_float(metadata.get("sol_current_price_from_report"))
+            if not pd.isna(report_price):
+                sol_price = report_price
 
         if pd.isna(sol_price) or pd.isna(btc_price):
             continue
@@ -432,6 +449,31 @@ def build_tracking_dataframe(sol_df: pd.DataFrame, btc_df: pd.DataFrame, metadat
     tracking = pd.DataFrame(rows)
     if tracking.empty:
         raise RuntimeError("Tracking frattale vuoto.")
+
+    latest = tracking.iloc[-1]
+    expected_btc_date = btc_bottom_date + pd.Timedelta(days=int(latest["day"]))
+    actual_btc_date = pd.Timestamp(latest["btc_equiv_date"]).normalize()
+    if actual_btc_date != expected_btc_date:
+        raise RuntimeError(
+            "Tracker frattale incoerente: la data BTC equivalente non "
+            "corrisponde al giorno di calendario dal bottom."
+        )
+
+    report_day = int(safe_float(metadata.get("sol_day_from_report"), -1))
+    report_btc_date = metadata.get("btc_equiv_from_report")
+    if metadata.get("source") == "structured_csv":
+        if report_day >= 0 and int(latest["day"]) != report_day:
+            raise RuntimeError(
+                f"Tracker e frattale principale sfalsati: giorno tracker "
+                f"{int(latest['day'])}, giorno report {report_day}."
+            )
+        if report_btc_date is not None:
+            report_btc_date = pd.Timestamp(report_btc_date).normalize()
+            if actual_btc_date != report_btc_date:
+                raise RuntimeError(
+                    "Tracker e frattale principale usano date BTC equivalenti diverse."
+                )
+
     return tracking
 
 
@@ -884,8 +926,9 @@ Questo modulo separa due percorsi che prima potevano essere confusi:
 
 ## Aderenza del percorso ancorato
 
-- Giorni controllati dal bottom: **{len(tracking)}**
-- Giorni controllati da inizio programma/scanner: **{len(from_program)}**
+- Giorno corrente dal bottom: **{int(latest["day"])}**
+- Osservazioni inclusive dal bottom: **{len(tracking)}**
+- Osservazioni da inizio programma/scanner: **{len(from_program)}**
 - Errore assoluto medio dal bottom: **{fmt_pct(mean_abs_bottom, signed=False)}**
 - Errore assoluto medio da inizio programma: **{fmt_pct(mean_abs_program, signed=False)}**
 - Gap firmato medio ultimi 7 giorni: **{fmt_pct(signed_gap_7, signed=True)}**
