@@ -27,6 +27,7 @@ import pandas as pd
 from scanner_signal_reader import load_scanner_summary, validate_scanner_summary
 from shared_market_snapshot import load_snapshot, normalize_asset, snapshot_price
 
+from compact_latest_report import compact_latest_report
 
 REPORTS_DIR = Path("reports")
 LATEST_REPORT = REPORTS_DIR / "latest_report.md"
@@ -528,6 +529,8 @@ def main() -> None:
     atomic_write(OUTPUT_REPORT, report.rstrip() + "\n")
     atomic_write(OUTPUT_JSON, json.dumps(payload, ensure_ascii=False, indent=2, default=str) + "\n")
     inject(report)
+    # COMPACT_REPORT_UI_PATCH_V1
+    compact_latest_report(LATEST_REPORT)
 
     print(f"Creato {OUTPUT_REPORT}")
     print(f"Creato {OUTPUT_JSON}")
