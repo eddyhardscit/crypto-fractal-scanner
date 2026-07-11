@@ -1,6 +1,6 @@
 # Diagnostica fonti exchange
 
-Generato: 2026-07-11 04:13 UTC
+Generato: 2026-07-11 07:22 UTC
 
 - Stato generale: **WARN**
 - Modalità collector: **github-hosted-kucoin-fallback**
