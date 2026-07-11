@@ -10,6 +10,7 @@ from alternative_exchange_sources import (
     classify_http_error,
     select_kraken_symbols,
     source_summary,
+    apply_cross_source_price_sanity,
     trade_metrics,
 )
 
@@ -45,11 +46,23 @@ def main() -> int:
     instruments = [
         {"symbol": "PI_XBTUSD", "base": "XBT", "quote": "USD", "type": "futures_inverse", "tradeable": True, "isExpired": False},
         {"symbol": "PF_XBTUSD", "base": "XBT", "quote": "USD", "type": "flexible_futures", "tradeable": True, "isExpired": False},
+        {"symbol": "PF_SOLVUSD", "base": "SOLV", "quote": "USD", "type": "flexible_futures", "tradeable": True, "isExpired": False},
         {"symbol": "PF_SOLUSD", "base": "SOL", "quote": "USD", "type": "flexible_futures", "tradeable": True, "isExpired": False},
         {"symbol": "PF_DOGEUSD", "base": "DOGE", "quote": "USD", "type": "flexible_futures", "tradeable": True, "isExpired": False},
     ]
     selected = select_kraken_symbols(instruments)
     assert selected == {"BTC": "PF_XBTUSD", "SOL": "PF_SOLUSD", "DOGE": "PF_DOGEUSD"}
+
+    sanity_probes = []
+    for exchange, price in (("kraken", 0.0027), ("bitget", 78.0), ("okx", 78.1), ("kucoin", 78.05)):
+        probe = AssetProbe(exchange, "perpetual", "SOL", symbol="TEST", status="OK", reachable=True, market_exists=True)
+        probe.capabilities = base_capabilities("perpetual")
+        probe.capabilities["price"] = True
+        probe.sample["last_price"] = price
+        sanity_probes.append(probe)
+    apply_cross_source_price_sanity(sanity_probes)
+    assert sanity_probes[0].status == "PREZZO/SIMBOLO NON COERENTE"
+    assert sanity_probes[0].capabilities["price"] is False
 
     probes = []
     for exchange in ("kraken", "bitget", "kucoin"):

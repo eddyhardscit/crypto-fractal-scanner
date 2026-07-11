@@ -36,7 +36,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 
-VERSION = "2.1.2"
+VERSION = "2.1.2b"
 REPORTS_DIR = Path("reports")
 JSON_PATH = REPORTS_DIR / "alternative_exchange_source_diagnostics.json"
 SAMPLES_PATH = REPORTS_DIR / "alternative_exchange_source_samples.json"
@@ -59,6 +59,7 @@ BITGET_SYMBOLS = {asset: f"{asset}USDT" for asset in ASSETS}
 OKX_SYMBOLS = {asset: f"{asset}-USDT-SWAP" for asset in ASSETS}
 COINBASE_SYMBOLS = {asset: f"{asset}-USD" for asset in ASSETS}
 KUCOIN_SYMBOLS = {"BTC": "XBTUSDTM", "SOL": "SOLUSDTM", "DOGE": "DOGEUSDTM"}
+KRAKEN_PREFERRED_SYMBOLS = {"BTC": "PF_XBTUSD", "SOL": "PF_SOLUSD", "DOGE": "PF_DOGEUSD"}
 
 
 @dataclass
@@ -422,19 +423,34 @@ def finalize_probe(probe: AssetProbe) -> AssetProbe:
 
 
 def select_kraken_symbols(instruments: list[dict[str, Any]]) -> dict[str, str]:
+    """Select exact Kraken perpetual symbols without substring collisions.
+
+    Critical example: PF_SOLVUSD is Solv Protocol (SOLV), not Solana (SOL).
+    Prefer the official exact symbols, then fall back only to exact base/pair tokens.
+    """
     aliases = {"BTC": {"BTC", "XBT"}, "SOL": {"SOL"}, "DOGE": {"DOGE"}}
+    normalized = {
+        str(row.get("symbol") or "").upper(): row
+        for row in instruments
+        if isinstance(row, dict) and str(row.get("symbol") or "").strip()
+    }
     selected: dict[str, str] = {}
     for asset in ASSETS:
+        preferred = KRAKEN_PREFERRED_SYMBOLS[asset]
+        row = normalized.get(preferred)
+        if row and bool(row.get("tradeable", True)) and not bool(row.get("isExpired", False)):
+            selected[asset] = preferred
+            continue
+
         candidates: list[tuple[int, str]] = []
-        for row in instruments:
-            if not isinstance(row, dict):
+        for symbol, row in normalized.items():
+            base = str(row.get("base") or "").upper().strip()
+            pair = str(row.get("pair") or "").upper().replace("/", ":").strip()
+            pair_base = pair.split(":", 1)[0] if ":" in pair else ""
+            if not bool(row.get("tradeable", True)) or bool(row.get("isExpired", False)):
                 continue
-            symbol = str(row.get("symbol") or "").upper()
-            base = str(row.get("base") or "").upper()
-            pair = str(row.get("pair") or "").upper()
-            if not symbol or not bool(row.get("tradeable", True)) or bool(row.get("isExpired", False)):
-                continue
-            if base not in aliases[asset] and not any(alias in symbol or alias in pair for alias in aliases[asset]):
+            # Exact matching only: never use substring matching such as SOL in SOLV.
+            if base not in aliases[asset] and pair_base not in aliases[asset]:
                 continue
             score = 0
             if symbol.startswith("PF_"):
@@ -443,7 +459,7 @@ def select_kraken_symbols(instruments: list[dict[str, Any]]) -> dict[str, str]:
                 score += 30
             if str(row.get("quote") or "").upper() in {"USD", "USDT"}:
                 score += 10
-            if "USD" in symbol:
+            if symbol.endswith("USD") or symbol.endswith("USDT"):
                 score += 5
             if row.get("lastTradingTime"):
                 score -= 50
@@ -471,6 +487,7 @@ def probe_kraken(session: requests.Session) -> list[AssetProbe]:
     if tickers_result.ok and isinstance(tickers_result.data, dict):
         ticker_rows = tickers_result.data.get("tickers") if isinstance(tickers_result.data.get("tickers"), list) else []
     ticker_map = {str(row.get("symbol") or "").upper(): row for row in ticker_rows if isinstance(row, dict)}
+    instrument_map = {str(row.get("symbol") or "").upper(): row for row in instruments if isinstance(row, dict)}
 
     probes: list[AssetProbe] = []
     for asset in ASSETS:
@@ -490,6 +507,15 @@ def probe_kraken(session: requests.Session) -> list[AssetProbe]:
         index = first_number(ticker.get("index"), ticker.get("indexPrice"))
         funding = first_number(ticker.get("fundingRate"), ticker.get("funding_rate"))
         oi = first_number(ticker.get("openInterest"), ticker.get("open_interest"))
+        instrument = instrument_map.get(symbol, {})
+        contract_size = first_number(
+            instrument.get("contractSize"),
+            instrument.get("contract_size"),
+            instrument.get("contractValue"),
+            instrument.get("contract_value"),
+        )
+        oi_base = oi * contract_size if oi is not None and contract_size is not None else None
+        oi_usd = oi_base * (mark or last) if oi_base is not None and (mark or last) is not None else None
         probe.capabilities.update(
             {
                 "price": last is not None,
@@ -506,7 +532,10 @@ def probe_kraken(session: requests.Session) -> list[AssetProbe]:
                 "index_price": index,
                 "funding_rate_raw": funding,
                 "funding_rate_prediction_raw": first_number(ticker.get("fundingRatePrediction")),
-                "open_interest_raw": oi,
+                "open_interest_contracts_raw": oi,
+                "contract_size": contract_size,
+                "open_interest_base_raw": oi_base,
+                "open_interest_usd": oi_usd,
                 "volume_24h_raw": first_number(ticker.get("volume24h"), ticker.get("volume")),
             }
         )
@@ -601,6 +630,7 @@ def probe_bitget(session: requests.Session) -> list[AssetProbe]:
                 "index_price": index,
                 "funding_rate_raw": funding,
                 "open_interest_base_raw": oi,
+                "open_interest_usd": oi * (mark or last) if oi is not None and (mark or last) is not None else None,
             }
         )
         if book_ok and isinstance(book_data, dict):
@@ -816,6 +846,7 @@ def probe_kucoin_control(session: requests.Session) -> list[AssetProbe]:
                 "index_price": index,
                 "funding_rate_raw": funding_rate,
                 "open_interest_base_raw": oi_base,
+                "open_interest_usd": oi_base * (mark or last) if oi_base is not None and (mark or last) is not None else None,
                 "contract_multiplier": multiplier,
             }
         )
@@ -835,6 +866,35 @@ def probe_kucoin_control(session: requests.Session) -> list[AssetProbe]:
             probe.capabilities["trades"] = metrics.get("trade_count", 0) > 0
         probes.append(finalize_probe(probe))
     return probes
+
+
+def apply_cross_source_price_sanity(probes: list[AssetProbe], max_deviation_pct: float = 5.0) -> None:
+    """Reject accidental symbol collisions using the cross-source price median."""
+    for asset in ASSETS:
+        rows = [probe for probe in probes if probe.asset == asset]
+        prices = sorted(
+            price
+            for price in (safe_float(probe.sample.get("last_price")) for probe in rows)
+            if price is not None and price > 0
+        )
+        if len(prices) < 3:
+            continue
+        middle = len(prices) // 2
+        median_price = prices[middle] if len(prices) % 2 else (prices[middle - 1] + prices[middle]) / 2.0
+        for probe in rows:
+            price = safe_float(probe.sample.get("last_price"))
+            if price is None or price <= 0 or median_price <= 0:
+                continue
+            deviation = abs(price / median_price - 1.0) * 100.0
+            probe.sample["cross_source_price_median"] = median_price
+            probe.sample["cross_source_price_deviation_pct"] = deviation
+            if deviation > max_deviation_pct:
+                probe.status = "PREZZO/SIMBOLO NON COERENTE"
+                probe.capabilities["price"] = False
+                probe.market_exists = False
+                probe.notes.append(
+                    f"Prezzo distante {deviation:.2f}% dalla mediana multi-fonte: possibile simbolo errato."
+                )
 
 
 def source_summary(probes: list[AssetProbe]) -> list[dict[str, Any]]:
@@ -875,7 +935,7 @@ def build_recommendation(summaries: list[dict[str, Any]]) -> dict[str, Any]:
         if row["exchange"] in {"kraken", "bitget", "okx"} and row["assets_found"] == row["assets_total"]
     ]
     derivative.sort(key=lambda row: (row["coverage_pct"], row["all_assets_ok"]), reverse=True)
-    selected = [row["exchange"] for row in derivative[:2] if row["coverage_pct"] >= 70.0]
+    selected = [row["exchange"] for row in derivative if row["coverage_pct"] >= 70.0 and row["all_assets_ok"]][:2]
     coinbase = next((row for row in summaries if row["exchange"] == "coinbase"), None)
     kucoin = next((row for row in summaries if row["exchange"] == "kucoin"), None)
     if len(selected) >= 2:
@@ -1008,7 +1068,7 @@ def write_outputs(probes: list[AssetProbe], started_at: str, finished_at: str) -
             )
 
     lines: list[str] = []
-    lines.append("# Diagnostica fonti exchange alternative — V2.1.2")
+    lines.append("# Diagnostica fonti exchange alternative — V2.1.2b")
     lines.append("")
     lines.append(f"Generato: **{finished_at}**")
     lines.append("")
@@ -1055,14 +1115,15 @@ def write_outputs(probes: list[AssetProbe], started_at: str, finished_at: str) -
     lines.append("")
     lines.append("## Campioni principali")
     lines.append("")
-    lines.append("| Fonte | Asset | Prezzo | Funding raw | OI raw/USD | Taker B/S | Book 0,5% | Spread bps |")
-    lines.append("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |")
+    lines.append("| Fonte | Asset | Prezzo | Funding raw | OI base/raw | OI USD normalizzato | Taker B/S | Book 0,5% | Spread bps |")
+    lines.append("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |")
     for probe in probes:
-        oi_value = probe.sample.get("open_interest_usd")
-        if oi_value is None:
-            oi_value = probe.sample.get("open_interest_base_raw")
+        oi_base = probe.sample.get("open_interest_base_raw")
+        if oi_base is None:
+            oi_base = probe.sample.get("open_interest_contracts_raw")
+        oi_usd = probe.sample.get("open_interest_usd")
         lines.append(
-            f"| {probe.exchange.title()} | {probe.asset} | {format_number(probe.sample.get('last_price'), 6)} | {format_number(probe.sample.get('funding_rate_raw'), 8)} | {format_number(oi_value, 4)} | {format_number(probe.sample.get('taker_buy_sell_ratio'), 3)} | {format_number(probe.sample.get('book_imbalance_0_5pct'), 3)} | {format_number(probe.sample.get('spread_bps'), 2)} |"
+            f"| {probe.exchange.title()} | {probe.asset} | {format_number(probe.sample.get('last_price'), 6)} | {format_number(probe.sample.get('funding_rate_raw'), 8)} | {format_number(oi_base, 4)} | {format_number(oi_usd, 2)} | {format_number(probe.sample.get('taker_buy_sell_ratio'), 3)} | {format_number(probe.sample.get('book_imbalance_0_5pct'), 3)} | {format_number(probe.sample.get('spread_bps'), 2)} |"
         )
     lines.append("")
     lines.append("## Errori e blocchi")
@@ -1120,6 +1181,7 @@ def run_probe() -> dict[str, Any]:
                 probe.capabilities = base_capabilities(market_type)
                 probe.notes.append(f"{type(exc).__name__}: {exc}")
                 probes.append(probe)
+    apply_cross_source_price_sanity(probes)
     finished = utc_now_iso()
     return write_outputs(probes, started, finished)
 
