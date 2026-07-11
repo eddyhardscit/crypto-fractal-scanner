@@ -1,0 +1,104 @@
+name: Apply Exchange Microstructure Upgrade V2.1 Once
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install exchange dependencies
+        run: python -m pip install -r requirements-exchange.txt
+
+      - name: Validate package files
+        run: |
+          test -f exchange_intraday_workflow.yml
+          test -f exchange_persistent_storage.py
+          test -f requirements-exchange-collector.txt
+
+      - name: Run offline v2.1 self-test
+        run: python exchange_microstructure_selftest.py
+
+      - name: Apply exchange microstructure v2.1 source patches
+        run: python apply_exchange_microstructure_upgrade_v2_1.py
+
+      - name: Compile upgraded Python files
+        run: |
+          python -m py_compile \
+            exchange_market_data.py \
+            exchange_persistent_storage.py \
+            exchange_microstructure_report.py \
+            exchange_signal_tracker.py \
+            exchange_microstructure_selftest.py \
+            global_confluence_report.py \
+            module_signal_tracker.py \
+            compact_latest_report.py \
+            data_quality_coherence_report.py
+
+      - name: Validate prepared daily workflow order
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          text = Path('.github/workflows/daily.yml').read_text(encoding='utf-8')
+          order = [
+              'python exchange_persistent_storage.py restore',
+              'python exchange_persistent_storage.py audit',
+              'python exchange_persistent_storage.py archive-completed-months',
+              'python exchange_signal_tracker.py',
+              'python exchange_microstructure_report.py',
+              'python global_confluence_report.py',
+          ]
+          positions = [text.find(item) for item in order]
+          if any(position < 0 for position in positions):
+              raise SystemExit(f'Moduli exchange mancanti nel daily preparato: {dict(zip(order, positions))}')
+          if positions != sorted(positions):
+              raise SystemExit(f'Ordine exchange errato: {dict(zip(order, positions))}')
+          if 'python exchange_market_data.py' in text:
+              raise SystemExit('Il daily non deve raccogliere e ripubblicare lo stato intraday: evita race con il workflow 15m.')
+          print('Ordine daily exchange v2.1: OK')
+          PY
+
+      - name: Commit source integration only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            .gitignore \
+            global_confluence_report.py \
+            module_signal_tracker.py \
+            compact_latest_report.py \
+            data_quality_coherence_report.py
+          if git diff --cached --quiet; then
+            echo "Source integration already installed."
+          else
+            git commit -m "Add exchange microstructure v2.1 integration"
+            git push
+          fi
+
+      - name: Prepare workflow artifacts
+        run: |
+          mkdir -p prepared_exchange_workflows
+          cp .github/workflows/daily.yml prepared_exchange_workflows/daily.yml
+          cp exchange_intraday_workflow.yml prepared_exchange_workflows/exchange_intraday.yml
+
+      - name: Upload prepared workflows
+        uses: actions/upload-artifact@v4
+        with:
+          name: exchange-v2-1-workflows-ready
+          path: prepared_exchange_workflows/
+          retention-days: 7
