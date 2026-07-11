@@ -38,6 +38,7 @@ START_MARKER = "<!-- DATA_QUALITY_COHERENCE_START -->"
 END_MARKER = "<!-- DATA_QUALITY_COHERENCE_END -->"
 
 ASSETS = ("BTC", "SOL", "DOGE")
+# EXCHANGE_MICROSTRUCTURE_QUALITY_PATCH_V2_1
 MOJIBAKE_TOKENS = ("Ã", "Â", "â€", "â†", "ðŸ", "�")
 # STRICT_SHARED_PRICE_CHECK_V1
 PRICE_TOLERANCE_PCT = 0.000001
@@ -66,6 +67,11 @@ MODULE_PRICE_SPECS: dict[str, dict[str, Any]] = {
     "Classic Visual": {
         "path": REPORTS_DIR / "classic_technical_visual_metrics.csv",
         "asset_columns": ("asset", "ticker"),
+        "price_columns": ("price",),
+    },
+    "Exchange Microstructure": {
+        "path": REPORTS_DIR / "exchange_microstructure_metrics.csv",
+        "asset_columns": ("asset",),
         "price_columns": ("price",),
     },
     "RSI top-cycle": {
@@ -441,6 +447,7 @@ def render(payload: dict[str, Any]) -> str:
     lines.append(f"- Snapshot condiviso completo: **{'OK' if payload['snapshot_complete'] else 'MANCANTE'}**")
     lines.append(f"- Scanner summary: **{'OK' if payload['scanner_summary_available'] else 'MANCANTE'}**")
     lines.append(f"- Price coherence sync: **{'OK' if payload['price_sync_available'] else 'MANCANTE'}**")
+    lines.append(f"- Dati exchange / microstruttura: **{'OK' if payload.get('exchange_data_available') else 'MANCANTE'}**")
     lines.append("")
 
     if payload["overall_status"] == "OK":
@@ -506,6 +513,40 @@ def main() -> None:
     if not price_sync_available:
         warnings.append("price_coherence_sync.py non risulta eseguito in questo workflow.")
 
+    exchange_required_files = (
+        REPORTS_DIR / "exchange_market_data_snapshot.json",
+        REPORTS_DIR / "exchange_market_data_intraday.csv",
+        REPORTS_DIR / "exchange_storage_status.json",
+        REPORTS_DIR / "exchange_microstructure_metrics.csv",
+        REPORTS_DIR / "exchange_microstructure_history.csv",
+        REPORTS_DIR / "exchange_signal_tracker_metrics.csv",
+        REPORTS_DIR / "exchange_prediction_overlay.csv",
+    )
+    exchange_missing_files = [path.name for path in exchange_required_files if not path.exists()]
+    exchange_data_available = not exchange_missing_files
+    if exchange_missing_files:
+        warnings.append("File exchange mancanti: " + ", ".join(exchange_missing_files))
+    else:
+        try:
+            exchange_metrics = pd.read_csv(REPORTS_DIR / "exchange_microstructure_metrics.csv")
+            required_exchange_columns = {
+                "asset", "price", "raw_score", "candidate_global_score", "global_score", "data_coverage",
+                "exchange_count", "kucoin_available", "global_activation_status",
+                "funding_rate_pct", "oi_change_24h_pct", "taker_buy_sell_ratio_4h",
+                "orderbook_imbalance_0_5pct",
+            }
+            missing_exchange_columns = sorted(required_exchange_columns - set(exchange_metrics.columns))
+            if missing_exchange_columns:
+                warnings.append("Campi exchange mancanti: " + ", ".join(missing_exchange_columns))
+                exchange_data_available = False
+            if "global_score" in exchange_metrics.columns:
+                exchange_scores = pd.to_numeric(exchange_metrics["global_score"], errors="coerce").dropna()
+                if (exchange_scores.abs() > 1).any():
+                    critical.append("Exchange Global score supera il limite prudente ±1.")
+        except Exception:
+            warnings.append("exchange_microstructure_metrics.csv non leggibile.")
+            exchange_data_available = False
+
     critical = list(dict.fromkeys(critical))
     warnings = list(dict.fromkeys(warnings))
     status = "ERROR" if critical else ("WARN" if warnings else "OK")
@@ -519,6 +560,8 @@ def main() -> None:
         "snapshot_complete": len(prices) == len(ASSETS),
         "scanner_summary_available": not summary.empty,
         "price_sync_available": price_sync_available,
+        "exchange_data_available": exchange_data_available,
+        "exchange_missing_files": exchange_missing_files,
         "snapshot_metadata": snapshot,
         "module_price_checks": module_price_checks,
         "technical_integrity": integrity,

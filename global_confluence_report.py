@@ -11,6 +11,8 @@ METRICS_CSV_PATH = REPORTS_DIR / "global_confluence_metrics.csv"
 
 TECHNICAL_METRICS_PATH = REPORTS_DIR / "technical_structure_metrics.csv"
 CLASSIC_TECH_METRICS_PATH = REPORTS_DIR / "classic_technical_confirmation_metrics.csv"
+EXCHANGE_MICROSTRUCTURE_METRICS_PATH = REPORTS_DIR / "exchange_microstructure_metrics.csv"
+# EXCHANGE_MICROSTRUCTURE_GLOBAL_PATCH_V2_1
 
 START_MARKER = "<!-- GLOBAL_CONFLUENCE_START -->"
 END_MARKER = "<!-- GLOBAL_CONFLUENCE_END -->"
@@ -54,7 +56,7 @@ WEIGHTED_COMPONENTS = [
     "Fractal path",
     "RSI top-cycle",
     "Lifecycle EMA",
-    "Futures",
+    "Exchange flow",
     "Daily change",
 ]
 
@@ -1445,6 +1447,83 @@ def parse_lifecycle_component(block: str, asset: str):
     )
 
 
+
+def parse_exchange_microstructure_component(asset: str):
+    """Read structured exchange metrics; Global score is already calibration-gated."""
+    if not EXCHANGE_MICROSTRUCTURE_METRICS_PATH.exists():
+        return component_template(
+            0,
+            "Dati exchange non disponibili; modulo neutrale.",
+            {"raw_score": None, "candidate_score": 0, "confidence": "MANCANTE", "bias": "n/a", "data_coverage": 0},
+        )
+
+    try:
+        with EXCHANGE_MICROSTRUCTURE_METRICS_PATH.open("r", encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+    except Exception as exc:
+        return component_template(
+            0,
+            f"Metriche exchange non leggibili: {type(exc).__name__}.",
+            {"raw_score": None, "candidate_score": 0, "confidence": "ERRORE", "bias": "n/a", "data_coverage": 0},
+        )
+
+    row = next((item for item in rows if clean_cell(item.get("asset", "")).upper() == asset), None)
+    if row is None:
+        return component_template(
+            0,
+            f"Riga exchange {asset} mancante; modulo neutrale.",
+            {"raw_score": None, "candidate_score": 0, "confidence": "MANCANTE", "bias": "n/a", "data_coverage": 0},
+        )
+
+    raw_score = parse_number(row.get("raw_score"))
+    candidate_score = max(-1, min(1, parse_int(row.get("candidate_global_score"), 0)))
+    reported_score = max(-1, min(1, parse_int(row.get("global_score"), 0)))
+    score = reported_score
+    confidence = clean_cell(row.get("confidence", "")) or "n/a"
+    bias = clean_cell(row.get("bias", "")) or "n/a"
+    activation = clean_cell(row.get("global_activation_status", "")) or "n/a"
+    coverage = parse_number(row.get("data_coverage"))
+    exchange_count = parse_int(row.get("exchange_count"), 0)
+    kucoin_available = clean_cell(row.get("kucoin_available", "")).lower() in {"true", "1", "yes", "si", "sì"}
+    flow = parse_number(row.get("flow_score"))
+    derivatives = parse_number(row.get("derivatives_score"))
+    crowding = parse_number(row.get("crowding_score"))
+    technical_confirmation = parse_number(row.get("technical_confirmation_score"))
+    detail_text = clean_cell(row.get("detail", ""))
+    if not detail_text:
+        detail_text = (
+            f"Raw {raw_score if raw_score is not None else 'n/a'}, candidato {candidate_score:+d}, "
+            f"flow {flow if flow is not None else 'n/a'}, derivati {derivatives if derivatives is not None else 'n/a'}, "
+            f"affollamento {crowding if crowding is not None else 'n/a'}, "
+            f"conferme tecniche {technical_confirmation if technical_confirmation is not None else 'n/a'}."
+        )
+    detail = (
+        f"{detail_text} Bias {bias}; confidenza {confidence}; fonti {exchange_count}/3; "
+        f"KuCoin {'OK' if kucoin_available else 'mancante'}; "
+        f"copertura {fmt_pct_plain(coverage * 100 if coverage is not None and coverage <= 1.0 else coverage)}. "
+        f"Attivazione: {activation}. Il Global usa {score:+d}; il candidato {candidate_score:+d} resta misurato separatamente."
+    )
+    return component_template(
+        score,
+        detail,
+        {
+            "raw_score": raw_score,
+            "candidate_score": candidate_score,
+            "reported_score": reported_score,
+            "confidence": confidence,
+            "bias": bias,
+            "activation_status": activation,
+            "data_coverage": coverage,
+            "exchange_count": exchange_count,
+            "kucoin_available": kucoin_available,
+            "flow_score": flow,
+            "derivatives_score": derivatives,
+            "crowding_score": crowding,
+            "technical_confirmation_score": technical_confirmation,
+        },
+    )
+
+
 def parse_futures_component(block: str, asset: str):
     reading = None
     strength = None
@@ -1557,6 +1636,7 @@ def build_components(source_text: str):
             ),
             "RSI top-cycle": parse_rsi_component(rsi_block, asset),
             "Lifecycle EMA": parse_lifecycle_component(lifecycle_block, asset),
+            "Exchange flow": parse_exchange_microstructure_component(asset),
             "Futures": parse_futures_component(futures_block, asset),
             "Daily change": parse_daily_change_component(daily_block, asset),
         }
@@ -1848,6 +1928,7 @@ def build_report(components: dict):
         "Fractal path",
         "RSI top-cycle",
         "Lifecycle EMA",
+        "Exchange flow",
         "Futures",
         "Daily change",
     ]
@@ -1892,6 +1973,7 @@ def build_report(components: dict):
                 fmt_signed_int(components[asset]["Fractal path"]["score"]),
                 fmt_signed_int(components[asset]["RSI top-cycle"]["score"]),
                 fmt_signed_int(components[asset]["Lifecycle EMA"]["score"]),
+                fmt_signed_int(components[asset]["Exchange flow"]["score"]),
                 fmt_signed_int(components[asset]["Futures"]["score"]),
                 fmt_signed_int(components[asset]["Daily change"]["score"]),
                 fmt_signed_int(score),
@@ -1916,7 +1998,8 @@ def build_report(components: dict):
     lines.append("- Fractal path tracker, solo per SOL")
     lines.append("- RSI top-cycle, soprattutto per SOL")
     lines.append("- Major alt lifecycle squeeze / EMA200 weekly, solo per SOL")
-    lines.append("- Futures / liquidazioni")
+    lines.append("- Exchange microstructure: OI, funding, taker flow, order book e liquidazioni campionate")
+    lines.append("- Futures / liquidazioni precedente, mantenuto come diagnostica")
     lines.append("- Cambiamento giornaliero")
     lines.append("")
     lines.append(
@@ -1933,6 +2016,11 @@ def build_report(components: dict):
     lines.append(
         "Nota Classic technical: **pesa massimo ±1** perché è un filtro di conferma "
         "e in parte si sovrappone alla struttura tecnica già esistente."
+    )
+    lines.append("")
+    lines.append(
+        "Nota exchange: **candidato massimo ±1, peso iniziale 0** e più conferme indipendenti. "
+        "Order book, funding o una singola liquidazione non bastano da soli."
     )
     lines.append("")
     lines.append("## Sintesi operativa")
@@ -1969,6 +2057,7 @@ def build_report(components: dict):
                 "Fractal path",
                 "RSI top-cycle",
                 "Lifecycle EMA",
+                "Exchange flow",
                 "Futures",
                 "Daily change",
                 "Totale",
@@ -2039,6 +2128,11 @@ def build_report(components: dict):
     lines.append(
         "Nota Classic technical: il modulo è utile per capire se il setup è confermato davvero, "
         "ma il suo peso resta prudente per evitare doppio conteggio con il modulo tecnico già presente."
+    )
+    lines.append("")
+    lines.append(
+        "Nota exchange: il modulo salva OI, funding, taker flow, order book e liquidazioni campionate. "
+        "Il candidato è limitato a ±1; il peso Global resta 0 finché il gate storico a 7 giorni non matura."
     )
 
     return "\n".join(lines).rstrip() + "\n", results
@@ -2117,6 +2211,19 @@ def write_metrics_csv(components: dict, results: dict) -> None:
         "lifecycle_bias",
         "lifecycle_ema200",
         "lifecycle_upside",
+        "exchange_flow_score_component",
+        "exchange_candidate_score_component",
+        "exchange_global_activation_status",
+        "exchange_count",
+        "exchange_kucoin_available",
+        "exchange_raw_score",
+        "exchange_confidence",
+        "exchange_bias",
+        "exchange_data_coverage",
+        "exchange_flow_score",
+        "exchange_derivatives_score",
+        "exchange_crowding_score",
+        "exchange_technical_confirmation_score",
         "futures_score",
         "futures_reading",
         "daily_change_score",
@@ -2202,6 +2309,19 @@ def write_metrics_csv(components: dict, results: dict) -> None:
             "lifecycle_bias": c["Lifecycle EMA"]["data"].get("bias"),
             "lifecycle_ema200": c["Lifecycle EMA"]["data"].get("ema200"),
             "lifecycle_upside": c["Lifecycle EMA"]["data"].get("upside"),
+            "exchange_flow_score_component": c["Exchange flow"]["score"],
+            "exchange_candidate_score_component": c["Exchange flow"]["data"].get("candidate_score"),
+            "exchange_global_activation_status": c["Exchange flow"]["data"].get("activation_status"),
+            "exchange_count": c["Exchange flow"]["data"].get("exchange_count"),
+            "exchange_kucoin_available": c["Exchange flow"]["data"].get("kucoin_available"),
+            "exchange_raw_score": c["Exchange flow"]["data"].get("raw_score"),
+            "exchange_confidence": c["Exchange flow"]["data"].get("confidence"),
+            "exchange_bias": c["Exchange flow"]["data"].get("bias"),
+            "exchange_data_coverage": c["Exchange flow"]["data"].get("data_coverage"),
+            "exchange_flow_score": c["Exchange flow"]["data"].get("flow_score"),
+            "exchange_derivatives_score": c["Exchange flow"]["data"].get("derivatives_score"),
+            "exchange_crowding_score": c["Exchange flow"]["data"].get("crowding_score"),
+            "exchange_technical_confirmation_score": c["Exchange flow"]["data"].get("technical_confirmation_score"),
             "futures_score": c["Futures"]["score"],
             "futures_reading": c["Futures"]["data"].get("reading"),
             "daily_change_score": c["Daily change"]["score"],

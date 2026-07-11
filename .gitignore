@@ -1,0 +1,8 @@
+
+# Exchange Microstructure v2.1 - raw state stored in GitHub Releases
+/reports/exchange_market_data_intraday.csv
+/reports/exchange_market_data_snapshot.json
+/reports/exchange_market_data_health.json
+/reports/exchange_market_data_raw.json
+/reports/exchange_storage_status.json
+/.exchange_storage/

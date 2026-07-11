@@ -95,6 +95,14 @@ MODULES = [
         "parent_family": "",
     },
     {
+        "key": "exchange_microstructure",
+        "label": "Microstruttura exchange",
+        "score_col": "exchange_candidate_score_component",
+        "role": "CALIBRABILE / NON PESATO FINO AL GATE",
+        "calibratable": True,
+        "parent_family": "",
+    },
+    {
         "key": "sol_fractal",
         "label": "Frattale SOL",
         "score_col": "sol_fractal_score",
@@ -122,6 +130,13 @@ BASE_HISTORY_COLUMNS = [
     "market_matches",
     "technical_score_component",
     "classic_technical_score_component",
+    "exchange_flow_score_component",
+    "exchange_candidate_score_component",
+    "exchange_global_activation_status",
+    "exchange_count",
+    "exchange_kucoin_available",
+    "exchange_raw_score",
+    "exchange_confidence",
     "sol_fractal_score",
     "classic_technical_raw_score",
     "classic_technical_verdict",
@@ -682,6 +697,13 @@ def build_signal_rows(global_rows, price_data):
             "market_matches": market_matches,
             "technical_score_component": safe_int(row.get("technical_score_component"), 0),
             "classic_technical_score_component": safe_int(row.get("classic_technical_score_component"), 0),
+            "exchange_flow_score_component": safe_int(row.get("exchange_flow_score_component"), 0),
+            "exchange_candidate_score_component": safe_int(row.get("exchange_candidate_score_component"), 0),
+            "exchange_global_activation_status": safe_str(row.get("exchange_global_activation_status")),
+            "exchange_count": safe_int(row.get("exchange_count"), 0),
+            "exchange_kucoin_available": safe_str(row.get("exchange_kucoin_available")),
+            "exchange_raw_score": safe_float(row.get("exchange_raw_score")),
+            "exchange_confidence": safe_str(row.get("exchange_confidence")),
             "sol_fractal_score": safe_int(row.get("sol_fractal_score"), 0),
             "classic_technical_raw_score": safe_float(row.get("classic_technical_raw_score")),
             "classic_technical_verdict": safe_str(row.get("classic_technical_verdict")),
@@ -1206,7 +1228,9 @@ def build_report(
     lines.append("- Market Regime grezzo = diagnostico, già incluso nella famiglia statistica")
     lines.append("- Struttura tecnica")
     lines.append("- Classic technical confirmation")
+    lines.append("- Microstruttura exchange, OI/funding/taker flow/order book")
     lines.append("- Frattale SOL/BTC, solo per SOL")
+    lines.append("# EXCHANGE_MICROSTRUCTURE_TRACKER_PATCH_V2_1")
     lines.append("")
     lines.append(
         "Regola anti-doppio-conteggio: **Scanner e Market Regime continuano a essere misurati separatamente "

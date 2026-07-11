@@ -21,6 +21,7 @@ HEADER_START = "<!-- COMPACT_REPORT_HEADER_START -->"
 HEADER_END = "<!-- COMPACT_REPORT_HEADER_END -->"
 SECTION_START = "<!-- COMPACT_SECTION_START:{key} -->"
 SECTION_END = "<!-- COMPACT_SECTION_END:{key} -->"
+# EXCHANGE_MICROSTRUCTURE_COMPACT_PATCH_V2_1
 
 
 # Le sezioni operative principali restano aperte. Tutte le altre sono chiuse,
@@ -143,6 +144,20 @@ MARKER_SECTIONS = (
         "<!-- FRACTAL_PATH_TRACKER_START -->",
         "<!-- FRACTAL_PATH_TRACKER_END -->",
         "🛤️ Tracking percorso frattale SOL/BTC",
+        False,
+    ),
+    (
+        "exchange_microstructure",
+        "<!-- EXCHANGE_MICROSTRUCTURE_START -->",
+        "<!-- EXCHANGE_MICROSTRUCTURE_END -->",
+        "🏦 Dati exchange, liquidità e leva",
+        False,
+    ),
+    (
+        "exchange_signal_tracker",
+        "<!-- EXCHANGE_SIGNAL_TRACKER_START -->",
+        "<!-- EXCHANGE_SIGNAL_TRACKER_END -->",
+        "🧠 Accuratezza segnali exchange",
         False,
     ),
     (
