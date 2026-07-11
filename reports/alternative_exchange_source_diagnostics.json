@@ -1,0 +1,1531 @@
+{
+  "schema_version": "2.1.2",
+  "started_at": "2026-07-11T09:21:27+00:00",
+  "finished_at": "2026-07-11T09:21:40+00:00",
+  "runner_context": {
+    "github_actions": "true",
+    "runner_os": "Linux",
+    "runner_arch": "X64",
+    "repository": "eddyhardscit/crypto-fractal-scanner"
+  },
+  "sources": [
+    {
+      "exchange": "kraken",
+      "market_type": "perpetual",
+      "assets_found": 3,
+      "assets_total": 3,
+      "capabilities_ok": 21,
+      "capabilities_total": 21,
+      "coverage_pct": 100.0,
+      "all_assets_ok": true,
+      "statuses": [
+        "OK"
+      ]
+    },
+    {
+      "exchange": "bitget",
+      "market_type": "perpetual",
+      "assets_found": 3,
+      "assets_total": 3,
+      "capabilities_ok": 21,
+      "capabilities_total": 21,
+      "coverage_pct": 100.0,
+      "all_assets_ok": true,
+      "statuses": [
+        "OK"
+      ]
+    },
+    {
+      "exchange": "okx",
+      "market_type": "perpetual",
+      "assets_found": 3,
+      "assets_total": 3,
+      "capabilities_ok": 18,
+      "capabilities_total": 21,
+      "coverage_pct": 85.71,
+      "all_assets_ok": true,
+      "statuses": [
+        "OK"
+      ]
+    },
+    {
+      "exchange": "coinbase",
+      "market_type": "spot",
+      "assets_found": 3,
+      "assets_total": 3,
+      "capabilities_ok": 9,
+      "capabilities_total": 21,
+      "coverage_pct": 42.86,
+      "all_assets_ok": false,
+      "statuses": [
+        "PARZIALE"
+      ]
+    },
+    {
+      "exchange": "kucoin",
+      "market_type": "perpetual-control",
+      "assets_found": 3,
+      "assets_total": 3,
+      "capabilities_ok": 21,
+      "capabilities_total": 21,
+      "coverage_pct": 100.0,
+      "all_assets_ok": true,
+      "statuses": [
+        "OK"
+      ]
+    }
+  ],
+  "recommendation": {
+    "status": "PRONTO PER INTEGRAZIONE SENZA VPS",
+    "message": "Nucleo proposto: KuCoin + Kraken + Bitget.",
+    "selected_derivatives": [
+      "kraken",
+      "bitget"
+    ],
+    "coinbase_spot_usable": true,
+    "kucoin_control_ok": true,
+    "important_note": "Coinbase è una conferma spot e non sostituisce funding/open interest dei perpetual."
+  },
+  "assets": [
+    {
+      "exchange": "kraken",
+      "market_type": "perpetual",
+      "asset": "BTC",
+      "symbol": "PF_XBTUSD",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 7,
+      "capability_total": 7,
+      "coverage_pct": 100.0,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": true,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 64193.0,
+        "mark_price": 64191.79819633185,
+        "index_price": 64188.38,
+        "funding_rate_raw": -0.10217415729,
+        "funding_rate_prediction_raw": 0.03499179725125,
+        "open_interest_raw": 1944.3352,
+        "volume_24h_raw": null,
+        "levels_bid": 1454,
+        "levels_ask": 1183,
+        "best_bid": 64192.0,
+        "best_ask": 64193.0,
+        "spread_bps": 0.15578314178728578,
+        "bid_depth_0_5pct_usd": 22861304.0116,
+        "ask_depth_0_5pct_usd": 22878021.648599986,
+        "book_imbalance_0_5pct": -0.00036549810821837053,
+        "trade_count": 100,
+        "taker_buy_notional": 223220.60410000008,
+        "taker_sell_notional": 39694.0532,
+        "taker_buy_sell_ratio": 5.623527609420347
+      },
+      "endpoints": {
+        "instruments": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 398.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/instruments"
+        },
+        "tickers": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 136.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/tickers"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 135.5,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/orderbook?symbol=PF_XBTUSD"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 126.6,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/history?symbol=PF_XBTUSD"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "kraken",
+      "market_type": "perpetual",
+      "asset": "SOL",
+      "symbol": "PF_SOLVUSD",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 7,
+      "capability_total": 7,
+      "coverage_pct": 100.0,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": true,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 0.002776,
+        "mark_price": 0.00276566823,
+        "index_price": 0.0027714,
+        "funding_rate_raw": -4.07199848132e-07,
+        "funding_rate_prediction_raw": -7.362246115e-07,
+        "open_interest_raw": 1384805.0,
+        "volume_24h_raw": null,
+        "levels_bid": 8,
+        "levels_ask": 2,
+        "best_bid": 0.002755,
+        "best_ask": 0.002778,
+        "spread_bps": 83.16254187871267,
+        "bid_depth_0_5pct_usd": 788.9218000000001,
+        "ask_depth_0_5pct_usd": 752.8380000000001,
+        "book_imbalance_0_5pct": 0.02340429423571687,
+        "trade_count": 25,
+        "taker_buy_notional": 854.798007,
+        "taker_sell_notional": 813.891205,
+        "taker_buy_sell_ratio": 1.0502607741043226
+      },
+      "endpoints": {
+        "instruments": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 398.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/instruments"
+        },
+        "tickers": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 136.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/tickers"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 214.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/orderbook?symbol=PF_SOLVUSD"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 123.9,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/history?symbol=PF_SOLVUSD"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "kraken",
+      "market_type": "perpetual",
+      "asset": "DOGE",
+      "symbol": "PF_DOGEUSD",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 7,
+      "capability_total": 7,
+      "coverage_pct": 100.0,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": true,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 0.074309,
+        "mark_price": 0.07427576796,
+        "index_price": 0.074267,
+        "funding_rate_raw": 1.481610899112e-06,
+        "funding_rate_prediction_raw": 1.307567273438e-06,
+        "open_interest_raw": 41892891.0,
+        "volume_24h_raw": null,
+        "levels_bid": 189,
+        "levels_ask": 239,
+        "best_bid": 0.074275,
+        "best_ask": 0.074296,
+        "spread_bps": 2.8273016323865314,
+        "bid_depth_0_5pct_usd": 1407538.0884069994,
+        "ask_depth_0_5pct_usd": 1377369.957582,
+        "book_imbalance_0_5pct": 0.010832720623738176,
+        "trade_count": 100,
+        "taker_buy_notional": 41908.39859500001,
+        "taker_sell_notional": 19720.848923,
+        "taker_buy_sell_ratio": 2.1250808602931466
+      },
+      "endpoints": {
+        "instruments": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 398.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/instruments"
+        },
+        "tickers": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 136.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/tickers"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 126.1,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/orderbook?symbol=PF_DOGEUSD"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 125.8,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://futures.kraken.com/derivatives/api/v3/history?symbol=PF_DOGEUSD"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "bitget",
+      "market_type": "perpetual",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 7,
+      "capability_total": 7,
+      "coverage_pct": 100.0,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": true,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 64206.9,
+        "mark_price": 64206.9,
+        "index_price": 64244.264,
+        "funding_rate_raw": -2.1e-05,
+        "open_interest_base_raw": 34216.8389,
+        "levels_bid": 100,
+        "levels_ask": 100,
+        "best_bid": 64206.9,
+        "best_ask": 64207.0,
+        "spread_bps": 0.015574650076322763,
+        "bid_depth_0_5pct_usd": 1950037.5031999992,
+        "ask_depth_0_5pct_usd": 2003488.8012099992,
+        "book_imbalance_0_5pct": -0.013519904483847059,
+        "trade_count": 100,
+        "taker_buy_notional": 157542.45441,
+        "taker_sell_notional": 28168.380199999992,
+        "taker_buy_sell_ratio": 5.592882987641584
+      },
+      "endpoints": {
+        "contracts": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 296.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/contracts?productType=usdt-futures"
+        },
+        "price": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 491.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/symbol-price?productType=usdt-futures&symbol=BTCUSDT"
+        },
+        "funding": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 174.5,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/current-fund-rate?productType=usdt-futures&symbol=BTCUSDT"
+        },
+        "open_interest": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 158.1,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/open-interest?productType=usdt-futures&symbol=BTCUSDT"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 177.4,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/merge-depth?productType=usdt-futures&symbol=BTCUSDT&precision=scale0&limit=100"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 163.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/fills?productType=usdt-futures&symbol=BTCUSDT&limit=100"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "bitget",
+      "market_type": "perpetual",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 7,
+      "capability_total": 7,
+      "coverage_pct": 100.0,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": true,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 78.091,
+        "mark_price": 78.091,
+        "index_price": 78.137,
+        "funding_rate_raw": 7.4e-05,
+        "open_interest_base_raw": 4231299.0,
+        "levels_bid": 100,
+        "levels_ask": 100,
+        "best_bid": 78.091,
+        "best_ask": 78.092,
+        "spread_bps": 0.12805572985424374,
+        "bid_depth_0_5pct_usd": 3076433.9164000005,
+        "ask_depth_0_5pct_usd": 2657497.3061999995,
+        "book_imbalance_0_5pct": 0.07306271978791505,
+        "trade_count": 100,
+        "taker_buy_notional": 11919.938600000001,
+        "taker_sell_notional": 54749.593400000005,
+        "taker_buy_sell_ratio": 0.21771739039070198
+      },
+      "endpoints": {
+        "contracts": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 296.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/contracts?productType=usdt-futures"
+        },
+        "price": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 178.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/symbol-price?productType=usdt-futures&symbol=SOLUSDT"
+        },
+        "funding": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 156.1,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/current-fund-rate?productType=usdt-futures&symbol=SOLUSDT"
+        },
+        "open_interest": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 160.8,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/open-interest?productType=usdt-futures&symbol=SOLUSDT"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 175.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/merge-depth?productType=usdt-futures&symbol=SOLUSDT&precision=scale0&limit=100"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 175.6,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/fills?productType=usdt-futures&symbol=SOLUSDT&limit=100"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "bitget",
+      "market_type": "perpetual",
+      "asset": "DOGE",
+      "symbol": "DOGEUSDT",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 7,
+      "capability_total": 7,
+      "coverage_pct": 100.0,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": true,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 0.07428,
+        "mark_price": 0.07428,
+        "index_price": 0.0743288437250174,
+        "funding_rate_raw": 0.0001,
+        "open_interest_base_raw": 1077915388.0,
+        "levels_bid": 100,
+        "levels_ask": 100,
+        "best_bid": 0.07426,
+        "best_ask": 0.07427,
+        "spread_bps": 1.3462574044152025,
+        "bid_depth_0_5pct_usd": 4322245.412200001,
+        "ask_depth_0_5pct_usd": 4214763.69552,
+        "book_imbalance_0_5pct": 0.012590090431414201,
+        "trade_count": 100,
+        "taker_buy_notional": 22098.57350000001,
+        "taker_sell_notional": 37322.490970000006,
+        "taker_buy_sell_ratio": 0.5920980332680085
+      },
+      "endpoints": {
+        "contracts": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 296.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/contracts?productType=usdt-futures"
+        },
+        "price": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 157.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/symbol-price?productType=usdt-futures&symbol=DOGEUSDT"
+        },
+        "funding": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 165.6,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/current-fund-rate?productType=usdt-futures&symbol=DOGEUSDT"
+        },
+        "open_interest": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 178.3,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/open-interest?productType=usdt-futures&symbol=DOGEUSDT"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 173.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/merge-depth?productType=usdt-futures&symbol=DOGEUSDT&precision=scale0&limit=100"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 165.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.bitget.com/api/v2/mix/market/fills?productType=usdt-futures&symbol=DOGEUSDT&limit=100"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "okx",
+      "market_type": "perpetual",
+      "asset": "BTC",
+      "symbol": "BTC-USDT-SWAP",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 6,
+      "capability_total": 7,
+      "coverage_pct": 85.71,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": false,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 64205.0,
+        "mark_price": 64205.1,
+        "index_price": null,
+        "funding_rate_raw": -2.16483449384e-05,
+        "open_interest_base_raw": 30867.847300000136,
+        "open_interest_usd": 1981870135.8965087,
+        "levels_bid": 100,
+        "levels_ask": 100,
+        "best_bid": 64205.0,
+        "best_ask": 64205.1,
+        "spread_bps": 0.015575086714068636,
+        "bid_depth_0_5pct_usd": 459972635.09699994,
+        "ask_depth_0_5pct_usd": 202624077.532,
+        "book_imbalance_0_5pct": 0.38839395466348187,
+        "trade_count": 100,
+        "taker_buy_notional": 5432411.5649999995,
+        "taker_sell_notional": 4912414.170000001,
+        "taker_buy_sell_ratio": 1.1058537364735268
+      },
+      "endpoints": {
+        "instruments": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 442.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/instruments?instType=SWAP"
+        },
+        "ticker": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 213.1,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/market/ticker?instId=BTC-USDT-SWAP"
+        },
+        "mark_price": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 217.1,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/mark-price?instType=SWAP&instId=BTC-USDT-SWAP"
+        },
+        "funding": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 215.3,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/funding-rate?instId=BTC-USDT-SWAP"
+        },
+        "open_interest": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 214.5,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=BTC-USDT-SWAP"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 259.1,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/market/books?instId=BTC-USDT-SWAP&sz=100"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 217.5,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/market/trades?instId=BTC-USDT-SWAP&limit=100"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "okx",
+      "market_type": "perpetual",
+      "asset": "SOL",
+      "symbol": "SOL-USDT-SWAP",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 6,
+      "capability_total": 7,
+      "coverage_pct": 85.71,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": false,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 78.08,
+        "mark_price": 78.07,
+        "index_price": null,
+        "funding_rate_raw": -4.76055796815e-05,
+        "open_interest_base_raw": 3108184.030000001,
+        "open_interest_usd": 242655927.22210008,
+        "levels_bid": 100,
+        "levels_ask": 100,
+        "best_bid": 78.07,
+        "best_ask": 78.08,
+        "spread_bps": 1.2809017548360595,
+        "bid_depth_0_5pct_usd": 7489569.0649999995,
+        "ask_depth_0_5pct_usd": 6226066.685699998,
+        "book_imbalance_0_5pct": 0.09212131338757057,
+        "trade_count": 100,
+        "taker_buy_notional": 3659.5979999999995,
+        "taker_sell_notional": 24498.81220000001,
+        "taker_buy_sell_ratio": 0.1493785890566563
+      },
+      "endpoints": {
+        "instruments": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 442.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/instruments?instType=SWAP"
+        },
+        "ticker": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 214.9,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/market/ticker?instId=SOL-USDT-SWAP"
+        },
+        "mark_price": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 214.6,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/mark-price?instType=SWAP&instId=SOL-USDT-SWAP"
+        },
+        "funding": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 218.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/funding-rate?instId=SOL-USDT-SWAP"
+        },
+        "open_interest": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 217.8,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=SOL-USDT-SWAP"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 218.4,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/market/books?instId=SOL-USDT-SWAP&sz=100"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 214.9,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/market/trades?instId=SOL-USDT-SWAP&limit=100"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "okx",
+      "market_type": "perpetual",
+      "asset": "DOGE",
+      "symbol": "DOGE-USDT-SWAP",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 6,
+      "capability_total": 7,
+      "coverage_pct": 85.71,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": false,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 0.07429,
+        "mark_price": 0.07427,
+        "index_price": null,
+        "funding_rate_raw": 9.71113759754e-05,
+        "open_interest_base_raw": 933433919.9999996,
+        "open_interest_usd": 69344805.91679998,
+        "levels_bid": 100,
+        "levels_ask": 100,
+        "best_bid": 0.07428,
+        "best_ask": 0.07429,
+        "spread_bps": 1.3464386697180721,
+        "bid_depth_0_5pct_usd": 4420.8636956,
+        "ask_depth_0_5pct_usd": 4138.6059813,
+        "book_imbalance_0_5pct": 0.03297607503204868,
+        "trade_count": 100,
+        "taker_buy_notional": 65.39071190000001,
+        "taker_sell_notional": 70.93710410000001,
+        "taker_buy_sell_ratio": 0.9218125370302508
+      },
+      "endpoints": {
+        "instruments": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 442.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/instruments?instType=SWAP"
+        },
+        "ticker": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 216.3,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/market/ticker?instId=DOGE-USDT-SWAP"
+        },
+        "mark_price": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 213.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/mark-price?instType=SWAP&instId=DOGE-USDT-SWAP"
+        },
+        "funding": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 211.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/funding-rate?instId=DOGE-USDT-SWAP"
+        },
+        "open_interest": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 273.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=DOGE-USDT-SWAP"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 222.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/market/books?instId=DOGE-USDT-SWAP&sz=100"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 219.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://www.okx.com/api/v5/market/trades?instId=DOGE-USDT-SWAP&limit=100"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "coinbase",
+      "market_type": "spot",
+      "asset": "BTC",
+      "symbol": "BTC-USD",
+      "status": "PARZIALE",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 3,
+      "capability_total": 7,
+      "coverage_pct": 42.86,
+      "capabilities": {
+        "price": true,
+        "mark_price": false,
+        "index_price": false,
+        "funding": false,
+        "open_interest": false,
+        "trades": true,
+        "order_book": true,
+        "spot_only": true,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 64191.4,
+        "mark_price": null,
+        "index_price": null,
+        "funding_rate_raw": null,
+        "open_interest_base_raw": null,
+        "levels_bid": 16424,
+        "levels_ask": 27179,
+        "best_bid": 64191.4,
+        "best_ask": 64191.41,
+        "spread_bps": 0.0015578410818329663,
+        "bid_depth_0_5pct_usd": 10881152.598320972,
+        "ask_depth_0_5pct_usd": 15138132.542384554,
+        "book_imbalance_0_5pct": -0.16360864339826944,
+        "trade_count": 100,
+        "taker_buy_notional": 565.0358997276,
+        "taker_sell_notional": 152.04695960999967,
+        "taker_buy_sell_ratio": 3.716193346956208,
+        "trade_side_semantics": "maker side inverted to estimate taker aggression"
+      },
+      "endpoints": {
+        "products": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 224.9,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products"
+        },
+        "ticker": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 43.5,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products/BTC-USD/ticker"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 71.1,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products/BTC-USD/book?level=2"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 42.8,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products/BTC-USD/trades?limit=100"
+        }
+      },
+      "notes": [
+        "Conferma spot: non fornisce funding o open interest dei perpetual."
+      ]
+    },
+    {
+      "exchange": "coinbase",
+      "market_type": "spot",
+      "asset": "SOL",
+      "symbol": "SOL-USD",
+      "status": "PARZIALE",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 3,
+      "capability_total": 7,
+      "coverage_pct": 42.86,
+      "capabilities": {
+        "price": true,
+        "mark_price": false,
+        "index_price": false,
+        "funding": false,
+        "open_interest": false,
+        "trades": true,
+        "order_book": true,
+        "spot_only": true,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 78.07,
+        "mark_price": null,
+        "index_price": null,
+        "funding_rate_raw": null,
+        "open_interest_base_raw": null,
+        "levels_bid": 2874,
+        "levels_ask": 11398,
+        "best_bid": 78.05,
+        "best_ask": 78.06,
+        "spread_bps": 1.2809017548360595,
+        "bid_depth_0_5pct_usd": 2054798.8643768814,
+        "ask_depth_0_5pct_usd": 2158821.276414024,
+        "book_imbalance_0_5pct": -0.02468718312553384,
+        "trade_count": 100,
+        "taker_buy_notional": 2851.076023004301,
+        "taker_sell_notional": 8332.972430887598,
+        "taker_buy_sell_ratio": 0.34214394043070356,
+        "trade_side_semantics": "maker side inverted to estimate taker aggression"
+      },
+      "endpoints": {
+        "products": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 224.9,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products"
+        },
+        "ticker": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 14.6,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products/SOL-USD/ticker"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 49.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products/SOL-USD/book?level=2"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 55.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products/SOL-USD/trades?limit=100"
+        }
+      },
+      "notes": [
+        "Conferma spot: non fornisce funding o open interest dei perpetual."
+      ]
+    },
+    {
+      "exchange": "coinbase",
+      "market_type": "spot",
+      "asset": "DOGE",
+      "symbol": "DOGE-USD",
+      "status": "PARZIALE",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 3,
+      "capability_total": 7,
+      "coverage_pct": 42.86,
+      "capabilities": {
+        "price": true,
+        "mark_price": false,
+        "index_price": false,
+        "funding": false,
+        "open_interest": false,
+        "trades": true,
+        "order_book": true,
+        "spot_only": true,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 0.07427,
+        "mark_price": null,
+        "index_price": null,
+        "funding_rate_raw": null,
+        "open_interest_base_raw": null,
+        "levels_bid": 1136,
+        "levels_ask": 8776,
+        "best_bid": 0.07425,
+        "best_ask": 0.07426,
+        "spread_bps": 1.3464386697199409,
+        "bid_depth_0_5pct_usd": 514904.8307250001,
+        "ask_depth_0_5pct_usd": 468536.89214199997,
+        "book_imbalance_0_5pct": 0.047148638810874326,
+        "trade_count": 100,
+        "taker_buy_notional": 13010.120104,
+        "taker_sell_notional": 5091.507299000001,
+        "taker_buy_sell_ratio": 2.5552590500175176,
+        "trade_side_semantics": "maker side inverted to estimate taker aggression"
+      },
+      "endpoints": {
+        "products": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 224.9,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products"
+        },
+        "ticker": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 44.8,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products/DOGE-USD/ticker"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 47.1,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products/DOGE-USD/book?level=2"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 52.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api.exchange.coinbase.com/products/DOGE-USD/trades?limit=100"
+        }
+      },
+      "notes": [
+        "Conferma spot: non fornisce funding o open interest dei perpetual."
+      ]
+    },
+    {
+      "exchange": "kucoin",
+      "market_type": "perpetual-control",
+      "asset": "BTC",
+      "symbol": "XBTUSDTM",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 7,
+      "capability_total": 7,
+      "coverage_pct": 100.0,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": true,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 64234.2,
+        "mark_price": 64236.2,
+        "index_price": 64242.07,
+        "funding_rate_raw": -3.6e-05,
+        "open_interest_base_raw": 29256.823,
+        "contract_multiplier": 0.001,
+        "levels_bid": 1000,
+        "levels_ask": 1000,
+        "best_bid": 64234.2,
+        "best_ask": 64234.3,
+        "spread_bps": 0.015567546026355976,
+        "bid_depth_0_5pct_usd": 13898620.881200004,
+        "ask_depth_0_5pct_usd": 13677916.169300003,
+        "book_imbalance_0_5pct": 0.008003351236445392,
+        "trade_count": 100,
+        "taker_buy_notional": 116975.26080000002,
+        "taker_sell_notional": 17023.910300000003,
+        "taker_buy_sell_ratio": 6.871233385199404
+      },
+      "endpoints": {
+        "contracts_active": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 426.5,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/contracts/active"
+        },
+        "contract": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 162.4,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/contracts/XBTUSDTM"
+        },
+        "ticker": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 168.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/ticker?symbol=XBTUSDTM"
+        },
+        "funding": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 181.9,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/funding-rate/XBTUSDTM/current"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 476.2,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/level2/snapshot?symbol=XBTUSDTM"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 159.6,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/trade/history?symbol=XBTUSDTM"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "kucoin",
+      "market_type": "perpetual-control",
+      "asset": "SOL",
+      "symbol": "SOLUSDTM",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 7,
+      "capability_total": 7,
+      "coverage_pct": 100.0,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": true,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 78.086,
+        "mark_price": 78.096,
+        "index_price": 78.135,
+        "funding_rate_raw": -8e-06,
+        "open_interest_base_raw": 4195780.4,
+        "contract_multiplier": 0.1,
+        "levels_bid": 1000,
+        "levels_ask": 1000,
+        "best_bid": 78.072,
+        "best_ask": 78.073,
+        "spread_bps": 0.12804753124238938,
+        "bid_depth_0_5pct_usd": 3989016.7172999997,
+        "ask_depth_0_5pct_usd": 4089152.353700001,
+        "book_imbalance_0_5pct": -0.012395833204269057,
+        "trade_count": 100,
+        "taker_buy_notional": 13733.216799999997,
+        "taker_sell_notional": 24848.73419999999,
+        "taker_buy_sell_ratio": 0.552672691070115
+      },
+      "endpoints": {
+        "contracts_active": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 426.5,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/contracts/active"
+        },
+        "contract": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 163.4,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/contracts/SOLUSDTM"
+        },
+        "ticker": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 175.4,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/ticker?symbol=SOLUSDTM"
+        },
+        "funding": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 163.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/funding-rate/SOLUSDTM/current"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 167.5,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/level2/snapshot?symbol=SOLUSDTM"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 189.0,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/trade/history?symbol=SOLUSDTM"
+        }
+      },
+      "notes": []
+    },
+    {
+      "exchange": "kucoin",
+      "market_type": "perpetual-control",
+      "asset": "DOGE",
+      "symbol": "DOGEUSDTM",
+      "status": "OK",
+      "reachable": true,
+      "market_exists": true,
+      "capability_count": 7,
+      "capability_total": 7,
+      "coverage_pct": 100.0,
+      "capabilities": {
+        "price": true,
+        "mark_price": true,
+        "index_price": true,
+        "funding": true,
+        "open_interest": true,
+        "trades": true,
+        "order_book": true,
+        "spot_only": false,
+        "public_liquidations": false,
+        "long_short_ratio": false
+      },
+      "sample": {
+        "last_price": 0.07429,
+        "mark_price": 0.07429,
+        "index_price": 0.07433,
+        "funding_rate_raw": 6.3e-05,
+        "open_interest_base_raw": 1289065000.0,
+        "contract_multiplier": 100.0,
+        "levels_bid": 287,
+        "levels_ask": 1000,
+        "best_bid": 0.07427,
+        "best_ask": 0.07428,
+        "spread_bps": 1.346076187911714,
+        "bid_depth_0_5pct_usd": 1136747.1710000003,
+        "ask_depth_0_5pct_usd": 1002293.0509999999,
+        "book_imbalance_0_5pct": 0.06285721914770075,
+        "trade_count": 100,
+        "taker_buy_notional": 18141.512000000006,
+        "taker_sell_notional": 9761.518,
+        "taker_buy_sell_ratio": 1.8584724220146913
+      },
+      "endpoints": {
+        "contracts_active": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 426.5,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/contracts/active"
+        },
+        "contract": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 165.7,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/contracts/DOGEUSDTM"
+        },
+        "ticker": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 160.6,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/ticker?symbol=DOGEUSDTM"
+        },
+        "funding": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 169.9,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/funding-rate/DOGEUSDTM/current"
+        },
+        "orderbook": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 171.6,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/level2/snapshot?symbol=DOGEUSDTM"
+        },
+        "trades": {
+          "ok": true,
+          "status_code": 200,
+          "latency_ms": 170.8,
+          "error_kind": "",
+          "error": "",
+          "response_snippet": "",
+          "url": "https://api-futures.kucoin.com/api/v1/trade/history?symbol=DOGEUSDTM"
+        }
+      },
+      "notes": []
+    }
+  ]
+}
