@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Callable
 
 
-PATCH_VERSION = "2.0"
+PATCH_VERSION = "2.1"
 ROOT = Path(".")
 BTC_MACRO = ROOT / "btc_macro_cycle_report.py"
 RELATIVE = ROOT / "relative_strength_btc_report.py"
@@ -141,9 +141,29 @@ def patch_exchange_tracker_text(text: str) -> str:
     filtered_metrics = '''def build_metrics(history: pd.DataFrame) -> pd.DataFrame:\n    history = ensure_columns(history)\n    rows: list[dict[str, Any]] = []\n    for asset in ASSETS:\n        asset_df = history.loc[history["asset"].astype(str).str.upper() == asset].copy()\n        eligibility_mask = asset_df["calibration_eligible"].map(is_calibration_eligible)\n        asset_df = asset_df.loc[eligibility_mask].copy()\n        for h in HORIZONS:\n            checked_mask = asset_df[f"checked_{h}d"].map(parse_bool)\n            checked = asset_df.loc[checked_mask].copy()\n'''
     text = replace_once(text, original_metrics, filtered_metrics, "Tracker calibration exclusion")
 
-    price_cell = '                    safe_str(row.get("price")),\n'
-    audit_cells = price_cell + '''                    safe_str(row.get("module_version"), "LEGACY"),\n                    "OK" if is_calibration_eligible(row.get("calibration_eligible")) else "ESCLUSA",\n'''
-    text = replace_once(text, price_cell, audit_cells, "Tracker audit cells")
+    # The repository has used both safe_str(price) and fmt_price(asset, price).
+    # Locate the price cell inside latest_rows structurally instead of depending
+    # on one exact formatter expression.
+    audit_marker = 'row.get("module_version")'
+    if audit_marker not in text:
+        block_start = text.find("latest_rows.append(")
+        block_end = text.find("\n    metric_rows:", block_start)
+        if block_start < 0 or block_end < 0:
+            raise RuntimeError("Blocco latest_rows del tracker non trovato.")
+        latest_block = text[block_start:block_end]
+        price_lines = [line for line in latest_block.splitlines() if 'row.get("price")' in line]
+        if len(price_lines) != 1:
+            raise RuntimeError(
+                f"Cella prezzo del tracker non univoca ({len(price_lines)} occorrenze nel blocco latest_rows)."
+            )
+        price_line = price_lines[0]
+        indent = price_line[: len(price_line) - len(price_line.lstrip())]
+        audit_cells = (
+            f'{indent}safe_str(row.get("module_version"), "LEGACY"),\n'
+            f'{indent}"OK" if is_calibration_eligible(row.get("calibration_eligible")) else "ESCLUSA",\n'
+        )
+        latest_block = latest_block.replace(price_line + "\n", price_line + "\n" + audit_cells, 1)
+        text = text[:block_start] + latest_block + text[block_end:]
 
     header_start = '["Data", "Asset", "Prezzo", '
     versioned_header_start = '["Data", "Asset", "Prezzo", "Versione", "Calibrazione", '
