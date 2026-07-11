@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Callable
 
 
-PATCH_VERSION = "2.1"
+PATCH_VERSION = "2.2"
 ROOT = Path(".")
 BTC_MACRO = ROOT / "btc_macro_cycle_report.py"
 RELATIVE = ROOT / "relative_strength_btc_report.py"
@@ -275,7 +275,14 @@ def migrate_exchange_history() -> tuple[int, int, bool]:
     if changed:
         tmp = EXCHANGE_HISTORY.with_suffix(EXCHANGE_HISTORY.suffix + ".tmp")
         with tmp.open("w", encoding="utf-8", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore")
+            # Force LF so GitHub's Linux runner does not report every migrated
+            # CSV row as trailing whitespace because of the default CRLF.
+            writer = csv.DictWriter(
+                handle,
+                fieldnames=fields,
+                extrasaction="ignore",
+                lineterminator="\n",
+            )
             writer.writeheader()
             writer.writerows(rows)
         tmp.replace(EXCHANGE_HISTORY)
