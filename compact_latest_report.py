@@ -21,6 +21,7 @@ HEADER_START = "<!-- COMPACT_REPORT_HEADER_START -->"
 HEADER_END = "<!-- COMPACT_REPORT_HEADER_END -->"
 SECTION_START = "<!-- COMPACT_SECTION_START:{key} -->"
 SECTION_END = "<!-- COMPACT_SECTION_END:{key} -->"
+# MACRO_CYCLE_RELATIVE_STRENGTH_COMPACT_PATCH_V1
 # EXCHANGE_MICROSTRUCTURE_COMPACT_PATCH_V2_1
 
 
@@ -61,6 +62,20 @@ MARKER_SECTIONS = (
         "<!-- GLOBAL_CONFLUENCE_END -->",
         "🌐 Global Confluence — quadro finale",
         True,
+    ),
+    (
+        "btc_macro_cycle",
+        "<!-- BTC_MACRO_CYCLE_START -->",
+        "<!-- BTC_MACRO_CYCLE_END -->",
+        "🌀 Bitcoin Macro Cycle — Power Law e Spiral",
+        False,
+    ),
+    (
+        "relative_strength_btc",
+        "<!-- RELATIVE_STRENGTH_BTC_START -->",
+        "<!-- RELATIVE_STRENGTH_BTC_END -->",
+        "₿ Forza relativa SOL/BTC e DOGE/BTC",
+        False,
     ),
     (
         "btc_sol_fractal",
