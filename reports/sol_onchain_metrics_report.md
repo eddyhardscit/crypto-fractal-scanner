@@ -1,7 +1,7 @@
 # SOL on-chain metrics report
 
-Generato: **2026-07-11 15:43:19 CEST**  
-UTC: **2026-07-11 13:43:10 UTC**
+Generato: **2026-07-11 19:35:30 CEST**  
+UTC: **2026-07-11 17:35:21 UTC**
 
 Questo report aggiunge una lettura on-chain/fondamentale di Solana.
 
@@ -20,10 +20,10 @@ Non sostituisce il frattale SOL/BTC. Serve a capire se dietro il movimento ci so
 
 | Componente | Valore | Punti | Lettura |
 | --- | --- | --- | --- |
-| TVL 7g | -3,64% | 0 | TVL stabile. |
-| DEX volume 7g | -10,20% | -1 | Volume DEX in calo: attività più debole. |
-| Fees 7g | +1,01% | 0 | Fee stabili. |
-| Stablecoin liquidity 7g | -1,63% | 0 | Stablecoin stabili. |
+| TVL 7g | -3,45% | 0 | TVL stabile. |
+| DEX volume 7g | -10,93% | -1 | Volume DEX in calo: attività più debole. |
+| Fees 7g | +2,17% | 0 | Fee stabili. |
+| Stablecoin liquidity 7g | -1,60% | 0 | Stablecoin stabili. |
 | Stake ratio | 67,94% | +1 | Quota staked alta: supply liquida più contenuta. |
 | Stake delinquent | 0,01% | 0 | Delinquent stake basso. |
 
@@ -31,21 +31,21 @@ Non sostituisce il frattale SOL/BTC. Serve a capire se dietro il movimento ci so
 
 | Metrica | Valore | Lettura |
 | --- | --- | --- |
-| Prezzo SOL | 78,11 $ | Prezzo spot usato per il report. |
-| Market cap | 45,48 mld $ | Grandezza complessiva di mercato. |
-| Volume 24h | 1,55 mld $ | Liquidità di trading spot aggregata. |
-| TVL Solana | 4,93 mld $ | Capitale in DeFi su Solana. |
-| TVL 7g | -3,64% | Crescita/calo DeFi a 7 giorni. |
-| DEX volume 24h | 1,61 mld $ | Attività di scambio on-chain. |
-| DEX volume 7g | 14,63 mld $ | Volume settimanale DEX. |
-| DEX change 7g | -10,20% | Accelerazione o rallentamento DEX. |
-| Fees 24h | 7,60 mln $ | Fee generate dalla chain/protocolli monitorati. |
-| Fees 7g | 54,20 mln $ | Fee settimanali. |
-| Fees change 7g | +1,01% | Uso rete in crescita/calo. |
-| Stablecoin su Solana | 15,42 mld $ | Liquidità stabile disponibile su chain. |
-| Stablecoin 7g | -1,63% | Entrata/uscita liquidità stabile. |
-| Supply totale | 630.102.284 | Supply totale convertita da lamports a SOL. |
-| Supply circolante | 582.156.543 | Supply circolante convertita da lamports a SOL. |
+| Prezzo SOL | 77,96 $ | Prezzo spot usato per il report. |
+| Market cap | 45,38 mld $ | Grandezza complessiva di mercato. |
+| Volume 24h | 1,31 mld $ | Liquidità di trading spot aggregata. |
+| TVL Solana | 4,94 mld $ | Capitale in DeFi su Solana. |
+| TVL 7g | -3,45% | Crescita/calo DeFi a 7 giorni. |
+| DEX volume 24h | 1,59 mld $ | Attività di scambio on-chain. |
+| DEX volume 7g | 14,62 mld $ | Volume settimanale DEX. |
+| DEX change 7g | -10,93% | Accelerazione o rallentamento DEX. |
+| Fees 24h | 7,69 mln $ | Fee generate dalla chain/protocolli monitorati. |
+| Fees 7g | 54,29 mln $ | Fee settimanali. |
+| Fees change 7g | +2,17% | Uso rete in crescita/calo. |
+| Stablecoin su Solana | 15,43 mld $ | Liquidità stabile disponibile su chain. |
+| Stablecoin 7g | -1,60% | Entrata/uscita liquidità stabile. |
+| Supply totale | 630.102.166 | Supply totale convertita da lamports a SOL. |
+| Supply circolante | 582.156.425 | Supply circolante convertita da lamports a SOL. |
 | SOL in stake | 428.060.743 | Stake attivo stimato da vote accounts. |
 | Stake / supply totale | 67,94% | Quota supply totale in staking. |
 | Stake / supply circolante | 73,53% | Quota supply circolante in staking. |
@@ -85,7 +85,7 @@ Queste metriche sono molto utili, ma spesso richiedono provider esterni. Il file
 | 2026-07-08 | 77,46 $ | 4,93 mld $ | +3,25% | 2,55 mld $ | +8,81% | 15,59 mld $ | 68,16% | 0 | NEUTRALE / MISTA |
 | 2026-07-09 | 77,98 $ | 4,95 mld $ | +0,89% | 2,44 mld $ | +4,56% | 15,39 mld $ | 68,16% | 2 | POSITIVA |
 | 2026-07-10 | 78,03 $ | 4,92 mld $ | -2,31% | 1,79 mld $ | -23,19% | 15,36 mld $ | 67,94% | -2 | NEGATIVA |
-| 2026-07-11 | 78,13 $ | 4,93 mld $ | -3,64% | 1,61 mld $ | -10,20% | 15,42 mld $ | 67,94% | 0 | NEUTRALE / MISTA |
+| 2026-07-11 | 77,96 $ | 4,94 mld $ | -3,45% | 1,59 mld $ | -10,93% | 15,43 mld $ | 67,94% | 0 | NEUTRALE / MISTA |
 
 ## Come usarlo insieme al frattale SOL/BTC
 

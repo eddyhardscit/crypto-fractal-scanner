@@ -1,7 +1,7 @@
 <!-- SCANNER_FORECAST_TRACKER_START -->
 # Scanner forecast path / cono probabilistico
 
-Generato: 2026-07-11 13:42:39 UTC
+Generato: 2026-07-11 17:34:54 UTC
 
 Questo report trasforma i 40 casi simili dello scanner in un cono previsionale leggibile.
 
@@ -18,9 +18,9 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 | Asset   | Data       | Prezzo iniziale   | Direzione scanner   | Casi positivi   | P10 30g     | P25 30g     | P50 30g     | P75 30g     | P90 30g     |
 |:--------|:-----------|:------------------|:--------------------|:----------------|:------------|:------------|:------------|:------------|:------------|
-| BTC | 2026-07-11 | 64.162 $ | SALITA | 72,50% | 51.820,56 $ | 61.591,28 $ | 69.059,16 $ | 76.896,75 $ | 88.728,78 $ |
-| SOL | 2026-07-11 | 78,11 $ | DISCESA | 35,00% | 61,75 $ | 71,17 $ | 76,78 $ | 83,44 $ | 101,07 $ |
-| DOGE | 2026-07-11 | 0.07473 $ | DISCESA | 17,50% | 0.05085 $ | 0.05524 $ | 0.05960 $ | 0.06858 $ | 0.08275 $ |
+| BTC | 2026-07-11 | 64.260 $ | SALITA | 72,50% | 51.899,58 $ | 61.685,20 $ | 69.164,46 $ | 77.014,01 $ | 88.864,08 $ |
+| SOL | 2026-07-11 | 77,96 $ | DISCESA | 35,00% | 61,63 $ | 71,04 $ | 76,64 $ | 83,28 $ | 100,88 $ |
+| DOGE | 2026-07-11 | 0.07515 $ | DISCESA | 15,00% | 0.05113 $ | 0.05555 $ | 0.05993 $ | 0.06826 $ | 0.08099 $ |
 
 ## Grafici
 
@@ -40,17 +40,17 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 | Asset   | Giorno   |   Controlli | Dentro p10-p90   | Dentro p25-p75   | Errore medio abs vs p50   | Errore medio vs p50   |
 |:--------|:---------|------------:|:-----------------|:-----------------|:--------------------------|:----------------------|
-| BTC | 1g | 1 | 100,00% | 100,00% | 1,02% | -1,02% |
+| BTC | 1g | 1 | 100,00% | 100,00% | 0,76% | -0,76% |
 | BTC | 3g | 0 | n/a | n/a | n/a | n/a |
 | BTC | 7g | 0 | n/a | n/a | n/a | n/a |
 | BTC | 14g | 0 | n/a | n/a | n/a | n/a |
 | BTC | 30g | 0 | n/a | n/a | n/a | n/a |
-| SOL | 1g | 1 | 100,00% | 100,00% | 0,75% | -0,75% |
+| SOL | 1g | 1 | 100,00% | 100,00% | 0,84% | -0,84% |
 | SOL | 3g | 0 | n/a | n/a | n/a | n/a |
 | SOL | 7g | 0 | n/a | n/a | n/a | n/a |
 | SOL | 14g | 0 | n/a | n/a | n/a | n/a |
 | SOL | 30g | 0 | n/a | n/a | n/a | n/a |
-| DOGE | 1g | 1 | 100,00% | 100,00% | 0,88% | 0,88% |
+| DOGE | 1g | 1 | 100,00% | 100,00% | 1,51% | 1,51% |
 | DOGE | 3g | 0 | n/a | n/a | n/a | n/a |
 | DOGE | 7g | 0 | n/a | n/a | n/a | n/a |
 | DOGE | 14g | 0 | n/a | n/a | n/a | n/a |

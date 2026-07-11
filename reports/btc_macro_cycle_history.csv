@@ -1,0 +1,2 @@
+signal_date,generated_utc,btc_price,power_central_price,power_lower_price,power_upper_price,power_percentile,power_deviation_pct,power_beta,cycle_phase_pct,days_since_halving,global_weight
+2026-07-11,2026-07-11T17:36:04.183314+00:00,64340.640625,122003.14829888575,76159.41880814107,306314.8609443631,2.108433734939759,-47.2631308928381,5.848032075626555,55.64795991704141,813,0
