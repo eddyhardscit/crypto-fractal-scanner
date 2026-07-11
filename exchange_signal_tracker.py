@@ -343,6 +343,25 @@ def fmt_pct(value: Any, decimals=2) -> str:
     return f"{float(number):+.{decimals}f}%".replace(".", ",")
 
 
+def fmt_price(asset: Any, value: Any) -> str:
+    number = safe_float(value)
+    if pd.isna(number):
+        return "n/a"
+    asset_text = safe_str(asset).upper()
+    if asset_text == "BTC":
+        return f"{float(number):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    if asset_text == "DOGE":
+        return f"{float(number):.5f}"
+    return f"{float(number):.2f}".replace(".", ",")
+
+
+def fmt_number(value: Any, decimals: int = 2) -> str:
+    number = safe_float(value)
+    if pd.isna(number):
+        return "n/a"
+    return f"{float(number):.{decimals}f}".replace(".", ",")
+
+
 def md_table(headers: list[str], rows: list[list[str]]) -> str:
     lines = ["| " + " | ".join(headers) + " |", "| " + " | ".join(["---"] * len(headers)) + " |"]
     lines.extend("| " + " | ".join(str(cell).replace("|", "/") for cell in row) + " |" for row in rows)
@@ -360,14 +379,14 @@ def render(history: pd.DataFrame, metrics: pd.DataFrame, updated: int) -> str:
                 [
                     safe_str(row.get("signal_date")),
                     safe_str(row.get("asset")),
-                    safe_str(row.get("price")),
-                    safe_str(row.get("candidate_global_score")),
-                    safe_str(row.get("global_score")),
-                    safe_str(row.get("raw_score")),
+                    fmt_price(row.get("asset"), row.get("price")),
+                    str(safe_int(row.get("candidate_global_score"))),
+                    str(safe_int(row.get("global_score"))),
+                    fmt_number(row.get("raw_score"), 2),
                     safe_str(row.get("confidence")),
-                    safe_str(row.get("taker_buy_sell_ratio_4h")),
-                    safe_str(row.get("oi_change_24h_pct")),
-                    safe_str(row.get("orderbook_imbalance_0_5pct")),
+                    fmt_number(row.get("taker_buy_sell_ratio_4h"), 2),
+                    fmt_pct(row.get("oi_change_24h_pct")),
+                    fmt_pct((safe_float(row.get("orderbook_imbalance_0_5pct")) or 0.0) * 100.0),
                 ]
             )
 

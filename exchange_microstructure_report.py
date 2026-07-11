@@ -53,11 +53,11 @@ METRIC_FIELDS = [
     "data_coverage",
     "source_health",
     "exchange_count",
-    "binance_available",
-    "bybit_available",
+    "kraken_available",
+    "bitget_available",
     "kucoin_available",
-    "binance_status",
-    "bybit_status",
+    "kraken_status",
+    "bitget_status",
     "kucoin_status",
     "raw_score",
     "candidate_global_score",
@@ -91,6 +91,8 @@ METRIC_FIELDS = [
     "spread_bps",
     "intraday_samples_4h",
     "intraday_samples_24h",
+    "intraday_span_4h_hours",
+    "intraday_span_24h_hours",
     "intraday_span_hours",
     "intraday_taker_ratio_avg_4h",
     "intraday_taker_ratio_avg_24h",
@@ -107,17 +109,17 @@ METRIC_FIELDS = [
     "bullish_consensus_count",
     "bearish_consensus_count",
     "divergent_metric_count",
-    "binance_funding_rate_pct",
-    "bybit_funding_rate_pct",
+    "kraken_funding_rate_pct",
+    "bitget_funding_rate_pct",
     "kucoin_funding_rate_pct",
-    "binance_open_interest_usd",
-    "bybit_open_interest_usd",
+    "kraken_open_interest_usd",
+    "bitget_open_interest_usd",
     "kucoin_open_interest_usd",
-    "binance_taker_ratio",
-    "bybit_taker_ratio",
+    "kraken_taker_ratio",
+    "bitget_taker_ratio",
     "kucoin_taker_ratio",
-    "binance_book_imbalance_0_5pct",
-    "bybit_book_imbalance_0_5pct",
+    "kraken_book_imbalance_0_5pct",
+    "bitget_book_imbalance_0_5pct",
     "kucoin_book_imbalance_0_5pct",
     "long_liquidation_usd_sample",
     "short_liquidation_usd_sample",
@@ -175,6 +177,8 @@ HISTORY_BASE_FIELDS = [
     "orderbook_imbalance_0_5pct",
     "orderbook_imbalance_1_0pct",
     "intraday_samples_24h",
+    "intraday_span_4h_hours",
+    "intraday_span_24h_hours",
     "intraday_span_hours",
     "intraday_taker_ratio_avg_4h",
     "intraday_taker_ratio_avg_24h",
@@ -341,9 +345,13 @@ def intraday_summaries() -> dict[str, dict[str, Any]]:
         rows_24h = [row for row in asset_rows if row["_timestamp"] >= latest_time - timedelta(hours=24)]
         rows_4h = [row for row in asset_rows if row["_timestamp"] >= latest_time - timedelta(hours=4)]
         span_hours = (asset_rows[-1]["_timestamp"] - asset_rows[0]["_timestamp"]).total_seconds() / 3600
+        span_4h_hours = ((rows_4h[-1]["_timestamp"] - rows_4h[0]["_timestamp"]).total_seconds() / 3600) if len(rows_4h) >= 2 else 0.0
+        span_24h_hours = ((rows_24h[-1]["_timestamp"] - rows_24h[0]["_timestamp"]).total_seconds() / 3600) if len(rows_24h) >= 2 else 0.0
         output[asset] = {
             "intraday_samples_4h": len(rows_4h),
             "intraday_samples_24h": len(rows_24h),
+            "intraday_span_4h_hours": span_4h_hours,
+            "intraday_span_24h_hours": span_24h_hours,
             "intraday_span_hours": span_hours,
             "intraday_taker_ratio_avg_4h": average_values(rows_4h, "taker_buy_sell_ratio_4h"),
             "intraday_taker_ratio_avg_24h": average_values(rows_24h, "taker_buy_sell_ratio_4h"),
@@ -367,7 +375,7 @@ def enrich_asset_with_intraday(asset_row: dict[str, Any], summary: dict[str, Any
         row["_intraday"] = {}
         return row
     row["_intraday"] = summary
-    if safe_int(summary.get("intraday_samples_4h"), 0) >= 3:
+    if safe_int(summary.get("intraday_samples_4h"), 0) >= 3 and (safe_float(summary.get("intraday_span_4h_hours"), 0.0) or 0.0) >= 0.75:
         for target, source in (
             ("taker_buy_sell_ratio_4h", "intraday_taker_ratio_avg_4h"),
             ("orderbook_imbalance_0_5pct", "intraday_book_imbalance_avg_4h"),
@@ -376,7 +384,7 @@ def enrich_asset_with_intraday(asset_row: dict[str, Any], summary: dict[str, Any
             value = safe_float(summary.get(source))
             if value is not None:
                 row[target] = value
-    if safe_int(summary.get("intraday_samples_24h"), 0) >= 8:
+    if safe_int(summary.get("intraday_samples_24h"), 0) >= 24 and (safe_float(summary.get("intraday_span_24h_hours"), 0.0) or 0.0) >= 18.0:
         for target, source in (
             ("taker_buy_sell_ratio_24h", "intraday_taker_ratio_avg_24h"),
             ("funding_rate_pct", "intraday_funding_avg_24h"),
@@ -449,11 +457,11 @@ def score_asset(asset: str, row: dict[str, Any], technical: dict[str, str], cali
     exchange_count = safe_int(row.get("exchange_count"), 0)
     exchange_available = row.get("exchange_available", {}) if isinstance(row.get("exchange_available"), dict) else {}
     exchanges = row.get("exchanges", {}) if isinstance(row.get("exchanges"), dict) else {}
-    binance_row = exchanges.get("binance", {}) if isinstance(exchanges.get("binance"), dict) else {}
-    bybit_row = exchanges.get("bybit", {}) if isinstance(exchanges.get("bybit"), dict) else {}
+    kraken_row = exchanges.get("kraken", {}) if isinstance(exchanges.get("kraken"), dict) else {}
+    bitget_row = exchanges.get("bitget", {}) if isinstance(exchanges.get("bitget"), dict) else {}
     kucoin_row = exchanges.get("kucoin", {}) if isinstance(exchanges.get("kucoin"), dict) else {}
-    binance_book = binance_row.get("orderbook", {}) if isinstance(binance_row.get("orderbook"), dict) else {}
-    bybit_book = bybit_row.get("orderbook", {}) if isinstance(bybit_row.get("orderbook"), dict) else {}
+    kraken_book = kraken_row.get("orderbook", {}) if isinstance(kraken_row.get("orderbook"), dict) else {}
+    bitget_book = bitget_row.get("orderbook", {}) if isinstance(bitget_row.get("orderbook"), dict) else {}
     kucoin_book = kucoin_row.get("orderbook", {}) if isinstance(kucoin_row.get("orderbook"), dict) else {}
     bullish_consensus_count = safe_int(row.get("bullish_consensus_count"), 0)
     bearish_consensus_count = safe_int(row.get("bearish_consensus_count"), 0)
@@ -645,7 +653,11 @@ def score_asset(asset: str, row: dict[str, Any], technical: dict[str, str], cali
     positive_categories = sum(score >= 0.75 for score in category_scores)
     negative_categories = sum(score <= -0.75 for score in category_scores)
 
-    if coverage < 0.60 or exchange_count < 2:
+    intraday_samples_4h = safe_int((row.get("_intraday") or {}).get("intraday_samples_4h"), 0)
+    intraday_span_4h_hours = safe_float((row.get("_intraday") or {}).get("intraday_span_4h_hours"), 0.0) or 0.0
+    if coverage < 0.60 or exchange_count < 2 or intraday_samples_4h < 3 or intraday_span_4h_hours < 0.75:
+        # Do not turn a single recent-trades sample into a daily candidate.
+        # Roughly one hour of 30-minute snapshots is required first.
         candidate_global_score = 0
     elif raw_score >= 2.5 and positive_categories >= 2 and bullish_consensus_count >= 1 and divergent_metric_count <= 1:
         candidate_global_score = 1
@@ -686,7 +698,9 @@ def score_asset(asset: str, row: dict[str, Any], technical: dict[str, str], cali
         bias = "MISTA / NEUTRALE"
 
     agreement = max(positive_categories, negative_categories)
-    if coverage >= 0.85 and exchange_count == 3 and agreement >= 3 and divergent_metric_count == 0:
+    if intraday_samples_4h < 3 or intraday_span_4h_hours < 0.75:
+        confidence = "BASSA"
+    elif coverage >= 0.85 and exchange_count == 3 and agreement >= 3 and divergent_metric_count == 0:
         confidence = "ALTA"
     elif coverage >= 0.70 and exchange_count >= 2 and agreement >= 2 and divergent_metric_count <= 1:
         confidence = "MEDIA"
@@ -695,9 +709,9 @@ def score_asset(asset: str, row: dict[str, Any], technical: dict[str, str], cali
 
     detail = (
         f"Flow {flow_score:+.2f}, derivati {derivatives_score:+.2f}, affollamento {crowding_score:+.2f}, "
-        f"liquidazioni campione {liquidation_score:+.2f}, conferme tecniche {technical_confirmation_score:+.2f}; "
+        f"liquidazioni {liquidation_score:+.2f}, conferme tecniche {technical_confirmation_score:+.2f}; "
         f"exchange {exchange_count}/3, copertura {coverage * 100:.0f}%, consenso bull {bullish_consensus_count}, "
-        f"bear {bearish_consensus_count}, divergenze {divergent_metric_count}; candidato {candidate_global_score:+d}, "
+        f"bear {bearish_consensus_count}, divergenze {divergent_metric_count}, campioni 4h {intraday_samples_4h} su {intraday_span_4h_hours:.2f}h; candidato {candidate_global_score:+d}, "
         f"peso Global {global_score:+d} ({global_activation_status})."
     )
 
@@ -707,8 +721,8 @@ def score_asset(asset: str, row: dict[str, Any], technical: dict[str, str], cali
         "price": price,
         "data_coverage": coverage,
         "exchange_count": exchange_count,
-        "binance_available": bool(exchange_available.get("binance")),
-        "bybit_available": bool(exchange_available.get("bybit")),
+        "kraken_available": bool(exchange_available.get("kraken")),
+        "bitget_available": bool(exchange_available.get("bitget")),
         "kucoin_available": bool(exchange_available.get("kucoin")),
         "raw_score": round(raw_score, 4),
         "candidate_global_score": candidate_global_score,
@@ -742,6 +756,8 @@ def score_asset(asset: str, row: dict[str, Any], technical: dict[str, str], cali
         "spread_bps": field(row, "spread_bps"),
         "intraday_samples_4h": safe_int((row.get("_intraday") or {}).get("intraday_samples_4h"), 0),
         "intraday_samples_24h": safe_int((row.get("_intraday") or {}).get("intraday_samples_24h"), 0),
+        "intraday_span_4h_hours": safe_float((row.get("_intraday") or {}).get("intraday_span_4h_hours")),
+        "intraday_span_24h_hours": safe_float((row.get("_intraday") or {}).get("intraday_span_24h_hours")),
         "intraday_span_hours": safe_float((row.get("_intraday") or {}).get("intraday_span_hours")),
         "intraday_taker_ratio_avg_4h": safe_float((row.get("_intraday") or {}).get("intraday_taker_ratio_avg_4h")),
         "intraday_taker_ratio_avg_24h": safe_float((row.get("_intraday") or {}).get("intraday_taker_ratio_avg_24h")),
@@ -758,17 +774,17 @@ def score_asset(asset: str, row: dict[str, Any], technical: dict[str, str], cali
         "bullish_consensus_count": bullish_consensus_count,
         "bearish_consensus_count": bearish_consensus_count,
         "divergent_metric_count": divergent_metric_count,
-        "binance_funding_rate_pct": safe_float(binance_row.get("funding_rate_pct")),
-        "bybit_funding_rate_pct": safe_float(bybit_row.get("funding_rate_pct")),
+        "kraken_funding_rate_pct": safe_float(kraken_row.get("funding_rate_pct")),
+        "bitget_funding_rate_pct": safe_float(bitget_row.get("funding_rate_pct")),
         "kucoin_funding_rate_pct": safe_float(kucoin_row.get("funding_rate_pct")),
-        "binance_open_interest_usd": safe_float(binance_row.get("open_interest_usd")),
-        "bybit_open_interest_usd": safe_float(bybit_row.get("open_interest_usd")),
+        "kraken_open_interest_usd": safe_float(kraken_row.get("open_interest_usd")),
+        "bitget_open_interest_usd": safe_float(bitget_row.get("open_interest_usd")),
         "kucoin_open_interest_usd": safe_float(kucoin_row.get("open_interest_usd")),
-        "binance_taker_ratio": safe_float(binance_row.get("taker_buy_sell_ratio_4h")),
-        "bybit_taker_ratio": safe_float(bybit_row.get("taker_buy_sell_ratio_recent")),
+        "kraken_taker_ratio": safe_float(kraken_row.get("taker_buy_sell_ratio_recent")),
+        "bitget_taker_ratio": safe_float(bitget_row.get("taker_buy_sell_ratio_recent")),
         "kucoin_taker_ratio": safe_float(kucoin_row.get("taker_buy_sell_ratio_recent")),
-        "binance_book_imbalance_0_5pct": safe_float(binance_book.get("imbalance_0_5pct")),
-        "bybit_book_imbalance_0_5pct": safe_float(bybit_book.get("imbalance_0_5pct")),
+        "kraken_book_imbalance_0_5pct": safe_float(kraken_book.get("imbalance_0_5pct")),
+        "bitget_book_imbalance_0_5pct": safe_float(bitget_book.get("imbalance_0_5pct")),
         "kucoin_book_imbalance_0_5pct": safe_float(kucoin_book.get("imbalance_0_5pct")),
         "long_liquidation_usd_sample": long_liq,
         "short_liquidation_usd_sample": short_liq,
@@ -787,7 +803,7 @@ def score_asset(asset: str, row: dict[str, Any], technical: dict[str, str], cali
 def liquidity_wall_summary(row: dict[str, Any], price: float | None) -> tuple[str, str]:
     bid_candidates: list[tuple[str, dict[str, Any]]] = []
     ask_candidates: list[tuple[str, dict[str, Any]]] = []
-    for exchange in ("binance", "bybit", "kucoin"):
+    for exchange in ("kraken", "bitget", "kucoin"):
         bid = row.get(f"{exchange}_bid_wall")
         ask = row.get(f"{exchange}_ask_wall")
         if isinstance(bid, dict) and safe_float(bid.get("notional")) is not None:
@@ -1025,18 +1041,20 @@ def classify_health_record(record: dict[str, Any]) -> str:
 
 
 def exchange_health_status(health: dict[str, Any], asset: str, exchange: str) -> str:
+    top = health.get("exchange_status", {}) if isinstance(health, dict) else {}
+    top_value = safe_text(top.get(exchange)).upper() if isinstance(top, dict) else ""
+    if top_value in {"PARZIALE", "GEO_BLOCKED", "RATE_LIMITED", "TIMEOUT", "DISABLED", "NOT_USED"}:
+        return top_value
     assets = health.get("assets", {}) if isinstance(health, dict) else {}
     asset_row = assets.get(asset, {}) if isinstance(assets, dict) else {}
     exchange_row = asset_row.get(exchange, {}) if isinstance(asset_row, dict) else {}
     states = [classify_health_record(row) for row in exchange_row.values() if isinstance(row, dict)]
     if "OK" in states:
         return "OK"
-    for candidate in ("GEO_BLOCKED", "RATE_LIMITED", "TIMEOUT", "HTTP_ERROR", "ERROR", "DISABLED"):
+    for candidate in ("GEO_BLOCKED", "RATE_LIMITED", "TIMEOUT", "HTTP_ERROR", "ERROR", "DISABLED", "NOT_USED", "PARZIALE"):
         if candidate in states:
             return candidate
-    top = health.get("exchange_status", {}) if isinstance(health, dict) else {}
-    value = safe_text(top.get(exchange)).upper() if isinstance(top, dict) else ""
-    return value or "MISSING"
+    return top_value or "MISSING"
 
 
 def status_label(state: str) -> str:
@@ -1049,6 +1067,8 @@ def status_label(state: str) -> str:
         "ERROR": "ERRORE",
         "DISABLED": "DISABILITATO",
         "MISSING": "MANCANTE",
+        "NOT_USED": "NON USATO",
+        "PARZIALE": "PARZIALE",
     }
     return labels.get(safe_text(state).upper(), safe_text(state, "MANCANTE"))
 
@@ -1067,13 +1087,14 @@ def render_source_diagnostics(health: dict[str, Any], storage: dict[str, Any]) -
         f"- Stato generale: **{safe_text(health.get('status'), 'n/a')}**",
         f"- Modalità collector: **{safe_text(health.get('collector_mode'), 'non dichiarata')}**",
         f"- Coppie exchange/asset disponibili: **{safe_int(health.get('available_exchange_asset_pairs'))}/{safe_int(health.get('total_exchange_asset_pairs'))}**",
+        f"- Coppie ausiliarie disponibili: **{safe_int(health.get('available_auxiliary_asset_pairs'))}/{safe_int(health.get('total_auxiliary_asset_pairs'))}**",
         f"- Storage ripristinato: **{safe_text(storage.get('status'), safe_text(storage.get('restore_status'), 'n/a'))}**",
         "",
         "## Stato sintetico",
         "",
     ]
     summary_rows = []
-    for exchange in ("binance", "bybit", "kucoin"):
+    for exchange in ("kraken", "bitget", "kucoin", "okx", "coinbase"):
         states = [exchange_health_status(health, asset, exchange) for asset in ASSETS]
         state = "OK" if "OK" in states else next((x for x in states if x != "MISSING"), "MISSING")
         summary_rows.append([exchange.capitalize(), status_label(state), ", ".join(f"{asset}: {status_label(exchange_health_status(health, asset, exchange))}" for asset in ASSETS)])
@@ -1083,7 +1104,7 @@ def render_source_diagnostics(health: dict[str, Any], storage: dict[str, Any]) -
     assets = health.get("assets", {}) if isinstance(health, dict) else {}
     for asset in ASSETS:
         asset_row = assets.get(asset, {}) if isinstance(assets, dict) else {}
-        for exchange in ("binance", "bybit", "kucoin"):
+        for exchange in ("kraken", "bitget", "kucoin", "okx", "coinbase"):
             exchange_row = asset_row.get(exchange, {}) if isinstance(asset_row, dict) else {}
             if not isinstance(exchange_row, dict) or not exchange_row:
                 endpoint_rows.append([asset, exchange.capitalize(), "n/a", "MANCANTE", "n/a", "Nessun record diagnostico"])
@@ -1104,7 +1125,7 @@ def render_source_diagnostics(health: dict[str, Any], storage: dict[str, Any]) -
     streams = health.get("liquidation_streams", {}) if isinstance(health, dict) else {}
     lines += ["## Stream liquidazioni", ""]
     stream_rows = []
-    for exchange in ("binance", "bybit"):
+    for exchange in ("kraken", "bitget"):
         row = streams.get(exchange, {}) if isinstance(streams, dict) else {}
         stream_rows.append([
             exchange.capitalize(),
@@ -1114,12 +1135,12 @@ def render_source_diagnostics(health: dict[str, Any], storage: dict[str, Any]) -
         ])
     lines += [md_table(["Exchange", "Stato", "Messaggi", "Dettaglio"], stream_rows), ""]
 
-    if any(exchange_health_status(health, asset, exchange) == "GEO_BLOCKED" for asset in ASSETS for exchange in ("binance", "bybit")):
+    if any(exchange_health_status(health, asset, exchange) == "GEO_BLOCKED" for asset in ASSETS for exchange in ("kraken", "bitget")):
         lines += [
             "## Lettura",
             "",
             "Almeno una fonte è bloccata geograficamente dall'IP del collector. Il programma non tenta proxy o aggiramenti. "
-            "Per usare quella fonte serve eseguire il collector su un host situato in una giurisdizione dove l'API sia consentita, oppure lasciarla disabilitata.",
+            "La fonte resta esclusa dal nucleo finché il blocco non viene risolto in modo conforme ai termini del servizio.",
             "",
         ]
     return "\n".join(lines).rstrip() + "\n"
@@ -1190,12 +1211,11 @@ def render_report(
         "",
         f"Generato: {utc_now_text()}",
         "",
-        "Questo modulo legge Binance Futures, Bybit e KuCoin Futures per aggiungere microstruttura, leva e flussi reali allo scanner.",
+        "Questo modulo legge Kraken Futures, Bitget Futures e KuCoin Futures come nucleo derivati. OKX e Coinbase vengono raccolti come fonti ausiliarie non pesate.",
         "Non modifica la formula matematica di RSI, Fibonacci o Wyckoff: controlla se quei segnali sono sostenuti da acquisti, vendite, OI, funding e liquidità.",
         "",
-        "**Limite importante:** gli exchange non pubblicano la mappa completa dei prezzi di liquidazione di tutti gli utenti. "
-        f"Le liquidazioni qui sotto sono eventi realmente osservati in un campione pubblico di circa {sample_seconds} secondi; "
-        "le zone future di liquidazione restano stime di pressione, non dati certi delle singole posizioni.",
+        "**Limite importante:** questo nucleo non assume disponibile un feed pubblico completo delle liquidazioni. "
+        "La componente liquidazioni resta neutrale; le zone future restano stime di pressione, non dati certi delle singole posizioni.",
         "",
         "Diagnostica completa: [exchange_source_diagnostics.md](exchange_source_diagnostics.md)",
         "",
@@ -1211,7 +1231,7 @@ def render_report(
                 "Bias exchange",
                 "Confidenza",
                 "Copertura",
-                "Funding",
+                "Funding 8h eq.",
                 "OI 24h",
                 "Taker flow (campione/4h)",
                 "Book 0,5%",
@@ -1223,7 +1243,7 @@ def render_report(
         "",
         "Il segnale candidato è limitato a **±1**, ma il peso nel Global resta **0** finché il tracker a 7 giorni non raggiunge 30 controlli, almeno 55% di accuratezza e return corretto direzione positivo. Un singolo muro o funding non basta.",
         "",
-        "La colonna taker usa un campione recente nel primo run. Dopo almeno 3 fotografie nelle ultime 4 ore viene sostituita automaticamente dalla media intraday 4h.",
+        "La colonna taker usa un campione recente nel primo run. Dopo almeno 3 fotografie distribuite su almeno 45 minuti viene sostituita automaticamente dalla media intraday 4h.",
         "",
         "## Dati separati per exchange",
         "",
@@ -1232,7 +1252,7 @@ def render_report(
     exchange_rows: list[list[str]] = []
     for asset in ASSETS:
         row = metric_map[asset]
-        for exchange in ("binance", "bybit", "kucoin"):
+        for exchange in ("kraken", "bitget", "kucoin"):
             available = row.get(f"{exchange}_available")
             exchange_rows.append(
                 [
@@ -1246,9 +1266,9 @@ def render_report(
                 ]
             )
     lines += [
-        md_table(["Asset", "Exchange", "Stato", "Funding", "Open interest", "Taker flow", "Book 0,5%"], exchange_rows),
+        md_table(["Asset", "Exchange", "Stato", "Funding 8h eq.", "Open interest", "Taker flow", "Book 0,5%"], exchange_rows),
         "",
-        "KuCoin contribuisce a funding, open interest, trade aggressivi e order book. Non viene inventato un long/short ratio pubblico né un feed pubblico completo delle liquidazioni quando l'API non li espone.",
+        "Kraken, Bitget e KuCoin contribuiscono a funding normalizzato, open interest, trade aggressivi e order book. Non viene inventato un long/short ratio pubblico né un feed completo delle liquidazioni.",
         "",
         "## Conferme per indicatori tecnici",
         "",
@@ -1261,12 +1281,12 @@ def render_report(
             "",
             f"- Score grezzo exchange: **{fmt_score(row.get('raw_score'))}**; candidato: **{fmt_int_score(row.get('candidate_global_score'))}**; peso Global: **{fmt_int_score(row.get('global_score'))}**.",
             f"- Attivazione Global: **{row.get('global_activation_status')}** — controlli 7g {safe_int(row.get('calibration_controls_7d'))}, accuratezza {fmt_pct(row.get('calibration_accuracy_7d'))}.",
-            f"- Fonti disponibili: Binance **{'SI' if row.get('binance_available') else 'NO'}**, Bybit **{'SI' if row.get('bybit_available') else 'NO'}**, KuCoin **{'SI' if row.get('kucoin_available') else 'NO'}**.",
+            f"- Fonti disponibili: Kraken **{'SI' if row.get('kraken_available') else 'NO'}**, Bitget **{'SI' if row.get('bitget_available') else 'NO'}**, KuCoin **{'SI' if row.get('kucoin_available') else 'NO'}**.",
             f"- Consenso multi-exchange: bull {safe_int(row.get('bullish_consensus_count'))}, bear {safe_int(row.get('bearish_consensus_count'))}, divergenze {safe_int(row.get('divergent_metric_count'))}.",
             f"- Flusso taker/order book: **{fmt_score(row.get('flow_score'))}**.",
             f"- OI/funding/basis: **{fmt_score(row.get('derivatives_score'))}**.",
             f"- Affollamento long/short: **{fmt_score(row.get('crowding_score'))}**.",
-            f"- Liquidazioni nel campione: **{safe_int(row.get('liquidation_events_sample'))} eventi**, long {fmt_usd(row.get('long_liquidation_usd_sample'))}, short {fmt_usd(row.get('short_liquidation_usd_sample'))}.",
+            "- Liquidazioni: **NON PESATE / FEED COMPLETO NON ASSUNTO DISPONIBILE**.",
             f"- **Wyckoff:** {row.get('wyckoff_confirmation')}",
             f"- **Fibonacci:** {row.get('fibonacci_confirmation')}",
             f"- **RSI:** {row.get('rsi_confirmation')}",
@@ -1318,7 +1338,7 @@ def render_report(
         "",
         "## Dati salvati",
         "",
-        "- `exchange_market_data_snapshot.json`: fotografia raw/derivata Binance + Bybit + KuCoin.",
+        "- `exchange_market_data_snapshot.json`: fotografia derivata Kraken + Bitget + KuCoin, con OKX e Coinbase ausiliari.",
         "- `exchange_market_data_intraday.csv`: memoria operativa mobile degli ultimi 180 giorni, ripristinata da due copie ridondanti su GitHub Releases.",
         "- `exchange_intraday_YYYY-MM.csv.gz`: archivio mensile permanente dei dati intraday, creato dopo la chiusura del mese.",
         "- `exchange_microstructure_metrics.csv`: score e conferme correnti lette dal Global.",
@@ -1329,13 +1349,15 @@ def render_report(
         "## Regole di prudenza",
         "",
         "- Un muro dell'order book può essere cancellato: non è un supporto garantito.",
-        "- Funding e long/short ratio misurano affollamento, non direzione certa.",
+        "- Funding, OI e flusso misurano pressione/affollamento, non direzione certa.",
         "- OI in aumento conta soltanto insieme alla direzione del prezzo e al taker flow.",
-        "- Le liquidazioni del campione breve sono diagnostiche e hanno peso ridotto.",
+        "- La componente liquidazioni resta neutrale finché non esiste un feed pubblico completo e verificato.",
         "- Prima dei 30 controlli a 7g il modulo non pesa nel Global; prima dei 30 controlli a 30g l'overlay non altera le previsioni.",
         "",
         f"Salute fonti: **{safe_text(health.get('status'), 'n/a')}** — coppie exchange/asset disponibili: {safe_int(health.get('available_exchange_asset_pairs'))}/{safe_int(health.get('total_exchange_asset_pairs'))}. "
-        f"Binance {status_label(exchange_health_status(health, 'BTC', 'binance'))}; Bybit {status_label(exchange_health_status(health, 'BTC', 'bybit'))}; KuCoin {status_label(exchange_health_status(health, 'BTC', 'kucoin'))}.",
+        f"Kraken {status_label(exchange_health_status(health, 'BTC', 'kraken'))}; Bitget {status_label(exchange_health_status(health, 'BTC', 'bitget'))}; KuCoin {status_label(exchange_health_status(health, 'BTC', 'kucoin'))}.",
+        f"Fonti ausiliarie non pesate: OKX {status_label(exchange_health_status(health, 'BTC', 'okx'))}; Coinbase {status_label(exchange_health_status(health, 'BTC', 'coinbase'))}. "
+        f"Copertura ausiliaria: {safe_int(health.get('available_auxiliary_asset_pairs'))}/{safe_int(health.get('total_auxiliary_asset_pairs'))}.",
         f"Storage persistente: **{safe_text(storage.get('status'), 'n/a')}** — ultimo asset: {safe_text(storage.get('asset'), 'n/a')}.",
         "",
     ]
@@ -1387,7 +1409,7 @@ def main() -> None:
         asset_row = enrich_asset_with_intraday(asset_row, intraday.get(asset, {}))
         metric = score_asset(asset, asset_row, tech.get(asset, {}), tracker_7d.get(asset, {}))
         metric["source_health"] = safe_text(health.get("status"), "n/a")
-        for exchange in ("binance", "bybit", "kucoin"):
+        for exchange in ("kraken", "bitget", "kucoin"):
             metric[f"{exchange}_status"] = exchange_health_status(health, asset, exchange)
         metrics.append(metric)
 

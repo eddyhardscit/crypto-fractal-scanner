@@ -14,17 +14,13 @@ concurrency:
 
 jobs:
   collect:
-    runs-on: ubuntu-slim
-    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
     env:
       GITHUB_TOKEN: ${{ github.token }}
       EXCHANGE_STORAGE_RELEASE_TAG: exchange-data-v2-1
       EXCHANGE_INTRADAY_RETENTION_DAYS: "180"
-      EXCHANGE_COLLECTOR_MODE: github-hosted-kucoin-fallback
-      # Binance e Bybit sono disabilitati sul runner GitHub perché l'IP attuale è geobloccato.
-      # Il collector esterno opzionale raccoglie tutti e tre gli exchange.
-      EXCHANGE_ENABLED_EXCHANGES: kucoin
-      EXCHANGE_SKIP_WEBSOCKET: "1"
+      EXCHANGE_COLLECTOR_MODE: github-hosted-kraken-bitget-kucoin
 
     steps:
       - name: Checkout repository
@@ -43,24 +39,11 @@ jobs:
       - name: Restore newest valid exchange state
         run: python exchange_persistent_storage.py restore
 
-      - name: Check whether external collector state is fresh
-        id: fallback
-        env:
-          EXTERNAL_COLLECTOR_FRESH_MINUTES: "90"
-          EXTERNAL_MIN_AVAILABLE_PAIRS: "6"
-        run: python exchange_fallback_guard.py
-
-      - name: Collect KuCoin fallback snapshot
-        if: steps.fallback.outputs.run_fallback == 'true'
+      - name: Collect Kraken Bitget KuCoin plus auxiliary sources
         run: python exchange_market_data.py
 
       - name: Publish redundant rolling state
-        if: steps.fallback.outputs.run_fallback == 'true'
         run: python exchange_persistent_storage.py publish-state
-
-      - name: Keep fresh external state
-        if: steps.fallback.outputs.run_fallback == 'false'
-        run: echo "${{ steps.fallback.outputs.reason }}"
 
       - name: Audit persistent storage
         run: python exchange_persistent_storage.py audit

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Diagnostic and integration-ready adapters for alternative public exchange data.
 
-Version 2.1.2 (diagnostic stage)
+Version 2.1.3 (integration adapters)
 
 Purpose
 -------
@@ -36,7 +36,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 
-VERSION = "2.1.2b"
+VERSION = "2.1.3"
 REPORTS_DIR = Path("reports")
 JSON_PATH = REPORTS_DIR / "alternative_exchange_source_diagnostics.json"
 SAMPLES_PATH = REPORTS_DIR / "alternative_exchange_source_samples.json"
@@ -532,6 +532,8 @@ def probe_kraken(session: requests.Session) -> list[AssetProbe]:
                 "index_price": index,
                 "funding_rate_raw": funding,
                 "funding_rate_prediction_raw": first_number(ticker.get("fundingRatePrediction")),
+                "funding_interval_hours": 1.0,
+                "price_change_24h_pct": first_number(ticker.get("change24h")),
                 "open_interest_contracts_raw": oi,
                 "contract_size": contract_size,
                 "open_interest_base_raw": oi_base,
@@ -629,6 +631,7 @@ def probe_bitget(session: requests.Session) -> list[AssetProbe]:
                 "mark_price": mark,
                 "index_price": index,
                 "funding_rate_raw": funding,
+                "funding_interval_hours": first_number(funding_row.get("fundingRateInterval")),
                 "open_interest_base_raw": oi,
                 "open_interest_usd": oi * (mark or last) if oi is not None and (mark or last) is not None else None,
             }
@@ -845,6 +848,8 @@ def probe_kucoin_control(session: requests.Session) -> list[AssetProbe]:
                 "mark_price": mark,
                 "index_price": index,
                 "funding_rate_raw": funding_rate,
+                "funding_interval_hours": (first_number(funding.get("granularity")) / 3600000.0) if first_number(funding.get("granularity")) else (first_number(contract.get("currentFundingRateGranularity"), contract.get("fundingRateGranularity")) / 3600000.0 if first_number(contract.get("currentFundingRateGranularity"), contract.get("fundingRateGranularity")) else None),
+                "price_change_24h_pct": (first_number(contract.get("priceChgPct")) * 100.0) if first_number(contract.get("priceChgPct")) is not None else None,
                 "open_interest_base_raw": oi_base,
                 "open_interest_usd": oi_base * (mark or last) if oi_base is not None and (mark or last) is not None else None,
                 "contract_multiplier": multiplier,
