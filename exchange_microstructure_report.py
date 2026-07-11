@@ -44,6 +44,7 @@ END_MARKER = "<!-- EXCHANGE_MICROSTRUCTURE_END -->"
 ASSETS = ("BTC", "SOL", "DOGE")
 LIQ_MIN_USD = {"BTC": 250_000.0, "SOL": 50_000.0, "DOGE": 20_000.0}
 HISTORY_KEY = ("signal_date", "asset")
+MODULE_VERSION = "V2.1.3"
 
 
 METRIC_FIELDS = [
@@ -201,6 +202,9 @@ HISTORY_BASE_FIELDS = [
     "overlay_weight",
     "adjusted_positive_rate_30d",
     "adjusted_return_p50_30d",
+    "module_version",
+    "calibration_eligible",
+    "calibration_note",
     "created_utc",
 ]
 
@@ -932,6 +936,9 @@ def update_history(metrics: list[dict[str, Any]], overlays: list[dict[str, Any]]
             "overlay_weight": overlay.get("overlay_weight"),
             "adjusted_positive_rate_30d": overlay.get("adjusted_positive_rate_30d"),
             "adjusted_return_p50_30d": overlay.get("adjusted_return_p50_30d"),
+            "module_version": MODULE_VERSION,
+            "calibration_eligible": True,
+            "calibration_note": "",
             "created_utc": now,
         }
         existing.append({field: row.get(field, "") for field in history_fields})

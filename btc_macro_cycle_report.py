@@ -287,7 +287,13 @@ def current_power_position(frame: pd.DataFrame, fit: dict[str, Any]) -> dict[str
     q10_price = float(predict_power(fit, [current_date], 0.10)[0])
     q90_price = float(predict_power(fit, [current_date], 0.90)[0])
     deviation = (current_price / q50_price - 1.0) * 100.0
-    if percentile <= 20:
+    # The corridor is defined by the actual p10 and p90 price bands.
+    # Residual percentile is used only after confirming that price is inside.
+    if current_price < q10_price:
+        zone = "SOTTO LA BANDA P10"
+    elif current_price > q90_price:
+        zone = "SOPRA LA BANDA P90"
+    elif percentile <= 20:
         zone = "BASSA NEL CORRIDOIO"
     elif percentile >= 80:
         zone = "ALTA NEL CORRIDOIO"
@@ -659,7 +665,18 @@ def freeze_history(position: dict[str, Any], cycle: dict[str, Any], fit: dict[st
     ]
     rows = read_csv(HISTORY_PATH)
     today = position["current_date"].date().isoformat()
-    if not any(row.get("signal_date") == today for row in rows):
+    month_key = today[:7]
+
+    # Power Law is a macro model. Freeze the first valid live forecast of each
+    # UTC calendar month so daily reruns are not counted as independent calls.
+    def row_month(row: dict[str, str]) -> str:
+        value = str(row.get("signal_date", "")).strip()
+        try:
+            return datetime.fromisoformat(value[:10]).strftime("%Y-%m")
+        except (TypeError, ValueError):
+            return ""
+
+    if not any(row_month(row) == month_key for row in rows):
         rows.append(
             {
                 "signal_date": today,
@@ -888,7 +905,7 @@ def build_report(
         )
     lines.append(md_table(["Orizzonte", "Controlli", "Vittorie vs naive", "Errore modello", "Errore naive", "Stato"], live_rows))
     lines.append("")
-    lines.append("Il modulo resta a peso 0 anche con un buon backtest. Prima si osserva la verifica live, poi si decide se usarlo soltanto per il rischio macro di lungo periodo.")
+    lines.append("Il modulo resta a peso 0 anche con un buon backtest. Prima si osserva la verifica live, poi si decide se usarlo soltanto per il rischio macro di lungo periodo. Le fotografie live della Power Law vengono salvate una sola volta per mese, così non si contano come indipendenti previsioni giornaliere quasi identiche.")
     lines.append("")
     lines.append("## File prodotti")
     lines.append("")

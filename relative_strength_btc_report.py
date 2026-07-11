@@ -443,16 +443,41 @@ def double_pattern(
                 continue
             neckline_point = max(between, key=lambda p: p["price"]) if bullish else min(between, key=lambda p: p["price"])
             neckline = float(neckline_point["price"])
+            post_pattern = frame.loc[second["date"]:].copy()
             if bullish:
-                confirmed = close > neckline * 1.005
                 target = neckline + (neckline - average)
+                confirmation_mask = post_pattern["Close"] > neckline * 1.005
+                confirmed = bool(confirmation_mask.any())
+                if confirmed:
+                    confirmation_date = confirmation_mask[confirmation_mask].index[0]
+                    target_column = "High" if "High" in post_pattern.columns else "Close"
+                    target_path = post_pattern.loc[confirmation_date:, target_column]
+                    target_reached = bool((target_path >= target).any())
+                else:
+                    target_reached = False
             else:
-                confirmed = close < neckline * 0.995
                 target = neckline - (average - neckline)
+                confirmation_mask = post_pattern["Close"] < neckline * 0.995
+                confirmed = bool(confirmation_mask.any())
+                if confirmed:
+                    confirmation_date = confirmation_mask[confirmation_mask].index[0]
+                    target_column = "Low" if "Low" in post_pattern.columns else "Close"
+                    target_path = post_pattern.loc[confirmation_date:, target_column]
+                    target_reached = bool((target_path <= target).any())
+                else:
+                    target_reached = False
+
+            if target_reached:
+                state = "TARGET RAGGIUNTO"
+            elif confirmed:
+                state = "CONFERMATO"
+            else:
+                state = "CANDIDATO"
+
             candidates.append(
                 {
                     "family": family,
-                    "state": "CONFERMATO" if confirmed else "CANDIDATO",
+                    "state": state,
                     "bullish": bullish,
                     "first_date": first["date"].strftime("%Y-%m-%d"),
                     "second_date": second["date"].strftime("%Y-%m-%d"),
@@ -466,9 +491,10 @@ def double_pattern(
     if not candidates:
         return {"family": "NESSUNO", "state": "ASSENTE"}
 
+    state_priority = {"TARGET RAGGIUNTO": 3, "CONFERMATO": 2, "CANDIDATO": 1}
     candidates.sort(
         key=lambda item: (
-            item["state"] == "CONFERMATO",
+            state_priority.get(item["state"], 0),
             -item["age_days"],
             -item["similarity_pct"],
         ),

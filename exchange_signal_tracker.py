@@ -68,6 +68,9 @@ BASE_COLUMNS = [
     "overlay_weight",
     "adjusted_positive_rate_30d",
     "adjusted_return_p50_30d",
+    "module_version",
+    "calibration_eligible",
+    "calibration_note",
     "created_utc",
 ]
 
@@ -109,6 +112,12 @@ def parse_bool(value: Any) -> bool:
     if isinstance(value, bool):
         return value
     return safe_str(value).lower() in {"true", "1", "yes", "y", "si", "sì"}
+
+
+def is_calibration_eligible(value: Any) -> bool:
+    """Blank legacy rows stay eligible unless migration explicitly excludes them."""
+    text = safe_str(value)
+    return True if text == "" else parse_bool(text)
 
 
 def horizon_columns(h: int) -> list[str]:
@@ -275,11 +284,15 @@ def metric_status(controls: int) -> str:
 
 
 def build_metrics(history: pd.DataFrame) -> pd.DataFrame:
+    history = ensure_columns(history)
     rows: list[dict[str, Any]] = []
     for asset in ASSETS:
-        asset_df = history[history["asset"].astype(str).str.upper() == asset].copy()
+        asset_df = history.loc[history["asset"].astype(str).str.upper() == asset].copy()
+        eligibility_mask = asset_df["calibration_eligible"].map(is_calibration_eligible)
+        asset_df = asset_df.loc[eligibility_mask].copy()
         for h in HORIZONS:
-            checked = asset_df[asset_df[f"checked_{h}d"].map(parse_bool)].copy()
+            checked_mask = asset_df[f"checked_{h}d"].map(parse_bool)
+            checked = asset_df.loc[checked_mask].copy()
             checked["candidate_score_num"] = pd.to_numeric(checked["candidate_global_score"], errors="coerce").fillna(0)
             checked["return_num"] = pd.to_numeric(checked[f"return_{h}d"], errors="coerce")
             checked["drawdown_num"] = pd.to_numeric(checked[f"drawdown_{h}d"], errors="coerce")
@@ -380,6 +393,8 @@ def render(history: pd.DataFrame, metrics: pd.DataFrame, updated: int) -> str:
                     safe_str(row.get("signal_date")),
                     safe_str(row.get("asset")),
                     fmt_price(row.get("asset"), row.get("price")),
+                    safe_str(row.get("module_version"), "LEGACY"),
+                    "OK" if is_calibration_eligible(row.get("calibration_eligible")) else "ESCLUSA",
                     str(safe_int(row.get("candidate_global_score"))),
                     str(safe_int(row.get("global_score"))),
                     fmt_number(row.get("raw_score"), 2),
@@ -418,7 +433,7 @@ def render(history: pd.DataFrame, metrics: pd.DataFrame, updated: int) -> str:
         "## Ultime fotografie giornaliere",
         "",
         md_table(
-            ["Data", "Asset", "Prezzo", "Candidato", "Peso Global", "Score raw", "Confidenza", "Taker 4h", "OI 24h", "Book 0,5%"],
+            ["Data", "Asset", "Prezzo", "Versione", "Calibrazione", "Candidato", "Peso Global", "Score raw", "Confidenza", "Taker 4h", "OI 24h", "Book 0,5%"],
             latest_rows,
         )
         if latest_rows
