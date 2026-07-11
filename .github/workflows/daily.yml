@@ -1,0 +1,169 @@
+name: Daily crypto scanner
+
+on:
+  schedule:
+    - cron: "12 7 * * *"
+      timezone: "Europe/Rome"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-crypto-scanner
+  cancel-in-progress: false
+
+jobs:
+  run-daily-scanner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas yfinance scipy tabulate matplotlib requests
+
+      - name: Validate upgrade files
+        run: |
+          test -f market_snapshot.py
+          test -f scanner_signal_reader.py
+          test -f data_quality_coherence_report.py
+
+          python -m py_compile \
+            scanner.py \
+            market_snapshot.py \
+            scanner_signal_reader.py \
+            data_quality_coherence_report.py
+
+      - name: Run shared market snapshot
+        run: python market_snapshot.py
+
+      - name: Run scanner
+        run: python scanner.py
+
+      - name: Run daily change report
+        run: python daily_change_report.py
+
+      - name: Run bounce after drawdown report
+        run: python bounce_after_drawdown_report.py
+
+      - name: Run scanner forecast tracker
+        run: python scanner_forecast_tracker.py
+
+      - name: Run extreme cases path report
+        run: python extreme_cases_path_report.py
+
+      - name: Run market regime match report
+        run: python market_regime_match_report.py
+
+      - name: Run classic technical confirmation report
+        run: python classic_technical_confirmation_report.py
+
+      - name: Run BTC 2022 vs SOL 2026 fractal report
+        run: python btc_2022_vs_sol_2026_report.py
+
+      - name: Run fractal path tracker
+        run: python fractal_path_tracker.py
+
+      - name: Run RSI top cycle report
+        run: python rsi_top_cycle_report.py
+
+      - name: Run SOL on-chain metrics report
+        run: python sol_onchain_metrics_report.py
+
+      - name: Run major alt lifecycle squeeze report
+        run: python major_alt_lifecycle_squeeze_report.py
+
+      - name: Run liquidation report
+        run: |
+          if [ -f liquidation_report.py ]; then
+            python liquidation_report.py
+          elif [ -f liquidations_report.py ]; then
+            python liquidations_report.py
+          else
+            echo "No liquidation report script found. Skipping liquidation report."
+          fi
+
+      - name: Run technical structure report
+        run: python technical_structure_report.py
+
+      - name: Run classic technical visual report
+        run: python classic_technical_visual_report.py
+
+      - name: Synchronize shared market prices
+        run: python price_coherence_sync.py
+
+      - name: Install exchange microstructure dependencies
+        run: python -m pip install -r requirements-exchange.txt
+
+      - name: Restore persistent exchange state
+        run: GITHUB_TOKEN="${{ github.token }}" EXCHANGE_STORAGE_RELEASE_TAG="exchange-data-v2-1" python exchange_persistent_storage.py restore
+
+      - name: Audit persistent exchange state
+        run: GITHUB_TOKEN="${{ github.token }}" EXCHANGE_STORAGE_RELEASE_TAG="exchange-data-v2-1" python exchange_persistent_storage.py audit
+
+      - name: Archive completed exchange months
+        run: GITHUB_TOKEN="${{ github.token }}" EXCHANGE_STORAGE_RELEASE_TAG="exchange-data-v2-1" python exchange_persistent_storage.py archive-completed-months
+
+      - name: Save current exchange daily snapshot
+        run: python exchange_microstructure_report.py
+
+      - name: Update exchange signal tracker
+        run: python exchange_signal_tracker.py
+
+      - name: Refresh exchange report after tracker
+        run: python exchange_microstructure_report.py
+
+      - name: Build ALT/BTC relative-strength report
+        run: python relative_strength_btc_report.py
+
+      - name: Build BTC macro cycle Power Law and Spiral
+        run: python btc_macro_cycle_report.py
+
+      - name: Run global confluence report
+        run: python global_confluence_report.py
+
+      - name: Run decision report
+        run: python decision_report.py
+
+      - name: Run module signal tracker
+        run: python module_signal_tracker.py
+
+      - name: Run global weight calibration report
+        run: python global_weight_calibration_report.py
+
+      - name: Run risk calibration report
+        run: python risk_calibration_report.py
+
+      - name: Run calibration status report
+        run: python calibration_status_report.py
+
+      - name: Run data quality coherence report
+        run: python data_quality_coherence_report.py
+
+      - name: Commit reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add reports/
+
+          if git diff --cached --quiet; then
+            echo "No report changes to commit."
+          else
+            git commit -m "Update daily crypto reports"
+            git push
+          fi
