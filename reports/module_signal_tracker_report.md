@@ -1,6 +1,6 @@
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-11 01:13 UTC
+Generato: 2026-07-11 03:03 UTC
 
 Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno quali orizzonti sono maturati.
 
@@ -19,7 +19,9 @@ Moduli controllati:
 - Market Regime grezzo = diagnostico, già incluso nella famiglia statistica
 - Struttura tecnica
 - Classic technical confirmation
+- Microstruttura exchange, OI/funding/taker flow/order book
 - Frattale SOL/BTC, solo per SOL
+# EXCHANGE_MICROSTRUCTURE_TRACKER_PATCH_V2_1
 
 Regola anti-doppio-conteggio: **Scanner e Market Regime continuano a essere misurati separatamente solo per diagnosi, ma non devono ricevere due modifiche di peso autonome**. La calibrazione dei pesi deve agire sulla Famiglia statistica.
 

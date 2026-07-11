@@ -1,7 +1,7 @@
 <!-- FRACTAL_PATH_TRACKER_START -->
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-11 01:12 UTC
+Generato: 2026-07-11 03:02 UTC
 
 Questo modulo separa due percorsi che prima potevano essere confusi:
 
@@ -16,7 +16,7 @@ Questo modulo separa due percorsi che prima potevano essere confusi:
 - Bottom BTC equivalente: **2022-11-21**
 - Giorno BTC equivalente: **2022-12-26**
 - Inizio programma/scanner: **2026-07-03**
-- Prezzo SOL corrente: **77,73 $**
+- Prezzo SOL corrente: **77,72 $**
 - Verdetto principale: **STRUTTURA ANALOGA, PREZZO NON ADERENTE**
 - Somiglianza strutturale: **+65,21%**
 - Aderenza live principale: **+58,29%**
@@ -34,7 +34,7 @@ Questo modulo separa due percorsi che prima potevano essere confusi:
 - Errore assoluto medio da inizio programma: **20,85%**
 - Gap firmato medio ultimi 7 giorni: **+19,57%**
 - Errore assoluto medio ultimi 7 giorni: **19,57%**
-- Gap ultimo giorno: **+16,62%**
+- Gap ultimo giorno: **+16,61%**
 - Stato aderenza: **STACCATO / MOLTO IN ANTICIPO**
 
 ## Grafico completo: due percorsi distinti
@@ -53,10 +53,10 @@ La linea **ancorata al bottom** serve a verificare il frattale originale. La lin
 
 ### Lettura rapida gap
 
-- Ultimo gap firmato: **+16,62%**
+- Ultimo gap firmato: **+16,61%**
 - Gap firmato medio 7g: **+19,57%**
 - Errore assoluto medio 7g: **19,57%**
-- Variazione recente gap: **-0,94%**
+- Variazione recente gap: **-0,95%**
 - Stato gap: **IN DEVIAZIONE SOPRA IL FRATTALE**
 - Trend gap: **SOL resta sopra il percorso ancorato con distacco quasi stabile**
 
@@ -80,30 +80,30 @@ Soglie operative del grafico:
 | 32 | 2026-07-08 | 2022-12-23 | 77,79 $ | 66,17 $ | +17,56% | da inizio programma |
 | 33 | 2026-07-09 | 2022-12-24 | 78,05 $ | 66,37 $ | +17,60% | da inizio programma |
 | 34 | 2026-07-10 | 2022-12-25 | 78,05 $ | 66,34 $ | +17,64% | da inizio programma |
-| 35 | 2026-07-11 | 2022-12-26 | 77,73 $ | 66,65 $ | +16,62% | da inizio programma |
+| 35 | 2026-07-11 | 2022-12-26 | 77,72 $ | 66,65 $ | +16,61% | da inizio programma |
 
 ## Proiezione futura salvata
 
 | Orizzonte   | Data target   | Percorso ancorato   | Scenario riancorato oggi   | Min/max riancorato   | Controllato   | Prezzo reale   | Errore riancorato   | Errore ancorato   |
 |:------------|:--------------|:--------------------|:---------------------------|:---------------------|:--------------|:---------------|:--------------------|:------------------|
-| 7g | 2026-07-18 | 65,74 $ | 76,67 $ | 76,02 $ / 77,73 $ | no | n/a | n/a | n/a |
-| 14g | 2026-07-25 | 67,74 $ | 79,00 $ | 76,02 $ / 79,00 $ | no | n/a | n/a | n/a |
-| 21g | 2026-08-01 | 83,39 $ | 97,25 $ | 76,02 $ / 97,25 $ | no | n/a | n/a | n/a |
-| 28g | 2026-08-08 | 90,34 $ | 105,36 $ | 76,02 $ / 105,36 $ | no | n/a | n/a | n/a |
-| 35g | 2026-08-15 | 89,97 $ | 104,93 $ | 76,02 $ / 109,22 $ | no | n/a | n/a | n/a |
-| 42g | 2026-08-22 | 89,66 $ | 104,56 $ | 76,02 $ / 109,22 $ | no | n/a | n/a | n/a |
-| 49g | 2026-08-29 | 85,91 $ | 100,19 $ | 76,02 $ / 109,22 $ | no | n/a | n/a | n/a |
-| 56g | 2026-09-05 | 97,81 $ | 114,07 $ | 76,02 $ / 114,07 $ | no | n/a | n/a | n/a |
-| 63g | 2026-09-12 | 92,66 $ | 108,06 $ | 76,02 $ / 114,07 $ | no | n/a | n/a | n/a |
-| 70g | 2026-09-19 | 88,36 $ | 103,04 $ | 76,02 $ / 114,07 $ | no | n/a | n/a | n/a |
-| 77g | 2026-09-26 | 95,32 $ | 111,16 $ | 76,02 $ / 114,07 $ | no | n/a | n/a | n/a |
-| 84g | 2026-10-03 | 109,38 $ | 127,56 $ | 76,02 $ / 128,81 $ | no | n/a | n/a | n/a |
-| 91g | 2026-10-10 | 106,91 $ | 124,68 $ | 76,02 $ / 130,17 $ | no | n/a | n/a | n/a |
-| 98g | 2026-10-17 | 109,47 $ | 127,67 $ | 76,02 $ / 130,83 $ | no | n/a | n/a | n/a |
-| 105g | 2026-10-24 | 116,81 $ | 136,23 $ | 76,02 $ / 136,23 $ | no | n/a | n/a | n/a |
-| 112g | 2026-10-31 | 115,99 $ | 135,27 $ | 76,02 $ / 140,05 $ | no | n/a | n/a | n/a |
-| 119g | 2026-11-07 | 108,43 $ | 126,45 $ | 76,02 $ / 140,05 $ | no | n/a | n/a | n/a |
-| 126g | 2026-11-14 | 110,66 $ | 129,05 $ | 76,02 $ / 140,05 $ | no | n/a | n/a | n/a |
+| 7g | 2026-07-18 | 65,74 $ | 76,66 $ | 76,01 $ / 77,72 $ | no | n/a | n/a | n/a |
+| 14g | 2026-07-25 | 67,74 $ | 78,99 $ | 76,01 $ / 78,99 $ | no | n/a | n/a | n/a |
+| 21g | 2026-08-01 | 83,39 $ | 97,24 $ | 76,01 $ / 97,24 $ | no | n/a | n/a | n/a |
+| 28g | 2026-08-08 | 90,34 $ | 105,35 $ | 76,01 $ / 105,35 $ | no | n/a | n/a | n/a |
+| 35g | 2026-08-15 | 89,97 $ | 104,91 $ | 76,01 $ / 109,21 $ | no | n/a | n/a | n/a |
+| 42g | 2026-08-22 | 89,66 $ | 104,55 $ | 76,01 $ / 109,21 $ | no | n/a | n/a | n/a |
+| 49g | 2026-08-29 | 85,91 $ | 100,17 $ | 76,01 $ / 109,21 $ | no | n/a | n/a | n/a |
+| 56g | 2026-09-05 | 97,81 $ | 114,05 $ | 76,01 $ / 114,05 $ | no | n/a | n/a | n/a |
+| 63g | 2026-09-12 | 92,66 $ | 108,05 $ | 76,01 $ / 114,05 $ | no | n/a | n/a | n/a |
+| 70g | 2026-09-19 | 88,36 $ | 103,03 $ | 76,01 $ / 114,05 $ | no | n/a | n/a | n/a |
+| 77g | 2026-09-26 | 95,32 $ | 111,15 $ | 76,01 $ / 114,05 $ | no | n/a | n/a | n/a |
+| 84g | 2026-10-03 | 109,38 $ | 127,55 $ | 76,01 $ / 128,79 $ | no | n/a | n/a | n/a |
+| 91g | 2026-10-10 | 106,91 $ | 124,67 $ | 76,01 $ / 130,15 $ | no | n/a | n/a | n/a |
+| 98g | 2026-10-17 | 109,47 $ | 127,65 $ | 76,01 $ / 130,81 $ | no | n/a | n/a | n/a |
+| 105g | 2026-10-24 | 116,81 $ | 136,21 $ | 76,01 $ / 136,21 $ | no | n/a | n/a | n/a |
+| 112g | 2026-10-31 | 115,99 $ | 135,25 $ | 76,01 $ / 140,03 $ | no | n/a | n/a | n/a |
+| 119g | 2026-11-07 | 108,43 $ | 126,44 $ | 76,01 $ / 140,03 $ | no | n/a | n/a | n/a |
+| 126g | 2026-11-14 | 110,66 $ | 129,04 $ | 76,01 $ / 140,03 $ | no | n/a | n/a | n/a |
 
 La colonna **Percorso ancorato** continua la scala dal bottom. La colonna **Scenario riancorato oggi** riparte dal prezzo corrente e non cancella, nei controlli, il gap gia accumulato.
 

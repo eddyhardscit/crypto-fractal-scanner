@@ -1,6 +1,6 @@
 # Calibrazione pesi Global Confluence
 
-Generato: 2026-07-11 01:13 UTC
+Generato: 2026-07-11 03:03 UTC
 
 Report completo: [global_weight_calibration_report.md](global_weight_calibration_report.md)
 
@@ -71,18 +71,18 @@ Il file continua a produrre solo raccomandazioni: **non modifica automaticamente
 
 | Asset | Famiglia | Righe senza controlli | Stato |
 | --- | --- | --- | --- |
-| BTC | BREVE | 8 | in attesa di controlli maturati |
-| BTC | SETTIMANALE | 12 | in attesa di controlli maturati |
-| BTC | SWING | 8 | in attesa di controlli maturati |
-| BTC | MEDIO | 12 | in attesa di controlli maturati |
-| SOL | BREVE | 6 | in attesa di controlli maturati |
-| SOL | SETTIMANALE | 12 | in attesa di controlli maturati |
-| SOL | SWING | 8 | in attesa di controlli maturati |
-| SOL | MEDIO | 12 | in attesa di controlli maturati |
-| DOGE | BREVE | 6 | in attesa di controlli maturati |
-| DOGE | SETTIMANALE | 12 | in attesa di controlli maturati |
-| DOGE | SWING | 8 | in attesa di controlli maturati |
-| DOGE | MEDIO | 12 | in attesa di controlli maturati |
+| BTC | BREVE | 11 | in attesa di controlli maturati |
+| BTC | SETTIMANALE | 15 | in attesa di controlli maturati |
+| BTC | SWING | 10 | in attesa di controlli maturati |
+| BTC | MEDIO | 15 | in attesa di controlli maturati |
+| SOL | BREVE | 9 | in attesa di controlli maturati |
+| SOL | SETTIMANALE | 15 | in attesa di controlli maturati |
+| SOL | SWING | 10 | in attesa di controlli maturati |
+| SOL | MEDIO | 15 | in attesa di controlli maturati |
+| DOGE | BREVE | 9 | in attesa di controlli maturati |
+| DOGE | SETTIMANALE | 15 | in attesa di controlli maturati |
+| DOGE | SWING | 10 | in attesa di controlli maturati |
+| DOGE | MEDIO | 15 | in attesa di controlli maturati |
 
 ## Come leggere le raccomandazioni
 

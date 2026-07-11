@@ -11,7 +11,7 @@
 
 # Decisione operativa sintetica
 
-Generato: 2026-07-11 01:13 UTC
+Generato: 2026-07-11 03:03 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 
@@ -54,8 +54,8 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - Long leva: **NO LONG A LEVA**
 - Short leva: **NO SHORT**
 - Rischio: **MOLTO ALTO**
-- Conferme: Doppio minimo confermato recente finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 81,62 / 114,07, valide soltanto se rientra anche il gap frattale.
-- Invalidazioni: Allarmi sotto 73,84 / 64,42 / 62,19.
+- Conferme: Doppio minimo confermato recente finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 81,61 / 114,05, valide soltanto se rientra anche il gap frattale.
+- Invalidazioni: Allarmi sotto 73,83 / 64,42 / 62,19.
 
 ### DOGE
 
@@ -76,7 +76,7 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.
 - **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.
 - **BTC leva** = nessun long a leva finché il prezzo snapshot non supera **67.248 $**; sotto quella soglia resta solo l'azione spot indicata dal Global.
-- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 5; EMA200 circa 113,51 $; upside verso EMA200 +46,01%. Non autorizza leva e non aggiunge punti automatici.
+- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 5; EMA200 circa 113,51 $; upside verso EMA200 +46,09%. Non autorizza leva e non aggiunge punti automatici.
 - **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.
 - Per SOL, se il Global è da **+3 in su**, la decisione non deve diventare bearish solo perché lo scanner grezzo a 30 giorni è incerto.
 
@@ -92,7 +92,7 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 <!-- MODULE_ACCURACY_START -->
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-11 01:13 UTC
+Generato: 2026-07-11 03:03 UTC
 
 Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno quali orizzonti sono maturati.
 
@@ -111,7 +111,9 @@ Moduli controllati:
 - Market Regime grezzo = diagnostico, già incluso nella famiglia statistica
 - Struttura tecnica
 - Classic technical confirmation
+- Microstruttura exchange, OI/funding/taker flow/order book
 - Frattale SOL/BTC, solo per SOL
+# EXCHANGE_MICROSTRUCTURE_TRACKER_PATCH_V2_1
 
 Regola anti-doppio-conteggio: **Scanner e Market Regime continuano a essere misurati separatamente solo per diagnosi, ma non devono ricevere due modifiche di peso autonome**. La calibrazione dei pesi deve agire sulla Famiglia statistica.
 
@@ -264,7 +266,7 @@ Nota tecnica: le colonne data sono forzate come testo, quindi non deve più appa
 <!-- GLOBAL_WEIGHT_CALIBRATION_START -->
 # Calibrazione pesi Global Confluence
 
-Generato: 2026-07-11 01:13 UTC
+Generato: 2026-07-11 03:03 UTC
 
 Report completo: [global_weight_calibration_report.md](global_weight_calibration_report.md)
 
@@ -335,18 +337,18 @@ Il file continua a produrre solo raccomandazioni: **non modifica automaticamente
 
 | Asset | Famiglia | Righe senza controlli | Stato |
 | --- | --- | --- | --- |
-| BTC | BREVE | 8 | in attesa di controlli maturati |
-| BTC | SETTIMANALE | 12 | in attesa di controlli maturati |
-| BTC | SWING | 8 | in attesa di controlli maturati |
-| BTC | MEDIO | 12 | in attesa di controlli maturati |
-| SOL | BREVE | 6 | in attesa di controlli maturati |
-| SOL | SETTIMANALE | 12 | in attesa di controlli maturati |
-| SOL | SWING | 8 | in attesa di controlli maturati |
-| SOL | MEDIO | 12 | in attesa di controlli maturati |
-| DOGE | BREVE | 6 | in attesa di controlli maturati |
-| DOGE | SETTIMANALE | 12 | in attesa di controlli maturati |
-| DOGE | SWING | 8 | in attesa di controlli maturati |
-| DOGE | MEDIO | 12 | in attesa di controlli maturati |
+| BTC | BREVE | 11 | in attesa di controlli maturati |
+| BTC | SETTIMANALE | 15 | in attesa di controlli maturati |
+| BTC | SWING | 10 | in attesa di controlli maturati |
+| BTC | MEDIO | 15 | in attesa di controlli maturati |
+| SOL | BREVE | 9 | in attesa di controlli maturati |
+| SOL | SETTIMANALE | 15 | in attesa di controlli maturati |
+| SOL | SWING | 10 | in attesa di controlli maturati |
+| SOL | MEDIO | 15 | in attesa di controlli maturati |
+| DOGE | BREVE | 9 | in attesa di controlli maturati |
+| DOGE | SETTIMANALE | 15 | in attesa di controlli maturati |
+| DOGE | SWING | 10 | in attesa di controlli maturati |
+| DOGE | MEDIO | 15 | in attesa di controlli maturati |
 
 ## Come leggere le raccomandazioni
 
@@ -405,7 +407,7 @@ Regola: sotto 60 controlli osserva soltanto; da 100+ controlli può diventare ut
 <!-- GLOBAL_CONFLUENCE_START -->
 # Sintesi finale di confluenza
 
-Generato: 2026-07-11 01:13 UTC
+Generato: 2026-07-11 03:03 UTC
 
 Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.
 
@@ -419,7 +421,8 @@ Moduli letti:
 - Fractal path tracker, solo per SOL
 - RSI top-cycle, soprattutto per SOL
 - Major alt lifecycle squeeze / EMA200 weekly, solo per SOL
-- Futures / liquidazioni
+- Exchange microstructure: OI, funding, taker flow, order book e liquidazioni campionate
+- Futures / liquidazioni precedente, mantenuto come diagnostica
 - Cambiamento giornaliero
 
 Nota statistica: **Scanner e Market Regime non vengono più sommati come due prove indipendenti**. Lo Scanner è il punteggio principale; il Market Regime può aggiungere al massimo 1 punto di conferma con almeno 10 match. La famiglia statistica è limitata a ±4.
@@ -428,21 +431,23 @@ Nota importante: **Lifecycle EMA200 viene letto e mostrato, ma vale sempre 0 pun
 
 Nota Classic technical: **pesa massimo ±1** perché è un filtro di conferma e in parte si sovrappone alla struttura tecnica già esistente.
 
+Nota exchange: **candidato massimo ±1, peso iniziale 0** e più conferme indipendenti. Order book, funding o una singola liquidazione non bastano da soli.
+
 ## Sintesi operativa
 
 | Asset | Punteggio | Confluenza | Bias | Affidabilità | Azione coerente | Conferme | Invalidazioni |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | BTC | +4 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA | ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE | Prima resistenza sopra 64.598; conferma del doppio minimo sopra 67.248. | Sotto 57.748 il quadro tecnico peggiora. |
-| SOL | +1 | MISTA / PARZIALE | Neutrale / misto | BASSA / RACCOLTA DATI | HOLD LEGGERO / ATTESA CONFERME | Doppio minimo confermato recente finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 81,62 / 114,07, valide soltanto se rientra anche il gap frattale. | Allarmi sotto 73,84 / 64,42 / 62,19. |
+| SOL | +1 | MISTA / PARZIALE | Neutrale / misto | BASSA / RACCOLTA DATI | HOLD LEGGERO / ATTESA CONFERME | Doppio minimo confermato recente finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 81,61 / 114,05, valide soltanto se rientra anche il gap frattale. | Allarmi sotto 73,83 / 64,42 / 62,19. |
 | DOGE | -8 | NEGATIVA | Ribassista | MEDIA / ALTA | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | Sopra 0.07923 migliora; sopra 0.07966 viene invalidato il pattern ribassista dominante. | Sotto 0.06961 il rischio ribassista aumenta. |
 
 ## Punteggi per modulo
 
-| Asset | Scanner grezzo | Market grezzo | Famiglia statistica | Scanner path | Tecnico | Classic tech | Frattale SOL | Fractal path | RSI top-cycle | Lifecycle EMA | Futures | Daily change | Totale |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | +3 | +3 | +4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | +4 |
-| SOL | -1 | +1 | 0 | 0 | +1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | +1 |
-| DOGE | -3 | -3 | -4 | 0 | -3 | -1 | 0 | 0 | 0 | 0 | 0 | 0 | -8 |
+| Asset | Scanner grezzo | Market grezzo | Famiglia statistica | Scanner path | Tecnico | Classic tech | Frattale SOL | Fractal path | RSI top-cycle | Lifecycle EMA | Exchange flow | Futures | Daily change | Totale |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BTC | +3 | +3 | +4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | +4 |
+| SOL | -1 | +1 | 0 | 0 | +1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | +1 |
+| DOGE | -3 | -3 | -4 | 0 | -3 | -1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | -8 |
 
 Le colonne **Scanner grezzo** e **Market grezzo** sono diagnostiche: nel totale entra soltanto la colonna **Famiglia statistica**.
 
@@ -470,6 +475,7 @@ Dettaglio moduli:
 - Fractal path: **0** — Non applicabile a questo asset.
 - RSI top-cycle: **0** — Non applicabile a questo asset.
 - Lifecycle EMA: **0** — Non applicabile a questo asset.
+- Exchange flow: **0** — Flow -1.00, derivati +0.00, affollamento +0.00, liquidazioni campione +0.00, conferme tecniche -1.00; exchange 1/3, copertura 29%, consenso bull 0, bear 0, divergenze 0; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE NEGATIVA / NON PESATA; confidenza BASSA; fonti 1/3; KuCoin OK; copertura 29,41%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
 - Futures: **0** — Lettura futures Rischio sotto, forza 4/5.
 - Daily change: **0** — BTC: nessun cambiamento forte in misto rispetto a ieri.
 
@@ -493,18 +499,19 @@ Dettaglio moduli:
 - Scanner (diagnostico, già incluso nella Famiglia statistica): **-1** — Casi positivi 40,00%, return centrale 30g -1,70%. Direzione scanner: DISCESA. Fonte: latest_scanner_summary strutturato.
 - Market regime (diagnostico, già incluso nella Famiglia statistica): **+1** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 20, positivi 30g 55,00%, return p50 +0,91%.
 - Scanner path: **0** — Raccolta dati. Controlli disponibili 1. Servono almeno 5 controlli prima di pesare il cono previsionale.
-- Tecnico: **+1** — Score tecnico 1/12, verdetto neutrale / misto, trend misto, struttura volatilità in espansione, divergenza nessuna, Wyckoff range / fase non chiara, pattern score +2 (rialzista Doppio minimo / CONFERMATO RECENTE; ribassista Doppio massimo / CANDIDATO). Fonte: technical_structure_metrics.csv.
-- Classic technical: **0** — Score classico -4/12, verdetto DEBOLE / NON CONFERMATO, stage STAGE 4 / MARKDOWN, struttura VOLATILITÀ IN ESPANSIONE, Wyckoff RANGE / FASE NON CHIARA, volatilità locale BASSO. Peso Global limitato a ±1 perché è un filtro di conferma.
-- Frattale SOL: **0** — Verdetto STRUTTURA ANALOGA, PREZZO NON ADERENTE, somiglianza strutturale +65,21%, aderenza live +58,29%, errore live +20,85%, gap corrente +16,62%, peso operativo 0, tracking STRUTTURA STABILE, fase FRATTALE NON CONFERMATO DAL PREZZO, rischio ALTO.
-- Fractal path: **0** — Tracking operativo, ma nessuna milestone settimanale ancora verificata. Gap corrente +16,62%, errore live +20,85%. Il modulo non pesa finché non maturano abbastanza controlli.
+- Tecnico: **+1** — Score tecnico 2/12, verdetto neutrale / misto, trend misto, struttura volatilità in espansione, divergenza nessuna, Wyckoff range / fase non chiara, pattern score +2 (rialzista Doppio minimo / CONFERMATO RECENTE; ribassista Doppio massimo / CANDIDATO). Fonte: technical_structure_metrics.csv.
+- Classic technical: **0** — Score classico -3/12, verdetto DEBOLE / NON CONFERMATO, stage STAGE 4 / MARKDOWN, struttura VOLATILITÀ IN ESPANSIONE, Wyckoff RANGE / FASE NON CHIARA, volatilità locale BASSO. Peso Global limitato a ±1 perché è un filtro di conferma.
+- Frattale SOL: **0** — Verdetto STRUTTURA ANALOGA, PREZZO NON ADERENTE, somiglianza strutturale +65,21%, aderenza live +58,29%, errore live +20,85%, gap corrente +16,61%, peso operativo 0, tracking STRUTTURA STABILE, fase FRATTALE NON CONFERMATO DAL PREZZO, rischio ALTO.
+- Fractal path: **0** — Tracking operativo, ma nessuna milestone settimanale ancora verificata. Gap corrente +16,61%, errore live +20,85%. Il modulo non pesa finché non maturano abbastanza controlli.
 - RSI top-cycle: **0** — Rischio top-cycle RSI: BASSO.
-- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 5, bias SQUEEZE SETUP FORTE, EMA200 113,51 $, upside EMA200 +46,01%, gap EMA50/EMA200 -1,22%, hit EMA200 12w +23,33%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
+- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 5, bias SQUEEZE SETUP FORTE, EMA200 113,51 $, upside EMA200 +46,09%, gap EMA50/EMA200 -1,22%, hit EMA200 12w +23,33%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
+- Exchange flow: **0** — Flow -2.00, derivati -1.00, affollamento +0.00, liquidazioni campione +0.00, conferme tecniche +0.00; exchange 1/3, copertura 29%, consenso bull 0, bear 0, divergenze 0; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE NEGATIVA / NON PESATA; confidenza BASSA; fonti 1/3; KuCoin OK; copertura 29,41%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
 - Futures: **0** — Lettura futures Misto, forza 1/5.
 - Daily change: **0** — SOL: nessun cambiamento forte in miglioramento rispetto a ieri.
 
-Conferme: Doppio minimo confermato recente finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 81,62 / 114,07, valide soltanto se rientra anche il gap frattale.
+Conferme: Doppio minimo confermato recente finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 81,61 / 114,05, valide soltanto se rientra anche il gap frattale.
 
-Invalidazioni: Allarmi sotto 73,84 / 64,42 / 62,19.
+Invalidazioni: Allarmi sotto 73,83 / 64,42 / 62,19.
 
 ### DOGE
 
@@ -528,6 +535,7 @@ Dettaglio moduli:
 - Fractal path: **0** — Non applicabile a questo asset.
 - RSI top-cycle: **0** — Non applicabile a questo asset.
 - Lifecycle EMA: **0** — Non applicabile a questo asset.
+- Exchange flow: **0** — Flow +1.00, derivati +0.00, affollamento +0.00, liquidazioni campione +0.00, conferme tecniche +0.75; exchange 1/3, copertura 29%, consenso bull 0, bear 0, divergenze 0; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza BASSA; fonti 1/3; KuCoin OK; copertura 29,41%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
 - Futures: **0** — Lettura futures Rischio sotto, forza 2/5.
 - Daily change: **0** — DOGE: nessun cambiamento forte in misto rispetto a ieri.
 
@@ -550,6 +558,8 @@ Servono almeno 5 controlli prima di influire leggermente, e 30+ controlli prima 
 Nota lifecycle EMA200: il modulo Major alt lifecycle squeeze resta nel report, ma pesa **0** nel Global perché EMA50/EMA200 e target EMA200 sono contesto, non conferme dirette di prezzo.
 
 Nota Classic technical: il modulo è utile per capire se il setup è confermato davvero, ma il suo peso resta prudente per evitare doppio conteggio con il modulo tecnico già presente.
+
+Nota exchange: il modulo salva OI, funding, taker flow, order book e liquidazioni campionate. Il candidato è limitato a ±1; il peso Global resta 0 finché il gate storico a 7 giorni non matura.
 <!-- GLOBAL_CONFLUENCE_END -->
 
 </details>
@@ -576,7 +586,7 @@ Ultima candela SOL usata: **11 luglio 2026**
 - **Somiglianza strutturale:** +65,21%
 - **Aderenza prezzo live:** +58,29%
 - **Errore medio live:** +20,85%
-- **Gap prezzo corrente:** +16,62%
+- **Gap prezzo corrente:** +16,61%
 - **Peso operativo suggerito:** 0
 - **Affidabilita:** BASSA / NON OPERATIVO
 - **Rischio fase:** ALTO
@@ -584,7 +594,7 @@ Ultima candela SOL usata: **11 luglio 2026**
 - **Sintesi:** La geometria ricorda BTC 2022, ma SOL è troppo distante dal percorso scalato per usarlo come conferma operativa.
 - **SOL è al giorno:** 35 dal bottom usato.
 - **Giorno BTC equivalente:** 2022-12-26
-- **Prossimo step:** Proiezione condizionale, non conferma operativa: **Laterale / movimento non forte.** Zona bassa **76,02 $** intorno al **16 luglio 2026**; zona alta **79,00 $** intorno al **25 luglio 2026**; fine step circa **79,00 $** entro il **25 luglio 2026**.
+- **Prossimo step:** Proiezione condizionale, non conferma operativa: **Laterale / movimento non forte.** Zona bassa **76,01 $** intorno al **16 luglio 2026**; zona alta **78,99 $** intorno al **25 luglio 2026**; fine step circa **78,99 $** entro il **25 luglio 2026**.
 
 ## Somiglianza prima e dopo inizio programma
 
@@ -597,8 +607,8 @@ Questa sezione separa la somiglianza della forma dall'aderenza reale del prezzo.
 | Periodo | Date | Giorni | Aderenza prezzo | Errore medio | Gap ultimo | Stato |
 | --- | --- | --- | --- | --- | --- | --- |
 | Prima del programma | 6 giugno 2026 -> 2 luglio 2026 | 27 | +87,95% | +6,02% | +21,89% | ABBASTANZA ALLINEATO |
-| Da inizio programma | 3 luglio 2026 -> 11 luglio 2026 | 9 | +58,29% | +20,85% | +16,62% | STACCATO / NON ADERENTE |
-| Totale dal bottom | 6 giugno 2026 -> 11 luglio 2026 | 36 | +80,54% | +9,73% | +16,62% | ABBASTANZA ALLINEATO |
+| Da inizio programma | 3 luglio 2026 -> 11 luglio 2026 | 9 | +58,29% | +20,85% | +16,61% | STACCATO / NON ADERENTE |
+| Totale dal bottom | 6 giugno 2026 -> 11 luglio 2026 | 36 | +80,54% | +9,73% | +16,61% | ABBASTANZA ALLINEATO |
 
 Nota: un frattale può avere una forma simile ma un prezzo distante. In quel caso non è operativo finché il gap non rientra.
 
@@ -610,10 +620,10 @@ Il frattale non deve generare acquisti o leva adesso. La forma è un contesto, m
 | --- | --- | --- |
 | Uso operativo | NO | Il frattale vale 0 punti operativi finché il prezzo resta non aderente. |
 | Aderenza live | +58,29% | Errore medio live +20,85%. |
-| Gap corrente | +16,62% | Deve rientrare circa entro ±12%. |
-| Prima conferma prezzo | 81,62 $ | Serve anche miglioramento del gap, non solo una candela sopra il livello. |
-| Seconda conferma | 114,07 $ | Rende più credibile il percorso, ma non sostituisce l'aderenza. |
-| Invalidazione soft | 73,84 $ | Sotto questa zona il quadro peggiora. |
+| Gap corrente | +16,61% | Deve rientrare circa entro ±12%. |
+| Prima conferma prezzo | 81,61 $ | Serve anche miglioramento del gap, non solo una candela sopra il livello. |
+| Seconda conferma | 114,05 $ | Rende più credibile il percorso, ma non sostituisce l'aderenza. |
+| Invalidazione soft | 73,83 $ | Sotto questa zona il quadro peggiora. |
 | Invalidazione forte | 62,19 $ | Sotto il bottom il paragone è quasi rotto. |
 
 ## Target ciclo fino al top BTC 2025
@@ -623,8 +633,8 @@ Il frattale non deve generare acquisti o leva adesso. La forma è un contesto, m
 | Stato | CONTESTO / NON OPERATIVO |
 | Top BTC 2025 | 6 ottobre 2025 - 124.753 $ |
 | Data SOL equivalente | 21 aprile 2029 |
-| Target ciclo base da oggi | 573,12 $ |
-| Massimo percorso base | 573,12 $ (21 aprile 2029) |
+| Target ciclo base da oggi | 573,04 $ |
+| Massimo percorso base | 573,04 $ (21 aprile 2029) |
 
 ## Grafici
 
@@ -649,30 +659,30 @@ Il frattale non deve generare acquisti o leva adesso. La forma è un contesto, m
 | Livello | Prezzo / soglia | Lettura |
 | --- | --- | --- |
 | Rientro gap | entro ±12% | Condizione necessaria per tornare operativo. |
-| Prima conferma | 81,62 $ | Deve accompagnarsi al rientro del gap. |
-| Seconda conferma | 114,07 $ | Scenario più credibile. |
-| Invalidazione soft | 73,84 $ | Il frattale si indebolisce. |
+| Prima conferma | 81,61 $ | Deve accompagnarsi al rientro del gap. |
+| Seconda conferma | 114,05 $ | Scenario più credibile. |
+| Invalidazione soft | 73,83 $ | Il frattale si indebolisce. |
 | Invalidazione forte | 62,19 $ | Il paragone si rompe. |
 
 ## Proiezione veloce con date SOL
 
 | Orizzonte | Data SOL | BTC fece | SOL base | Min percorso | Max percorso |
 | --- | --- | --- | --- | --- | --- |
-| 7 giorni | 18 luglio 2026 | -1,37% | 76,67 $ | 76,02 $ | 77,73 $ |
-| 14 giorni | 25 luglio 2026 | +1,64% | 79,00 $ | 76,02 $ | 79,00 $ |
-| 30 giorni | 10 agosto 2026 | +36,63% | 106,20 $ | 76,02 $ | 106,20 $ |
-| 60 giorni | 9 settembre 2026 | +37,11% | 106,57 $ | 76,02 $ | 114,07 $ |
-| 90 giorni | 9 ottobre 2026 | +65,45% | 128,61 $ | 76,02 $ | 130,17 $ |
-| 120 giorni | 8 novembre 2026 | +67,30% | 130,05 $ | 76,02 $ | 140,05 $ |
+| 7 giorni | 18 luglio 2026 | -1,37% | 76,66 $ | 76,01 $ | 77,72 $ |
+| 14 giorni | 25 luglio 2026 | +1,64% | 78,99 $ | 76,01 $ | 78,99 $ |
+| 30 giorni | 10 agosto 2026 | +36,63% | 106,19 $ | 76,01 $ | 106,19 $ |
+| 60 giorni | 9 settembre 2026 | +37,11% | 106,56 $ | 76,01 $ | 114,05 $ |
+| 90 giorni | 9 ottobre 2026 | +65,45% | 128,59 $ | 76,01 $ | 130,15 $ |
+| 120 giorni | 8 novembre 2026 | +67,30% | 130,03 $ | 76,01 $ | 140,03 $ |
 
 ## Prossimi step se SOL segue BTC 2022
 
 | Step | Date SOL | BTC fine | SOL zona bassa | SOL zona alta | SOL fine base | Lettura |
 | --- | --- | --- | --- | --- | --- | --- |
-| Step 1 - prossime 2 settimane | 11 luglio 2026 -> 25 luglio 2026 | +1,64% | 76,02 $ (16 luglio 2026) | 79,00 $ (25 luglio 2026) | 79,00 $ | Laterale / movimento non forte. |
-| Step 2 - primo mese | 26 luglio 2026 -> 10 agosto 2026 | +36,63% | 80,15 $ (26 luglio 2026) | 106,20 $ (10 agosto 2026) | 106,20 $ | Spinta rialzista abbastanza pulita. |
-| Step 3 - secondo mese | 11 agosto 2026 -> 9 settembre 2026 | +37,11% | 99,47 $ (26 agosto 2026) | 114,07 $ (5 settembre 2026) | 106,57 $ | Spinta rialzista abbastanza pulita. |
-| Step 4 - terzo mese | 10 settembre 2026 -> 9 ottobre 2026 | +65,45% | 92,74 $ (23 settembre 2026) | 130,17 $ (6 ottobre 2026) | 128,61 $ | Spinta rialzista abbastanza pulita. |
+| Step 1 - prossime 2 settimane | 11 luglio 2026 -> 25 luglio 2026 | +1,64% | 76,01 $ (16 luglio 2026) | 78,99 $ (25 luglio 2026) | 78,99 $ | Laterale / movimento non forte. |
+| Step 2 - primo mese | 26 luglio 2026 -> 10 agosto 2026 | +36,63% | 80,14 $ (26 luglio 2026) | 106,19 $ (10 agosto 2026) | 106,19 $ | Spinta rialzista abbastanza pulita. |
+| Step 3 - secondo mese | 11 agosto 2026 -> 9 settembre 2026 | +37,11% | 99,45 $ (26 agosto 2026) | 114,05 $ (5 settembre 2026) | 106,56 $ | Spinta rialzista abbastanza pulita. |
+| Step 4 - terzo mese | 10 settembre 2026 -> 9 ottobre 2026 | +65,45% | 92,73 $ (23 settembre 2026) | 130,15 $ (6 ottobre 2026) | 128,59 $ | Spinta rialzista abbastanza pulita. |
 
 Nota: le proiezioni restano condizionali. La forma simile non compensa un prezzo non aderente.
 
@@ -697,10 +707,10 @@ Filtro prudente: usa almeno 3 picchi RSI, separa vicinanza matematica e rischio 
 
 | Voce | Valore | Lettura |
 | --- | --- | --- |
-| Prezzo SOL | 77,73 $ |  |
+| Prezzo SOL | 77,72 $ |  |
 | Weekly RSI | 40,48 / linea grezza 54,36 | LINEA NON AFFIDABILE / RISCHIO NON ATTIVO — IRREALISTICA / NON OPERATIVA |
 | Monthly RSI | 41,34 / linea grezza 56,16 | RSI TROPPO BASSO PER RISCHIO TOP — VALIDA / USO PRUDENTE |
-| Target ciclo base | 573,12 $ | Avanzamento +13,56% |
+| Target ciclo base | 573,04 $ | Avanzamento +13,56% |
 | Rischio top-cycle RSI | BASSO | Nessun segnale top-cycle macro attivo. Prezzo ancora lontano dal target ciclo; il filtro RSI resta solo di monitoraggio. |
 
 ## Lettura semplice
@@ -736,15 +746,15 @@ Report separato completo: **[sol_onchain_metrics_report.md](sol_onchain_metrics_
 
 | Voce | Valore |
 | --- | --- |
-| Score on-chain | 0 |
+| Score on-chain | 1 |
 | Bias | NEUTRALE / MISTA |
 | Azione coerente | NESSUNA CONFERMA FORTE / LEGGERE INSIEME AL FRATTALE |
-| Prezzo SOL | 77,73 $ |
-| TVL Solana | 4,89 mld $ |
-| TVL 7g | -4,41% |
-| DEX volume 24h | 1,77 mld $ |
-| Fees 24h | 7,28 mln $ |
-| Stablecoin su Solana | 15,36 mld $ |
+| Prezzo SOL | 77,72 $ |
+| TVL Solana | 4,93 mld $ |
+| TVL 7g | -3,70% |
+| DEX volume 24h | 1,71 mld $ |
+| Fees 24h | 7,55 mln $ |
+| Stablecoin su Solana | 15,42 mld $ |
 | Stake ratio | 67,94% |
 | Metriche mancanti | sol_realized_price_usd, sol_mvrv, sol_holder_profit_pct, sol_exchange_netflow_24h_usd |
 
@@ -781,13 +791,13 @@ Report separato completo: **[major_alt_lifecycle_squeeze_report.md](major_alt_li
 | Trend squeeze score | 0 |
 | Confronto precedente | 2026-07-09 |
 | Fonte prezzi | Yahoo Finance SOL-USD weekly |
-| Prezzo SOL | 77,73 $ |
+| Prezzo SOL | 77,72 $ |
 | EMA200 weekly target | 113,51 $ |
-| Upside verso EMA200 | +46,01% |
-| Distanza prezzo da EMA200 | -31,51% |
+| Upside verso EMA200 | +46,09% |
+| Distanza prezzo da EMA200 | -31,55% |
 | Gap EMA50/EMA200 | -1,22% |
 | Stato cross | EMA50/EMA200 SOVRAPPOSTE / INCROCIO IN CORSO |
-| RSI weekly | 40,49 |
+| RSI weekly | 40,47 |
 | Età SOL | 6,2 anni |
 | Analoghi storici usati | 30 |
 | Max analoghi per asset | 3 |
@@ -807,7 +817,7 @@ Nota importante: **questo modulo ora NON pesa più nel Global Confluence**. Rest
 
 Nota: se EMA50/EMA200 sono dentro ±2%, il modulo parla di medie sovrapposte / incrocio in corso, perché exchange diversi possono mostrare il cross leggermente prima o dopo.
 
-<!-- Generato: 2026-07-11 01:13 UTC -->
+<!-- Generato: 2026-07-11 03:02 UTC -->
 <!-- MAJOR_ALT_LIFECYCLE_SQUEEZE_END -->
 
 </details>
@@ -815,7 +825,7 @@ Nota: se EMA50/EMA200 sono dentro ±2%, il modulo parla di medie sovrapposte / i
 
 # Report giornaliero BTC / SOL / DOGE
 
-Aggiornato il: **2026-07-11 01:09:17 UTC**
+Aggiornato il: **2026-07-11 02:59:22 UTC**
 
 Questo report confronta il grafico attuale di Bitcoin, Solana e Dogecoin con tanti grafici storici di altre crypto.
 
@@ -867,9 +877,9 @@ Questa sezione risponde subito a due domande:
 
 | Asset | Scende a | Target rimbalzo | % casi rimbalzo | Movimento reale | Lettura discesa | Sale a | Target dump | % casi dump | Movimento reale | Lettura spike |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 60.866 $ | 70.477 $ | +7,14% | +15,79% | rimbalzo poco frequente | 70.477 $ | 60.866 $ | +8,33% | -13,64% | spike storicamente più resistente |
-| SOL | 73,84 $ | 85,50 $ | +10,71% | +15,79% | rimbalzo poco frequente | 85,50 $ | 73,84 $ | +27,78% | -13,64% | spike storicamente più resistente |
-| DOGE | 0,07038 $ | 0,08149 $ | +10,81% | +15,79% | rimbalzo poco frequente | 0,08149 $ | 0,07038 $ | +58,33% | -13,64% | attenzione a prendere profitto |
+| BTC | 60.910 $ | 70.527 $ | +7,14% | +15,79% | rimbalzo poco frequente | 70.527 $ | 60.910 $ | +8,33% | -13,64% | spike storicamente più resistente |
+| SOL | 73,83 $ | 85,49 $ | +10,71% | +15,79% | rimbalzo poco frequente | 85,49 $ | 73,83 $ | +27,78% | -13,64% | spike storicamente più resistente |
+| DOGE | 0,07047 $ | 0,08160 $ | +10,81% | +15,79% | rimbalzo poco frequente | 0,08160 $ | 0,07047 $ | +58,33% | -13,64% | attenzione a prendere profitto |
 
 ## Spiegazione ultra semplice
 
@@ -921,7 +931,7 @@ Nel report principale vedi solo la sintesi. Nel report separato ci sono anche so
 <!-- SCANNER_FORECAST_TRACKER_START -->
 # Scanner forecast path / cono probabilistico
 
-Generato: 2026-07-11 01:12:03 UTC
+Generato: 2026-07-11 03:02:02 UTC
 
 Questo report trasforma i 40 casi simili dello scanner in un cono previsionale leggibile.
 
@@ -938,9 +948,9 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 | Asset   | Data       | Prezzo iniziale   | Direzione scanner   | Casi positivi   | P10 30g     | P25 30g     | P50 30g     | P75 30g     | P90 30g     |
 |:--------|:-----------|:------------------|:--------------------|:----------------|:------------|:------------|:------------|:------------|:------------|
-| BTC | 2026-07-11 | 64.070 $ | SALITA | 77,50% | 51.789,96 $ | 65.727,12 $ | 69.840,38 $ | 78.522,33 $ | 92.100,18 $ |
-| SOL | 2026-07-11 | 77,73 $ | DISCESA | 40,00% | 61,45 $ | 69,00 $ | 76,41 $ | 84,76 $ | 111,74 $ |
-| DOGE | 2026-07-11 | 0.07408 $ | DISCESA | 15,00% | 0.04509 $ | 0.05093 $ | 0.05751 $ | 0.06838 $ | 0.07960 $ |
+| BTC | 2026-07-11 | 64.115 $ | SALITA | 77,50% | 51.826,88 $ | 65.773,98 $ | 69.890,16 $ | 78.578,30 $ | 92.165,83 $ |
+| SOL | 2026-07-11 | 77,72 $ | DISCESA | 40,00% | 61,44 $ | 68,99 $ | 76,40 $ | 84,75 $ | 111,72 $ |
+| DOGE | 2026-07-11 | 0.07418 $ | DISCESA | 15,00% | 0.04515 $ | 0.05100 $ | 0.05759 $ | 0.06847 $ | 0.07971 $ |
 
 ## Grafici
 
@@ -960,17 +970,17 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 | Asset   | Giorno   |   Controlli | Dentro p10-p90   | Dentro p25-p75   | Errore medio abs vs p50   | Errore medio vs p50   |
 |:--------|:---------|------------:|:-----------------|:-----------------|:--------------------------|:----------------------|
-| BTC | 1g | 1 | 100,00% | 100,00% | 1,12% | -1,12% |
+| BTC | 1g | 1 | 100,00% | 100,00% | 1,10% | -1,10% |
 | BTC | 3g | 0 | n/a | n/a | n/a | n/a |
 | BTC | 7g | 0 | n/a | n/a | n/a | n/a |
 | BTC | 14g | 0 | n/a | n/a | n/a | n/a |
 | BTC | 30g | 0 | n/a | n/a | n/a | n/a |
-| SOL | 1g | 1 | 100,00% | 100,00% | 1,24% | -1,24% |
+| SOL | 1g | 1 | 100,00% | 100,00% | 1,27% | -1,27% |
 | SOL | 3g | 0 | n/a | n/a | n/a | n/a |
 | SOL | 7g | 0 | n/a | n/a | n/a | n/a |
 | SOL | 14g | 0 | n/a | n/a | n/a | n/a |
 | SOL | 30g | 0 | n/a | n/a | n/a | n/a |
-| DOGE | 1g | 1 | 100,00% | 100,00% | 0,03% | 0,03% |
+| DOGE | 1g | 1 | 100,00% | 100,00% | 0,12% | 0,12% |
 | DOGE | 3g | 0 | n/a | n/a | n/a | n/a |
 | DOGE | 7g | 0 | n/a | n/a | n/a | n/a |
 | DOGE | 14g | 0 | n/a | n/a | n/a | n/a |
@@ -997,7 +1007,7 @@ Nota: servono almeno 5 controlli prima di dare un peso minimo al cono. Sotto 5 c
 <!-- EXTREME_CASES_PATH_START -->
 # Extreme cases path report
 
-Generato: 2026-07-11 01:12 UTC
+Generato: 2026-07-11 03:02 UTC
 
 Questo report si attiva quando i casi positivi o negativi sono almeno **80%**.
 
@@ -1071,23 +1081,23 @@ La sigla `g7` sopra una barra significa che il massimo rialzo è avvenuto al gio
 | WAVES-USD       | 2022-05-30 | +84,44%      | +28,83%                  |              4 | -42,96%      |              17 | -55,72%          | -29,04%      | SPIKE PRIMA DEL DUMP          |
 | LINK-USD        | 2022-05-30 | +84,37%      | +24,39%                  |             10 | -21,06%      |              14 | -36,54%          | -16,73%      | SPIKE PRIMA DEL DUMP          |
 | OP-USD          | 2026-03-11 | +84,46%      | +14,28%                  |              5 | -15,36%      |              18 | -25,94%          | -4,42%       | SPIKE PRIMA DEL DUMP          |
-| AVAX-USD        | 2025-11-21 | +86,17%      | +12,94%                  |              6 | -14,04%      |              27 | -23,89%          | -8,75%       | SPIKE PRIMA DEL DUMP          |
+| AVAX-USD        | 2025-11-21 | +86,16%      | +12,94%                  |              6 | -14,04%      |              27 | -23,89%          | -8,75%       | SPIKE PRIMA DEL DUMP          |
 | ADA-USD         | 2022-05-30 | +84,55%      | +12,55%                  |              9 | -19,98%      |              19 | -28,90%          | -18,34%      | SPIKE PRIMA DEL DUMP          |
 | BAT-USD         | 2018-12-27 | +84,12%      | +10,32%                  |             13 | -6,08%       |              17 | -14,87%          | -1,76%       | PERCORSO RIBASSISTA MISTO     |
-| LTC-USD         | 2022-05-29 | +84,62%      | +8,43%                   |              1 | -32,07%      |              15 | -37,36%          | -17,15%      | SPIKE PRIMA DEL DUMP          |
+| LTC-USD         | 2022-05-29 | +84,61%      | +8,43%                   |              1 | -32,07%      |              15 | -37,36%          | -17,15%      | SPIKE PRIMA DEL DUMP          |
 | BTC-USD         | 2022-05-29 | +83,84%      | +7,97%                   |              2 | -35,42%      |              20 | -40,18%          | -31,13%      | RIALZO MODESTO PRIMA DEL DUMP |
 | DOT-USD         | 2023-09-22 | +83,31%      | +6,01%                   |              9 | -9,22%       |              27 | -14,37%          | -1,36%       | PERCORSO RIBASSISTA MISTO     |
-| CHZ-USD         | 2022-06-03 | +86,76%      | +5,97%                   |              3 | -28,71%      |              15 | -32,73%          | -19,17%      | RIALZO MODESTO PRIMA DEL DUMP |
+| CHZ-USD         | 2022-06-03 | +86,77%      | +5,97%                   |              3 | -28,71%      |              15 | -32,73%          | -19,17%      | RIALZO MODESTO PRIMA DEL DUMP |
 | ZEC-USD         | 2019-08-24 | +86,88%      | +5,15%                   |             25 | -11,71%      |              30 | -16,03%          | -11,71%      | RIALZO MODESTO PRIMA DEL DUMP |
 | ENJ-USD         | 2022-06-04 | +86,27%      | +5,00%                   |              2 | -33,46%      |              14 | -36,63%          | -16,55%      | RIALZO MODESTO PRIMA DEL DUMP |
-| XLM-USD         | 2022-05-30 | +83,80%      | +4,76%                   |              1 | -25,70%      |              14 | -29,08%          | -23,40%      | RIALZO MODESTO PRIMA DEL DUMP |
+| XLM-USD         | 2022-05-30 | +83,81%      | +4,76%                   |              1 | -25,70%      |              14 | -29,08%          | -23,40%      | RIALZO MODESTO PRIMA DEL DUMP |
 | VET-USD         | 2022-06-01 | +86,54%      | +4,39%                   |              8 | -29,00%      |              17 | -31,99%          | -27,52%      | RIALZO MODESTO PRIMA DEL DUMP |
 | XTZ-USD         | 2026-03-15 | +87,30%      | +4,26%                   |              5 | -12,14%      |              14 | -15,73%          | -10,41%      | RIALZO MODESTO PRIMA DEL DUMP |
 | BCH-USD         | 2022-05-30 | +85,04%      | +3,48%                   |              1 | -47,58%      |              29 | -49,34%          | -46,95%      | RIALZO MODESTO PRIMA DEL DUMP |
 | NEO-USD         | 2022-05-30 | +85,51%      | +3,34%                   |              7 | -27,65%      |              19 | -29,99%          | -26,97%      | RIALZO MODESTO PRIMA DEL DUMP |
 | INJ-USD         | 2022-06-01 | +85,96%      | +3,20%                   |              1 | -42,93%      |              30 | -44,70%          | -42,93%      | RIALZO MODESTO PRIMA DEL DUMP |
 | ETH-USD         | 2022-06-04 | +86,03%      | +3,20%                   |              2 | -44,85%      |              14 | -46,56%          | -36,11%      | RIALZO MODESTO PRIMA DEL DUMP |
-| FIL-USD         | 2022-06-03 | +84,97%      | +2,37%                   |              3 | -30,96%      |              15 | -32,56%          | -28,22%      | PERCORSO RIBASSISTA MISTO     |
+| FIL-USD         | 2022-06-03 | +84,96%      | +2,37%                   |              3 | -30,96%      |              15 | -32,56%          | -28,22%      | PERCORSO RIBASSISTA MISTO     |
 
 ## Come leggerlo
 
@@ -1168,12 +1178,12 @@ Questa è la parte da leggere per prima. Ti dice subito se lo scenario è più d
 - Casi positivi / salita storica: **77,50%**
 - Casi negativi / discesa storica: **22,50%**
 - Quanto è netto il segnale: **forte**
-- Prezzo attuale: **64.069,72 $**
-- Return normale fra 30 giorni: **69.840,38 $** (9,01%)
-- Drawdown normale durante il mese: **62.037,34 $** (-3,17%)
-- Drawdown brutto da rispettare: **58.314,20 $** (-8,98%)
-- Max gain normale durante il mese: **75.825,52 $** (18,35%)
-- Max gain buono / take profit ottimistico: **85.865,24 $** (34,02%)
+- Prezzo attuale: **64.115,39 $**
+- Return normale fra 30 giorni: **69.890,16 $** (9,01%)
+- Drawdown normale durante il mese: **62.081,57 $** (-3,17%)
+- Drawdown brutto da rispettare: **58.355,77 $** (-8,98%)
+- Max gain normale durante il mese: **75.879,57 $** (18,35%)
+- Max gain buono / take profit ottimistico: **85.926,45 $** (34,02%)
 
 **Come leggerlo:** casi positivi/negativi ti dicono la direzione più probabile. Return ti dice il prezzo finale fra 30 giorni. Drawdown ti dice il rischio di discesa durante il mese. Max gain ti dice il possibile rialzo durante il mese.
 
@@ -1182,12 +1192,12 @@ Questa è la parte da leggere per prima. Ti dice subito se lo scenario è più d
 - Casi positivi / salita storica: **40,00%**
 - Casi negativi / discesa storica: **60,00%**
 - Quanto è netto il segnale: **debole**
-- Prezzo attuale: **77,73 $**
-- Return normale fra 30 giorni: **76,41 $** (-1,70%)
+- Prezzo attuale: **77,72 $**
+- Return normale fra 30 giorni: **76,40 $** (-1,70%)
 - Drawdown normale durante il mese: **68,41 $** (-11,98%)
 - Drawdown brutto da rispettare: **58,06 $** (-25,30%)
-- Max gain normale durante il mese: **83,78 $** (7,79%)
-- Max gain buono / take profit ottimistico: **95,27 $** (22,56%)
+- Max gain normale durante il mese: **83,77 $** (7,79%)
+- Max gain buono / take profit ottimistico: **95,26 $** (22,56%)
 
 **Come leggerlo:** casi positivi/negativi ti dicono la direzione più probabile. Return ti dice il prezzo finale fra 30 giorni. Drawdown ti dice il rischio di discesa durante il mese. Max gain ti dice il possibile rialzo durante il mese.
 
@@ -1216,7 +1226,7 @@ Il quadro generale oggi è prudente/debole. Lo scanner vede più rischio di disc
 # Bitcoin — mappa semplice dei prossimi 30 giorni
 
 **Semaforo:** 🟢 VERDE / Favorevole
-**Prezzo attuale:** 64.069,72 $
+**Prezzo attuale:** 64.115,39 $
 
 **Direzione più probabile a 30 giorni:** **SALITA**
 - Probabilità storica di salita: **77,50%**
@@ -1235,11 +1245,11 @@ La lettura principale è rialzista, con segnale forte. Nei casi storici simili, 
 
 **Return** significa rendimento finale. Qui guardiamo dove potrebbe stare il prezzo **alla fine dei 30 giorni**, non durante il percorso.
 
-- Se va molto male: **51.789,96 $** (-19,17%)
-- Se va male: **65.727,12 $** (2,59%)
-- Scenario normale: **69.840,38 $** (9,01%)
-- Se va bene: **78.522,33 $** (22,56%)
-- Se va molto bene: **92.100,18 $** (43,75%)
+- Se va molto male: **51.826,88 $** (-19,17%)
+- Se va male: **65.773,98 $** (2,59%)
+- Scenario normale: **69.890,16 $** (9,01%)
+- Se va bene: **78.578,30 $** (22,56%)
+- Se va molto bene: **92.165,83 $** (43,75%)
 
 **Come leggerlo:** se vuoi sapere dove potrebbe trovarsi il prezzo fra 30 giorni, guarda soprattutto lo **scenario normale**.
 
@@ -1247,9 +1257,9 @@ La lettura principale è rialzista, con segnale forte. Nei casi storici simili, 
 
 **Drawdown** significa la discesa massima durante il periodo. Non è il prezzo finale: è il punto più basso che il prezzo può toccare durante il mese.
 
-- Discesa normale: **62.037,34 $** (-3,17%)
-- Discesa brutta: **58.314,20 $** (-8,98%)
-- Discesa molto brutta: **45.525,12 $** (-28,94%)
+- Discesa normale: **62.081,57 $** (-3,17%)
+- Discesa brutta: **58.355,77 $** (-8,98%)
+- Discesa molto brutta: **45.557,57 $** (-28,94%)
 
 **Come leggerlo:** se usi leva, questa è la parte più importante. Anche se dopo 30 giorni il prezzo recupera, durante il mese può prima scendere qui.
 
@@ -1257,15 +1267,15 @@ La lettura principale è rialzista, con segnale forte. Nei casi storici simili, 
 
 **Max gain** significa il massimo rialzo toccato durante il mese. Non è il prezzo finale: può essere anche solo uno spike temporaneo.
 
-- Rialzo normale: **75.825,52 $** (18,35%)
-- Rialzo buono: **85.865,24 $** (34,02%)
-- Rialzo molto forte: **104.188,30 $** (62,62%)
+- Rialzo normale: **75.879,57 $** (18,35%)
+- Rialzo buono: **85.926,45 $** (34,02%)
+- Rialzo molto forte: **104.262,57 $** (62,62%)
 
 **Come leggerlo:** questa parte serve per capire possibili zone di take profit. Il rialzo normale è più realistico; il rialzo molto forte è possibile ma meno comune.
 
 ## Lettura pratica finale
 
-Scenario normale: nei casi simili, Bitcoin tendeva a muoversi tra una zona bassa intorno a **62.037,34 $** e uno spike normale intorno a **75.825,52 $**.
+Scenario normale: nei casi simili, Bitcoin tendeva a muoversi tra una zona bassa intorno a **62.081,57 $** e uno spike normale intorno a **75.879,57 $**.
 
 La chiusura a 30 giorni era più spesso positiva: salita 77,50%, discesa 22,50%. Quindi la lettura principale è favorevole.
 
@@ -1276,7 +1286,7 @@ Nota leva BTC: se la liquidazione è vicina a 51.000 $, guarda soprattutto la di
 # Solana — mappa semplice dei prossimi 30 giorni
 
 **Semaforo:** 🟡 GIALLO / Incerto
-**Prezzo attuale:** 77,73 $
+**Prezzo attuale:** 77,72 $
 
 **Direzione più probabile a 30 giorni:** **DISCESA**
 - Probabilità storica di salita: **40,00%**
@@ -1295,11 +1305,11 @@ La lettura principale è ribassista, con segnale debole. Nei casi storici simili
 
 **Return** significa rendimento finale. Qui guardiamo dove potrebbe stare il prezzo **alla fine dei 30 giorni**, non durante il percorso.
 
-- Se va molto male: **61,45 $** (-20,95%)
-- Se va male: **69,00 $** (-11,23%)
-- Scenario normale: **76,41 $** (-1,70%)
-- Se va bene: **84,76 $** (9,05%)
-- Se va molto bene: **111,74 $** (43,75%)
+- Se va molto male: **61,44 $** (-20,95%)
+- Se va male: **68,99 $** (-11,23%)
+- Scenario normale: **76,40 $** (-1,70%)
+- Se va bene: **84,75 $** (9,05%)
+- Se va molto bene: **111,72 $** (43,75%)
 
 **Come leggerlo:** se vuoi sapere dove potrebbe trovarsi il prezzo fra 30 giorni, guarda soprattutto lo **scenario normale**.
 
@@ -1317,15 +1327,15 @@ La lettura principale è ribassista, con segnale debole. Nei casi storici simili
 
 **Max gain** significa il massimo rialzo toccato durante il mese. Non è il prezzo finale: può essere anche solo uno spike temporaneo.
 
-- Rialzo normale: **83,78 $** (7,79%)
-- Rialzo buono: **95,27 $** (22,56%)
-- Rialzo molto forte: **121,08 $** (55,77%)
+- Rialzo normale: **83,77 $** (7,79%)
+- Rialzo buono: **95,26 $** (22,56%)
+- Rialzo molto forte: **121,06 $** (55,77%)
 
 **Come leggerlo:** questa parte serve per capire possibili zone di take profit. Il rialzo normale è più realistico; il rialzo molto forte è possibile ma meno comune.
 
 ## Lettura pratica finale
 
-Scenario normale: nei casi simili, Solana tendeva a muoversi tra una zona bassa intorno a **68,41 $** e uno spike normale intorno a **83,78 $**.
+Scenario normale: nei casi simili, Solana tendeva a muoversi tra una zona bassa intorno a **68,41 $** e uno spike normale intorno a **83,77 $**.
 
 La chiusura a 30 giorni era più spesso negativa: salita 40,00%, discesa 60,00%. Quindi la lettura principale è prudente/debole.
 
@@ -1459,7 +1469,7 @@ Per ora si usa solo lo scanner storico grezzo. Quando ci saranno abbastanza prev
 
 ## Semaforo: 🟢 VERDE / Favorevole
 
-**Prezzo attuale:** 64.069,72 $
+**Prezzo attuale:** 64.115,39 $
 
 Bitcoin ha un segnale favorevole. La statistica dei casi simili indica più possibilità di salita che di discesa, ma resta comunque una probabilità, non una certezza.
 
@@ -1482,10 +1492,10 @@ Bitcoin ha un segnale favorevole. La statistica dei casi simili indica più poss
 
 ## Livelli principali
 
-- Scenario medio a 30 giorni: **72.842,41 $**
-- Scenario centrale a 30 giorni: **69.840,38 $**
-- Zona di rischio media: **59.274,25 $**
-- Zona di rialzo media: **80.879,34 $**
+- Scenario medio a 30 giorni: **72.894,34 $**
+- Scenario centrale a 30 giorni: **69.890,16 $**
+- Zona di rischio media: **59.316,51 $**
+- Zona di rialzo media: **80.936,99 $**
 
 **Come leggerli:** scenario centrale = prezzo finale più normale a 30 giorni. Zona rischio = dove può scendere durante il mese. Zona rialzo = dove può arrivare durante uno spike.
 
@@ -1493,45 +1503,45 @@ Bitcoin ha un segnale favorevole. La statistica dei casi simili indica più poss
 
 **Return** significa prezzo finale dopo 30 giorni rispetto al prezzo di oggi.
 
-- **Percentile 10%**: -19,17% → **51.789,96 $**
+- **Percentile 10%**: -19,17% → **51.826,88 $**
   - Percentile 10: se va molto male, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 25%**: 2,59% → **65.727,12 $**
+- **Percentile 25%**: 2,59% → **65.773,98 $**
   - Percentile 25: se va male, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 50%**: 9,01% → **69.840,38 $**
+- **Percentile 50%**: 9,01% → **69.890,16 $**
   - Percentile 50: scenario normale. È il valore principale da guardare per il prezzo fra 30 giorni.
-- **Percentile 75%**: 22,56% → **78.522,33 $**
+- **Percentile 75%**: 22,56% → **78.578,30 $**
   - Percentile 75: se va bene, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 90%**: 43,75% → **92.100,18 $**
+- **Percentile 90%**: 43,75% → **92.165,83 $**
   - Percentile 90: se va molto bene, fra 30 giorni il prezzo può arrivare circa in questa zona.
 
 ## Percentili drawdown — discesa durante i 30 giorni
 
 **Drawdown** significa quanto può scendere il prezzo durante il mese, anche se poi recupera.
 
-- **Percentile 10%**: -28,94% → **45.525,12 $**
+- **Percentile 10%**: -28,94% → **45.557,57 $**
   - Percentile 10: rischio molto brutto. Durante i 30 giorni il prezzo può scendere fino a questa zona o peggio.
-- **Percentile 25%**: -8,98% → **58.314,20 $**
+- **Percentile 25%**: -8,98% → **58.355,77 $**
   - Percentile 25: rischio brutto. Durante i 30 giorni il prezzo può scendere fino a questa zona.
-- **Percentile 50%**: -3,17% → **62.037,34 $**
+- **Percentile 50%**: -3,17% → **62.081,57 $**
   - Percentile 50: discesa normale durante il mese. È il drawdown centrale.
-- **Percentile 75%**: 0,00% → **64.069,72 $**
+- **Percentile 75%**: 0,00% → **64.115,39 $**
   - Percentile 75: discesa contenuta. Scenario abbastanza tranquillo.
-- **Percentile 90%**: 0,00% → **64.069,72 $**
+- **Percentile 90%**: 0,00% → **64.115,39 $**
   - Percentile 90: discesa molto contenuta. Scenario molto tranquillo.
 
 ## Percentili max gain — rialzo durante i 30 giorni
 
 **Max gain** significa il massimo rialzo che il prezzo può toccare durante il mese, anche solo temporaneamente.
 
-- **Percentile 10%**: 1,58% → **65.078,82 $**
+- **Percentile 10%**: 1,58% → **65.125,21 $**
   - Percentile 10: rialzo scarso. Durante i 30 giorni il prezzo è salito poco.
-- **Percentile 25%**: 7,51% → **68.884,50 $**
+- **Percentile 25%**: 7,51% → **68.933,60 $**
   - Percentile 25: rialzo modesto. Durante i 30 giorni il prezzo ha fatto poca strada verso l'alto.
-- **Percentile 50%**: 18,35% → **75.825,52 $**
+- **Percentile 50%**: 18,35% → **75.879,57 $**
   - Percentile 50: rialzo normale. È lo spike centrale più realistico.
-- **Percentile 75%**: 34,02% → **85.865,24 $**
+- **Percentile 75%**: 34,02% → **85.926,45 $**
   - Percentile 75: rialzo buono. Zona interessante per possibile take profit.
-- **Percentile 90%**: 62,62% → **104.188,30 $**
+- **Percentile 90%**: 62,62% → **104.262,57 $**
   - Percentile 90: rialzo molto forte. Possibile, ma meno comune.
 
 ## Dati tecnici per controllo
@@ -1543,12 +1553,12 @@ Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. No
 | LRC-USD         | 2018-09-19   | 2018-12-27 |        88.95 |        95.69 |           0    |         178.55 |
 | XRP-USD         | 2019-09-24   | 2020-01-01 |        88.9  |        24.17 |          -2.4  |          26.46 |
 | FIL-USD         | 2023-06-19   | 2023-09-26 |        87.84 |        17.86 |           0    |          21.6  |
-| KSM-USD         | 2022-03-10   | 2022-06-17 |        86.44 |        11.02 |          -4.93 |          16.96 |
+| KSM-USD         | 2022-03-10   | 2022-06-17 |        86.43 |        11.02 |          -4.93 |          16.96 |
 | YFI-USD         | 2023-06-14   | 2023-09-21 |        86.12 |         2.83 |          -3.99 |           8.79 |
 | ETC-USD         | 2019-05-12   | 2019-08-19 |        86.08 |        15.03 |           0    |          32.2  |
 | XLM-USD         | 2020-01-07   | 2020-04-15 |        85.76 |        45.24 |           0    |          62.58 |
-| ONE-USD         | 2020-01-07   | 2020-04-15 |        85.71 |        14.92 |           0    |          14.92 |
-| ETH-USD         | 2023-06-15   | 2023-09-22 |        85.5  |         4.4  |          -3.37 |           8.82 |
+| ONE-USD         | 2020-01-07   | 2020-04-15 |        85.7  |        14.92 |           0    |          14.92 |
+| ETH-USD         | 2023-06-15   | 2023-09-22 |        85.49 |         4.4  |          -3.37 |           8.82 |
 | DOT-USD         | 2023-06-15   | 2023-09-22 |        85.39 |        -1.36 |          -9.22 |           6.01 |
 
 ---
@@ -1557,7 +1567,7 @@ Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. No
 
 ## Semaforo: 🟡 GIALLO / Incerto
 
-**Prezzo attuale:** 77,73 $
+**Prezzo attuale:** 77,72 $
 
 Solana è in una situazione incerta. Lo scanner non vede un vantaggio chiaro né per la salita né per la discesa. In questi casi è meglio non forzare la previsione.
 
@@ -1580,10 +1590,10 @@ Solana è in una situazione incerta. Lo scanner non vede un vantaggio chiaro né
 
 ## Livelli principali
 
-- Scenario medio a 30 giorni: **82,07 $**
-- Scenario centrale a 30 giorni: **76,41 $**
-- Zona di rischio media: **66,44 $**
-- Zona di rialzo media: **94,54 $**
+- Scenario medio a 30 giorni: **82,06 $**
+- Scenario centrale a 30 giorni: **76,40 $**
+- Zona di rischio media: **66,43 $**
+- Zona di rialzo media: **94,52 $**
 
 **Come leggerli:** scenario centrale = prezzo finale più normale a 30 giorni. Zona rischio = dove può scendere durante il mese. Zona rialzo = dove può arrivare durante uno spike.
 
@@ -1591,15 +1601,15 @@ Solana è in una situazione incerta. Lo scanner non vede un vantaggio chiaro né
 
 **Return** significa prezzo finale dopo 30 giorni rispetto al prezzo di oggi.
 
-- **Percentile 10%**: -20,95% → **61,45 $**
+- **Percentile 10%**: -20,95% → **61,44 $**
   - Percentile 10: se va molto male, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 25%**: -11,23% → **69,00 $**
+- **Percentile 25%**: -11,23% → **68,99 $**
   - Percentile 25: se va male, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 50%**: -1,70% → **76,41 $**
+- **Percentile 50%**: -1,70% → **76,40 $**
   - Percentile 50: scenario normale. È il valore principale da guardare per il prezzo fra 30 giorni.
-- **Percentile 75%**: 9,05% → **84,76 $**
+- **Percentile 75%**: 9,05% → **84,75 $**
   - Percentile 75: se va bene, fra 30 giorni il prezzo può stare circa in questa zona.
-- **Percentile 90%**: 43,75% → **111,74 $**
+- **Percentile 90%**: 43,75% → **111,72 $**
   - Percentile 90: se va molto bene, fra 30 giorni il prezzo può arrivare circa in questa zona.
 
 ## Percentili drawdown — discesa durante i 30 giorni
@@ -1612,24 +1622,24 @@ Solana è in una situazione incerta. Lo scanner non vede un vantaggio chiaro né
   - Percentile 25: rischio brutto. Durante i 30 giorni il prezzo può scendere fino a questa zona.
 - **Percentile 50%**: -11,98% → **68,41 $**
   - Percentile 50: discesa normale durante il mese. È il drawdown centrale.
-- **Percentile 75%**: -2,76% → **75,58 $**
+- **Percentile 75%**: -2,76% → **75,57 $**
   - Percentile 75: discesa contenuta. Scenario abbastanza tranquillo.
-- **Percentile 90%**: 0,00% → **77,73 $**
+- **Percentile 90%**: 0,00% → **77,72 $**
   - Percentile 90: discesa molto contenuta. Scenario molto tranquillo.
 
 ## Percentili max gain — rialzo durante i 30 giorni
 
 **Max gain** significa il massimo rialzo che il prezzo può toccare durante il mese, anche solo temporaneamente.
 
-- **Percentile 10%**: 0,00% → **77,73 $**
+- **Percentile 10%**: 0,00% → **77,72 $**
   - Percentile 10: rialzo scarso. Durante i 30 giorni il prezzo è salito poco.
-- **Percentile 25%**: 0,43% → **78,06 $**
+- **Percentile 25%**: 0,43% → **78,05 $**
   - Percentile 25: rialzo modesto. Durante i 30 giorni il prezzo ha fatto poca strada verso l'alto.
-- **Percentile 50%**: 7,79% → **83,78 $**
+- **Percentile 50%**: 7,79% → **83,77 $**
   - Percentile 50: rialzo normale. È lo spike centrale più realistico.
-- **Percentile 75%**: 22,56% → **95,27 $**
+- **Percentile 75%**: 22,56% → **95,26 $**
   - Percentile 75: rialzo buono. Zona interessante per possibile take profit.
-- **Percentile 90%**: 55,77% → **121,08 $**
+- **Percentile 90%**: 55,77% → **121,06 $**
   - Percentile 90: rialzo molto forte. Possibile, ma meno comune.
 
 ## Dati tecnici per controllo
@@ -1644,7 +1654,7 @@ Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. No
 | XLM-USD         | 2020-01-07   | 2020-04-15 |        79.48 |        45.24 |           0    |          62.58 |
 | WAVES-USD       | 2019-02-21   | 2019-05-31 |        79.42 |       -30.84 |         -30.84 |           0.49 |
 | NEAR-USD        | 2024-04-15   | 2024-07-23 |        79.11 |       -25.43 |         -38.83 |           0    |
-| LRC-USD         | 2018-09-19   | 2018-12-27 |        78.17 |        95.69 |           0    |         178.55 |
+| LRC-USD         | 2018-09-19   | 2018-12-27 |        78.18 |        95.69 |           0    |         178.55 |
 | ENJ-USD         | 2018-09-19   | 2018-12-27 |        77.8  |       -16.11 |         -19.37 |           5.11 |
 | BNB-USD         | 2025-12-06   | 2026-03-15 |        77.64 |        -8.86 |         -13.44 |           0.84 |
 | VET-USD         | 2020-01-09   | 2020-04-17 |        77.47 |        16.09 |          -3.73 |          26.08 |
@@ -1741,9 +1751,9 @@ Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. No
 | XRP-USD         | 2019-09-24   | 2020-01-01 |        88.32 |        24.17 |          -2.4  |          26.46 |
 | XTZ-USD         | 2025-12-06   | 2026-03-15 |        87.3  |       -10.41 |         -12.14 |           4.26 |
 | QTUM-USD        | 2022-02-20   | 2022-05-30 |        87.26 |       -31.65 |         -37.87 |           0    |
-| XLM-USD         | 2019-09-29   | 2020-01-06 |        87.21 |        39.92 |          -5.54 |          39.92 |
+| XLM-USD         | 2019-09-29   | 2020-01-06 |        87.22 |        39.92 |          -5.54 |          39.92 |
 | ZEC-USD         | 2019-05-17   | 2019-08-24 |        86.88 |       -11.71 |         -11.71 |           5.15 |
-| CHZ-USD         | 2022-02-24   | 2022-06-03 |        86.76 |       -19.17 |         -28.71 |           5.97 |
+| CHZ-USD         | 2022-02-24   | 2022-06-03 |        86.77 |       -19.17 |         -28.71 |           5.97 |
 | VET-USD         | 2022-02-22   | 2022-06-01 |        86.54 |       -27.52 |         -29    |           4.39 |
 | 1INCH-USD       | 2022-02-22   | 2022-06-01 |        86.46 |       -31.62 |         -42.19 |           0    |
 
@@ -1757,7 +1767,7 @@ Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. No
 <!-- MARKET_REGIME_MATCH_START -->
 # Market Regime Match Report
 
-Generated: 2026-07-11 01:12 UTC
+Generated: 2026-07-11 03:02 UTC
 
 This report adds market regime context to the raw fractal matches.
 
@@ -1771,9 +1781,9 @@ Main idea:
 
 | target   | target_regime_today   |   target_price | target_above_ma200   | target_return_90d   | target_ma200_slope_60d   | btc_regime_today   | btc_return_90d   | btc_ma200_slope_60d   |
 |:---------|:----------------------|---------------:|:---------------------|:--------------------|:-------------------------|:-------------------|:-----------------|:----------------------|
-| BTC-USD | BEAR | 64.070 $ | False | -9.41% | -10.10% | BEAR | -9.41% | -10.10% |
-| DOGE-USD | BEAR | 0.07408 $ | False | -18.42% | -16.38% | BEAR | -9.41% | -10.10% |
-| SOL-USD | BEAR | 77,73 $ | False | -4.67% | -18.38% | BEAR | -9.41% | -10.10% |
+| BTC-USD | BEAR | 64.115 $ | False | -9.41% | -10.10% | BEAR | -9.41% | -10.10% |
+| DOGE-USD | BEAR | 0.07418 $ | False | -18.39% | -16.38% | BEAR | -9.41% | -10.10% |
+| SOL-USD | BEAR | 77,72 $ | False | -4.72% | -18.38% | BEAR | -9.41% | -10.10% |
 
 ## Summary by regime filter
 
@@ -1833,29 +1843,29 @@ The table below shows the top matches separately for each target, so BTC does no
 | target   | similar_asset   | start_date   | similarity   | btc_regime_at_match   | similar_asset_regime_at_match   | regime_alignment   | outcome_family   | return_30d   | drawdown_30d   | max_gain_30d   | return_60d   | drawdown_60d   | max_gain_60d   |
 |:---------|:----------------|:-------------|:-------------|:----------------------|:--------------------------------|:-------------------|:-----------------|:-------------|:---------------|:---------------|:-------------|:---------------|:---------------|
 | BTC-USD | LRC-USD | 2018-09-19 | 88.95% | BEAR | BEAR | SAME_BTC_AND_ASSET | HIGH_SPIKE_60D | 95.69% | 0.00% | 178.55% | 42.97% | 0.00% | 178.55% |
-| BTC-USD | KSM-USD | 2022-03-10 | 86.44% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 11.02% | -4.93% | 16.96% | 14.38% | -4.93% | 37.01% |
+| BTC-USD | KSM-USD | 2022-03-10 | 86.43% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 11.02% | -4.93% | 16.96% | 14.38% | -4.93% | 37.01% |
 | BTC-USD | XLM-USD | 2020-01-07 | 85.76% | BEAR | BEAR | SAME_BTC_AND_ASSET | EXPLOSIVE_60D | 45.24% | 0.00% | 62.58% | 53.88% | 0.00% | 78.05% |
-| BTC-USD | ONE-USD | 2020-01-07 | 85.71% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 14.92% | 0.00% | 14.92% | -3.06% | -3.06% | 19.26% |
+| BTC-USD | ONE-USD | 2020-01-07 | 85.70% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 14.92% | 0.00% | 14.92% | -3.06% | -3.06% | 19.26% |
 | BTC-USD | TRX-USD | 2020-01-07 | 85.36% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 22.02% | 0.00% | 33.95% | 32.98% | 0.00% | 48.70% |
 | BTC-USD | EOS-USD | 2020-01-07 | 84.95% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 7.83% | 0.00% | 25.64% | 7.27% | 0.00% | 25.64% |
 | BTC-USD | LTC-USD | 2020-01-06 | 84.92% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 7.04% | -3.57% | 20.47% | 9.84% | -3.57% | 20.47% |
-| BTC-USD | MKR-USD | 2021-07-21 | 84.92% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 29.66% | -0.21% | 38.63% | 12.58% | -6.23% | 38.63% |
+| BTC-USD | MKR-USD | 2021-07-21 | 84.91% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 29.66% | -0.21% | 38.63% | 12.58% | -6.23% | 38.63% |
 | BTC-USD | ADA-USD | 2020-01-07 | 84.42% | BEAR | BEAR | SAME_BTC_AND_ASSET | EXPLOSIVE_60D | 58.37% | 0.00% | 64.15% | 140.87% | 0.00% | 179.32% |
 | BTC-USD | OMG-USD | 2020-01-07 | 84.33% | BEAR | BEAR | SAME_BTC_AND_ASSET | EXPLOSIVE_60D | 79.99% | 0.00% | 79.99% | 195.80% | 0.00% | 253.59% |
 | DOGE-USD | DASH-USD | 2022-02-20 | 88.77% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -29.45% | -33.95% | 2.32% | -19.38% | -36.58% | 2.32% |
 | DOGE-USD | XTZ-USD | 2025-12-06 | 87.30% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -10.41% | -12.14% | 4.26% | -2.16% | -12.14% | 4.26% |
 | DOGE-USD | QTUM-USD | 2022-02-20 | 87.26% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -31.65% | -37.87% | 0.00% | 12.26% | -37.87% | 12.26% |
-| DOGE-USD | XLM-USD | 2019-09-29 | 87.21% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 39.92% | -5.54% | 39.92% | 24.54% | -5.54% | 74.65% |
-| DOGE-USD | CHZ-USD | 2022-02-24 | 86.76% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -19.17% | -28.71% | 5.97% | 11.61% | -28.71% | 22.22% |
+| DOGE-USD | XLM-USD | 2019-09-29 | 87.22% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 39.92% | -5.54% | 39.92% | 24.54% | -5.54% | 74.65% |
+| DOGE-USD | CHZ-USD | 2022-02-24 | 86.77% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -19.17% | -28.71% | 5.97% | 11.61% | -28.71% | 22.22% |
 | DOGE-USD | VET-USD | 2022-02-22 | 86.54% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -27.52% | -29.00% | 4.39% | -11.12% | -29.73% | 4.39% |
 | DOGE-USD | 1INCH-USD | 2022-02-22 | 86.46% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -31.62% | -42.19% | 0.00% | -20.09% | -42.19% | 0.00% |
-| DOGE-USD | OMG-USD | 2022-02-20 | 86.43% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -32.46% | -37.50% | 0.00% | -16.83% | -40.22% | 0.00% |
+| DOGE-USD | OMG-USD | 2022-02-20 | 86.44% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -32.46% | -37.50% | 0.00% | -16.83% | -40.22% | 0.00% |
 | DOGE-USD | THETA-USD | 2022-02-24 | 86.27% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 1.59% | -8.56% | 23.35% | 14.81% | -8.85% | 24.03% |
 | DOGE-USD | ENJ-USD | 2022-02-25 | 86.27% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -16.55% | -33.46% | 5.00% | 1.45% | -33.46% | 5.00% |
 | SOL-USD | QTUM-USD | 2018-09-19 | 79.82% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | -2.21% | -3.68% | 15.25% | -0.51% | -17.60% | 15.25% |
 | SOL-USD | TRX-USD | 2018-09-19 | 79.77% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 55.01% | 0.00% | 55.01% | 32.25% | 0.00% | 58.38% |
 | SOL-USD | XLM-USD | 2020-01-07 | 79.48% | BEAR | BEAR | SAME_BTC_AND_ASSET | EXPLOSIVE_60D | 45.24% | 0.00% | 62.58% | 53.88% | 0.00% | 78.05% |
-| SOL-USD | LRC-USD | 2018-09-19 | 78.17% | BEAR | BEAR | SAME_BTC_AND_ASSET | HIGH_SPIKE_60D | 95.69% | 0.00% | 178.55% | 42.97% | 0.00% | 178.55% |
+| SOL-USD | LRC-USD | 2018-09-19 | 78.18% | BEAR | BEAR | SAME_BTC_AND_ASSET | HIGH_SPIKE_60D | 95.69% | 0.00% | 178.55% | 42.97% | 0.00% | 178.55% |
 | SOL-USD | ENJ-USD | 2018-09-19 | 77.80% | BEAR | BEAR | SAME_BTC_AND_ASSET | EXPLOSIVE_60D | -16.11% | -19.37% | 5.11% | 93.16% | -38.09% | 93.16% |
 | SOL-USD | XRP-USD | 2020-01-07 | 77.39% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 9.73% | 0.00% | 25.47% | 5.71% | 0.00% | 25.47% |
 | SOL-USD | SOL-USD | 2025-12-04 | 77.37% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | -7.51% | -10.44% | 9.16% | 6.95% | -10.44% | 10.43% |
@@ -1893,7 +1903,7 @@ The table below shows the top matches separately for each target, so BTC does no
 <!-- CLASSIC_TECHNICAL_CONFIRMATION_START -->
 # Classic technical confirmation report
 
-Generato: 2026-07-11 01:12 UTC
+Generato: 2026-07-11 03:02 UTC
 
 Questo modulo controlla se il setup è confermato secondo analisi tecnica classica. Non sostituisce lo scanner frattale: serve come filtro di conferma.
 
@@ -1913,35 +1923,35 @@ Cosa controlla:
 
 | Asset | Prezzo | Score | Verdetto | Stage | Struttura | Wyckoff | Volatilità locale | Azione |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 64.070 $ | -2 | DEBOLE / NON CONFERMATO | STAGE 4 / MARKDOWN | MASSIMI E MINIMI DECRESCENTI | SPRING / TEST POSSIBILE | MEDIO | RIDUCI RISCHIO / NO LONG A LEVA |
-| SOL | 77,73 $ | -4 | DEBOLE / NON CONFERMATO | STAGE 4 / MARKDOWN | VOLATILITÀ IN ESPANSIONE | RANGE / FASE NON CHIARA | BASSO | NON INSEGUIRE / TAKE PROFIT SU SPIKE |
-| DOGE | 0.07408 $ | -9 | RIBASSISTA / FRAGILE | STAGE 4 / MARKDOWN | MASSIMI E MINIMI DECRESCENTI | MARKDOWN / DEBOLEZZA | BASSO | NO LONG / SHORT SOLO DOPO SPIKE E REJECTION |
+| BTC | 64.115 $ | -2 | DEBOLE / NON CONFERMATO | STAGE 4 / MARKDOWN | MASSIMI E MINIMI DECRESCENTI | SPRING / TEST POSSIBILE | MEDIO | RIDUCI RISCHIO / NO LONG A LEVA |
+| SOL | 77,72 $ | -3 | DEBOLE / NON CONFERMATO | STAGE 4 / MARKDOWN | VOLATILITÀ IN ESPANSIONE | RANGE / FASE NON CHIARA | BASSO | NON INSEGUIRE / TAKE PROFIT SU SPIKE |
+| DOGE | 0.07418 $ | -9 | RIBASSISTA / FRAGILE | STAGE 4 / MARKDOWN | MASSIMI E MINIMI DECRESCENTI | MARKDOWN / DEBOLEZZA | BASSO | NO LONG / SHORT SOLO DOPO SPIKE E REJECTION |
 
 ## Punteggi per area
 
 | Asset | Trend | Struttura | Momentum | Volume | Prezzo | Candela | Wyckoff | Totale |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | BTC | -4 | -2 | +1 | +2 | 0 | 0 | +1 | -2 |
-| SOL | -4 | 0 | 0 | +1 | 0 | -1 | 0 | -4 |
+| SOL | -4 | 0 | 0 | +2 | 0 | -1 | 0 | -3 |
 | DOGE | -4 | -2 | -2 | +1 | 0 | 0 | -2 | -9 |
 
 ## Livelli tecnici
 
 | Asset | Supporto | Resistenza | Breakout 60g | Breakdown 60g | ATR14 | Rendimento 30g | Rendimento 90g |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 63.062 $ | 64.186 $ | 82.430 $ | 57.748 $ | 2,98% | 4,31% | -12,26% |
-| SOL | 77,45 $ | 83,22 $ | 98,27 $ | 60,41 $ | 4,15% | 23,07% | -8,50% |
-| DOGE | 0.07206 $ | 0.07923 $ | 0.11825 $ | 0.06961 $ | 3,82% | -10,67% | -20,42% |
+| BTC | 63.062 $ | 64.186 $ | 82.430 $ | 57.748 $ | 2,99% | 4,30% | -12,27% |
+| SOL | 77,45 $ | 83,22 $ | 98,27 $ | 60,41 $ | 4,17% | 23,00% | -8,54% |
+| DOGE | 0.07206 $ | 0.07923 $ | 0.11825 $ | 0.06961 $ | 3,83% | -10,65% | -20,40% |
 
 ## Lettura dettagliata
 
 ### BTC
 
-- Prezzo: **64.070 $**
+- Prezzo: **64.115 $**
 - Score classico: **-2 / 12**
 - Verdetto: **DEBOLE / NON CONFERMATO**
 - Azione coerente: **RIDUCI RISCHIO / NO LONG A LEVA**
-- Volatilità tecnica locale: **MEDIO** — ATR14 2,98%; distanza supporto 1,64%; distanza resistenza 0,14%
+- Volatilità tecnica locale: **MEDIO** — ATR14 2,99%; distanza supporto 1,63%; distanza resistenza 0,15%
 
 Dettaglio:
 
@@ -1949,7 +1959,7 @@ Dettaglio:
 - Stage weekly: **STAGE 4 / MARKDOWN** — Prezzo sotto MA30 weekly con MA30 in discesa.
 - Struttura: **-2** — MASSIMI E MINIMI DECRESCENTI
 - Momentum: **+1** — RSI sano 53.7; MACD sopra signal; istogramma MACD in peggioramento
-- Volume: **+2** — OBV sopra media; CMF positivo 0.11; volume ratio 0.92
+- Volume: **+2** — OBV sopra media; CMF positivo 0.09; volume ratio 0.86
 - Conferma prezzo: **0** — Nessuna rottura confermata di prezzo.
 - Candela: **0** — Nessuna candela forte
 - Wyckoff: **+1** — SPRING / TEST POSSIBILE. Ha bucato un minimo importante e ha recuperato: possibile spring, da confermare.
@@ -1958,11 +1968,11 @@ Indicatori principali:
 
 | Indicatore | Valore |
 | --- | --- |
-| RSI14 | 53.69 |
-| MACD histogram | 614.66400 |
-| CMF20 | 0.114 |
-| Volume ratio 20 | 0.92 |
-| MA20 | 61.814 $ |
+| RSI14 | 53.67 |
+| MACD histogram | 614.25742 |
+| CMF20 | 0.093 |
+| Volume ratio 20 | 0.86 |
+| MA20 | 61.813 $ |
 | MA50 | 65.368 $ |
 | MA100 | 70.789 $ |
 | MA200 | 74.103 $ |
@@ -1973,19 +1983,19 @@ Indicatori principali:
 
 ### SOL
 
-- Prezzo: **77,73 $**
-- Score classico: **-4 / 12**
+- Prezzo: **77,72 $**
+- Score classico: **-3 / 12**
 - Verdetto: **DEBOLE / NON CONFERMATO**
 - Azione coerente: **NON INSEGUIRE / TAKE PROFIT SU SPIKE**
-- Volatilità tecnica locale: **BASSO** — ATR14 4,15%; distanza supporto 0,37%; distanza resistenza 7,06%
+- Volatilità tecnica locale: **BASSO** — ATR14 4,17%; distanza supporto 0,31%; distanza resistenza 7,12%
 
 Dettaglio:
 
 - Trend: **-4** — prezzo sotto MA200 daily; breve termine sopra MA20/MA50; MA50 daily in discesa; MA200 daily in discesa; STAGE 4 / MARKDOWN
 - Stage weekly: **STAGE 4 / MARKDOWN** — Prezzo sotto MA30 weekly con MA30 in discesa.
 - Struttura: **0** — VOLATILITÀ IN ESPANSIONE
-- Momentum: **0** — RSI sano 53.7; RSI in peggioramento; MACD sopra signal; istogramma MACD in peggioramento
-- Volume: **+1** — OBV sopra media; CMF neutrale 0.01; volume ratio 0.79
+- Momentum: **0** — RSI sano 53.6; RSI in peggioramento; MACD sopra signal; istogramma MACD in peggioramento
+- Volume: **+2** — OBV sopra media; CMF positivo 0.05; volume ratio 0.76
 - Conferma prezzo: **0** — Nessuna rottura confermata di prezzo.
 - Candela: **-1** — Bearish engulfing
 - Wyckoff: **0** — RANGE / FASE NON CHIARA. Nessuna fase Wyckoff pulita.
@@ -1994,34 +2004,34 @@ Indicatori principali:
 
 | Indicatore | Valore |
 | --- | --- |
-| RSI14 | 53.72 |
-| MACD histogram | 0.30036 |
-| CMF20 | 0.014 |
-| Volume ratio 20 | 0.79 |
+| RSI14 | 53.62 |
+| MACD histogram | 0.29781 |
+| CMF20 | 0.051 |
+| Volume ratio 20 | 0.76 |
 | MA20 | 75,55 $ |
 | MA50 | 74,68 $ |
 | MA100 | 80,40 $ |
 | MA200 | 92,20 $ |
 | Pendenza MA50 20g | -6,63% |
 | Pendenza MA200 60g | -18,74% |
-| Bollinger width | 25,60% |
+| Bollinger width | 25,61% |
 | Bollinger position | 0.61 |
 
 ### DOGE
 
-- Prezzo: **0.07408 $**
+- Prezzo: **0.07418 $**
 - Score classico: **-9 / 12**
 - Verdetto: **RIBASSISTA / FRAGILE**
 - Azione coerente: **NO LONG / SHORT SOLO DOPO SPIKE E REJECTION**
-- Volatilità tecnica locale: **BASSO** — ATR14 3,82%; distanza supporto 2,83%; distanza resistenza 6,93%
+- Volatilità tecnica locale: **BASSO** — ATR14 3,83%; distanza supporto 2,86%; distanza resistenza 6,90%
 
 Dettaglio:
 
 - Trend: **-4** — prezzo sotto MA200 daily; medie daily allineate ribassiste; MA50 daily in discesa; MA200 daily in discesa; STAGE 4 / MARKDOWN
 - Stage weekly: **STAGE 4 / MARKDOWN** — Prezzo sotto MA30 weekly con MA30 in discesa.
 - Struttura: **-2** — MASSIMI E MINIMI DECRESCENTI
-- Momentum: **-2** — RSI debole 37.7; RSI in peggioramento; MACD sopra signal; istogramma MACD in peggioramento
-- Volume: **+1** — OBV sopra media; CMF neutrale -0.00; volume ratio 0.77
+- Momentum: **-2** — RSI debole 37.8; RSI in peggioramento; MACD sopra signal; istogramma MACD in peggioramento
+- Volume: **+1** — OBV sopra media; CMF neutrale -0.02; volume ratio 0.72
 - Conferma prezzo: **0** — Nessuna rottura confermata di prezzo.
 - Candela: **0** — Nessuna candela forte
 - Wyckoff: **-2** — MARKDOWN / DEBOLEZZA. Prezzo basso nel range e sotto medie principali.
@@ -2030,10 +2040,10 @@ Indicatori principali:
 
 | Indicatore | Valore |
 | --- | --- |
-| RSI14 | 37.72 |
+| RSI14 | 37.78 |
 | MACD histogram | 0.00049 |
-| CMF20 | -0.002 |
-| Volume ratio 20 | 0.77 |
+| CMF20 | -0.018 |
+| Volume ratio 20 | 0.72 |
 | MA20 | 0.07559 $ |
 | MA50 | 0.08518 $ |
 | MA100 | 0.09329 $ |
@@ -2065,7 +2075,7 @@ Nota: questo modulo deve pesare poco nel Global finché non viene verificato dal
 <!-- CLASSIC_TECHNICAL_VISUAL_START -->
 # Classic technical visual report
 
-Generato: 2026-07-11 01:13 UTC
+Generato: 2026-07-11 03:03 UTC
 
 Questo report crea grafici visivi dei pattern tecnici principali. Serve per vedere il grafico e il ciclo di vita dei pattern; non aggiunge automaticamente punteggio al Global.
 
@@ -2088,9 +2098,9 @@ Pattern controllati:
 
 | Asset | Prezzo | Pattern principale | Stato | Famiglia | Breakout | Target | Progresso | Distanza neckline | Fibonacci | Stato prezzo | Supporto |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 64.070 $ | Doppio massimo | CANDIDATO | ribassista | n/a | 49.952 $ | n/a | 10,95% | Fib 23,6% TENUTO (0) @ 62.981 $ | NEL RANGE | 62.553 $ |
-| SOL | 77,73 $ | Doppio minimo | CONFERMATO RECENTE | rialzista | 2026-07-01 | 91,46 $ | 11,54% | n/a | Fib 23,6% TESTATO (0) @ 78,29 $ | NEL RANGE | 76,82 $ |
-| DOGE | 0.07408 $ | Triplo massimo | MATURO | ribassista | 2026-06-24 | 0.05847 $ | 20,46% | n/a | Fib 23,6% NON ATTIVO (0) @ 0.08109 $ | NEL RANGE | 0.06961 $ |
+| BTC | 64.115 $ | Doppio massimo | CANDIDATO | ribassista | n/a | 49.952 $ | n/a | 11,03% | Fib 23,6% TENUTO (0) @ 62.981 $ | NEL RANGE | 62.553 $ |
+| SOL | 77,72 $ | Doppio minimo | CONFERMATO RECENTE | rialzista | 2026-07-01 | 91,46 $ | 11,47% | n/a | Fib 23,6% TESTATO (0) @ 78,29 $ | NEL RANGE | 76,82 $ |
+| DOGE | 0.07418 $ | Triplo massimo | MATURO | ribassista | 2026-06-24 | 0.05847 $ | 19,95% | n/a | Fib 23,6% NON ATTIVO (0) @ 0.08109 $ | NEL RANGE | 0.06961 $ |
 
 ## BTC
 
@@ -2107,31 +2117,31 @@ Pattern controllati:
 - Neckline: **57.748 $**
 - Target teorico: **49.952 $**
 - Progresso verso target: **n/a**
-- Distanza dalla neckline: **10,95%**
+- Distanza dalla neckline: **11,03%**
 - Fonte lifecycle: **technical_structure_metrics.csv**
 - Fibonacci: **Fib 23,6% TENUTO (0) @ 62.981 $** — Swing UP 2026-07-01 57.748 -> 2026-07-06 64.598; livello più vicino 23.6% a 62.981; stato TENUTO; confluenza: nessuna confluenza indipendente.
 - Invalidazione: **58.903 $**
 - Relazione prezzo/neckline: **sopra neckline**
 - Dettaglio: Due massimi simili vicino a 65.544 tra 2026-06-22 e 2026-07-06. Neckline ribassista stimata: 57.748. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 5 giorni. Fonte lifecycle: technical_structure_metrics.csv.
-- Candela più recente: **Nessuna candela forte**
+- Candela più recente: **Doji / indecisione**
 - Stato prezzo: **NEL RANGE**
 - Supporto: **62.553 $**
 - Resistenza: **64.598 $**
 - Breakout 60g: **82.430 $**
 - Breakdown 60g: **57.748 $**
-- RSI14: **53.59**
-- ATR14: **2,98%**
-- Volume ratio 20g: **0.92**
-- Rendimento 30g: **+4,26%**
-- Rendimento 90g: **-12,30%**
+- RSI14: **53.76**
+- ATR14: **2,99%**
+- Volume ratio 20g: **0.86**
+- Rendimento 30g: **+4,34%**
+- Rendimento 90g: **-12,24%**
 
 ### Pattern trovati
 
 | Pattern | Stato | Score | Famiglia | Neckline | Breakout | Età | Target | Progresso | Distanza neckline | Invalidazione | Dettaglio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Doppio massimo | CANDIDATO | 0 | ribassista | 57.748 $ | n/a | n/a | 49.952 $ | n/a | 10,95% | 58.903 $ | Due massimi simili a 65.544 $ e 64.598 $. Neckline circa 57.748 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 5 giorni. |
+| Doppio massimo | CANDIDATO | 0 | ribassista | 57.748 $ | n/a | n/a | 49.952 $ | n/a | 11,03% | 58.903 $ | Due massimi simili a 65.544 $ e 64.598 $. Neckline circa 57.748 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 5 giorni. |
 | Triangolo discendente possibile | CANDIDATO | 0 | ribassista | n/a | n/a | n/a | n/a | n/a | n/a | n/a | Massimi decrescenti e supporto quasi piatto. Stato: CANDIDATO; il pattern non ha una neckline univoca da usare per il lifecycle. |
-| Doppio minimo | CANDIDATO | 0 | rialzista | 67.248 $ | n/a | n/a | 76.748 $ | n/a | 4,96% | 65.903 $ | Due minimi simili a 59.109 $ e 57.748 $. Neckline circa 67.248 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 10 giorni. |
+| Doppio minimo | CANDIDATO | 0 | rialzista | 67.248 $ | n/a | n/a | 76.748 $ | n/a | 4,89% | 65.903 $ | Due minimi simili a 59.109 $ e 57.748 $. Neckline circa 67.248 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 10 giorni. |
 
 ## SOL
 
@@ -2147,33 +2157,33 @@ Pattern controllati:
 - Età breakout: **10 giorni**
 - Neckline: **75,94 $**
 - Target teorico: **91,46 $**
-- Progresso verso target: **11,54%**
+- Progresso verso target: **11,47%**
 - Distanza dalla neckline: **n/a**
 - Fonte lifecycle: **technical_structure_metrics.csv**
 - Fibonacci: **Fib 23,6% TESTATO (0) @ 78,29 $** — Swing UP 2026-06-06 60,41 -> 2026-07-04 83,81; livello più vicino 23.6% a 78,29; stato TESTATO; confluenza: neckline rialzista.
 - Invalidazione: **74,42 $**
 - Relazione prezzo/neckline: **sopra neckline**
-- Dettaglio: Due minimi simili vicino a 60,41 tra 2026-06-06 e 2026-06-25. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (10 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: 11,54%. Relazione prezzo/neckline: sopra neckline. Fonte lifecycle: technical_structure_metrics.csv.
+- Dettaglio: Due minimi simili vicino a 60,41 tra 2026-06-06 e 2026-06-25. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (10 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: 11,47%. Relazione prezzo/neckline: sopra neckline. Fonte lifecycle: technical_structure_metrics.csv.
 - Candela più recente: **Bearish engulfing**
 - Stato prezzo: **NEL RANGE**
 - Supporto: **76,82 $**
 - Resistenza: **83,81 $**
 - Breakout 60g: **98,27 $**
 - Breakdown 60g: **60,41 $**
-- RSI14: **53.72**
-- ATR14: **4,15%**
-- Volume ratio 20g: **0.79**
-- Rendimento 30g: **+23,07%**
-- Rendimento 90g: **-8,50%**
+- RSI14: **53.70**
+- ATR14: **4,17%**
+- Volume ratio 20g: **0.76**
+- Rendimento 30g: **+23,05%**
+- Rendimento 90g: **-8,51%**
 
 ### Pattern trovati
 
 | Pattern | Stato | Score | Famiglia | Neckline | Breakout | Età | Target | Progresso | Distanza neckline | Invalidazione | Dettaglio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Doppio minimo | CONFERMATO RECENTE | +2 | rialzista | 75,94 $ | 2026-07-01 | 10g | 91,46 $ | 11,54% | n/a | 74,42 $ | Due minimi simili vicino a 60,41 tra 2026-06-06 e 2026-06-25. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (10 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: 11,54%. Relazione prezzo/neckline: sopra neckline. Fonte lifecycle: technical_structure_metrics.csv. |
-| Doppio massimo | CANDIDATO | 0 | ribassista | 60,41 $ | n/a | n/a | 33,04 $ | n/a | 28,66% | 61,62 $ | Due massimi simili a 87,79 $ e 83,81 $. Neckline circa 60,41 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 7 giorni. |
-| Doppio minimo | CANDIDATO | 0 | rialzista | 98,27 $ | n/a | n/a | 114,91 $ | n/a | 26,42% | 96,30 $ | Due minimi simili a 81,63 $ e 81,69 $. Neckline circa 98,27 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 49 giorni. |
-| Testa e spalle | TARGET RAGGIUNTO | 0 | ribassista | 82,57 $ | 2026-05-28 | 44g | 66,88 $ | 30,85% | n/a | 84,22 $ | Spalla sinistra 88,05 $, testa 98,27 $, spalla destra 87,79 $. Neckline circa 82,57 $. Breakout neckline: 2026-05-28 (44 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 66,88 $; progresso: 30,85%; prezzo sotto neckline. |
+| Doppio minimo | CONFERMATO RECENTE | +2 | rialzista | 75,94 $ | 2026-07-01 | 10g | 91,46 $ | 11,47% | n/a | 74,42 $ | Due minimi simili vicino a 60,41 tra 2026-06-06 e 2026-06-25. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (10 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: 11,47%. Relazione prezzo/neckline: sopra neckline. Fonte lifecycle: technical_structure_metrics.csv. |
+| Doppio massimo | CANDIDATO | 0 | ribassista | 60,41 $ | n/a | n/a | 33,04 $ | n/a | 28,64% | 61,62 $ | Due massimi simili a 87,79 $ e 83,81 $. Neckline circa 60,41 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 7 giorni. |
+| Doppio minimo | CANDIDATO | 0 | rialzista | 98,27 $ | n/a | n/a | 114,91 $ | n/a | 26,44% | 96,30 $ | Due minimi simili a 81,63 $ e 81,69 $. Neckline circa 98,27 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 49 giorni. |
+| Testa e spalle | TARGET RAGGIUNTO | 0 | ribassista | 82,57 $ | 2026-05-28 | 44g | 66,88 $ | 30,92% | n/a | 84,22 $ | Spalla sinistra 88,05 $, testa 98,27 $, spalla destra 87,79 $. Neckline circa 82,57 $. Breakout neckline: 2026-05-28 (44 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 66,88 $; progresso: 30,92%; prezzo sotto neckline. |
 
 ## DOGE
 
@@ -2189,32 +2199,32 @@ Pattern controllati:
 - Età breakout: **17 giorni**
 - Neckline: **0.07809 $**
 - Target teorico: **0.05847 $**
-- Progresso verso target: **20,46%**
+- Progresso verso target: **19,95%**
 - Distanza dalla neckline: **n/a**
 - Fonte lifecycle: **technical_structure_metrics.csv**
 - Fibonacci: **Fib 23,6% NON ATTIVO (0) @ 0.08109 $** — Swing DOWN 2026-05-14 0.11825 -> 2026-06-30 0.06961; livello più vicino 23.6% a 0.08109; stato NON ATTIVO; confluenza: resistenza tecnica, invalidazione ribassista.
 - Invalidazione: **0.07966 $**
 - Relazione prezzo/neckline: **sotto neckline**
-- Dettaglio: Tre massimi simili vicino a 0.09772 dal 2026-03-25 al 2026-06-12. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (17 giorni fa). Stato: MATURO. Target teorico: 0.05847; progresso corrente: 20,46%. Relazione prezzo/neckline: sotto neckline. Fonte lifecycle: technical_structure_metrics.csv.
+- Dettaglio: Tre massimi simili vicino a 0.09772 dal 2026-03-25 al 2026-06-12. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (17 giorni fa). Stato: MATURO. Target teorico: 0.05847; progresso corrente: 19,95%. Relazione prezzo/neckline: sotto neckline. Fonte lifecycle: technical_structure_metrics.csv.
 - Candela più recente: **Nessuna candela forte**
 - Stato prezzo: **NEL RANGE**
 - Supporto: **0.06961 $**
 - Resistenza: **0.07923 $**
 - Breakout 60g: **0.11825 $**
 - Breakdown 60g: **0.06961 $**
-- RSI14: **37.65**
-- ATR14: **3,82%**
-- Volume ratio 20g: **0.77**
-- Rendimento 30g: **-10,70%**
-- Rendimento 90g: **-20,44%**
+- RSI14: **37.98**
+- ATR14: **3,83%**
+- Volume ratio 20g: **0.72**
+- Rendimento 30g: **-10,58%**
+- Rendimento 90g: **-20,33%**
 
 ### Pattern trovati
 
 | Pattern | Stato | Score | Famiglia | Neckline | Breakout | Età | Target | Progresso | Distanza neckline | Invalidazione | Dettaglio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Triplo massimo | MATURO | -1 | ribassista | 0.07809 $ | 2026-06-24 | 17g | 0.05847 $ | 20,46% | n/a | 0.07966 $ | Tre massimi simili vicino a 0.09772 dal 2026-03-25 al 2026-06-12. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (17 giorni fa). Stato: MATURO. Target teorico: 0.05847; progresso corrente: 20,46%. Relazione prezzo/neckline: sotto neckline. Fonte lifecycle: technical_structure_metrics.csv. |
-| Doppio massimo | MATURO | -1 | ribassista | 0.07809 $ | 2026-06-24 | 17g | 0.06035 $ | 22,63% | n/a | 0.07966 $ | Due massimi simili a 0.09584 $ e 0.09169 $. Neckline circa 0.07809 $. Breakout neckline: 2026-06-24 (17 giorni fa). Stato: MATURO. Target teorico: 0.06035 $; progresso: 22,63%; prezzo sotto neckline. |
-| Doppio minimo | CANDIDATO | 0 | rialzista | 0.11825 $ | n/a | n/a | 0.14377 $ | n/a | 59,63% | 0.11589 $ | Due minimi simili a 0.09274 $ e 0.09675 $. Neckline circa 0.11825 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 44 giorni. |
+| Triplo massimo | MATURO | -1 | ribassista | 0.07809 $ | 2026-06-24 | 17g | 0.05847 $ | 19,95% | n/a | 0.07966 $ | Tre massimi simili vicino a 0.09772 dal 2026-03-25 al 2026-06-12. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (17 giorni fa). Stato: MATURO. Target teorico: 0.05847; progresso corrente: 19,95%. Relazione prezzo/neckline: sotto neckline. Fonte lifecycle: technical_structure_metrics.csv. |
+| Doppio massimo | MATURO | -1 | ribassista | 0.07809 $ | 2026-06-24 | 17g | 0.06035 $ | 22,07% | n/a | 0.07966 $ | Due massimi simili a 0.09584 $ e 0.09169 $. Neckline circa 0.07809 $. Breakout neckline: 2026-06-24 (17 giorni fa). Stato: MATURO. Target teorico: 0.06035 $; progresso: 22,07%; prezzo sotto neckline. |
+| Doppio minimo | CANDIDATO | 0 | rialzista | 0.11825 $ | n/a | n/a | 0.14377 $ | n/a | 59,42% | 0.11589 $ | Due minimi simili a 0.09274 $ e 0.09675 $. Neckline circa 0.11825 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 44 giorni. |
 
 ## Stati del ciclo di vita
 
@@ -2248,7 +2258,7 @@ Nota: questi pattern sono riconosciuti con regole algoritmiche semplici. Sono ut
 <!-- FRACTAL_PATH_TRACKER_START -->
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-11 01:12 UTC
+Generato: 2026-07-11 03:02 UTC
 
 Questo modulo separa due percorsi che prima potevano essere confusi:
 
@@ -2263,7 +2273,7 @@ Questo modulo separa due percorsi che prima potevano essere confusi:
 - Bottom BTC equivalente: **2022-11-21**
 - Giorno BTC equivalente: **2022-12-26**
 - Inizio programma/scanner: **2026-07-03**
-- Prezzo SOL corrente: **77,73 $**
+- Prezzo SOL corrente: **77,72 $**
 - Verdetto principale: **STRUTTURA ANALOGA, PREZZO NON ADERENTE**
 - Somiglianza strutturale: **+65,21%**
 - Aderenza live principale: **+58,29%**
@@ -2281,7 +2291,7 @@ Questo modulo separa due percorsi che prima potevano essere confusi:
 - Errore assoluto medio da inizio programma: **20,85%**
 - Gap firmato medio ultimi 7 giorni: **+19,57%**
 - Errore assoluto medio ultimi 7 giorni: **19,57%**
-- Gap ultimo giorno: **+16,62%**
+- Gap ultimo giorno: **+16,61%**
 - Stato aderenza: **STACCATO / MOLTO IN ANTICIPO**
 
 ## Grafico completo: due percorsi distinti
@@ -2300,10 +2310,10 @@ La linea **ancorata al bottom** serve a verificare il frattale originale. La lin
 
 ### Lettura rapida gap
 
-- Ultimo gap firmato: **+16,62%**
+- Ultimo gap firmato: **+16,61%**
 - Gap firmato medio 7g: **+19,57%**
 - Errore assoluto medio 7g: **19,57%**
-- Variazione recente gap: **-0,94%**
+- Variazione recente gap: **-0,95%**
 - Stato gap: **IN DEVIAZIONE SOPRA IL FRATTALE**
 - Trend gap: **SOL resta sopra il percorso ancorato con distacco quasi stabile**
 
@@ -2327,30 +2337,30 @@ Soglie operative del grafico:
 | 32 | 2026-07-08 | 2022-12-23 | 77,79 $ | 66,17 $ | +17,56% | da inizio programma |
 | 33 | 2026-07-09 | 2022-12-24 | 78,05 $ | 66,37 $ | +17,60% | da inizio programma |
 | 34 | 2026-07-10 | 2022-12-25 | 78,05 $ | 66,34 $ | +17,64% | da inizio programma |
-| 35 | 2026-07-11 | 2022-12-26 | 77,73 $ | 66,65 $ | +16,62% | da inizio programma |
+| 35 | 2026-07-11 | 2022-12-26 | 77,72 $ | 66,65 $ | +16,61% | da inizio programma |
 
 ## Proiezione futura salvata
 
 | Orizzonte   | Data target   | Percorso ancorato   | Scenario riancorato oggi   | Min/max riancorato   | Controllato   | Prezzo reale   | Errore riancorato   | Errore ancorato   |
 |:------------|:--------------|:--------------------|:---------------------------|:---------------------|:--------------|:---------------|:--------------------|:------------------|
-| 7g | 2026-07-18 | 65,74 $ | 76,67 $ | 76,02 $ / 77,73 $ | no | n/a | n/a | n/a |
-| 14g | 2026-07-25 | 67,74 $ | 79,00 $ | 76,02 $ / 79,00 $ | no | n/a | n/a | n/a |
-| 21g | 2026-08-01 | 83,39 $ | 97,25 $ | 76,02 $ / 97,25 $ | no | n/a | n/a | n/a |
-| 28g | 2026-08-08 | 90,34 $ | 105,36 $ | 76,02 $ / 105,36 $ | no | n/a | n/a | n/a |
-| 35g | 2026-08-15 | 89,97 $ | 104,93 $ | 76,02 $ / 109,22 $ | no | n/a | n/a | n/a |
-| 42g | 2026-08-22 | 89,66 $ | 104,56 $ | 76,02 $ / 109,22 $ | no | n/a | n/a | n/a |
-| 49g | 2026-08-29 | 85,91 $ | 100,19 $ | 76,02 $ / 109,22 $ | no | n/a | n/a | n/a |
-| 56g | 2026-09-05 | 97,81 $ | 114,07 $ | 76,02 $ / 114,07 $ | no | n/a | n/a | n/a |
-| 63g | 2026-09-12 | 92,66 $ | 108,06 $ | 76,02 $ / 114,07 $ | no | n/a | n/a | n/a |
-| 70g | 2026-09-19 | 88,36 $ | 103,04 $ | 76,02 $ / 114,07 $ | no | n/a | n/a | n/a |
-| 77g | 2026-09-26 | 95,32 $ | 111,16 $ | 76,02 $ / 114,07 $ | no | n/a | n/a | n/a |
-| 84g | 2026-10-03 | 109,38 $ | 127,56 $ | 76,02 $ / 128,81 $ | no | n/a | n/a | n/a |
-| 91g | 2026-10-10 | 106,91 $ | 124,68 $ | 76,02 $ / 130,17 $ | no | n/a | n/a | n/a |
-| 98g | 2026-10-17 | 109,47 $ | 127,67 $ | 76,02 $ / 130,83 $ | no | n/a | n/a | n/a |
-| 105g | 2026-10-24 | 116,81 $ | 136,23 $ | 76,02 $ / 136,23 $ | no | n/a | n/a | n/a |
-| 112g | 2026-10-31 | 115,99 $ | 135,27 $ | 76,02 $ / 140,05 $ | no | n/a | n/a | n/a |
-| 119g | 2026-11-07 | 108,43 $ | 126,45 $ | 76,02 $ / 140,05 $ | no | n/a | n/a | n/a |
-| 126g | 2026-11-14 | 110,66 $ | 129,05 $ | 76,02 $ / 140,05 $ | no | n/a | n/a | n/a |
+| 7g | 2026-07-18 | 65,74 $ | 76,66 $ | 76,01 $ / 77,72 $ | no | n/a | n/a | n/a |
+| 14g | 2026-07-25 | 67,74 $ | 78,99 $ | 76,01 $ / 78,99 $ | no | n/a | n/a | n/a |
+| 21g | 2026-08-01 | 83,39 $ | 97,24 $ | 76,01 $ / 97,24 $ | no | n/a | n/a | n/a |
+| 28g | 2026-08-08 | 90,34 $ | 105,35 $ | 76,01 $ / 105,35 $ | no | n/a | n/a | n/a |
+| 35g | 2026-08-15 | 89,97 $ | 104,91 $ | 76,01 $ / 109,21 $ | no | n/a | n/a | n/a |
+| 42g | 2026-08-22 | 89,66 $ | 104,55 $ | 76,01 $ / 109,21 $ | no | n/a | n/a | n/a |
+| 49g | 2026-08-29 | 85,91 $ | 100,17 $ | 76,01 $ / 109,21 $ | no | n/a | n/a | n/a |
+| 56g | 2026-09-05 | 97,81 $ | 114,05 $ | 76,01 $ / 114,05 $ | no | n/a | n/a | n/a |
+| 63g | 2026-09-12 | 92,66 $ | 108,05 $ | 76,01 $ / 114,05 $ | no | n/a | n/a | n/a |
+| 70g | 2026-09-19 | 88,36 $ | 103,03 $ | 76,01 $ / 114,05 $ | no | n/a | n/a | n/a |
+| 77g | 2026-09-26 | 95,32 $ | 111,15 $ | 76,01 $ / 114,05 $ | no | n/a | n/a | n/a |
+| 84g | 2026-10-03 | 109,38 $ | 127,55 $ | 76,01 $ / 128,79 $ | no | n/a | n/a | n/a |
+| 91g | 2026-10-10 | 106,91 $ | 124,67 $ | 76,01 $ / 130,15 $ | no | n/a | n/a | n/a |
+| 98g | 2026-10-17 | 109,47 $ | 127,65 $ | 76,01 $ / 130,81 $ | no | n/a | n/a | n/a |
+| 105g | 2026-10-24 | 116,81 $ | 136,21 $ | 76,01 $ / 136,21 $ | no | n/a | n/a | n/a |
+| 112g | 2026-10-31 | 115,99 $ | 135,25 $ | 76,01 $ / 140,03 $ | no | n/a | n/a | n/a |
+| 119g | 2026-11-07 | 108,43 $ | 126,44 $ | 76,01 $ / 140,03 $ | no | n/a | n/a | n/a |
+| 126g | 2026-11-14 | 110,66 $ | 129,04 $ | 76,01 $ / 140,03 $ | no | n/a | n/a | n/a |
 
 La colonna **Percorso ancorato** continua la scala dal bottom. La colonna **Scenario riancorato oggi** riparte dal prezzo corrente e non cancella, nei controlli, il gap gia accumulato.
 
@@ -2388,6 +2398,185 @@ La colonna **Percorso ancorato** continua la scala dal bottom. La colonna **Scen
 </details>
 <!-- COMPACT_SECTION_END:fractal_path -->
 
+<!-- COMPACT_SECTION_START:exchange_microstructure -->
+<details>
+<summary><strong>🏦 Dati exchange, liquidità e leva</strong></summary>
+
+<!-- EXCHANGE_MICROSTRUCTURE_START -->
+# Dati exchange, liquidità e leva
+
+Generato: 2026-07-11 03:03 UTC
+
+Questo modulo legge Binance Futures, Bybit e KuCoin Futures per aggiungere microstruttura, leva e flussi reali allo scanner.
+Non modifica la formula matematica di RSI, Fibonacci o Wyckoff: controlla se quei segnali sono sostenuti da acquisti, vendite, OI, funding e liquidità.
+
+**Limite importante:** gli exchange non pubblicano la mappa completa dei prezzi di liquidazione di tutti gli utenti. Le liquidazioni qui sotto sono eventi realmente osservati in un campione pubblico di circa 15 secondi; le zone future di liquidazione restano stime di pressione, non dati certi delle singole posizioni.
+
+## Sintesi
+
+| Asset | Prezzo | Exchange | Segnale candidato | Peso Global | Bias exchange | Confidenza | Copertura | Funding | OI 24h | Taker B/S 4h | Book 0,5% | Liq long campione | Liq short campione |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BTC | 64.152 $ | 1 | 0 | 0 | LEGGERMENTE NEGATIVA / NON PESATA | BASSA | 29% | -0,0010% | +1,72% | 0,06 | +2,84% | 0 $ | 0 $ |
+| SOL | 77,77 $ | 1 | 0 | 0 | LEGGERMENTE NEGATIVA / NON PESATA | BASSA | 29% | +0,0073% | +17,81% | 0,41 | -9,72% | 0 $ | 0 $ |
+| DOGE | 0.07422 $ | 1 | 0 | 0 | LEGGERMENTE POSITIVA / NON PESATA | BASSA | 29% | +0,0024% | -7,68% | 1,14 | +4,98% | 0 $ | 0 $ |
+
+Il segnale candidato è limitato a **±1**, ma il peso nel Global resta **0** finché il tracker a 7 giorni non raggiunge 30 controlli, almeno 55% di accuratezza e return corretto direzione positivo. Un singolo muro o funding non basta.
+
+## Dati separati per exchange
+
+| Asset | Exchange | Stato | Funding | Open interest | Taker B/S | Book 0,5% |
+| --- | --- | --- | --- | --- | --- | --- |
+| BTC | Binance | MANCANTE | n/a | n/a | n/a | +0,00% |
+| BTC | Bybit | MANCANTE | n/a | n/a | n/a | +0,00% |
+| BTC | Kucoin | OK | -0,0010% | 1,86 mld $ | 0,06 | +2,84% |
+| SOL | Binance | MANCANTE | n/a | n/a | n/a | +0,00% |
+| SOL | Bybit | MANCANTE | n/a | n/a | n/a | +0,00% |
+| SOL | Kucoin | OK | +0,0073% | 341,84 mln $ | 0,41 | -9,72% |
+| DOGE | Binance | MANCANTE | n/a | n/a | n/a | +0,00% |
+| DOGE | Bybit | MANCANTE | n/a | n/a | n/a | +0,00% |
+| DOGE | Kucoin | OK | +0,0024% | 97,18 mln $ | 1,14 | +4,98% |
+
+KuCoin contribuisce a funding, open interest, trade aggressivi e order book. Non viene inventato un long/short ratio pubblico né un feed pubblico completo delle liquidazioni quando l'API non li espone.
+
+## Conferme per indicatori tecnici
+
+### BTC
+
+- Score grezzo exchange: **-1,50**; candidato: **0**; peso Global: **0**.
+- Attivazione Global: **LOCKED / RACCOLTA 7G** — controlli 7g 0, accuratezza n/a.
+- Fonti disponibili: Binance **NO**, Bybit **NO**, KuCoin **SI**.
+- Consenso multi-exchange: bull 0, bear 0, divergenze 0.
+- Flusso taker/order book: **-1,00**.
+- OI/funding/basis: **+0,00**.
+- Affollamento long/short: **+0,00**.
+- Liquidazioni nel campione: **0 eventi**, long 0 $, short 0 $.
+- **Wyckoff:** Possibile accumulazione non confermata: il flusso aggressivo resta venditore.
+- **Fibonacci:** Fibonacci tenuto; nessuna conferma exchange netta.
+- **RSI:** RSI in zona non estrema o flusso exchange non abbastanza netto.
+- **Pattern:** I pattern candidati restano non operativi: i dati exchange possono solo preparare la conferma.
+- **Breakout/breakdown:** Resistenza vicina ma long affollati/flusso debole: rischio di falso breakout o squeeze breve.
+- **Mappa liquidità attuale:** muro bid kucoin @ 63.366 (-1,22%, 3,16 mln $, 1649.1x mediana); muro ask kucoin @ 64.925 (+1,20%, 3,24 mln $, 1739.3x mediana)
+
+### SOL
+
+- Score grezzo exchange: **-3,00**; candidato: **0**; peso Global: **0**.
+- Attivazione Global: **LOCKED / RACCOLTA 7G** — controlli 7g 0, accuratezza n/a.
+- Fonti disponibili: Binance **NO**, Bybit **NO**, KuCoin **SI**.
+- Consenso multi-exchange: bull 0, bear 0, divergenze 0.
+- Flusso taker/order book: **-2,00**.
+- OI/funding/basis: **-1,00**.
+- Affollamento long/short: **+0,00**.
+- Liquidazioni nel campione: **0 eventi**, long 0 $, short 0 $.
+- **Wyckoff:** Fase Wyckoff non abbastanza chiara per una conferma exchange.
+- **Fibonacci:** Livello Fibonacci soltanto testato: order book e taker flow non bastano ancora per dichiararlo tenuto o perso. Confluenza tecnica dichiarata: neckline rialzista.
+- **RSI:** RSI in zona non estrema o flusso exchange non abbastanza netto.
+- **Pattern:** I pattern candidati restano non operativi: i dati exchange possono solo preparare la conferma.
+- **Breakout/breakdown:** Prezzo non abbastanza vicino a un livello chiave o flusso non netto.
+- **Mappa liquidità attuale:** muro bid kucoin @ 76,88 (-1,14%, 1,02 mln $, 573.8x mediana); muro ask kucoin @ 78,61 (+1,08%, 1,98 mln $, 2178.3x mediana)
+
+### DOGE
+
+- Score grezzo exchange: **+1,38**; candidato: **0**; peso Global: **0**.
+- Attivazione Global: **LOCKED / RACCOLTA 7G** — controlli 7g 0, accuratezza n/a.
+- Fonti disponibili: Binance **NO**, Bybit **NO**, KuCoin **SI**.
+- Consenso multi-exchange: bull 0, bear 0, divergenze 0.
+- Flusso taker/order book: **+1,00**.
+- OI/funding/basis: **+0,00**.
+- Affollamento long/short: **+0,00**.
+- Liquidazioni nel campione: **0 eventi**, long 0 $, short 0 $.
+- **Wyckoff:** Possibile accumulazione/spring sostenuto da pressione compratrice o assorbimento.
+- **Fibonacci:** Fibonacci non_attivo; nessuna conferma exchange netta. Confluenza tecnica dichiarata: resistenza tecnica, invalidazione ribassista.
+- **RSI:** RSI in zona non estrema o flusso exchange non abbastanza netto.
+- **Pattern:** I pattern candidati restano non operativi: i dati exchange possono solo preparare la conferma.
+- **Breakout/breakdown:** Prezzo non abbastanza vicino a un livello chiave o flusso non netto.
+- **Mappa liquidità attuale:** muro bid kucoin @ 0.07286 (-1,85%, 1,55 mln $, 584.1x mediana); muro ask kucoin @ 0.07555 (+1,78%, 832,2 mila $, 164.5x mediana)
+
+## Overlay sulle previsioni a 30 giorni
+
+La previsione storica grezza dello scanner resta intatta. L'overlay exchange può correggerla solo dopo almeno 30 controlli maturati a 30 giorni e solo se il modulo dimostra accuratezza direzionale almeno del 55%.
+
+| Asset | Prob. grezza salita | Return p50 grezzo | Controlli 30g | Accuratezza exchange | Stato overlay | Peso | Prob. corretta | Return corretto |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BTC | +77,50% | +9,01% | 0 | n/a | RACCOLTA DATI | 0,00 | +77,50% | +9,01% |
+| SOL | +40,00% | -1,70% | 0 | n/a | RACCOLTA DATI | 0,00 | +40,00% | -1,70% |
+| DOGE | +15,00% | -22,37% | 0 | n/a | RACCOLTA DATI | 0,00 | +15,00% | -22,37% |
+
+## Dati salvati
+
+- `exchange_market_data_snapshot.json`: fotografia raw/derivata Binance + Bybit + KuCoin.
+- `exchange_market_data_intraday.csv`: memoria operativa mobile degli ultimi 180 giorni, ripristinata da due copie ridondanti su GitHub Releases.
+- `exchange_intraday_YYYY-MM.csv.gz`: archivio mensile permanente dei dati intraday, creato dopo la chiusura del mese.
+- `exchange_microstructure_metrics.csv`: score e conferme correnti lette dal Global.
+- `exchange_microstructure_history.csv`: prima fotografia giornaliera congelata, usata per valutare le previsioni.
+- `exchange_signal_tracker_metrics.csv`: accuratezza a 1/3/7/14/30 giorni.
+- `exchange_prediction_overlay.csv`: confronto scanner grezzo vs overlay calibrato.
+
+## Regole di prudenza
+
+- Un muro dell'order book può essere cancellato: non è un supporto garantito.
+- Funding e long/short ratio misurano affollamento, non direzione certa.
+- OI in aumento conta soltanto insieme alla direzione del prezzo e al taker flow.
+- Le liquidazioni del campione breve sono diagnostiche e hanno peso ridotto.
+- Prima dei 30 controlli a 7g il modulo non pesa nel Global; prima dei 30 controlli a 30g l'overlay non altera le previsioni.
+
+Salute fonti: **WARN** — coppie exchange/asset disponibili: 3/9.
+Storage persistente: **OK** — ultimo asset: exchange_state_A.tar.gz.
+<!-- EXCHANGE_MICROSTRUCTURE_END -->
+
+</details>
+<!-- COMPACT_SECTION_END:exchange_microstructure -->
+
+<!-- COMPACT_SECTION_START:exchange_signal_tracker -->
+<details>
+<summary><strong>🧠 Accuratezza segnali exchange</strong></summary>
+
+<!-- EXCHANGE_SIGNAL_TRACKER_START -->
+# Accuratezza dati exchange e microstruttura
+
+Generato: 2026-07-11 03:03 UTC
+
+Questo tracker verifica se il segnale candidato exchange ±1 anticipa correttamente la direzione del prezzo a 1/3/7/14/30 giorni.
+Il peso Global resta 0 finché l'orizzonte 7g non ha almeno 30 controlli, accuratezza almeno 55% e return corretto direzione positivo. L'overlay a 30g ha un gate separato.
+
+Controlli maturati completati in questa esecuzione: **0**.
+
+## Ultime fotografie giornaliere
+
+_Nessuna fotografia exchange ancora salvata._
+
+## Accuratezza direzionale
+
+| Asset | Orizzonte | Controlli | Accuratezza | Return corretto direzione | Drawdown medio | Max gain medio | Stato |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| BTC | 1g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 3g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 7g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 14g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| BTC | 30g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 1g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 3g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 7g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 14g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| SOL | 30g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 1g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 3g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 7g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 14g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+| DOGE | 30g | 0 | n/a | n/a | n/a | n/a | RACCOLTA DATI |
+
+## Regole
+
+- Sotto 30 controlli: solo raccolta dati; il segnale candidato non pesa nel Global.
+- Da 30 controlli a 7g: il peso Global può attivarsi soltanto con accuratezza almeno 55% e return corretto direzione positivo.
+- Da 30 controlli a 30g: l'overlay può attivarsi soltanto con accuratezza almeno 55%.
+- Da 60 controlli: la lettura diventa più utile.
+- Da 100 controlli: possibile revisione seria del peso ±1.
+- Se l'accuratezza scende sotto 45%, l'overlay viene sospeso, non invertito automaticamente.
+<!-- EXCHANGE_SIGNAL_TRACKER_END -->
+
+</details>
+<!-- COMPACT_SECTION_END:exchange_signal_tracker -->
+
 <!-- COMPACT_SECTION_START:liquidations -->
 <details>
 <summary><strong>💥 Futures e liquidazioni</strong></summary>
@@ -2408,9 +2597,9 @@ Report separato completo: [liquidation_report.md](liquidation_report.md)
 
 | Asset | Prezzo | Funding | OI 24h | Long/Short | Lettura futures | Forza |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 64.070 $ | +0.0059% | +3.87% | 1.78 | Rischio sotto | 4/5 |
-| SOL | 77,73 $ | -0.0000% | -22.88% | 2.80 | Misto | 1/5 |
-| DOGE | 0.07408 $ | +0.0100% | -0.25% | 3.17 | Rischio sotto | 2/5 |
+| BTC | 64.115 $ | +0.0024% | +4.45% | 1.67 | Rischio sotto | 4/5 |
+| SOL | 77,72 $ | +0.0010% | -23.15% | 2.66 | Misto | 1/5 |
+| DOGE | 0.07418 $ | +0.0100% | -0.21% | 3.08 | Rischio sotto | 2/5 |
 
 ## Come usarla insieme al frattale
 
@@ -2431,7 +2620,7 @@ Report separato completo: [liquidation_report.md](liquidation_report.md)
 <!-- TECHNICAL_STRUCTURE_START -->
 # Report struttura tecnica
 
-Generato: 2026-07-11 01:13 UTC
+Generato: 2026-07-11 03:02 UTC
 
 Questo report aggiunge al tuo scanner una lettura classica di analisi tecnica.
 
@@ -2456,9 +2645,9 @@ Regola anti-pattern-zombie: un pattern vecchio non resta indefinitamente conferm
 
 | Asset   | Prezzo   |   Punteggio | Verdetto           | Trend            | Momentum        | Struttura                                             |   Pattern score | Fibonacci      | Pattern rialzista                  | Pattern ribassista         | Supporto   | Resistenza   |
 |:--------|:---------|------------:|:-------------------|:-----------------|:----------------|:------------------------------------------------------|----------------:|:---------------|:-----------------------------------|:---------------------------|:-----------|:-------------|
-| BTC | 64.070 $ | 0 | NEUTRALE / MISTO | Trend ribassista | Momentum misto | Struttura ribassista con massimi e minimi decrescenti | 0 | 0 / TENUTO | Doppio minimo / CANDIDATO | Doppio massimo / CANDIDATO | 57.748 | 64.598 |
-| SOL | 77,73 $ | 1 | NEUTRALE / MISTO | Trend misto | Momentum misto | Volatilità in espansione | +2 | 0 / TESTATO | Doppio minimo / CONFERMATO RECENTE | Doppio massimo / CANDIDATO | 64,42 | 83,81 |
-| DOGE | 0.07408 $ | -7 | RIBASSISTA TECNICO | Trend ribassista | Momentum debole | Struttura ribassista con massimi e minimi decrescenti | -1 | 0 / NON ATTIVO | Triplo minimo / CANDIDATO | Triplo massimo / MATURO | 0.06961 | 0.07923 |
+| BTC | 64.115 $ | 0 | NEUTRALE / MISTO | Trend ribassista | Momentum misto | Struttura ribassista con massimi e minimi decrescenti | 0 | 0 / TENUTO | Doppio minimo / CANDIDATO | Doppio massimo / CANDIDATO | 57.748 | 64.598 |
+| SOL | 77,72 $ | 2 | NEUTRALE / MISTO | Trend misto | Momentum misto | Volatilità in espansione | +2 | 0 / TESTATO | Doppio minimo / CONFERMATO RECENTE | Doppio massimo / CANDIDATO | 64,42 | 83,81 |
+| DOGE | 0.07418 $ | -7 | RIBASSISTA TECNICO | Trend ribassista | Momentum debole | Struttura ribassista con massimi e minimi decrescenti | -1 | 0 / NON ATTIVO | Triplo minimo / CANDIDATO | Triplo massimo / MATURO | 0.06961 | 0.07923 |
 
 ## Riepilogo ciclo di vita pattern
 
@@ -2472,15 +2661,15 @@ Regola anti-pattern-zombie: un pattern vecchio non resta indefinitamente conferm
 
 | Asset   |   RSI 14 |   Istogramma MACD | MA20    | MA50    | MA200   | Pendenza MA50 20g   | Pendenza MA200 60g   | Rendimento 30g   | Rendimento 90g   |
 |:--------|---------:|------------------:|:--------|:--------|:--------|:--------------------|:---------------------|:-----------------|:-----------------|
-| BTC | 53.59 | 612.852 | 61.812 | 65.367 | 74.103 | -9,34% | -10,10% | 0,80% | -9,45% |
-| SOL | 53.72 | 0.30036 | 75,55 | 74,68 | 92,20 | -6,35% | -18,38% | 16,32% | -4,67% |
-| DOGE | 37.65 | 0.00049 | 0.07559 | 0.08518 | 0.10156 | -13,28% | -16,38% | -13,84% | -18,44% |
+| BTC | 53.76 | 615.767 | 61.814 | 65.368 | 74.103 | -9,34% | -10,10% | 0,87% | -9,38% |
+| SOL | 53.7 | 0.29972 | 75,55 | 74,68 | 92,20 | -6,35% | -18,38% | 16,31% | -4,68% |
+| DOGE | 37.98 | 0.0005 | 0.07559 | 0.08518 | 0.10156 | -13,28% | -16,38% | -13,72% | -18,33% |
 
 ## Dettaglio asset
 
 ### BTC
 
-- Prezzo: **64.070 $**
+- Prezzo: **64.115 $**
 - Punteggio tecnico: **0 / 12**
 - Verdetto: **NEUTRALE / MISTO**
 - Trend: **Trend ribassista** (-3)
@@ -2490,7 +2679,7 @@ Regola anti-pattern-zombie: un pattern vecchio non resta indefinitamente conferm
   - Dettaglio struttura: Ultimi minimi: 5.808e+04 -> 5.775e+04. Ultimi massimi: 6.554e+04 -> 6.46e+04.
 - Divergenza: **Divergenza rialzista RSI, Divergenza ribassista nascosta RSI** (1)
 - Fase Wyckoff candidata: **Possibile accumulazione** (1)
-  - Dettaglio Wyckoff: Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI 53.6.
+  - Dettaglio Wyckoff: Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI 53.8.
 - Fibonacci automatico: **TENUTO** (0)
   - Swing UP 2026-07-01 57.748 -> 2026-07-06 64.598; livello più vicino 23.6% a 62.981; stato TENUTO; confluenza: nessuna confluenza indipendente.
 - Punteggio pattern: **0**
@@ -2502,36 +2691,36 @@ Pattern classici e ciclo di vita:
 
 - Doppio minimo: **CANDIDATO** (0)
   - Due minimi simili vicino a 57.748 tra 2026-06-05 e 2026-07-01. Neckline stimata: 67.248. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 10 giorni.
-  - neckline 67.248; target 76.748; distanza dalla neckline 4,96%; prezzo sotto neckline.
+  - neckline 67.248; target 76.748; distanza dalla neckline 4,89%; prezzo sotto neckline.
 - Triplo minimo: **CANDIDATO** (0)
   - Tre minimi simili vicino a 57.748 dal 2026-06-05 al 2026-07-01. Neckline stimata: 67.248. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 10 giorni.
-  - neckline 67.248; target 76.748; distanza dalla neckline 4,96%; prezzo sotto neckline.
+  - neckline 67.248; target 76.748; distanza dalla neckline 4,89%; prezzo sotto neckline.
 - Adam and Eve Bottom: **CANDIDATO** (0)
   - Pattern Adam and Eve Bottom vicino a 57.748 dal 2026-06-05 al 2026-07-01. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 67.248. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 10 giorni.
-  - neckline 67.248; target 76.748; distanza dalla neckline 4,96%; prezzo sotto neckline.
+  - neckline 67.248; target 76.748; distanza dalla neckline 4,89%; prezzo sotto neckline.
 - Doppio massimo: **CANDIDATO** (0)
   - Due massimi simili vicino a 65.544 tra 2026-06-22 e 2026-07-06. Neckline ribassista stimata: 57.748. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 5 giorni.
-  - neckline 57.748; target 49.952; distanza dalla neckline 10,95%; prezzo sopra neckline.
+  - neckline 57.748; target 49.952; distanza dalla neckline 11,03%; prezzo sopra neckline.
 - Triplo massimo: **CANDIDATO** (0)
   - Tre massimi simili vicino a 67.248 dal 2026-06-15 al 2026-07-06. Neckline ribassista stimata: 57.748. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 5 giorni.
-  - neckline 57.748; target 48.247; distanza dalla neckline 10,95%; prezzo sopra neckline.
+  - neckline 57.748; target 48.247; distanza dalla neckline 11,03%; prezzo sopra neckline.
 - Adam and Eve Top: **CANDIDATO** (0)
   - Pattern Adam and Eve Top vicino a 67.248 dal 2026-06-15 al 2026-07-06. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 57.748. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 5 giorni.
-  - neckline 57.748; target 48.247; distanza dalla neckline 10,95%; prezzo sopra neckline.
+  - neckline 57.748; target 48.247; distanza dalla neckline 11,03%; prezzo sopra neckline.
 
 ### SOL
 
-- Prezzo: **77,73 $**
-- Punteggio tecnico: **1 / 12**
+- Prezzo: **77,72 $**
+- Punteggio tecnico: **2 / 12**
 - Verdetto: **NEUTRALE / MISTO**
 - Trend: **Trend misto** (-1)
 - Momentum: **Momentum misto** (-1)
-- Volume: **Volume da accumulazione** (1)
+- Volume: **Volume da accumulazione** (2)
 - Struttura: **Volatilità in espansione** (0)
   - Dettaglio struttura: Ultimi minimi: 67.92 -> 64.42. Ultimi massimi: 74.89 -> 83.81.
 - Divergenza: **Nessuna** (0)
 - Fase Wyckoff candidata: **Range / fase non chiara** (0)
-  - Dettaglio Wyckoff: Posizione nel range a 120 giorni: 45,74%. Fase non abbastanza chiara.
+  - Dettaglio Wyckoff: Posizione nel range a 120 giorni: 45,72%. Fase non abbastanza chiara.
 - Fibonacci automatico: **TESTATO** (0)
   - Swing UP 2026-06-06 60,41 -> 2026-07-04 83,81; livello più vicino 23.6% a 78,29; stato TESTATO; confluenza: neckline rialzista.
 - Punteggio pattern: **+2**
@@ -2542,27 +2731,27 @@ Pattern classici e ciclo di vita:
 Pattern classici e ciclo di vita:
 
 - Doppio minimo: **CONFERMATO RECENTE** (+2)
-  - Due minimi simili vicino a 60,41 tra 2026-06-06 e 2026-06-25. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (10 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: 11,54%. Relazione prezzo/neckline: sopra neckline.
-  - neckline 75,94; target 91,46; breakout 2026-07-01 (10g); progresso 11,54%; prezzo sopra neckline.
+  - Due minimi simili vicino a 60,41 tra 2026-06-06 e 2026-06-25. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (10 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: 11,47%. Relazione prezzo/neckline: sopra neckline.
+  - neckline 75,94; target 91,46; breakout 2026-07-01 (10g); progresso 11,47%; prezzo sopra neckline.
 - Triplo minimo: **CANDIDATO** (0)
   - Tre minimi simili vicino a 81,41 dal 2026-04-12 al 2026-05-23. Neckline stimata: 98,27. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 49 giorni.
-  - neckline 98,27; target 115,13; distanza dalla neckline 26,42%; prezzo sotto neckline.
+  - neckline 98,27; target 115,13; distanza dalla neckline 26,44%; prezzo sotto neckline.
 - Adam and Eve Bottom: **CONFERMATO RECENTE** (+2)
-  - Pattern Adam and Eve Bottom vicino a 60,41 dal 2026-06-06 al 2026-06-25. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (10 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: 11,54%. Relazione prezzo/neckline: sopra neckline.
-  - neckline 75,94; target 91,46; breakout 2026-07-01 (10g); progresso 11,54%; prezzo sopra neckline.
+  - Pattern Adam and Eve Bottom vicino a 60,41 dal 2026-06-06 al 2026-06-25. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (10 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: 11,47%. Relazione prezzo/neckline: sopra neckline.
+  - neckline 75,94; target 91,46; breakout 2026-07-01 (10g); progresso 11,47%; prezzo sopra neckline.
 - Doppio massimo: **CANDIDATO** (0)
   - Due massimi simili vicino a 87,79 tra 2026-05-21 e 2026-07-04. Neckline ribassista stimata: 60,41. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 7 giorni.
-  - neckline 60,41; target 33,04; distanza dalla neckline 28,66%; prezzo sopra neckline.
+  - neckline 60,41; target 33,04; distanza dalla neckline 28,64%; prezzo sopra neckline.
 - Triplo massimo: **CANDIDATO** (0)
   - Tre massimi simili vicino a 88,05 dal 2026-04-27 al 2026-07-04. Neckline ribassista stimata: 60,41. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 7 giorni.
-  - neckline 60,41; target 32,78; distanza dalla neckline 28,66%; prezzo sopra neckline.
+  - neckline 60,41; target 32,78; distanza dalla neckline 28,64%; prezzo sopra neckline.
 - Eve and Adam Top: **CANDIDATO** (0)
   - Pattern Eve and Adam Top vicino a 87,79 dal 2026-05-21 al 2026-07-04. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 60,41. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 7 giorni.
-  - neckline 60,41; target 33,04; distanza dalla neckline 28,66%; prezzo sopra neckline.
+  - neckline 60,41; target 33,04; distanza dalla neckline 28,64%; prezzo sopra neckline.
 
 ### DOGE
 
-- Prezzo: **0.07408 $**
+- Prezzo: **0.07418 $**
 - Punteggio tecnico: **-7 / 12**
 - Verdetto: **RIBASSISTA TECNICO**
 - Trend: **Trend ribassista** (-3)
@@ -2572,7 +2761,7 @@ Pattern classici e ciclo di vita:
   - Dettaglio struttura: Ultimi minimi: 0.07809 -> 0.06961. Ultimi massimi: 0.09169 -> 0.07923.
 - Divergenza: **Divergenza ribassista nascosta RSI** (-1)
 - Fase Wyckoff candidata: **Possibile accumulazione** (1)
-  - Dettaglio Wyckoff: Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI 37.7.
+  - Dettaglio Wyckoff: Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI 38.0.
 - Fibonacci automatico: **NON ATTIVO** (0)
   - Swing DOWN 2026-05-14 0.11825 -> 2026-06-30 0.06961; livello più vicino 23.6% a 0.08109; stato NON ATTIVO; confluenza: resistenza tecnica, invalidazione ribassista.
 - Punteggio pattern: **-1**
@@ -2585,17 +2774,17 @@ Pattern classici e ciclo di vita:
 - Doppio minimo: **ASSENTE** (0)
 - Triplo minimo: **CANDIDATO** (0)
   - Tre minimi simili vicino a 0.09274 dal 2026-04-19 al 2026-05-28. Neckline stimata: 0.11825. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 44 giorni.
-  - neckline 0.11825; target 0.14377; distanza dalla neckline 59,63%; prezzo sotto neckline.
+  - neckline 0.11825; target 0.14377; distanza dalla neckline 59,42%; prezzo sotto neckline.
 - Adam and Eve Bottom: **CANDIDATO** (0)
   - Pattern Adam and Eve Bottom vicino a 0.09274 dal 2026-04-19 al 2026-05-28. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 0.11825. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 44 giorni.
-  - neckline 0.11825; target 0.14377; distanza dalla neckline 59,63%; prezzo sotto neckline.
+  - neckline 0.11825; target 0.14377; distanza dalla neckline 59,42%; prezzo sotto neckline.
 - Doppio massimo: **ASSENTE** (0)
 - Triplo massimo: **MATURO** (-1)
-  - Tre massimi simili vicino a 0.09772 dal 2026-03-25 al 2026-06-12. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (17 giorni fa). Stato: MATURO. Target teorico: 0.05847; progresso corrente: 20,46%. Relazione prezzo/neckline: sotto neckline.
-  - neckline 0.07809; target 0.05847; breakout 2026-06-24 (17g); progresso 20,46%; prezzo sotto neckline.
+  - Tre massimi simili vicino a 0.09772 dal 2026-03-25 al 2026-06-12. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (17 giorni fa). Stato: MATURO. Target teorico: 0.05847; progresso corrente: 19,95%. Relazione prezzo/neckline: sotto neckline.
+  - neckline 0.07809; target 0.05847; breakout 2026-06-24 (17g); progresso 19,95%; prezzo sotto neckline.
 - Eve and Adam Top: **MATURO** (-1)
-  - Pattern Eve and Adam Top vicino a 0.09584 dal 2026-04-07 al 2026-06-12. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (17 giorni fa). Stato: MATURO. Target teorico: 0.06035; progresso corrente: 22,63%. Relazione prezzo/neckline: sotto neckline.
-  - neckline 0.07809; target 0.06035; breakout 2026-06-24 (17g); progresso 22,63%; prezzo sotto neckline.
+  - Pattern Eve and Adam Top vicino a 0.09584 dal 2026-04-07 al 2026-06-12. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (17 giorni fa). Stato: MATURO. Target teorico: 0.06035; progresso corrente: 22,07%. Relazione prezzo/neckline: sotto neckline.
+  - neckline 0.07809; target 0.06035; breakout 2026-06-24 (17g); progresso 22,07%; prezzo sotto neckline.
 
 ## Fibonacci automatico
 
@@ -2677,35 +2866,42 @@ Report dettagliati:
 <!-- DATA_QUALITY_COHERENCE_START -->
 # Data quality / coherence check
 
-Generato: 2026-07-11 01:13 UTC
+Generato: 2026-07-11 03:03 UTC
 
 Questo controllo non modifica punteggi o decisioni. Verifica che tutti i moduli usino lo stesso prezzo corrente e che le nuove regole Technical/Classic Visual siano integre.
 
-## Stato finale: **OK**
+## Stato finale: **WARN**
+
+## Avvisi
+
+- 3 campi prezzo non coincidono con lo snapshot entro 0.00%.
 
 ## Prezzo unico per modulo
 
-| Modulo              | Asset   | Campo             | Stato   | Prezzo snapshot   | Prezzo modulo   | Differenza   |
-|:--------------------|:--------|:------------------|:--------|:------------------|:----------------|:-------------|
-| Scanner             | BTC     | current_price     | OK      | 64.070 $          | 64.070 $        | +0,0000%     |
-| Scanner             | DOGE    | current_price     | OK      | 0.07408 $         | 0.07408 $       | -0,0000%     |
-| Scanner             | SOL     | current_price     | OK      | 77,73 $           | 77,73 $         | +0,0000%     |
-| Scanner Forecast    | BTC     | current_price     | OK      | 64.070 $          | 64.070 $        | +0,0000%     |
-| Scanner Forecast    | SOL     | current_price     | OK      | 77,73 $           | 77,73 $         | +0,0000%     |
-| Scanner Forecast    | DOGE    | current_price     | OK      | 0.07408 $         | 0.07408 $       | -0,0000%     |
-| Technical Structure | BTC     | price             | OK      | 64.070 $          | 64.070 $        | +0,0000%     |
-| Technical Structure | SOL     | price             | OK      | 77,73 $           | 77,73 $         | +0,0000%     |
-| Technical Structure | DOGE    | price             | OK      | 0.07408 $         | 0.07408 $       | -0,0000%     |
-| Classic Technical   | BTC     | price             | OK      | 64.070 $          | 64.070 $        | +0,0000%     |
-| Classic Technical   | SOL     | price             | OK      | 77,73 $           | 77,73 $         | +0,0000%     |
-| Classic Technical   | DOGE    | price             | OK      | 0.07408 $         | 0.07408 $       | -0,0000%     |
-| Classic Visual      | BTC     | price             | OK      | 64.070 $          | 64.070 $        | +0,0000%     |
-| Classic Visual      | SOL     | price             | OK      | 77,73 $           | 77,73 $         | +0,0000%     |
-| Classic Visual      | DOGE    | price             | OK      | 0.07408 $         | 0.07408 $       | -0,0000%     |
-| RSI top-cycle       | SOL     | current_price     | OK      | 77,73 $           | 77,73 $         | +0,0000%     |
-| RSI top-cycle       | SOL     | current_price     | OK      | 77,73 $           | 77,73 $         | +0,0000%     |
-| Frattale BTC/SOL    | SOL     | sol_current_price | OK      | 77,73 $           | 77,73 $         | +0,0000%     |
-| Fractal path        | SOL     | current_price     | OK      | 77,73 $           | 77,73 $         | +0,0000%     |
+| Modulo                  | Asset   | Campo             | Stato   | Prezzo snapshot   | Prezzo modulo   | Differenza   |
+|:------------------------|:--------|:------------------|:--------|:------------------|:----------------|:-------------|
+| Scanner                 | BTC     | current_price     | OK      | 64.115 $          | 64.115 $        | +0,0000%     |
+| Scanner                 | DOGE    | current_price     | OK      | 0.07418 $         | 0.07418 $       | +0,0000%     |
+| Scanner                 | SOL     | current_price     | OK      | 77,72 $           | 77,72 $         | +0,0000%     |
+| Scanner Forecast        | BTC     | current_price     | OK      | 64.115 $          | 64.115 $        | +0,0000%     |
+| Scanner Forecast        | SOL     | current_price     | OK      | 77,72 $           | 77,72 $         | +0,0000%     |
+| Scanner Forecast        | DOGE    | current_price     | OK      | 0.07418 $         | 0.07418 $       | +0,0000%     |
+| Technical Structure     | BTC     | price             | OK      | 64.115 $          | 64.115 $        | +0,0000%     |
+| Technical Structure     | SOL     | price             | OK      | 77,72 $           | 77,72 $         | +0,0000%     |
+| Technical Structure     | DOGE    | price             | OK      | 0.07418 $         | 0.07418 $       | +0,0000%     |
+| Classic Technical       | BTC     | price             | OK      | 64.115 $          | 64.115 $        | +0,0000%     |
+| Classic Technical       | SOL     | price             | OK      | 77,72 $           | 77,72 $         | +0,0000%     |
+| Classic Technical       | DOGE    | price             | OK      | 0.07418 $         | 0.07418 $       | +0,0000%     |
+| Classic Visual          | BTC     | price             | OK      | 64.115 $          | 64.115 $        | +0,0000%     |
+| Classic Visual          | SOL     | price             | OK      | 77,72 $           | 77,72 $         | +0,0000%     |
+| Classic Visual          | DOGE    | price             | OK      | 0.07418 $         | 0.07418 $       | +0,0000%     |
+| Exchange Microstructure | BTC     | price             | WARN    | 64.115 $          | 64.152 $        | +0,0573%     |
+| Exchange Microstructure | SOL     | price             | WARN    | 77,72 $           | 77,77 $         | +0,0605%     |
+| Exchange Microstructure | DOGE    | price             | WARN    | 0.07418 $         | 0.07422 $       | +0,0607%     |
+| RSI top-cycle           | SOL     | current_price     | OK      | 77,72 $           | 77,72 $         | +0,0000%     |
+| RSI top-cycle           | SOL     | current_price     | OK      | 77,72 $           | 77,72 $         | +0,0000%     |
+| Frattale BTC/SOL        | SOL     | sol_current_price | OK      | 77,72 $           | 77,72 $         | +0,0000%     |
+| Fractal path            | SOL     | current_price     | OK      | 77,72 $           | 77,72 $         | +0,0000%     |
 
 ## Integrità Technical / Classic Visual
 
@@ -2722,8 +2918,9 @@ Nessun indicatore comune di mojibake trovato.
 - Snapshot condiviso completo: **OK**
 - Scanner summary: **OK**
 - Price coherence sync: **OK**
+- Dati exchange / microstruttura: **OK**
 
-Il workflow è tecnicamente coerente nei controlli disponibili.
+Il workflow può continuare, ma gli avvisi sopra vanno verificati.
 <!-- DATA_QUALITY_COHERENCE_END -->
 
 </details>

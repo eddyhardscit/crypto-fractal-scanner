@@ -1,7 +1,7 @@
 # RSI top-cycle warning - SOL
 
-Generato: **2026-07-11 03:12:41 CEST**  
-UTC: **2026-07-11 01:12:41 UTC**
+Generato: **2026-07-11 05:02:32 CEST**  
+UTC: **2026-07-11 03:02:32 UTC**
 
 Questo report usa l'RSI soltanto come filtro di possibile esaurimento ciclo.
 La vicinanza matematica a una retta non basta: la linea deve essere costruita su almeno tre picchi, superare i controlli di qualità e trovarsi in una vera zona RSI da top.
@@ -17,8 +17,8 @@ La vicinanza matematica a una retta non basta: la linea deve essere costruita su
 
 | Voce | Valore |
 | --- | --- |
-| Prezzo SOL attuale | 77,73 $ |
-| Target ciclo base | 573,12 $ |
+| Prezzo SOL attuale | 77,72 $ |
+| Target ciclo base | 573,04 $ |
 | Avanzamento verso target base | +13,56% |
 | Fase prezzo | inizio ciclo / lontano dal target macro |
 | Rischio top-cycle RSI | BASSO |
