@@ -1,7 +1,7 @@
 # RSI top-cycle warning - SOL
 
-Generato: **2026-07-11 01:41:42 CEST**  
-UTC: **2026-07-10 23:41:42 UTC**
+Generato: **2026-07-11 02:41:09 CEST**  
+UTC: **2026-07-11 00:41:09 UTC**
 
 Questo report usa l'RSI soltanto come filtro di possibile esaurimento ciclo.
 La vicinanza matematica a una retta non basta: la linea deve essere costruita su almeno tre picchi, superare i controlli di qualità e trovarsi in una vera zona RSI da top.
@@ -10,15 +10,15 @@ La vicinanza matematica a una retta non basta: la linea deve essere costruita su
 
 | Voce | RSI attuale | Linea stimata grezza | Distanza matematica | Vicinanza matematica | Rischio reale | Picchi | R² | RMSE | Qualità linea |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Weekly RSI | 40,61 | 54,36 | 13,75 | LONTANO | LINEA NON AFFIDABILE / RISCHIO NON ATTIVO | 3 | 0,93 | 2,45 | IRREALISTICA / NON OPERATIVA |
-| Monthly RSI | 41,40 | 56,16 | 14,76 | LONTANO | RSI TROPPO BASSO PER RISCHIO TOP | 3 | 1,00 | 0,18 | VALIDA / USO PRUDENTE |
+| Weekly RSI | 40,50 | 54,36 | 13,86 | LONTANO | LINEA NON AFFIDABILE / RISCHIO NON ATTIVO | 3 | 0,93 | 2,45 | IRREALISTICA / NON OPERATIVA |
+| Monthly RSI | 41,35 | 56,16 | 14,81 | LONTANO | RSI TROPPO BASSO PER RISCHIO TOP | 3 | 1,00 | 0,18 | VALIDA / USO PRUDENTE |
 
 ## Confluenza con target ciclo SOL
 
 | Voce | Valore |
 | --- | --- |
-| Prezzo SOL attuale | 78,01 $ |
-| Target ciclo base | 577,84 $ |
+| Prezzo SOL attuale | 77,78 $ |
+| Target ciclo base | 576,13 $ |
 | Avanzamento verso target base | +13,50% |
 | Fase prezzo | inizio ciclo / lontano dal target macro |
 | Rischio top-cycle RSI | BASSO |
@@ -32,7 +32,7 @@ La vicinanza matematica a una retta non basta: la linea deve essere costruita su
 | Periodo | Picchi usati | Pendenza RSI/anno | R² | RMSE | Stato | Motivo | Fine proiezione | Proiezione alla data ciclo |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Weekly | 3 | -12,31 | 0,93 | 2,45 | IRREALISTICA / NON OPERATIVA | La top-line stimata oggi è sotto RSI 60; non rappresenta più una vera area di esaurimento ciclo. | None | non disponibile |
-| Monthly | 3 | -4,10 | 1,00 | 0,18 | VALIDA / USO PRUDENTE | Fit basato su 3 picchi, R² 1,00, RMSE 0,18. | 2026-11-11 | non proiettata fino al 2029-04-21: limite massimo 103 giorni |
+| Monthly | 3 | -4,10 | 1,00 | 0,18 | VALIDA / USO PRUDENTE | Fit basato su 3 picchi, R² 1,00, RMSE 0,18. | 2026-11-11 | non proiettata fino al 2029-04-22: limite massimo 103 giorni |
 
 Regole applicate:
 

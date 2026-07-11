@@ -1,6 +1,6 @@
 # Calibrazione pesi Global Confluence
 
-Generato: 2026-07-10 23:42 UTC
+Generato: 2026-07-11 00:41 UTC
 
 Report completo: [global_weight_calibration_report.md](global_weight_calibration_report.md)
 
@@ -21,57 +21,65 @@ Il file continua a produrre solo raccomandazioni: **non modifica automaticamente
 
 | Asset | Segnali salvati | Stato | Controlli max | Righe 30+ | Righe 60+ | Righe 100+ | Miglior modulo calibrabile | Orizzonte | Accuratezza | Return corretto direzione | Lettura |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 2 | FEEDBACK RAPIDO | 1 | 0 | 0 | 0 | Tecnico | 1g | 100,00% | +0,31% | feedback rapido: utile da osservare, non da pesare |
-| SOL | 2 | FEEDBACK RAPIDO | 1 | 0 | 0 | 0 | Famiglia statistica | 1g | 100,00% | +0,10% | feedback rapido: utile da osservare, non da pesare |
-| DOGE | 2 | FEEDBACK RAPIDO | 1 | 0 | 0 | 0 | Famiglia statistica | 1g | 100,00% | +0,11% | feedback rapido: utile da osservare, non da pesare |
+| BTC | 3 | FEEDBACK RAPIDO | 2 | 0 | 0 | 0 | Famiglia statistica | 1g | 50,00% | -0,02% | feedback rapido: utile da osservare, non da pesare |
+| SOL | 3 | FEEDBACK RAPIDO | 2 | 0 | 0 | 0 | Tecnico | 1g | 50,00% | +0,01% | feedback rapido: utile da osservare, non da pesare |
+| DOGE | 3 | FEEDBACK RAPIDO | 2 | 0 | 0 | 0 | Famiglia statistica | 1g | 50,00% | -0,03% | feedback rapido: utile da osservare, non da pesare |
 
 ## Raccomandazioni per moduli calibrabili
 
 | Asset | Orizzonte | Famiglia | Modulo | Controlli | Accuratezza | Return corretto direzione | Return medio | Drawdown medio | Max gain medio | Raccomandazione | Δ peso suggerito | Confidenza |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 1g | BREVE | Famiglia statistica | 1 | 0,00% | -0,31% | -0,31% | -0,34% | -0,08% | OSSERVA | 0,0 | BASSA |
+| BTC | 1g | BREVE | Famiglia statistica | 2 | 50,00% | -0,02% | -0,02% | -0,06% | +0,17% | OSSERVA | 0,0 | BASSA |
 | BTC | 1g | BREVE | Tecnico | 1 | 100,00% | +0,31% | -0,31% | -0,34% | -0,08% | OSSERVA | 0,0 | BASSA |
-| DOGE | 1g | BREVE | Classic technical | 1 | 100,00% | +0,11% | -0,11% | -0,13% | +0,04% | OSSERVA | 0,0 | BASSA |
-| DOGE | 1g | BREVE | Famiglia statistica | 1 | 100,00% | +0,11% | -0,11% | -0,13% | +0,04% | OSSERVA | 0,0 | BASSA |
-| DOGE | 1g | BREVE | Tecnico | 1 | 100,00% | +0,11% | -0,11% | -0,13% | +0,04% | OSSERVA | 0,0 | BASSA |
-| SOL | 1g | BREVE | Famiglia statistica | 1 | 100,00% | +0,10% | -0,10% | -0,21% | +0,02% | OSSERVA | 0,0 | BASSA |
+| BTC | 2g | BREVE | Famiglia statistica | 1 | 100,00% | +1,27% | +1,27% | +1,22% | +1,41% | OSSERVA | 0,0 | BASSA |
+| BTC | 2g | BREVE | Tecnico | 1 | 0,00% | -1,27% | +1,27% | +1,22% | +1,41% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Classic technical | 2 | 50,00% | -0,03% | +0,03% | -0,03% | +0,15% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Famiglia statistica | 2 | 50,00% | -0,03% | +0,03% | -0,03% | +0,15% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Tecnico | 2 | 50,00% | -0,03% | +0,03% | -0,03% | +0,15% | OSSERVA | 0,0 | BASSA |
+| DOGE | 2g | BREVE | Classic technical | 1 | 0,00% | -1,59% | +1,59% | +1,49% | +1,68% | OSSERVA | 0,0 | BASSA |
+| DOGE | 2g | BREVE | Famiglia statistica | 1 | 0,00% | -1,59% | +1,59% | +1,49% | +1,68% | OSSERVA | 0,0 | BASSA |
+| DOGE | 2g | BREVE | Tecnico | 1 | 0,00% | -1,59% | +1,59% | +1,49% | +1,68% | OSSERVA | 0,0 | BASSA |
+| SOL | 1g | BREVE | Famiglia statistica | 2 | 50,00% | -0,01% | +0,01% | -0,05% | +0,24% | OSSERVA | 0,0 | BASSA |
 | SOL | 1g | BREVE | Frattale SOL | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | OSSERVA | 0,0 | BASSA |
-| SOL | 1g | BREVE | Tecnico | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | OSSERVA | 0,0 | BASSA |
+| SOL | 1g | BREVE | Tecnico | 2 | 50,00% | +0,01% | +0,01% | -0,05% | +0,24% | OSSERVA | 0,0 | BASSA |
+| SOL | 2g | BREVE | Famiglia statistica | 1 | 100,00% | +0,28% | -0,28% | -0,31% | +0,05% | OSSERVA | 0,0 | BASSA |
+| SOL | 2g | BREVE | Frattale SOL | 1 | 0,00% | -0,28% | -0,28% | -0,31% | +0,05% | OSSERVA | 0,0 | BASSA |
+| SOL | 2g | BREVE | Tecnico | 1 | 0,00% | -0,28% | -0,28% | -0,31% | +0,05% | OSSERVA | 0,0 | BASSA |
 
 ## Moduli esclusi dalle proposte di peso
 
 | Modulo | Ruolo | Famiglia madre | Controlli max | Motivo esclusione |
 | --- | --- | --- | --- | --- |
-| Global confluence | BENCHMARK | nessuna | 1 | Risultato finale del Global: benchmark, non peso interno. |
-| Market regime grezzo | DIAGNOSTICO | statistical_family | 1 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
-| Scanner grezzo | DIAGNOSTICO | statistical_family | 1 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
+| Global confluence | BENCHMARK | nessuna | 2 | Risultato finale del Global: benchmark, non peso interno. |
+| Market regime grezzo | DIAGNOSTICO | statistical_family | 2 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
+| Scanner grezzo | DIAGNOSTICO | statistical_family | 2 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
 
 ## Sintesi per famiglia temporale
 
 | Asset | Famiglia | Modulo calibrabile | Controlli totali | Accuratezza media ponderata | Return corretto direzione |
 | --- | --- | --- | --- | --- | --- |
-| BTC | BREVE | Famiglia statistica | 1 | 0,00% | -0,31% |
-| BTC | BREVE | Tecnico | 1 | 100,00% | +0,31% |
-| DOGE | BREVE | Classic technical | 1 | 100,00% | +0,11% |
-| DOGE | BREVE | Famiglia statistica | 1 | 100,00% | +0,11% |
-| DOGE | BREVE | Tecnico | 1 | 100,00% | +0,11% |
-| SOL | BREVE | Famiglia statistica | 1 | 100,00% | +0,10% |
-| SOL | BREVE | Frattale SOL | 1 | 0,00% | -0,10% |
-| SOL | BREVE | Tecnico | 1 | 0,00% | -0,10% |
+| BTC | BREVE | Famiglia statistica | 3 | 66,67% | +0,41% |
+| BTC | BREVE | Tecnico | 2 | 50,00% | -0,48% |
+| DOGE | BREVE | Classic technical | 3 | 33,33% | -0,55% |
+| DOGE | BREVE | Famiglia statistica | 3 | 33,33% | -0,55% |
+| DOGE | BREVE | Tecnico | 3 | 33,33% | -0,55% |
+| SOL | BREVE | Famiglia statistica | 3 | 66,67% | +0,09% |
+| SOL | BREVE | Frattale SOL | 2 | 0,00% | -0,19% |
+| SOL | BREVE | Tecnico | 3 | 33,33% | -0,09% |
 
 ## Aree ancora in attesa
 
 | Asset | Famiglia | Righe senza controlli | Stato |
 | --- | --- | --- | --- |
-| BTC | BREVE | 10 | in attesa di controlli maturati |
+| BTC | BREVE | 8 | in attesa di controlli maturati |
 | BTC | SETTIMANALE | 12 | in attesa di controlli maturati |
 | BTC | SWING | 8 | in attesa di controlli maturati |
 | BTC | MEDIO | 12 | in attesa di controlli maturati |
-| SOL | BREVE | 9 | in attesa di controlli maturati |
+| SOL | BREVE | 6 | in attesa di controlli maturati |
 | SOL | SETTIMANALE | 12 | in attesa di controlli maturati |
 | SOL | SWING | 8 | in attesa di controlli maturati |
 | SOL | MEDIO | 12 | in attesa di controlli maturati |
-| DOGE | BREVE | 9 | in attesa di controlli maturati |
+| DOGE | BREVE | 6 | in attesa di controlli maturati |
 | DOGE | SETTIMANALE | 12 | in attesa di controlli maturati |
 | DOGE | SWING | 8 | in attesa di controlli maturati |
 | DOGE | MEDIO | 12 | in attesa di controlli maturati |
