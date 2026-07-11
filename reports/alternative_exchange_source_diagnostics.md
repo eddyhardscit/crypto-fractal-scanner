@@ -1,6 +1,6 @@
-# Diagnostica fonti exchange alternative — V2.1.2
+# Diagnostica fonti exchange alternative — V2.1.2b
 
-Generato: **2026-07-11T09:21:40+00:00**
+Generato: **2026-07-11T09:35:39+00:00**
 
 Questo test non modifica Global Confluence, Decision Report o previsioni. Verifica soltanto accessibilità, mercati e campi pubblici dal runner GitHub reale.
 
@@ -24,7 +24,7 @@ Coinbase spot è utilizzabile come conferma aggiuntiva di book e flusso eseguito
 | Fonte | Asset | Simbolo | Stato | Prezzo | Mark | Index | Funding | OI | Trade | Book | Copertura |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---: |
 | Kraken | BTC | PF_XBTUSD | OK | SI | SI | SI | SI | SI | SI | SI | 100% |
-| Kraken | SOL | PF_SOLVUSD | OK | SI | SI | SI | SI | SI | SI | SI | 100% |
+| Kraken | SOL | PF_SOLUSD | OK | SI | SI | SI | SI | SI | SI | SI | 100% |
 | Kraken | DOGE | PF_DOGEUSD | OK | SI | SI | SI | SI | SI | SI | SI | 100% |
 | Bitget | BTC | BTCUSDT | OK | SI | SI | SI | SI | SI | SI | SI | 100% |
 | Bitget | SOL | SOLUSDT | OK | SI | SI | SI | SI | SI | SI | SI | 100% |
@@ -41,23 +41,23 @@ Coinbase spot è utilizzabile come conferma aggiuntiva di book e flusso eseguito
 
 ## Campioni principali
 
-| Fonte | Asset | Prezzo | Funding raw | OI raw/USD | Taker B/S | Book 0,5% | Spread bps |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Kraken | BTC | 64,193.00 | -0.10217416 | n/a | 5.624 | -0.000 | 0.16 |
-| Kraken | SOL | 0.002776 | -0.00000041 | n/a | 1.050 | 0.023 | 83.16 |
-| Kraken | DOGE | 0.074309 | 0.00000148 | n/a | 2.125 | 0.011 | 2.83 |
-| Bitget | BTC | 64,206.90 | -0.00002100 | 34,216.84 | 5.593 | -0.014 | 0.02 |
-| Bitget | SOL | 78.091000 | 0.00007400 | 4.23 mln | 0.218 | 0.073 | 0.13 |
-| Bitget | DOGE | 0.074280 | 0.00010000 | 1.08 mld | 0.592 | 0.013 | 1.35 |
-| Okx | BTC | 64,205.00 | -0.00002165 | 1.98 mld | 1.106 | 0.388 | 0.02 |
-| Okx | SOL | 78.080000 | -0.00004761 | 242.66 mln | 0.149 | 0.092 | 1.28 |
-| Okx | DOGE | 0.074290 | 0.00009711 | 69.34 mln | 0.922 | 0.033 | 1.35 |
-| Coinbase | BTC | 64,191.40 | n/a | n/a | 3.716 | -0.164 | 0.00 |
-| Coinbase | SOL | 78.070000 | n/a | n/a | 0.342 | -0.025 | 1.28 |
-| Coinbase | DOGE | 0.074270 | n/a | n/a | 2.555 | 0.047 | 1.35 |
-| Kucoin | BTC | 64,234.20 | -0.00003600 | 29,256.82 | 6.871 | 0.008 | 0.02 |
-| Kucoin | SOL | 78.086000 | -0.00000800 | 4.20 mln | 0.553 | -0.012 | 0.13 |
-| Kucoin | DOGE | 0.074290 | 0.00006300 | 1.29 mld | 1.858 | 0.063 | 1.35 |
+| Fonte | Asset | Prezzo | Funding raw | OI base/raw | OI USD normalizzato | Taker B/S | Book 0,5% | Spread bps |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Kraken | BTC | 64,189.00 | -0.10217416 | 1,944.54 | 124.82 mln | 0.537 | 0.027 | 0.16 |
+| Kraken | SOL | 77.930000 | -0.00006256 | 245,269.34 | 19.11 mln | 0.564 | -0.057 | 1.28 |
+| Kraken | DOGE | 0.074243 | 0.00000148 | 41.97 mln | 3.12 mln | 0.948 | -0.058 | 2.56 |
+| Bitget | BTC | 64,205.90 | -0.00002200 | 34,193.68 | 2.20 mld | 0.019 | 0.391 | 0.02 |
+| Bitget | SOL | 77.924000 | 0.00007000 | 4.22 mln | 328.85 mln | 20.720 | -0.014 | 0.13 |
+| Bitget | DOGE | 0.074230 | 0.00010000 | 1.08 mld | 79.93 mln | 0.214 | 0.159 | 1.35 |
+| Okx | BTC | 64,208.60 | -0.00002012 | 30,866.86 | 1.98 mld | 4.176 | 0.004 | 0.02 |
+| Okx | SOL | 77.910000 | -0.00005273 | 3.10 mln | 241.68 mln | 2.611 | 0.113 | 1.28 |
+| Okx | DOGE | 0.074240 | 0.00009297 | 934.06 mln | 69.35 mln | 5.899 | 0.057 | 1.35 |
+| Coinbase | BTC | 64,184.10 | n/a | n/a | n/a | 2.775 | -0.154 | 0.00 |
+| Coinbase | SOL | 77.890000 | n/a | n/a | n/a | 0.164 | 0.094 | 1.28 |
+| Coinbase | DOGE | 0.074220 | n/a | n/a | n/a | 0.627 | 0.211 | 1.35 |
+| Kucoin | BTC | 64,232.30 | -0.00003400 | 29,284.25 | 1.88 mld | 0.237 | 0.016 | 0.02 |
+| Kucoin | SOL | 77.904000 | -0.00000800 | 4.20 mln | 326.90 mln | 0.208 | 0.018 | 0.13 |
+| Kucoin | DOGE | 0.074240 | 0.00006100 | 1.29 mld | 95.70 mln | 2.237 | -0.096 | 1.35 |
 
 ## Errori e blocchi
 
