@@ -1,6 +1,6 @@
 # Extreme cases path report
 
-Generato: 2026-07-11 17:34 UTC
+Generato: 2026-07-11 18:59 UTC
 
 Questo report si attiva quando i casi positivi o negativi sono almeno **80%**.
 
@@ -73,12 +73,12 @@ La sigla `g7` sopra una barra significa che il massimo rialzo è avvenuto al gio
 |:----------------|:-----------|:-------------|:-------------------------|---------------:|:-------------|----------------:|:-----------------|:-------------|:------------------------------|
 | WAVES-USD       | 2022-05-30 | +84,86%      | +28,83%                  |              4 | -42,96%      |              17 | -55,72%          | -29,04%      | SPIKE PRIMA DEL DUMP          |
 | LINK-USD        | 2022-05-30 | +84,27%      | +24,39%                  |             10 | -21,06%      |              14 | -36,54%          | -16,73%      | SPIKE PRIMA DEL DUMP          |
-| ZEC-USD         | 2019-08-29 | +87,10%      | +17,47%                  |             20 | -21,74%      |              28 | -33,38%          | -9,79%       | SPIKE PRIMA DEL DUMP          |
-| ZIL-USD         | 2019-08-16 | +83,62%      | +16,38%                  |              8 | -10,08%      |              21 | -22,74%          | -3,60%       | SPIKE PRIMA DEL DUMP          |
+| ZEC-USD         | 2019-08-29 | +87,11%      | +17,47%                  |             20 | -21,74%      |              28 | -33,38%          | -9,79%       | SPIKE PRIMA DEL DUMP          |
+| ZIL-USD         | 2019-08-16 | +83,63%      | +16,38%                  |              8 | -10,08%      |              21 | -22,74%          | -3,60%       | SPIKE PRIMA DEL DUMP          |
 | ADA-USD         | 2022-06-04 | +84,98%      | +13,35%                  |              4 | -20,84%      |              27 | -30,16%          | -17,03%      | SPIKE PRIMA DEL DUMP          |
-| AVAX-USD        | 2025-11-21 | +86,15%      | +12,94%                  |              6 | -14,04%      |              27 | -23,89%          | -8,75%       | SPIKE PRIMA DEL DUMP          |
+| AVAX-USD        | 2025-11-21 | +86,16%      | +12,94%                  |              6 | -14,04%      |              27 | -23,89%          | -8,75%       | SPIKE PRIMA DEL DUMP          |
 | OMG-USD         | 2022-06-04 | +87,01%      | +11,92%                  |              5 | -29,18%      |              14 | -36,72%          | -22,91%      | SPIKE PRIMA DEL DUMP          |
-| LTC-USD         | 2022-05-29 | +84,27%      | +8,43%                   |              1 | -32,07%      |              15 | -37,36%          | -17,15%      | SPIKE PRIMA DEL DUMP          |
+| LTC-USD         | 2022-05-29 | +84,28%      | +8,43%                   |              1 | -32,07%      |              15 | -37,36%          | -17,15%      | SPIKE PRIMA DEL DUMP          |
 | BAT-USD         | 2019-01-01 | +84,60%      | +7,93%                   |              8 | -13,95%      |              27 | -20,27%          | -13,42%      | RIALZO MODESTO PRIMA DEL DUMP |
 | AVAX-USD        | 2022-06-05 | +84,85%      | +7,55%                   |              1 | -38,58%      |              13 | -42,89%          | -25,24%      | RIALZO MODESTO PRIMA DEL DUMP |
 | CHZ-USD         | 2022-06-03 | +86,65%      | +5,97%                   |              3 | -28,71%      |              15 | -32,73%          | -19,17%      | RIALZO MODESTO PRIMA DEL DUMP |

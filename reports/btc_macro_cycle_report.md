@@ -1,6 +1,6 @@
 # Bitcoin Macro Cycle — Power Law e Four-Year Spiral
 
-Generato: 2026-07-11 17:36 UTC
+Generato: 2026-07-11 19:00 UTC
 
 Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche, non autorizza leva e pesa **0** nel Global Confluence.
 
@@ -8,10 +8,10 @@ Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche
 
 | Voce | Valore | Lettura |
 | --- | --- | --- |
-| Prezzo BTC | 64.341 $ | prezzo corrente |
-| Power Law centrale | 122.003 $ | deviazione -47,26% |
-| Banda p10-p90 | 76.159 $ / 306.315 $ | BASSA NEL CORRIDOIO |
-| Percentile residuo | 2,11% | posizione storica nel corridoio |
+| Prezzo BTC | 64.272 $ | prezzo corrente |
+| Power Law centrale | 122.003 $ | deviazione -47,32% |
+| Banda p10-p90 | 76.159 $ / 306.315 $ | SOTTO LA BANDA P10 |
+| Percentile residuo | 2,06% | posizione storica nel corridoio |
 | Esponente β | 5,8480 | R² log-log 92,00% |
 | Stabilità β | BASSA | range 1,3044 cambiando finestra |
 | Ultimo halving | 2024-04-19 | 813 giorni fa |
@@ -23,10 +23,10 @@ La Power Law viene trattata come regressione empirica, non come legge fisica. Il
 ## Bitcoin Power Law
 
 - Campione: 2014-09-17 → 2026-07-11 (4316 osservazioni)
-- Formula stimata: prezzo ≈ exp(-39.4173) × giorni^5.8480
+- Formula stimata: prezzo ≈ exp(-39.4172) × giorni^5.8480
 - Prezzo centrale oggi: **122.003 $**
-- Posizione corrente: **BASSA NEL CORRIDOIO**, percentile 2,11%
-- Scarto dal centro: **-47,26%**
+- Posizione corrente: **SOTTO LA BANDA P10**, percentile 2,06%
+- Scarto dal centro: **-47,32%**
 
 ![Bitcoin Power Law](btc_power_law_chart.png)
 
@@ -73,8 +73,8 @@ Campione molto piccolo: questi rendimenti sono contesto di ciclo, non probabilit
 
 | Asset | Coppia | Forza vs BTC | Score raw | Candidato | 30g | Peso Global |
 | --- | --- | --- | --- | --- | --- | --- |
-| SOL | SOL/BTC | RELATIVA MISTA / NON CONFERMATA | -1 | 0 | 15.41389857201263 | 0 |
-| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -8 | -1 | -13.661455479847518 | 0 |
+| SOL | SOL/BTC | RELATIVA MISTA / NON CONFERMATA | -1 | 0 | 15.499531957225177 | 0 |
+| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -8 | -1 | -13.500180629169979 | 0 |
 
 ## Tracker live Power Law
 
@@ -84,7 +84,7 @@ Campione molto piccolo: questi rendimenti sono contesto di ciclo, non probabilit
 | 180g | 0 | n/a | n/a | n/a | RACCOLTA LIVE / PESO 0 |
 | 365g | 0 | n/a | n/a | n/a | RACCOLTA LIVE / PESO 0 |
 
-Il modulo resta a peso 0 anche con un buon backtest. Prima si osserva la verifica live, poi si decide se usarlo soltanto per il rischio macro di lungo periodo.
+Il modulo resta a peso 0 anche con un buon backtest. Prima si osserva la verifica live, poi si decide se usarlo soltanto per il rischio macro di lungo periodo. Le fotografie live della Power Law vengono salvate una sola volta per mese, così non si contano come indipendenti previsioni giornaliere quasi identiche.
 
 ## File prodotti
 
