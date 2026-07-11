@@ -73,6 +73,7 @@ MODULE_PRICE_SPECS: dict[str, dict[str, Any]] = {
         "path": REPORTS_DIR / "exchange_microstructure_metrics.csv",
         "asset_columns": ("asset",),
         "price_columns": ("price",),
+        "tolerance_pct": 0.20,
     },
     "RSI top-cycle": {
         "path": REPORTS_DIR / "rsi_top_cycle_metrics.csv",
@@ -224,7 +225,10 @@ def collect_module_price_checks(prices: dict[str, float]) -> list[dict[str, Any]
                 value = safe_float(row.get(column))
                 snap = prices[asset]
                 diff = (value / snap - 1.0) * 100.0 if not np.isnan(value) and snap else np.nan
-                status = "OK" if not np.isnan(diff) and abs(diff) <= PRICE_TOLERANCE_PCT else "WARN"
+                tolerance_pct = safe_float(spec.get("tolerance_pct", PRICE_TOLERANCE_PCT))
+                if np.isnan(tolerance_pct):
+                    tolerance_pct = PRICE_TOLERANCE_PCT
+                status = "OK" if not np.isnan(diff) and abs(diff) <= tolerance_pct else "WARN"
                 checks.append(
                     {
                         "module": module,
@@ -234,6 +238,7 @@ def collect_module_price_checks(prices: dict[str, float]) -> list[dict[str, Any]
                         "snapshot_price": snap,
                         "difference_pct": diff,
                         "field": column,
+                        "tolerance_pct": tolerance_pct,
                     }
                 )
     return checks
@@ -502,7 +507,7 @@ def main() -> None:
     bad_prices = [item for item in module_price_checks if item["status"] not in {"OK", "MISSING"}]
     if bad_prices:
         warnings.append(
-            f"{len(bad_prices)} campi prezzo non coincidono con lo snapshot entro {PRICE_TOLERANCE_PCT:.2f}%."
+            f"{len(bad_prices)} campi prezzo superano la tolleranza specifica del modulo."
         )
 
     tech_critical, tech_warnings, integrity = technical_integrity_checks()
@@ -521,6 +526,7 @@ def main() -> None:
         REPORTS_DIR / "exchange_microstructure_history.csv",
         REPORTS_DIR / "exchange_signal_tracker_metrics.csv",
         REPORTS_DIR / "exchange_prediction_overlay.csv",
+        REPORTS_DIR / "exchange_source_diagnostics.md",
     )
     exchange_missing_files = [path.name for path in exchange_required_files if not path.exists()]
     exchange_data_available = not exchange_missing_files

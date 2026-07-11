@@ -1230,7 +1230,6 @@ def build_report(
     lines.append("- Classic technical confirmation")
     lines.append("- Microstruttura exchange, OI/funding/taker flow/order book")
     lines.append("- Frattale SOL/BTC, solo per SOL")
-    lines.append("# EXCHANGE_MICROSTRUCTURE_TRACKER_PATCH_V2_1")
     lines.append("")
     lines.append(
         "Regola anti-doppio-conteggio: **Scanner e Market Regime continuano a essere misurati separatamente "
