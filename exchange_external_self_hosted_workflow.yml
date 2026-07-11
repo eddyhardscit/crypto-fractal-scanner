@@ -1,0 +1,54 @@
+name: Collect Exchange Data on Self-Hosted Runner
+
+on:
+  schedule:
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: exchange-persistent-storage
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    # Activate only after registering a Linux self-hosted runner with label: exchange-collector
+    runs-on: [self-hosted, linux, exchange-collector]
+    timeout-minutes: 15
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      EXCHANGE_STORAGE_RELEASE_TAG: exchange-data-v2-1
+      EXCHANGE_INTRADAY_RETENTION_DAYS: "180"
+      EXCHANGE_LIQ_SAMPLE_SECONDS: "15"
+      EXTERNAL_MIN_AVAILABLE_PAIRS: "6"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements-exchange-collector.txt
+
+      - name: Install collector dependencies
+        run: python -m pip install -r requirements-exchange-collector.txt
+
+      - name: Collect and publish validated full exchange state
+        run: python exchange_external_collector.py
+
+      - name: Emergency diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: external-exchange-diagnostics-${{ github.run_id }}
+          path: |
+            reports/exchange_market_data_health.json
+            reports/exchange_market_data_snapshot.json
+            reports/exchange_storage_status.json
+          if-no-files-found: ignore
+          retention-days: 7
