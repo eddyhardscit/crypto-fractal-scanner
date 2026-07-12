@@ -1,6 +1,6 @@
 # Paper trading automatico KuCoin
 
-Generato: 2026-07-12T11:29:13+00:00
+Generato: 2026-07-12T11:35:10+00:00
 
 ## Configurazione attiva
 
@@ -10,45 +10,45 @@ Generato: 2026-07-12T11:29:13+00:00
 - Compounding: **ATTIVO**
 - Reinvestimento dei profitti: **100,00%**
 - Politica target: **solo monitoraggio; il bot non aumenta il rischio per inseguirlo**
-- Snapshot prezzi usato: **2026-07-12T11:29:11+00:00**; stato dati: **FRESH**; età: **0,0 min**; conversione EUR/USDT: **CONFIG_FALLBACK**
+- Snapshot prezzi usato: **2026-07-12T11:35:09+00:00**; stato dati: **FRESH**; età: **0,0 min**; conversione EUR/USDT: **CONFIG_FALLBACK**
 - Dashboard intraday: [apri la pagina live](https://github.com/eddyhardscit/crypto-fractal-scanner/blob/paper-trading-live/reports/paper_trading_live.md)
 
 ## Freschezza dati di mercato
 
 | Stato | Fonte | Snapshot mercato | Controllato | Età | Limite | Nuove entrate |
 | --- | --- | --- | --- | --- | --- | --- |
-| FRESH | KUCOIN_PUBLIC_API | 2026-07-12T11:29:11+00:00 | 2026-07-12T11:29:11+00:00 | 0,0 min | 25,0 min | ABILITATE |
+| FRESH | KUCOIN_PUBLIC_API | 2026-07-12T11:35:09+00:00 | 2026-07-12T11:35:09+00:00 | 0,0 min | 25,0 min | ABILITATE |
 
 | TF | Asset con dati | Candela più recente | Candela più vecchia | Età massima | Limite | Stato |
 | --- | --- | --- | --- | --- | --- | --- |
-| 15m | 12 | 2026-07-11T09:30:00+00:00 | 2026-07-09T08:15:00+00:00 | 75,24 h | 40,0 min | STALE_CANDLE |
-| 60m | 12 | 2026-06-30T14:00:00+00:00 | 2026-06-29T23:00:00+00:00 | 300,49 h | 1,42 h | STALE_CANDLE |
-| 240m | 12 | 2026-05-23T08:00:00+00:00 | 2026-05-23T08:00:00+00:00 | 1203,49 h | 4,42 h | STALE_CANDLE |
+| 15m | 12 | 2026-07-12T11:15:00+00:00 | 2026-07-12T11:15:00+00:00 | 20,2 min | 40,0 min | OK |
+| 60m | 12 | 2026-07-12T10:00:00+00:00 | 2026-07-12T10:00:00+00:00 | 1,59 h | 1,42 h | STALE_CANDLE |
+| 240m | 12 | 2026-07-12T04:00:00+00:00 | 2026-07-12T04:00:00+00:00 | 7,59 h | 4,42 h | STALE_CANDLE |
 
 ## Segnali quasi entrati / motivi di esclusione
 
 | Portafoglio | Asset | TF | Lato | Score | Soglia | Manca | Stato | Età candela | Motivo |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| MAIN | SOL | 240m | SHORT | -6,82 | 6,00 | 0,00 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | T | 240m | SHORT | -6,48 | 6,00 | 0,00 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | ADA | 240m | SHORT | -6,45 | 6,00 | 0,00 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | EVAA | 240m | SHORT | -6,17 | 6,00 | 0,00 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | AAVE | 240m | SHORT | -6,00 | 6,00 | 0,00 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | XRP | 240m | SHORT | -5,96 | 6,00 | 0,04 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | LAB | 240m | LONG | 5,35 | 6,00 | 0,65 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | PEPE | 240m | SHORT | -5,32 | 6,00 | 0,68 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | ETH | 240m | SHORT | -4,78 | 6,00 | 1,22 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | HYPE | 240m | LONG | 4,75 | 6,00 | 1,25 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | BTC | 240m | SHORT | -4,08 | 6,00 | 1,92 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| MAIN | ZEC | 240m | LONG | 1,03 | 6,00 | 4,97 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| SHADOW_1H_BALANCED | T | 60m | SHORT | -7,33 | 5,00 | 0,00 | STALE_CANDLE | 285,49 h | Ultima candela chiusa troppo vecchia: 17129.2 minuti; limite 85. |
-| SHADOW_1H_FAST | T | 60m | SHORT | -7,33 | 4,50 | 0,00 | STALE_CANDLE | 285,49 h | Ultima candela chiusa troppo vecchia: 17129.2 minuti; limite 85. |
-| SHADOW_RELATIVE_STRENGTH | T | 60m | SHORT | -7,33 | 4,00 | 0,00 | STALE_CANDLE | 285,49 h | Ultima candela chiusa troppo vecchia: 17129.2 minuti; limite 85. |
-| SHADOW_1H_BALANCED | LAB | 60m | SHORT | -7,00 | 5,00 | 0,00 | STALE_CANDLE | 300,49 h | Ultima candela chiusa troppo vecchia: 18029.2 minuti; limite 85. |
-| SHADOW_1H_FAST | LAB | 60m | SHORT | -7,00 | 4,50 | 0,00 | STALE_CANDLE | 300,49 h | Ultima candela chiusa troppo vecchia: 18029.2 minuti; limite 85. |
-| SHADOW_RELATIVE_STRENGTH | LAB | 60m | SHORT | -7,00 | 4,00 | 0,00 | STALE_CANDLE | 300,49 h | Ultima candela chiusa troppo vecchia: 18029.2 minuti; limite 85. |
-| SHADOW_4H_WIDE | SOL | 240m | SHORT | -6,82 | 5,00 | 0,00 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
-| SHADOW_4H_WIDE | T | 240m | SHORT | -6,48 | 5,00 | 0,00 | STALE_CANDLE | 1203,49 h | Ultima candela chiusa troppo vecchia: 72209.2 minuti; limite 265. |
+| MAIN | LAB | 240m | SHORT | -7,75 | 6,00 | 0,00 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | ZEC | 240m | LONG | 7,75 | 6,00 | 0,00 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | AAVE | 240m | LONG | 6,81 | 6,00 | 0,00 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | T | 240m | LONG | 6,25 | 6,00 | 0,00 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | XRP | 240m | SHORT | -5,45 | 6,00 | 0,55 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | BTC | 240m | LONG | 5,17 | 6,00 | 0,83 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | SOL | 240m | SHORT | -3,96 | 6,00 | 2,04 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | ADA | 240m | SHORT | -3,76 | 6,00 | 2,24 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | EVAA | 240m | SHORT | -3,25 | 6,00 | 2,75 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | ETH | 240m | LONG | 3,25 | 6,00 | 2,75 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | HYPE | 240m | SHORT | -2,82 | 6,00 | 3,18 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| MAIN | PEPE | 240m | LONG | 1,50 | 6,00 | 4,50 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| SHADOW_1H_BALANCED | LAB | 60m | SHORT | -7,75 | 5,00 | 0,00 | STALE_CANDLE | 1,59 h | Ultima candela chiusa troppo vecchia: 95.2 minuti; limite 85. |
+| SHADOW_1H_FAST | LAB | 60m | SHORT | -7,75 | 4,50 | 0,00 | STALE_CANDLE | 1,59 h | Ultima candela chiusa troppo vecchia: 95.2 minuti; limite 85. |
+| SHADOW_4H_WIDE | LAB | 240m | SHORT | -7,75 | 5,00 | 0,00 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| SHADOW_RELATIVE_STRENGTH | LAB | 60m | SHORT | -7,75 | 4,00 | 0,00 | STALE_CANDLE | 1,59 h | Ultima candela chiusa troppo vecchia: 95.2 minuti; limite 85. |
+| SHADOW_4H_WIDE | ZEC | 240m | LONG | 7,75 | 5,00 | 0,00 | STALE_CANDLE | 7,59 h | Ultima candela chiusa troppo vecchia: 455.2 minuti; limite 265. |
+| SHADOW_1H_BALANCED | ZEC | 60m | LONG | 6,92 | 5,00 | 0,00 | STALE_CANDLE | 1,59 h | Ultima candela chiusa troppo vecchia: 95.2 minuti; limite 85. |
+| SHADOW_1H_FAST | ZEC | 60m | LONG | 6,92 | 4,50 | 0,00 | STALE_CANDLE | 1,59 h | Ultima candela chiusa troppo vecchia: 95.2 minuti; limite 85. |
+| SHADOW_RELATIVE_STRENGTH | ZEC | 60m | LONG | 6,92 | 4,00 | 0,00 | STALE_CANDLE | 1,59 h | Ultima candela chiusa troppo vecchia: 95.2 minuti; limite 85. |
 
 **Manca** indica quanti punti servivano per raggiungere la soglia. `STRATEGY_FILTER` significa che lo score bastava, ma mancava breakout, momentum o forza relativa. `ALREADY_PROCESSED` significa che la stessa candela era già stata esaminata.
 
