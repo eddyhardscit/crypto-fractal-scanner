@@ -37,6 +37,8 @@ FILES = (
     "research_all_signals_trades.csv",
     "research_all_signals_report.md",
     "research_all_signals_latest.json",
+    "market_regime_latest.json",
+    "market_regime_history.csv",
 )
 
 

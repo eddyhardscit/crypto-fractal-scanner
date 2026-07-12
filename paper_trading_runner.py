@@ -167,12 +167,27 @@ def main() -> None:
     )
     raw_signals = generate_signals(bundle, config)
     state = load_state(config)
-    research_result = run_research_cycle(raw_signals, bundle, config)
     signal_diagnostics = build_signal_diagnostics(
         bundle,
         config,
         raw_signals,
         state,
+    )
+    research_eligible_ids = {
+        str(row.get("signal_id", ""))
+        for row in signal_diagnostics.get("rows", [])
+        if row.get("status") in {"READY", "RISK_GATE"}
+        and row.get("signal_id")
+    }
+    research_signals = [
+        signal
+        for signal in raw_signals
+        if signal.signal_id in research_eligible_ids
+    ]
+    research_result = run_research_cycle(
+        research_signals,
+        bundle,
+        config,
     )
     executable_ids = set(
         signal_diagnostics.get(
