@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from kucoin_public_data import bundle_frames, safe_float
+from paper_rsi_extreme_scalping import extreme_reversal_setup
 
 REPORTS_DIR = Path("reports")
 GLOBAL_METRICS_PATH = REPORTS_DIR / "global_confluence_metrics.csv"
@@ -282,87 +283,428 @@ def deterministic_id(*parts: Any, length: int = 20) -> str:
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:length]
 
 
-def strategy_accepts(strategy: str, side: str, features: dict[str, Any], score: float) -> bool:
+def strategy_accepts(
+    strategy: str,
+    side: str,
+    features: dict[str, Any],
+    score: float,
+) -> bool:
     if strategy == "momentum_breakout":
-        return features["breakout_state"] == ("UP" if side == "LONG" else "DOWN") or abs(features["ret_short_pct"]) >= 1.5
+        return (
+            features["breakout_state"]
+            == ("UP" if side == "LONG" else "DOWN")
+            or abs(features["ret_short_pct"]) >= 1.5
+        )
     if strategy == "relative_strength":
-        relative = 0.65 * features["relative_medium_pct"] + 0.35 * features["relative_long_pct"]
-        return relative >= 2.0 if side == "LONG" else relative <= -2.0
+        relative = (
+            0.65 * features["relative_medium_pct"]
+            + 0.35 * features["relative_long_pct"]
+        )
+        return (
+            relative >= 2.0
+            if side == "LONG"
+            else relative <= -2.0
+        )
+    if strategy == "rsi_extreme_reversal":
+        return bool(features.get("extreme_accepted"))
     return True
 
 
-def generate_signals(bundle: dict[str, Any], config: dict[str, Any]) -> list[Signal]:
+def generate_signals(
+    bundle: dict[str, Any],
+    config: dict[str, Any],
+) -> list[Signal]:
     frames = bundle_frames(bundle)
-    global_rows = _read_latest_by_asset(GLOBAL_METRICS_PATH)
-    exchange_rows = _read_latest_by_asset(EXCHANGE_METRICS_PATH)
+    global_rows = _read_latest_by_asset(
+        GLOBAL_METRICS_PATH
+    )
+    exchange_rows = _read_latest_by_asset(
+        EXCHANGE_METRICS_PATH
+    )
     btc_frames = frames.get("BTC", {})
     signals: list[Signal] = []
 
     for portfolio in config.get("portfolios", []):
         if not portfolio.get("enabled", True):
             continue
-        timeframe = int(portfolio["timeframe_minutes"])
-        minimum_score = float(portfolio["minimum_abs_score"])
-        strategy = str(portfolio.get("strategy", "confluence_trend"))
 
-        for asset, payload in bundle.get("assets", {}).items():
+        timeframe = int(portfolio["timeframe_minutes"])
+        minimum_score = float(
+            portfolio["minimum_abs_score"]
+        )
+        strategy = str(
+            portfolio.get(
+                "strategy",
+                "confluence_trend",
+            )
+        )
+
+        for asset, payload in bundle.get(
+            "assets",
+            {},
+        ).items():
             frame = frames.get(asset, {}).get(timeframe)
             btc_frame = btc_frames.get(timeframe)
-            features = compute_features(frame, btc_frame if asset != "BTC" else frame)
+            features = compute_features(
+                frame,
+                btc_frame if asset != "BTC" else frame,
+            )
             if not features:
                 continue
-            global_overlay, global_reason = global_overlay_for_asset(asset, global_rows)
-            exchange_overlay, exchange_reason = exchange_overlay_for_asset(asset, exchange_rows)
-            score, reasons = score_features(features, global_overlay, exchange_overlay)
 
+            global_overlay, global_reason = (
+                global_overlay_for_asset(
+                    asset,
+                    global_rows,
+                )
+            )
+            exchange_overlay, exchange_reason = (
+                exchange_overlay_for_asset(
+                    asset,
+                    exchange_rows,
+                )
+            )
+
+            if strategy == "rsi_extreme_reversal":
+                side = str(
+                    portfolio.get(
+                        "reversal_side",
+                        "LONG",
+                    )
+                ).upper()
+                setup = extreme_reversal_setup(
+                    frame,
+                    side,
+                    portfolio,
+                )
+                score = float(
+                    setup.get("score", 0.0)
+                )
+                if (
+                    score < minimum_score
+                    or not setup.get("accepted")
+                ):
+                    continue
+                if (
+                    side == "LONG"
+                    and not portfolio.get(
+                        "allow_long",
+                        True,
+                    )
+                ):
+                    continue
+                if (
+                    side == "SHORT"
+                    and not portfolio.get(
+                        "allow_short",
+                        True,
+                    )
+                ):
+                    continue
+
+                stop_pct = float(
+                    setup.get("stop_pct", 0.0)
+                )
+                target_pct = stop_pct * float(
+                    portfolio.get("reward_risk", 1.5)
+                )
+                candle_time = str(
+                    setup.get(
+                        "candle_time",
+                        features["candle_time"],
+                    )
+                )
+                experiment_group = deterministic_id(
+                    asset,
+                    timeframe,
+                    candle_time,
+                    side,
+                    "rsi_extreme_reversal_event",
+                )
+                signal_id = deterministic_id(
+                    portfolio["name"],
+                    strategy,
+                    experiment_group,
+                )
+                relative_blend = (
+                    0.65
+                    * features["relative_medium_pct"]
+                    + 0.35
+                    * features["relative_long_pct"]
+                )
+                reason = "; ".join(
+                    list(setup.get("reasons", []))
+                    + [
+                        global_reason
+                        + " (solo contesto, peso 0)",
+                        exchange_reason
+                        + " (solo contesto, peso 0)",
+                    ]
+                )
+
+                signals.append(
+                    Signal(
+                        signal_id=signal_id,
+                        experiment_group_id=experiment_group,
+                        portfolio=str(
+                            portfolio["name"]
+                        ),
+                        is_main=bool(
+                            portfolio.get("is_main")
+                        ),
+                        strategy=strategy,
+                        asset=asset,
+                        symbol=str(
+                            payload.get("symbol", "")
+                        ),
+                        timeframe_minutes=timeframe,
+                        candle_time=candle_time,
+                        side=side,
+                        score=round(score, 4),
+                        confidence=confidence_from_score(
+                            score
+                        ),
+                        entry_reference_price=float(
+                            payload.get("mark_price")
+                            or features["price"]
+                        ),
+                        atr_pct=round(
+                            float(
+                                setup.get(
+                                    "atr_pct",
+                                    0.0,
+                                )
+                            ),
+                            6,
+                        ),
+                        stop_pct=round(
+                            stop_pct,
+                            8,
+                        ),
+                        target_pct=round(
+                            target_pct,
+                            8,
+                        ),
+                        leverage=float(
+                            portfolio.get(
+                                "leverage",
+                                config["risk"].get(
+                                    "default_leverage",
+                                    1.0,
+                                ),
+                            )
+                        ),
+                        max_holding_hours=int(
+                            portfolio.get(
+                                "max_holding_hours",
+                                4,
+                            )
+                        ),
+                        trailing_at_r=float(
+                            portfolio.get(
+                                "trailing_at_r",
+                                1.0,
+                            )
+                        ),
+                        trailing_atr_multiple=float(
+                            portfolio.get(
+                                "trailing_atr_multiple",
+                                0.8,
+                            )
+                        ),
+                        reason=reason,
+                        relative_strength_score=round(
+                            relative_blend,
+                            4,
+                        ),
+                        breakout_state=str(
+                            setup.get(
+                                "state",
+                                "RSI_EXTREME_REVERSAL",
+                            )
+                        ),
+                        global_overlay=round(
+                            global_overlay,
+                            4,
+                        ),
+                        exchange_overlay=round(
+                            exchange_overlay,
+                            4,
+                        ),
+                    )
+                )
+                continue
+
+            score, reasons = score_features(
+                features,
+                global_overlay,
+                exchange_overlay,
+            )
             if abs(score) < minimum_score:
                 continue
+
             side = "LONG" if score > 0 else "SHORT"
-            if side == "LONG" and not portfolio.get("allow_long", True):
+            if (
+                side == "LONG"
+                and not portfolio.get("allow_long", True)
+            ):
                 continue
-            if side == "SHORT" and not portfolio.get("allow_short", True):
+            if (
+                side == "SHORT"
+                and not portfolio.get("allow_short", True)
+            ):
                 continue
-            if not strategy_accepts(strategy, side, features, score):
+            if not strategy_accepts(
+                strategy,
+                side,
+                features,
+                score,
+            ):
                 continue
 
-            atr_pct = max(float(config["risk"].get("minimum_stop_pct", 0.008)) * 100.0, features["atr_pct"])
-            stop_pct = atr_pct / 100.0 * float(portfolio.get("atr_stop_multiple", 2.0))
-            stop_pct = max(float(config["risk"].get("minimum_stop_pct", 0.008)), stop_pct)
-            stop_pct = min(float(config["risk"].get("maximum_stop_pct", 0.12)), stop_pct)
-            target_pct = stop_pct * float(portfolio.get("reward_risk", 2.0))
+            atr_pct = max(
+                float(
+                    config["risk"].get(
+                        "minimum_stop_pct",
+                        0.008,
+                    )
+                )
+                * 100.0,
+                features["atr_pct"],
+            )
+            stop_pct = (
+                atr_pct
+                / 100.0
+                * float(
+                    portfolio.get(
+                        "atr_stop_multiple",
+                        2.0,
+                    )
+                )
+            )
+            stop_pct = max(
+                float(
+                    config["risk"].get(
+                        "minimum_stop_pct",
+                        0.008,
+                    )
+                ),
+                stop_pct,
+            )
+            stop_pct = min(
+                float(
+                    config["risk"].get(
+                        "maximum_stop_pct",
+                        0.12,
+                    )
+                ),
+                stop_pct,
+            )
+            target_pct = stop_pct * float(
+                portfolio.get("reward_risk", 2.0)
+            )
             candle_time = features["candle_time"]
-            experiment_group = deterministic_id(asset, timeframe, candle_time, side, "market_event")
-            signal_id = deterministic_id(portfolio["name"], strategy, experiment_group)
-            relative_blend = 0.65 * features["relative_medium_pct"] + 0.35 * features["relative_long_pct"]
-            reason = "; ".join(reasons + [global_reason, exchange_reason])
+            experiment_group = deterministic_id(
+                asset,
+                timeframe,
+                candle_time,
+                side,
+                "market_event",
+            )
+            signal_id = deterministic_id(
+                portfolio["name"],
+                strategy,
+                experiment_group,
+            )
+            relative_blend = (
+                0.65 * features["relative_medium_pct"]
+                + 0.35 * features["relative_long_pct"]
+            )
+            reason = "; ".join(
+                reasons
+                + [global_reason, exchange_reason]
+            )
 
             signals.append(
                 Signal(
                     signal_id=signal_id,
                     experiment_group_id=experiment_group,
                     portfolio=str(portfolio["name"]),
-                    is_main=bool(portfolio.get("is_main")),
+                    is_main=bool(
+                        portfolio.get("is_main")
+                    ),
                     strategy=strategy,
                     asset=asset,
-                    symbol=str(payload.get("symbol", "")),
+                    symbol=str(
+                        payload.get("symbol", "")
+                    ),
                     timeframe_minutes=timeframe,
                     candle_time=candle_time,
                     side=side,
                     score=round(score, 4),
-                    confidence=confidence_from_score(score),
-                    entry_reference_price=float(payload.get("mark_price") or features["price"]),
-                    atr_pct=round(features["atr_pct"], 6),
-                    stop_pct=round(stop_pct, 8),
-                    target_pct=round(target_pct, 8),
-                    leverage=float(portfolio.get("leverage", config["risk"].get("default_leverage", 1.0))),
-                    max_holding_hours=int(portfolio.get("max_holding_hours", 168)),
-                    trailing_at_r=float(portfolio.get("trailing_at_r", 0.0)),
-                    trailing_atr_multiple=float(portfolio.get("trailing_atr_multiple", 0.0)),
+                    confidence=confidence_from_score(
+                        score
+                    ),
+                    entry_reference_price=float(
+                        payload.get("mark_price")
+                        or features["price"]
+                    ),
+                    atr_pct=round(
+                        features["atr_pct"],
+                        6,
+                    ),
+                    stop_pct=round(
+                        stop_pct,
+                        8,
+                    ),
+                    target_pct=round(
+                        target_pct,
+                        8,
+                    ),
+                    leverage=float(
+                        portfolio.get(
+                            "leverage",
+                            config["risk"].get(
+                                "default_leverage",
+                                1.0,
+                            ),
+                        )
+                    ),
+                    max_holding_hours=int(
+                        portfolio.get(
+                            "max_holding_hours",
+                            168,
+                        )
+                    ),
+                    trailing_at_r=float(
+                        portfolio.get(
+                            "trailing_at_r",
+                            0.0,
+                        )
+                    ),
+                    trailing_atr_multiple=float(
+                        portfolio.get(
+                            "trailing_atr_multiple",
+                            0.0,
+                        )
+                    ),
                     reason=reason,
-                    relative_strength_score=round(relative_blend, 4),
-                    breakout_state=str(features["breakout_state"]),
-                    global_overlay=round(global_overlay, 4),
-                    exchange_overlay=round(exchange_overlay, 4),
+                    relative_strength_score=round(
+                        relative_blend,
+                        4,
+                    ),
+                    breakout_state=str(
+                        features["breakout_state"]
+                    ),
+                    global_overlay=round(
+                        global_overlay,
+                        4,
+                    ),
+                    exchange_overlay=round(
+                        exchange_overlay,
+                        4,
+                    ),
                 )
             )
     return signals
+

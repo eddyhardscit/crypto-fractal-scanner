@@ -22,6 +22,7 @@ from paper_signal_engine import (
     EXCHANGE_METRICS_PATH,
     GLOBAL_METRICS_PATH,
 )
+from paper_rsi_extreme_scalping import extreme_reversal_setup
 from paper_trading_engine import (
     can_open,
     current_prices,
@@ -163,6 +164,22 @@ def _strategy_reason(
             f"{expected} oppure movimento breve ≥1,5%; "
             f"breakout={features.get('breakout_state', 'NONE')}, "
             f"movimento={features.get('ret_short_pct', 0.0):+.2f}%."
+        )
+    if strategy == "rsi_extreme_reversal":
+        missing = str(
+            features.get(
+                "extreme_missing_text",
+                "filtri di inversione non superati",
+            )
+        )
+        return (
+            "Filtro scalp RSI estremo: servono RSI estremo, "
+            "shock, volume e conferma della candela successiva; "
+            f"manca: {missing}. "
+            f"RSI {features.get('extreme_candidate_rsi', 0.0):.1f}"
+            f"→{features.get('extreme_confirmation_rsi', 0.0):.1f}; "
+            f"volume x{features.get('extreme_volume_ratio', 0.0):.2f}; "
+            f"shock {features.get('extreme_shock_atr', 0.0):.2f} ATR."
         )
     if strategy == "relative_strength":
         relative = (
@@ -417,12 +434,88 @@ def build_signal_diagnostics(
                     exchange_rows,
                 )
             )
-            score, score_reasons = score_features(
-                features,
-                global_overlay,
-                exchange_overlay,
-            )
-            side = "LONG" if score > 0 else "SHORT"
+
+            if strategy == "rsi_extreme_reversal":
+                side = str(
+                    definition.get(
+                        "reversal_side",
+                        "LONG",
+                    )
+                ).upper()
+                extreme = extreme_reversal_setup(
+                    frame,
+                    side,
+                    definition,
+                )
+                features.update(
+                    {
+                        "extreme_accepted": bool(
+                            extreme.get("accepted")
+                        ),
+                        "extreme_missing_text": str(
+                            extreme.get(
+                                "missing_text",
+                                "",
+                            )
+                        ),
+                        "extreme_candidate_rsi": float(
+                            extreme.get(
+                                "candidate_rsi",
+                                0.0,
+                            )
+                        ),
+                        "extreme_confirmation_rsi": float(
+                            extreme.get(
+                                "confirmation_rsi",
+                                0.0,
+                            )
+                        ),
+                        "extreme_volume_ratio": float(
+                            extreme.get(
+                                "volume_ratio",
+                                0.0,
+                            )
+                        ),
+                        "extreme_shock_atr": float(
+                            extreme.get(
+                                "shock_atr",
+                                0.0,
+                            )
+                        ),
+                        "candle_time": str(
+                            extreme.get(
+                                "candle_time",
+                                features.get(
+                                    "candle_time",
+                                    "n/a",
+                                ),
+                            )
+                        ),
+                        "breakout_state": str(
+                            extreme.get(
+                                "state",
+                                "RSI_EXTREME_REVERSAL",
+                            )
+                        ),
+                    }
+                )
+                score = float(
+                    extreme.get("score", 0.0)
+                )
+                score_reasons = list(
+                    extreme.get("reasons", [])
+                )
+            else:
+                score, score_reasons = score_features(
+                    features,
+                    global_overlay,
+                    exchange_overlay,
+                )
+                side = (
+                    "LONG"
+                    if score > 0
+                    else "SHORT"
+                )
             candle_time = str(
                 features.get("candle_time", "n/a")
             )

@@ -82,9 +82,48 @@ def validate_config(config: dict[str, Any]) -> None:
             raise ConfigError(f"Nome portafoglio mancante o duplicato: {name!r}")
         names.add(name)
         main_count += int(bool(portfolio.get("is_main")))
-        leverage = float(portfolio.get("leverage", risk.get("default_leverage", 1)))
-        if leverage <= 0 or leverage > float(risk.get("absolute_max_leverage", 5)):
-            raise ConfigError(f"Leva non valida per {name}: {leverage}")
+        leverage = float(
+            portfolio.get(
+                "leverage",
+                risk.get("default_leverage", 1),
+            )
+        )
+        global_cap = float(
+            risk.get("absolute_max_leverage", 5)
+        )
+        if leverage <= 0:
+            raise ConfigError(
+                f"Leva non valida per {name}: {leverage}"
+            )
+        if leverage > global_cap:
+            allowed_test = bool(
+                portfolio.get(
+                    "paper_only_high_leverage_test"
+                )
+            )
+            fixed_margin = float(
+                portfolio.get("fixed_margin_eur", 0)
+            )
+            max_stop = float(
+                portfolio.get(
+                    "maximum_stop_pct",
+                    1.0,
+                )
+            )
+            if (
+                not allowed_test
+                or portfolio.get("is_main")
+                or portfolio.get("strategy")
+                != "rsi_extreme_reversal"
+                or leverage > 15
+                or not 0 < fixed_margin <= 50
+                or max_stop > 0.05
+            ):
+                raise ConfigError(
+                    "Leva oltre il limite globale consentita "
+                    "solo ai test paper RSI estremi con margine fisso "
+                    f"massimo €50: {name}={leverage}x"
+                )
     if main_count != 1:
         raise ConfigError("Deve esistere esattamente un portafoglio principale abilitato.")
 

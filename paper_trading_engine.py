@@ -29,7 +29,7 @@ CONFIG_SNAPSHOT_PATH = REPORTS_DIR / "paper_trading_config_snapshot.json"
 TRADE_FIELDS = [
     "trade_id", "experiment_group_id", "portfolio", "is_main", "strategy", "asset", "symbol", "side",
     "timeframe_minutes", "opened_at", "closed_at", "holding_hours", "entry_price", "exit_price",
-    "quantity", "notional_eur", "margin_eur", "leverage", "initial_stop_price", "final_stop_price",
+    "quantity", "notional_eur", "margin_eur", "leverage", "liquidation_price", "initial_stop_price", "final_stop_price",
     "target_price", "gross_pnl_eur", "entry_fee_eur", "exit_fee_eur", "funding_pnl_eur",
     "net_pnl_eur", "return_on_margin_pct", "r_multiple", "close_reason", "signal_score", "confidence",
     "source", "eur_usdt_rate"
@@ -277,84 +277,300 @@ def portfolio_definition(config: dict[str, Any], name: str) -> dict[str, Any]:
 
 
 def can_open(
-    portfolio: dict[str, Any], signal: Signal, equity: float, config: dict[str, Any]
+    portfolio: dict[str, Any],
+    signal: Signal,
+    equity: float,
+    config: dict[str, Any],
 ) -> tuple[bool, str]:
-    allowed, reason = risk_gate(portfolio, equity, config)
+    allowed, reason = risk_gate(
+        portfolio,
+        equity,
+        config,
+    )
     if not allowed:
         return False, reason
+
+    definition = portfolio_definition(
+        config,
+        signal.portfolio,
+    )
     positions = portfolio.get("open_positions", [])
-    if len(positions) >= int(config["risk"]["max_open_positions"]):
+    max_positions = int(
+        definition.get(
+            "max_open_positions",
+            config["risk"]["max_open_positions"],
+        )
+    )
+    if len(positions) >= max_positions:
         return False, "numero massimo posizioni"
-    if any(position["asset"] == signal.asset for position in positions):
+    if any(
+        position["asset"] == signal.asset
+        for position in positions
+    ):
         return False, "asset già aperto nel portafoglio"
-    same_direction = sum(position["side"] == signal.side for position in positions)
-    if same_direction >= int(config["risk"]["max_same_direction_positions"]):
-        return False, "limite posizioni nella stessa direzione"
+
+    same_direction = sum(
+        position["side"] == signal.side
+        for position in positions
+    )
+    max_same_direction = int(
+        definition.get(
+            "max_same_direction_positions",
+            config["risk"][
+                "max_same_direction_positions"
+            ],
+        )
+    )
+    if same_direction >= max_same_direction:
+        return (
+            False,
+            "limite posizioni nella stessa direzione",
+        )
     return True, "OK"
 
 
 def build_position(
-    portfolio: dict[str, Any], signal: Signal, bundle: dict[str, Any], equity: float, config: dict[str, Any], when: datetime
+    portfolio: dict[str, Any],
+    signal: Signal,
+    bundle: dict[str, Any],
+    equity: float,
+    config: dict[str, Any],
+    when: datetime,
 ) -> tuple[dict[str, Any] | None, str]:
-    eur_usdt_rate = float(bundle.get("eur_usdt_rate", config.get("eur_usdt_fallback_rate", 1.0)))
+    eur_usdt_rate = float(
+        bundle.get(
+            "eur_usdt_rate",
+            config.get("eur_usdt_fallback_rate", 1.0),
+        )
+    )
     if eur_usdt_rate <= 0:
         return None, "cambio EUR/USDT non valido"
-    risk_fraction = effective_risk_fraction(portfolio, equity, config)
-    sizing_equity = equity if config.get("compounding_enabled", True) else float(state_initial_capital(portfolio, config))
-    reinvestment = float(config.get("reinvestment_rate", 1.0))
-    if config.get("compounding_enabled", True):
-        sizing_equity = float(config["initial_capital_eur"]) + max(0.0, equity - float(config["initial_capital_eur"])) * reinvestment + min(0.0, equity - float(config["initial_capital_eur"]))
-    risk_budget = max(0.0, sizing_equity * risk_fraction)
-    if risk_budget <= 0:
-        return None, "budget rischio nullo"
 
-    max_total_risk = equity * float(config["risk"]["max_total_open_risk"])
-    risk_budget = min(risk_budget, max(0.0, max_total_risk - open_risk_eur(portfolio)))
-    if risk_budget <= 0:
+    definition = portfolio_definition(
+        config,
+        signal.portfolio,
+    )
+    sizing_equity = (
+        equity
+        if config.get("compounding_enabled", True)
+        else float(
+            state_initial_capital(
+                portfolio,
+                config,
+            )
+        )
+    )
+    reinvestment = float(
+        config.get("reinvestment_rate", 1.0)
+    )
+    if config.get("compounding_enabled", True):
+        initial = float(config["initial_capital_eur"])
+        sizing_equity = (
+            initial
+            + max(0.0, equity - initial) * reinvestment
+            + min(0.0, equity - initial)
+        )
+
+    min_stop = float(
+        definition.get(
+            "minimum_stop_pct",
+            config["risk"]["minimum_stop_pct"],
+        )
+    )
+    max_stop = float(
+        definition.get(
+            "maximum_stop_pct",
+            config["risk"]["maximum_stop_pct"],
+        )
+    )
+    stop_pct = max(
+        min_stop,
+        min(max_stop, float(signal.stop_pct)),
+    )
+
+    global_leverage_cap = float(
+        config["risk"]["absolute_max_leverage"]
+    )
+    leverage_cap = float(
+        definition.get(
+            "max_leverage",
+            global_leverage_cap,
+        )
+    )
+    leverage = min(
+        float(signal.leverage),
+        leverage_cap,
+    )
+    if leverage <= 0:
+        return None, "leva non valida"
+
+    max_total_risk = (
+        equity
+        * float(
+            config["risk"]["max_total_open_risk"]
+        )
+    )
+    remaining_risk = max(
+        0.0,
+        max_total_risk - open_risk_eur(portfolio),
+    )
+    if remaining_risk <= 0:
         return None, "limite rischio complessivo"
 
-    stop_pct = max(float(config["risk"]["minimum_stop_pct"]), min(float(config["risk"]["maximum_stop_pct"]), signal.stop_pct))
-    leverage = min(float(signal.leverage), float(config["risk"]["absolute_max_leverage"]))
-    notional_eur = risk_budget / stop_pct
-    max_notional_by_margin = equity * float(config["risk"]["max_margin_per_position"]) * leverage
-    remaining_margin = max(0.0, equity * float(config["risk"]["max_total_margin"]) - open_margin_eur(portfolio))
-    max_notional_by_total_margin = remaining_margin * leverage
-    notional_eur = min(notional_eur, max_notional_by_margin, max_notional_by_total_margin)
+    max_notional_by_margin = (
+        equity
+        * float(
+            config["risk"]["max_margin_per_position"]
+        )
+        * leverage
+    )
+    remaining_margin = max(
+        0.0,
+        equity
+        * float(config["risk"]["max_total_margin"])
+        - open_margin_eur(portfolio),
+    )
+    max_notional_by_total_margin = (
+        remaining_margin * leverage
+    )
+    max_notional_by_risk = (
+        remaining_risk / stop_pct
+    )
+
+    fixed_margin = definition.get("fixed_margin_eur")
+    if fixed_margin is not None:
+        desired_notional = (
+            float(fixed_margin) * leverage
+        )
+        notional_eur = min(
+            desired_notional,
+            max_notional_by_risk,
+            max_notional_by_margin,
+            max_notional_by_total_margin,
+        )
+    else:
+        risk_fraction = float(
+            definition.get(
+                "risk_per_trade_override",
+                effective_risk_fraction(
+                    portfolio,
+                    equity,
+                    config,
+                ),
+            )
+        )
+        desired_risk = max(
+            0.0,
+            sizing_equity * risk_fraction,
+        )
+        risk_budget = min(
+            desired_risk,
+            remaining_risk,
+        )
+        if risk_budget <= 0:
+            return None, "budget rischio nullo"
+        notional_eur = min(
+            risk_budget / stop_pct,
+            max_notional_by_margin,
+            max_notional_by_total_margin,
+        )
+
     if notional_eur < 25.0:
         return None, "posizione inferiore a 25 EUR"
 
     risk_budget = notional_eur * stop_pct
-    bps = slippage_bps(bundle, signal.asset, config)
-    reference = float(bundle.get("assets", {}).get(signal.asset, {}).get("mark_price") or signal.entry_reference_price)
-    entry_price = adverse_price(reference, signal.side, True, bps)
+    bps = slippage_bps(
+        bundle,
+        signal.asset,
+        config,
+    )
+    reference = float(
+        bundle.get("assets", {})
+        .get(signal.asset, {})
+        .get("mark_price")
+        or signal.entry_reference_price
+    )
+    entry_price = adverse_price(
+        reference,
+        signal.side,
+        True,
+        bps,
+    )
     notional_usdt = notional_eur * eur_usdt_rate
     quantity = notional_usdt / entry_price
     margin_eur = notional_eur / leverage
-    direction = 1.0 if signal.side == "LONG" else -1.0
-    stop_price = entry_price * (1.0 - direction * stop_pct)
-    target_price = entry_price * (1.0 + direction * signal.target_pct)
-    fee_rate = float(config["execution"]["taker_fee_bps"]) / 10_000.0
+    direction = (
+        1.0
+        if signal.side == "LONG"
+        else -1.0
+    )
+    stop_price = entry_price * (
+        1.0 - direction * stop_pct
+    )
+    target_price = entry_price * (
+        1.0 + direction * signal.target_pct
+    )
+
+    liquidation_buffer = float(
+        definition.get(
+            "liquidation_buffer_fraction",
+            0.005,
+        )
+    )
+    liquidation_distance = max(
+        0.001,
+        1.0 / leverage - liquidation_buffer,
+    )
+    liquidation_price = entry_price * (
+        1.0 - direction * liquidation_distance
+    )
+    if (
+        signal.side == "LONG"
+        and stop_price <= liquidation_price
+    ):
+        return None, "stop oltre la liquidazione stimata"
+    if (
+        signal.side == "SHORT"
+        and stop_price >= liquidation_price
+    ):
+        return None, "stop oltre la liquidazione stimata"
+
+    fee_rate = (
+        float(config["execution"]["taker_fee_bps"])
+        / 10_000.0
+    )
     entry_fee_eur = notional_eur * fee_rate
     if entry_fee_eur >= portfolio["balance_eur"]:
-        return None, "saldo insufficiente per commissione"
+        return (
+            None,
+            "saldo insufficiente per commissione",
+        )
 
-    portfolio["balance_eur"] = float(portfolio["balance_eur"]) - entry_fee_eur
+    portfolio["balance_eur"] = (
+        float(portfolio["balance_eur"])
+        - entry_fee_eur
+    )
     position = {
         "trade_id": signal.signal_id,
-        "experiment_group_id": signal.experiment_group_id,
+        "experiment_group_id": (
+            signal.experiment_group_id
+        ),
         "portfolio": signal.portfolio,
         "is_main": signal.is_main,
         "strategy": signal.strategy,
         "asset": signal.asset,
         "symbol": signal.symbol,
         "side": signal.side,
-        "timeframe_minutes": signal.timeframe_minutes,
+        "timeframe_minutes": (
+            signal.timeframe_minutes
+        ),
         "opened_at": iso_utc(when),
         "entry_price": entry_price,
         "quantity": quantity,
         "notional_eur": notional_eur,
         "margin_eur": margin_eur,
         "leverage": leverage,
+        "liquidation_price": liquidation_price,
         "initial_stop_price": stop_price,
         "stop_price": stop_price,
         "target_price": target_price,
@@ -363,9 +579,13 @@ def build_position(
         "funding_pnl_eur": 0.0,
         "last_funding_time": iso_utc(when),
         "last_processed_candle": "",
-        "max_holding_hours": signal.max_holding_hours,
+        "max_holding_hours": (
+            signal.max_holding_hours
+        ),
         "trailing_at_r": signal.trailing_at_r,
-        "trailing_atr_multiple": signal.trailing_atr_multiple,
+        "trailing_atr_multiple": (
+            signal.trailing_atr_multiple
+        ),
         "atr_pct": signal.atr_pct,
         "signal_score": signal.score,
         "confidence": signal.confidence,
@@ -493,16 +713,36 @@ def update_positions(
 
         stop = float(position["stop_price"])
         target = float(position["target_price"])
+        liquidation_raw = position.get(
+            "liquidation_price"
+        )
+        liquidation = (
+            float(liquidation_raw)
+            if liquidation_raw not in (None, "")
+            else None
+        )
+        candle_open = float(candle.get("open", mark))
         if position["side"] == "LONG":
             stop_hit = float(candle["low"]) <= stop
             target_hit = float(candle["high"]) >= target
+            liquidation_gap = (
+                liquidation is not None
+                and candle_open <= liquidation
+            )
         else:
             stop_hit = float(candle["high"]) >= stop
             target_hit = float(candle["low"]) <= target
+            liquidation_gap = (
+                liquidation is not None
+                and candle_open >= liquidation
+            )
 
         exit_price = None
         reason = ""
-        if stop_hit and target_hit:
+        if liquidation_gap:
+            exit_price = liquidation
+            reason = "LIQUIDATION_GAP"
+        elif stop_hit and target_hit:
             if config["execution"].get("same_candle_stop_target_policy") == "TARGET_FIRST":
                 exit_price, reason = target, "TARGET_SAME_CANDLE"
             else:
@@ -633,7 +873,7 @@ def write_open_positions(state: dict[str, Any], bundle: dict[str, Any]) -> None:
     rows: list[dict[str, Any]] = []
     fields = [
         "portfolio", "is_main", "trade_id", "experiment_group_id", "asset", "symbol", "side", "strategy",
-        "timeframe_minutes", "opened_at", "entry_price", "mark_price", "stop_price", "target_price", "quantity",
+        "timeframe_minutes", "opened_at", "entry_price", "mark_price", "stop_price", "liquidation_price", "target_price", "quantity",
         "notional_eur", "margin_eur", "leverage", "initial_risk_eur", "entry_fee_eur", "funding_pnl_eur",
         "signal_score", "confidence"
     ]

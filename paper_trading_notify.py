@@ -189,7 +189,11 @@ def build_event_messages(summary: dict[str, Any]) -> list[str]:
                             f"Entry "
                             f"{float(position.get('entry_price', 0.0)):.6g} "
                             f"· Stop "
-                            f"{float(position.get('stop_price', 0.0)):.6g} "
+                            f"{float(position.get('stop_price', 0.0)):.6g}"
+                        ),
+                        (
+                            f"Liquidazione stimata "
+                            f"{float(position.get('liquidation_price', 0.0)):.6g} "
                             f"· Target "
                             f"{float(position.get('target_price', 0.0)):.6g}"
                         ),

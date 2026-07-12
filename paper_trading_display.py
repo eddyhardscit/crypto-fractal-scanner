@@ -13,6 +13,12 @@ PORTFOLIO_LABELS = {
     "SHADOW_1H_FAST": "Rapida 1H",
     "SHADOW_4H_WIDE": "Ampia 4H",
     "SHADOW_RELATIVE_STRENGTH": "Forza relativa 1H",
+    "SHADOW_RSI_LONG_15X_10": "Scalp RSI Long €10 · 15x",
+    "SHADOW_RSI_LONG_15X_50": "Scalp RSI Long €50 · 15x",
+    "SHADOW_RSI_LONG_5X": "Scalp RSI Long prudente 5x",
+    "SHADOW_RSI_SHORT_15X_10": "Scalp RSI Short €10 · 15x",
+    "SHADOW_RSI_SHORT_15X_50": "Scalp RSI Short €50 · 15x",
+    "SHADOW_RSI_SHORT_5X": "Scalp RSI Short prudente 5x",
 }
 
 PORTFOLIO_DESCRIPTIONS = {
@@ -32,12 +38,31 @@ PORTFOLIO_DESCRIPTIONS = {
     "SHADOW_RELATIVE_STRENGTH": (
         "Test a 1 ora che seleziona forza o debolezza rispetto a Bitcoin."
     ),
+    "SHADOW_RSI_LONG_15X_10": (
+        "Scalp long 15m dopo capitolazione RSI confermata; margine fisso €10 e leva paper 15x."
+    ),
+    "SHADOW_RSI_LONG_15X_50": (
+        "Scalp long 15m sullo stesso segnale; margine fisso €50 e leva paper 15x."
+    ),
+    "SHADOW_RSI_LONG_5X": (
+        "Versione prudente long dello scalp RSI 15m, leva 5x e rischio ridotto."
+    ),
+    "SHADOW_RSI_SHORT_15X_10": (
+        "Scalp short 15m dopo euforia RSI confermata; margine fisso €10 e leva paper 15x."
+    ),
+    "SHADOW_RSI_SHORT_15X_50": (
+        "Scalp short 15m sullo stesso segnale; margine fisso €50 e leva paper 15x."
+    ),
+    "SHADOW_RSI_SHORT_5X": (
+        "Versione prudente short dello scalp RSI 15m, leva 5x e rischio ridotto."
+    ),
 }
 
 STRATEGY_LABELS = {
     "confluence_trend": "Confluenza trend",
     "momentum_breakout": "Momentum / breakout",
     "relative_strength": "Forza relativa vs BTC",
+    "rsi_extreme_reversal": "Inversione RSI estrema 15m",
 }
 
 
