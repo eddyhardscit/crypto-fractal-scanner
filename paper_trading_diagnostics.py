@@ -33,6 +33,43 @@ DIAGNOSTICS_PATH = Path(
 )
 
 
+RSI_MTF_METRICS_PATH = Path(
+    "reports/rsi_multitimeframe_divergence_metrics.csv"
+)
+
+
+def _load_rsi_multitimeframe_contexts() -> dict[str, dict[str, str]]:
+    if not RSI_MTF_METRICS_PATH.exists():
+        return {}
+    try:
+        frame = pd.read_csv(RSI_MTF_METRICS_PATH)
+    except Exception:
+        return {}
+
+    output: dict[str, dict[str, str]] = {}
+    for _, row in frame.iterrows():
+        asset = str(row.get("asset", "")).strip()
+        timeframe = str(row.get("timeframe", "")).strip()
+        summary = str(row.get("summary_label", "n/a")).strip()
+        state = str(row.get("lifecycle_state", "n/a")).strip()
+        if not asset or not timeframe:
+            continue
+        output.setdefault(asset, {})[timeframe] = (
+            f"{summary} [{state}]"
+        )
+    return output
+
+
+def _rsi_multitimeframe_text(
+    contexts: dict[str, dict[str, str]],
+    asset: str,
+) -> str:
+    values = contexts.get(asset, {})
+    daily = values.get("1D", "n/a")
+    weekly = values.get("1W", "n/a")
+    return f"D: {daily} | W: {weekly} | peso 0"
+
+
 def _now(value: datetime | None = None) -> datetime:
     current = value or datetime.now(timezone.utc)
     if current.tzinfo is None:
@@ -251,6 +288,9 @@ def build_signal_diagnostics(
     exchange_rows = _read_latest_by_asset(
         EXCHANGE_METRICS_PATH
     )
+    rsi_multitimeframe_contexts = (
+        _load_rsi_multitimeframe_contexts()
+    )
     btc_frames = frames.get("BTC", {})
     prices = current_prices(bundle)
     eur_rate = float(
@@ -303,6 +343,12 @@ def build_signal_diagnostics(
                 "asset": asset,
                 "timeframe_minutes": timeframe,
                 "minimum_abs_score": threshold,
+                "rsi_multitimeframe_context": (
+                    _rsi_multitimeframe_text(
+                        rsi_multitimeframe_contexts,
+                        asset,
+                    )
+                ),
             }
             if frame is None or len(frame) < 60:
                 rows.append(

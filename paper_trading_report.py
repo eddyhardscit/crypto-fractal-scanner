@@ -410,6 +410,10 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
                         "candle_age_minutes"
                     )
                 ),
+                row.get(
+                    "rsi_multitimeframe_context",
+                    "n/a",
+                ),
                 row.get("reason", ""),
             ]
         )
@@ -427,6 +431,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
                         "Manca",
                         "Stato",
                         "Età candela",
+                        "RSI D/W (peso 0)",
                         "Motivo",
                     ],
                     diagnostic_rows,

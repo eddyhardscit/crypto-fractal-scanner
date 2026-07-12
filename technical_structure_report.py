@@ -2165,6 +2165,10 @@ def inject_into_latest_report(section_md):
 
 
 def main():
+    from rsi_multitimeframe_divergence import (
+        main as run_rsi_multitimeframe_divergence,
+    )
+
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     rows = []
@@ -2181,6 +2185,7 @@ def main():
         OUTPUT_REPORT.write_text(md, encoding="utf-8", newline="\n")
         inject_into_latest_report(md)
         print("Nessun dato valido scaricato.")
+        run_rsi_multitimeframe_divergence()
         return
 
     metrics = pd.DataFrame(rows)
@@ -2202,6 +2207,9 @@ def main():
             f"bear {row['dominant_bearish_pattern'] or 'nessuno'} "
             f"({it_label(row['dominant_bearish_status'])})"
         )
+
+
+    run_rsi_multitimeframe_divergence()
 
 
 if __name__ == "__main__":
