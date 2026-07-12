@@ -1,0 +1,97 @@
+name: Apply Scanner and Telegram Upgrade V2 Once
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Extract verified upgrade files
+        run: |
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import zipfile
+
+          archive_path = Path("scanner_telegram_upgrade_v2.zip")
+          if not archive_path.exists():
+              raise SystemExit("scanner_telegram_upgrade_v2.zip non trovato nella root del repository")
+
+          allowed = {
+              "paper_trading_notify.py",
+              "paper_trading_live_publish.py",
+              "telegram_scanner_notify.py",
+              "paper_trading_runner.py",
+              "paper_trading_report.py",
+              "paper_trading_config.json",
+              "paper_trading_selftest.py",
+              "README_SCANNER_TELEGRAM_V2.md",
+              "SHA256SUMS.txt",
+          }
+
+          with zipfile.ZipFile(archive_path) as archive:
+              names = {str(PurePosixPath(info.filename)) for info in archive.infolist() if not info.is_dir()}
+              missing = allowed - names
+              unexpected = names - allowed
+              if missing or unexpected:
+                  raise SystemExit(f"Contenuto ZIP non valido. Mancanti={sorted(missing)} inattesi={sorted(unexpected)}")
+              for name in sorted(allowed):
+                  target = Path(name)
+                  target.write_bytes(archive.read(name))
+                  print("Installato", name)
+          PY
+
+      - name: Install test dependencies
+        run: python -m pip install -r requirements-paper-trading.txt
+
+      - name: Compile upgraded modules
+        run: |
+          python -m py_compile \
+            paper_trading_notify.py \
+            paper_trading_live_publish.py \
+            telegram_scanner_notify.py \
+            paper_trading_runner.py \
+            paper_trading_report.py \
+            paper_trading_selftest.py
+
+      - name: Run offline end-to-end self-test
+        run: python paper_trading_selftest.py
+
+      - name: Commit upgraded scanner and Telegram integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            paper_trading_notify.py \
+            paper_trading_live_publish.py \
+            telegram_scanner_notify.py \
+            paper_trading_runner.py \
+            paper_trading_report.py \
+            paper_trading_config.json \
+            paper_trading_selftest.py \
+            README_SCANNER_TELEGRAM_V2.md \
+            SHA256SUMS.txt
+          git rm -f scanner_telegram_upgrade_v2.zip
+
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da pubblicare."
+          else
+            git commit -m "Add live scanner dashboard and Telegram notifications"
+            git push
+          fi
