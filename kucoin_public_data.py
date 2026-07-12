@@ -227,17 +227,23 @@ def fetch_klines(
     now: datetime | None = None,
 ) -> pd.DataFrame:
     current = now or utc_now()
+    interval_ms = int(timeframe_minutes) * 60_000
 
-    # KuCoin Futures expects `from` and `to` in milliseconds.
-    # Unix seconds can return an empty kline payload even when
-    # contracts and mark prices are available.
-    end = int(current.timestamp() * 1000)
-    # Add a buffer for missing intervals and exchange-side truncation.
-    start = end - int(
-        timeframe_minutes
-        * 60_000
-        * max(limit + 80, 200)
+    # KuCoin Futures returns at most about 200 rows for this public
+    # endpoint and, when the requested window is wider, it can return
+    # the oldest rows in that window. Ask explicitly for the latest
+    # 200 fully closed candles so EMA200 remains available and the
+    # final candle is current.
+    current_ms = int(current.timestamp() * 1000)
+    current_open_ms = (
+        current_ms // interval_ms
+    ) * interval_ms
+    end = current_open_ms - 1
+    requested_count = 200
+    start = current_open_ms - (
+        requested_count * interval_ms
     )
+
     data = get_json(
         session,
         FUTURES_BASE,
@@ -252,7 +258,7 @@ def fetch_klines(
     frame = _normalize_kline_rows(data)
 
     # Defensive retry without a time window if KuCoin returns
-    # an empty payload for the requested interval.
+    # an empty payload for the precise recent window.
     if frame.empty:
         fallback_data = get_json(
             session,
@@ -270,6 +276,8 @@ def fetch_klines(
         timeframe_minutes,
         now=current,
     )
+    if len(frame) > requested_count:
+        frame = frame.tail(requested_count)
     if len(frame) > limit:
         frame = frame.tail(limit)
     return frame
