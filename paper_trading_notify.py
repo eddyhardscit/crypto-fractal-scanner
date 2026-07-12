@@ -21,6 +21,11 @@ from paper_trading_sample_watch import (
     pending_milestone_notification,
 )
 
+from research_sample_watch import (
+    mark_research_notifications_sent,
+    pending_research_notifications,
+)
+
 from paper_trading_display import (
     aggregate_positions,
     current_stop_risk_eur,
@@ -518,6 +523,9 @@ def notify(
         "digest_sent": False,
         "sample_milestone_sent": False,
         "sample_milestones": [],
+        "research_milestone_messages": 0,
+        "research_milestones_sent": False,
+        "research_meta_ready_sent": False,
     }
     if not token or not chat_id:
         return result
@@ -550,6 +558,22 @@ def notify(
             result["sample_milestones"] = (
                 reached_milestones
             )
+
+    research_marks: dict[str, Any] = {}
+    if state is not None and config is not None:
+        (
+            research_messages,
+            research_marks,
+            research_snapshot,
+        ) = pending_research_notifications(
+            state,
+            config,
+        )
+        messages.extend(research_messages)
+        result["research_milestone_messages"] = len(
+            research_messages
+        )
+        result["research_snapshot"] = research_snapshot
 
     current = (
         now or datetime.now(timezone.utc)
@@ -601,6 +625,19 @@ def notify(
             reached_milestones,
         )
         result["sample_milestone_sent"] = True
+
+    if research_marks and state is not None:
+        mark_research_notifications_sent(
+            state,
+            research_marks,
+        )
+        result["research_milestones_sent"] = bool(
+            research_marks.get("strategy")
+            or research_marks.get("regime")
+        )
+        result["research_meta_ready_sent"] = bool(
+            research_marks.get("meta_ready")
+        )
 
     if digest_due and state is not None:
         state.setdefault(
