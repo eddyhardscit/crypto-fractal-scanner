@@ -1,6 +1,6 @@
 # Paper trading automatico KuCoin
 
-Generato: 2026-07-12T01:54:50+00:00
+Generato: 2026-07-12T06:42:29+00:00
 
 ## Configurazione attiva
 
@@ -10,7 +10,7 @@ Generato: 2026-07-12T01:54:50+00:00
 - Compounding: **ATTIVO**
 - Reinvestimento dei profitti: **100,00%**
 - Politica target: **solo monitoraggio; il bot non aumenta il rischio per inseguirlo**
-- Ultimi prezzi: **2026-07-12T01:54:50+00:00**; conversione EUR/USDT: **CONFIG_FALLBACK**
+- Ultimi prezzi: **2026-07-12T06:42:29+00:00**; conversione EUR/USDT: **CONFIG_FALLBACK**
 - Dashboard intraday: [apri la pagina live](https://github.com/eddyhardscit/crypto-fractal-scanner/blob/paper-trading-live/reports/paper_trading_live.md)
 
 ## Portafoglio principale
@@ -18,6 +18,18 @@ Generato: 2026-07-12T01:54:50+00:00
 | Equity | Rendimento | P&L mese | Target | Progresso | Aperte | Chiuse | Win rate | PF | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | €10.000,00 | 0,00% | €0,00 | €3.000,00 | 0,00% | 0 | 0 | 0,00% | 0,00 | 0,00% |
+
+## Stato del campione statistico
+
+| MAIN eventi indip. | Sistema eventi indip. | Stato | Prossima soglia |
+| --- | --- | --- | --- |
+| 0 | 0 | CAMPIONE INSUFFICIENTE | 30 (mancano 30) |
+
+- Trade MAIN chiusi: **0**; win rate **0,00%**; profit factor **0,00**.
+- Expectancy: **€0,00** per trade; P&L netto: **€0,00**; max drawdown: **0,00%**.
+- Valutazione: **Servono altri eventi indipendenti prima di trarre conclusioni.**
+- Soglie automatiche Telegram: **30, 100, 200 e 300 eventi indipendenti chiusi del MAIN**.
+- Una soglia richiede una valutazione; non attiva automaticamente il trading reale.
 
 ## Confronto portafogli
 
