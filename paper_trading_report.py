@@ -18,6 +18,14 @@ from paper_trading_config import load_config
 from paper_trading_engine import STATE_PATH, TRADE_LOG_PATH
 from paper_trading_sample_watch import sample_snapshot
 from paper_trading_diagnostics import DIAGNOSTICS_PATH
+from paper_trading_display import (
+    aggregate_positions,
+    current_stop_risk_eur,
+    portfolio_description,
+    portfolio_label,
+    portfolio_type,
+    strategy_label,
+)
 
 REPORTS_DIR = Path("reports")
 REPORT_PATH = REPORTS_DIR / "paper_trading_report.md"
@@ -113,46 +121,92 @@ def unrealized(position: dict[str, Any], prices: dict[str, float], eur_rate: flo
     return (mark - float(position["entry_price"])) * float(position["quantity"]) * direction / eur_rate
 
 
-def portfolio_metrics(state: dict[str, Any], config: dict[str, Any]) -> list[dict[str, Any]]:
+def portfolio_metrics(
+    state: dict[str, Any],
+    config: dict[str, Any],
+) -> list[dict[str, Any]]:
     trades = load_trades()
     prices, eur_rate, _, _ = market_prices()
     target = float(config.get("monthly_target_eur", 0.0))
     rows: list[dict[str, Any]] = []
 
     for name, portfolio in state.get("portfolios", {}).items():
-        unreal = sum(unrealized(position, prices, eur_rate) for position in portfolio.get("open_positions", []))
+        positions = list(portfolio.get("open_positions", []))
+        unreal = sum(
+            unrealized(position, prices, eur_rate)
+            for position in positions
+        )
         equity = float(portfolio.get("balance_eur", 0.0)) + unreal
-        month_start = float(portfolio.get("periods", {}).get("month_start_equity_eur", equity))
+        month_start = float(
+            portfolio.get("periods", {}).get(
+                "month_start_equity_eur",
+                equity,
+            )
+        )
         month_pnl = equity - month_start
-        subset = trades[trades["portfolio"].astype(str) == name].copy() if not trades.empty and "portfolio" in trades.columns else pd.DataFrame()
+        subset = (
+            trades[
+                trades["portfolio"].astype(str) == name
+            ].copy()
+            if not trades.empty and "portfolio" in trades.columns
+            else pd.DataFrame()
+        )
         if subset.empty:
             trade_count = wins = unique_events = 0
             net = expectancy = win_rate = 0.0
             profit_factor = 0.0
         else:
-            pnl = pd.to_numeric(subset.get("net_pnl_eur"), errors="coerce").fillna(0.0)
+            pnl = pd.to_numeric(
+                subset.get("net_pnl_eur"),
+                errors="coerce",
+            ).fillna(0.0)
             trade_count = len(subset)
             wins = int((pnl > 0).sum())
-            unique_events = subset.get("experiment_group_id", pd.Series(dtype=str)).astype(str).nunique()
+            unique_events = subset.get(
+                "experiment_group_id",
+                pd.Series(dtype=str),
+            ).astype(str).nunique()
             net = float(pnl.sum())
             expectancy = float(pnl.mean())
             win_rate = wins / trade_count * 100.0
             gross_profit = float(pnl[pnl > 0].sum())
             gross_loss = abs(float(pnl[pnl < 0].sum()))
-            profit_factor = gross_profit / gross_loss if gross_loss > 0 else (math.inf if gross_profit > 0 else 0.0)
+            profit_factor = (
+                gross_profit / gross_loss
+                if gross_loss > 0
+                else (math.inf if gross_profit > 0 else 0.0)
+            )
+
+        exposure = aggregate_positions(positions)
         rows.append(
             {
                 "generated_utc": now_iso(),
                 "portfolio": name,
+                "portfolio_label": portfolio_label(name),
                 "is_main": bool(portfolio.get("is_main")),
                 "strategy": portfolio.get("strategy", ""),
+                "strategy_label": strategy_label(
+                    portfolio.get("strategy", "")
+                ),
                 "equity_eur": equity,
                 "balance_eur": portfolio.get("balance_eur", 0.0),
                 "unrealized_pnl_eur": unreal,
                 "month_pnl_eur": month_pnl,
                 "monthly_target_eur": target,
-                "target_progress_pct": month_pnl / target * 100.0 if target > 0 else 0.0,
-                "open_positions": len(portfolio.get("open_positions", [])),
+                "target_progress_pct": (
+                    month_pnl / target * 100.0
+                    if target > 0
+                    else 0.0
+                ),
+                "open_positions": len(positions),
+                "open_margin_eur": exposure["margin_eur"],
+                "open_notional_eur": exposure["notional_eur"],
+                "open_initial_risk_eur": exposure[
+                    "initial_risk_eur"
+                ],
+                "open_stop_risk_eur": exposure[
+                    "current_stop_risk_eur"
+                ],
                 "closed_trades": trade_count,
                 "unique_market_events": unique_events,
                 "winning_trades": wins,
@@ -160,7 +214,9 @@ def portfolio_metrics(state: dict[str, Any], config: dict[str, Any]) -> list[dic
                 "profit_factor": profit_factor,
                 "expectancy_eur": expectancy,
                 "net_pnl_closed_eur": net,
-                "max_drawdown_pct": float(portfolio.get("max_drawdown_pct", 0.0)),
+                "max_drawdown_pct": float(
+                    portfolio.get("max_drawdown_pct", 0.0)
+                ),
             }
         )
     return rows
@@ -170,8 +226,11 @@ def write_metrics(rows: list[dict[str, Any]]) -> None:
     fields = [
         "generated_utc", "portfolio", "is_main", "strategy", "equity_eur", "balance_eur",
         "unrealized_pnl_eur", "month_pnl_eur", "monthly_target_eur", "target_progress_pct",
-        "open_positions", "closed_trades", "unique_market_events", "winning_trades", "win_rate_pct",
-        "profit_factor", "expectancy_eur", "net_pnl_closed_eur", "max_drawdown_pct"
+        "open_positions", "open_margin_eur", "open_notional_eur",
+        "open_initial_risk_eur", "open_stop_risk_eur", "closed_trades",
+        "unique_market_events", "winning_trades", "win_rate_pct",
+        "profit_factor", "expectancy_eur", "net_pnl_closed_eur",
+        "max_drawdown_pct"
     ]
     METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with METRICS_PATH.open("w", encoding="utf-8", newline="") as handle:
@@ -180,25 +239,33 @@ def write_metrics(rows: list[dict[str, Any]]) -> None:
         writer.writerows(rows)
 
 
-def open_position_rows(state: dict[str, Any]) -> list[list[Any]]:
+def open_position_rows(
+    state: dict[str, Any],
+) -> list[list[Any]]:
     prices, eur_rate, _, _ = market_prices()
     rows: list[list[Any]] = []
     for name, portfolio in state.get("portfolios", {}).items():
         for position in portfolio.get("open_positions", []):
-            mark = prices.get(position["asset"], float(position["entry_price"]))
+            mark = prices.get(
+                position["asset"],
+                float(position["entry_price"]),
+            )
             pnl = unrealized(position, prices, eur_rate)
             rows.append(
                 [
-                    name,
+                    portfolio_label(name),
                     position["asset"],
                     position["side"],
-                    position["strategy"],
+                    strategy_label(position["strategy"]),
                     f"{position['timeframe_minutes']}m",
+                    fmt_num(position.get("leverage"), 1) + "x",
                     fmt_num(position["entry_price"], 5),
                     fmt_num(mark, 5),
                     fmt_num(position["stop_price"], 5),
                     fmt_num(position["target_price"], 5),
                     fmt_eur(position["margin_eur"]),
+                    fmt_eur(position.get("notional_eur", 0.0)),
+                    fmt_eur(current_stop_risk_eur(position)),
                     fmt_eur(pnl),
                 ]
             )
@@ -214,7 +281,7 @@ def recent_closed_rows(limit: int = 12) -> list[list[Any]]:
     for _, trade in ordered.iterrows():
         rows.append(
             [
-                str(trade.get("portfolio", "")),
+                portfolio_label(trade.get("portfolio", "")),
                 str(trade.get("asset", "")),
                 str(trade.get("side", "")),
                 str(trade.get("closed_at", "")),
@@ -387,7 +454,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
         gap = row.get("score_gap")
         diagnostic_rows.append(
             [
-                row.get("portfolio", ""),
+                portfolio_label(row.get("portfolio", "")),
                 row.get("asset", ""),
                 f"{row.get('timeframe_minutes', '')}m",
                 row.get("side", ""),
@@ -465,7 +532,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
         total_return = (float(main["equity_eur"]) / initial - 1.0) * 100.0 if initial > 0 else 0.0
         lines.extend(
             [
-                "## Portafoglio principale",
+                "## Portafoglio principale — Principale 4H",
                 "",
                 md_table(
                     ["Equity", "Rendimento", "P&L mese", "Target", "Progresso", "Aperte", "Chiuse", "Win rate", "PF", "Max DD"],
@@ -498,7 +565,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
             "",
             md_table(
                 [
-                    "MAIN eventi indip.",
+                    "Principale 4H — eventi indip.",
                     "Sistema eventi indip.",
                     "Stato",
                     "Prossima soglia",
@@ -512,7 +579,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
             ),
             "",
             (
-                f"- Trade MAIN chiusi: **{sample['closed_trades']}**; "
+                f"- Trade del Principale 4H chiusi: **{sample['closed_trades']}**; "
                 f"win rate **{fmt_pct(sample['win_rate_pct'])}**; "
                 f"profit factor **{fmt_num(sample['profit_factor'])}**."
             ),
@@ -526,7 +593,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
             f"- Valutazione: **{sample['meaning']}**",
             (
                 "- Soglie automatiche Telegram: **30, 100, 200 "
-                "e 300 eventi indipendenti chiusi del MAIN**."
+                "e 300 eventi indipendenti chiusi del portafoglio principale**."
             ),
             (
                 "- Una soglia richiede una valutazione; non attiva "
@@ -535,15 +602,109 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
             "",
         ]
     )
-    lines.extend(["## Confronto portafogli", ""])
-    ordered = sorted(metrics, key=lambda row: (not row["is_main"], -float(row["equity_eur"])))
+    ordered = sorted(
+        metrics,
+        key=lambda row: (
+            not row["is_main"],
+            -float(row["equity_eur"]),
+        ),
+    )
+
+    lines.extend(["## Capitale impegnato e rischio", ""])
+    capital_rows = []
+    for row in ordered:
+        capital_rows.append(
+            [
+                portfolio_type(
+                    row["portfolio"],
+                    row["is_main"],
+                ),
+                portfolio_label(row["portfolio"]),
+                row["open_positions"],
+                fmt_eur(row["equity_eur"]),
+                fmt_eur(row["open_margin_eur"]),
+                fmt_eur(row["open_notional_eur"]),
+                fmt_eur(row["open_stop_risk_eur"]),
+                fmt_eur(row["unrealized_pnl_eur"]),
+            ]
+        )
+    lines.extend(
+        [
+            md_table(
+                [
+                    "Tipo",
+                    "Portafoglio",
+                    "Posizioni",
+                    "Equity",
+                    "Margine impegnato",
+                    "Esposizione con leva",
+                    "Rischio agli stop",
+                    "P&L aperto",
+                ],
+                capital_rows,
+            ),
+            "",
+            (
+                "**Importante:** ogni riga è un conto virtuale "
+                "separato da €10.000. I margini dei diversi "
+                "portafogli non vanno sommati come se "
+                "appartenessero a un unico conto."
+            ),
+            "",
+            (
+                "**Rischio agli stop** è la perdita residua "
+                "stimata usando gli stop correnti. Se uno stop "
+                "protegge già un profitto, il rischio residuo "
+                "viene mostrato come €0."
+            ),
+            "",
+            "## Legenda portafogli",
+            "",
+        ]
+    )
+
+    legend_rows = []
+    for definition in config.get("portfolios", []):
+        if not definition.get("enabled", True):
+            continue
+        legend_rows.append(
+            [
+                portfolio_type(
+                    definition.get("name"),
+                    bool(definition.get("is_main")),
+                ),
+                portfolio_label(definition.get("name")),
+                strategy_label(definition.get("strategy")),
+                portfolio_description(definition.get("name")),
+            ]
+        )
+    lines.extend(
+        [
+            md_table(
+                [
+                    "Tipo",
+                    "Nome leggibile",
+                    "Metodo",
+                    "Significato",
+                ],
+                legend_rows,
+            ),
+            "",
+            "## Confronto risultati",
+            "",
+        ]
+    )
+
     comparison_rows = []
     for row in ordered:
         comparison_rows.append(
             [
-                "MAIN" if row["is_main"] else "OMBRA",
-                row["portfolio"],
-                row["strategy"],
+                portfolio_type(
+                    row["portfolio"],
+                    row["is_main"],
+                ),
+                portfolio_label(row["portfolio"]),
+                strategy_label(row["strategy"]),
                 fmt_eur(row["equity_eur"]),
                 fmt_eur(row["net_pnl_closed_eur"]),
                 row["closed_trades"],
@@ -557,11 +718,28 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
     lines.extend(
         [
             md_table(
-                ["Tipo", "Portafoglio", "Strategia", "Equity", "P&L chiuso", "Trade", "Eventi indip.", "Win rate", "PF", "Expectancy", "Max DD"],
+                [
+                    "Tipo",
+                    "Portafoglio",
+                    "Strategia",
+                    "Equity",
+                    "P&L chiuso",
+                    "Trade",
+                    "Eventi indip.",
+                    "Win rate",
+                    "PF",
+                    "Expectancy",
+                    "Max DD",
+                ],
                 comparison_rows,
             ),
             "",
-            "**Eventi indip.** conta gli eventi di mercato distinti; le varianti di stop, target e timeframe restano collegate allo stesso evento sperimentale.",
+            (
+                "**Eventi indip.** conta gli eventi di "
+                "mercato distinti; varianti dello stesso "
+                "movimento restano collegate allo stesso "
+                "evento sperimentale."
+            ),
             "",
             "## Posizioni aperte",
             "",
@@ -569,7 +747,27 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
     )
     positions = open_position_rows(state)
     if positions:
-        lines.append(md_table(["Portafoglio", "Asset", "Lato", "Strategia", "TF", "Entry", "Mark", "Stop", "Target", "Margine", "P&L"], positions))
+        lines.append(
+            md_table(
+                [
+                    "Portafoglio",
+                    "Asset",
+                    "Lato",
+                    "Metodo",
+                    "TF",
+                    "Leva",
+                    "Entry",
+                    "Mark",
+                    "Stop",
+                    "Target",
+                    "Margine",
+                    "Esposizione",
+                    "Rischio stop",
+                    "P&L",
+                ],
+                positions,
+            )
+        )
     else:
         lines.append("_Nessuna posizione virtuale aperta._")
 
@@ -587,7 +785,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
             "",
             "- Nessuna martingala e nessuna mediazione automatica in perdita.",
             "- Il target mensile riduce il rischio quando viene avvicinato o raggiunto; non lo aumenta mai.",
-            "- Il portafoglio principale e quelli ombra hanno contabilità separata.",
+            "- Il portafoglio principale e le simulazioni di confronto hanno contabilità separata.",
             "- Commissioni, slippage e funding sono inclusi nella simulazione secondo i parametri configurati.",
             "- Quando stop e target risultano toccati nella stessa candela, prevale lo stop salvo modifica esplicita della configurazione.",
             "",
