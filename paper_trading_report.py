@@ -224,7 +224,8 @@ def portfolio_metrics(
 
 def write_metrics(rows: list[dict[str, Any]]) -> None:
     fields = [
-        "generated_utc", "portfolio", "is_main", "strategy", "equity_eur", "balance_eur",
+        "generated_utc", "portfolio", "portfolio_label", "is_main", "strategy", "strategy_label",
+        "equity_eur", "balance_eur",
         "unrealized_pnl_eur", "month_pnl_eur", "monthly_target_eur", "target_progress_pct",
         "open_positions", "open_margin_eur", "open_notional_eur",
         "open_initial_risk_eur", "open_stop_risk_eur", "closed_trades",
@@ -234,7 +235,7 @@ def write_metrics(rows: list[dict[str, Any]]) -> None:
     ]
     METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with METRICS_PATH.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
 
