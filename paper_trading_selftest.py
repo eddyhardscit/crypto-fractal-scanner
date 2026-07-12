@@ -21,6 +21,8 @@ RUNTIME_FILES = (
     "paper_trading_engine.py",
     "paper_trading_report.py",
     "paper_trading_notify.py",
+    "paper_trading_live_publish.py",
+    "telegram_scanner_notify.py",
     "paper_trading_runner.py",
 )
 ROOT = Path(__file__).resolve().parent

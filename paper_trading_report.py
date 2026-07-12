@@ -6,6 +6,7 @@ from __future__ import annotations
 import csv
 import json
 import math
+import os
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -18,6 +19,7 @@ from paper_trading_engine import STATE_PATH, TRADE_LOG_PATH
 
 REPORTS_DIR = Path("reports")
 REPORT_PATH = REPORTS_DIR / "paper_trading_report.md"
+LIVE_REPORT_PATH = REPORTS_DIR / "paper_trading_live.md"
 LATEST_REPORT_PATH = REPORTS_DIR / "latest_report.md"
 MARKET_CACHE_PATH = REPORTS_DIR / "paper_trading_market_cache.json"
 METRICS_PATH = REPORTS_DIR / "paper_trading_shadow_metrics.csv"
@@ -191,6 +193,28 @@ def open_position_rows(state: dict[str, Any]) -> list[list[Any]]:
     return rows
 
 
+def recent_closed_rows(limit: int = 12) -> list[list[Any]]:
+    trades = load_trades()
+    if trades.empty:
+        return []
+    ordered = trades.tail(limit).iloc[::-1]
+    rows: list[list[Any]] = []
+    for _, trade in ordered.iterrows():
+        rows.append(
+            [
+                str(trade.get("portfolio", "")),
+                str(trade.get("asset", "")),
+                str(trade.get("side", "")),
+                str(trade.get("closed_at", "")),
+                fmt_num(trade.get("exit_price"), 5),
+                fmt_eur(trade.get("net_pnl_eur")),
+                fmt_num(trade.get("r_multiple")),
+                str(trade.get("close_reason", "")),
+            ]
+        )
+    return rows
+
+
 def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
     metrics = portfolio_metrics(state, config)
     write_metrics(metrics)
@@ -214,6 +238,11 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
         f"- Reinvestimento dei profitti: **{fmt_pct(float(config.get('reinvestment_rate', 1.0)) * 100)}**",
         "- Politica target: **solo monitoraggio; il bot non aumenta il rischio per inseguirlo**",
         f"- Ultimi prezzi: **{market_generated}**; conversione EUR/USDT: **{rate_source}**",
+        (
+            "- Dashboard intraday: "
+            f"[apri la pagina live](https://github.com/{os.getenv('GITHUB_REPOSITORY', 'eddyhardscit/crypto-fractal-scanner')}/blob/"
+            f"{config.get('notifications', {}).get('live_report_branch', 'paper-trading-live')}/reports/paper_trading_live.md)"
+        ),
         "",
     ]
 
@@ -279,6 +308,14 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
         lines.append(md_table(["Portafoglio", "Asset", "Lato", "Strategia", "TF", "Entry", "Mark", "Stop", "Target", "Margine", "P&L"], positions))
     else:
         lines.append("_Nessuna posizione virtuale aperta._")
+
+    lines.extend(["", "## Ultime operazioni chiuse", ""])
+    recent = recent_closed_rows()
+    if recent:
+        lines.append(md_table(["Portafoglio", "Asset", "Lato", "Chiusura UTC", "Exit", "P&L netto", "R", "Motivo"], recent))
+    else:
+        lines.append("_Nessuna operazione virtuale chiusa._")
+
     lines.extend(
         [
             "",
@@ -314,6 +351,7 @@ def main() -> None:
     report = render_report(state, config)
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     REPORT_PATH.write_text(report, encoding="utf-8")
+    LIVE_REPORT_PATH.write_text(report, encoding="utf-8")
     latest = LATEST_REPORT_PATH.read_text(encoding="utf-8") if LATEST_REPORT_PATH.exists() else ""
     LATEST_REPORT_PATH.write_text(replace_block(latest, report), encoding="utf-8")
     print(f"Paper trading report aggiornato: {REPORT_PATH}")

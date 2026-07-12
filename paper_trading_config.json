@@ -10,9 +10,25 @@
   "universe": {
     "max_assets": 12,
     "minimum_turnover_24h_usdt": 5000000.0,
-    "mandatory_assets": ["BTC", "SOL", "HYPE"],
-    "excluded_assets": ["USDT", "USDC", "DAI", "TUSD", "FDUSD", "EUR", "GBP"],
-    "timeframes_minutes": [15, 60, 240],
+    "mandatory_assets": [
+      "BTC",
+      "SOL",
+      "HYPE"
+    ],
+    "excluded_assets": [
+      "USDT",
+      "USDC",
+      "DAI",
+      "TUSD",
+      "FDUSD",
+      "EUR",
+      "GBP"
+    ],
+    "timeframes_minutes": [
+      15,
+      60,
+      240
+    ],
     "minimum_candles": 120
   },
   "execution": {
@@ -29,20 +45,29 @@
     "max_total_open_risk": 0.02,
     "max_daily_loss": 0.02,
     "max_weekly_loss": 0.05,
-    "max_monthly_drawdown": 0.10,
+    "max_monthly_drawdown": 0.1,
     "max_open_positions": 4,
     "max_same_direction_positions": 3,
-    "max_margin_per_position": 0.20,
-    "max_total_margin": 0.70,
+    "max_margin_per_position": 0.2,
+    "max_total_margin": 0.7,
     "default_leverage": 3.0,
     "absolute_max_leverage": 5.0,
     "minimum_stop_pct": 0.008,
     "maximum_stop_pct": 0.12
   },
   "profit_protection": [
-    {"target_progress": 0.50, "risk_multiplier": 0.80},
-    {"target_progress": 0.83, "risk_multiplier": 0.60},
-    {"target_progress": 1.00, "risk_multiplier": 0.40}
+    {
+      "target_progress": 0.5,
+      "risk_multiplier": 0.8
+    },
+    {
+      "target_progress": 0.83,
+      "risk_multiplier": 0.6
+    },
+    {
+      "target_progress": 1.0,
+      "risk_multiplier": 0.4
+    }
   ],
   "portfolios": [
     {
@@ -125,5 +150,12 @@
       "trailing_at_r": 1.1,
       "trailing_atr_multiple": 1.5
     }
-  ]
+  ],
+  "notifications": {
+    "send_live_trade_events": true,
+    "telegram_digest_interval_hours": 4,
+    "live_report_interval_hours": 4,
+    "send_daily_scanner_report": true,
+    "live_report_branch": "paper-trading-live"
+  }
 }
