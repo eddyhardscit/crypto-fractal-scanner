@@ -1,0 +1,58 @@
+name: Automatic KuCoin Paper Trading
+
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-trading-persistent-state
+  cancel-in-progress: false
+
+jobs:
+  paper-trading:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+      GITHUB_TOKEN: ${{ github.token }}
+      PAPER_TRADING_RELEASE_TAG: paper-trading-v1
+      PAPER_TRADING_CONFIG: paper_trading_config.json
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install paper-trading dependencies
+        run: python -m pip install -r requirements-paper-trading.txt
+
+      - name: Restore persistent paper-trading state
+        run: python paper_trading_storage.py restore
+
+      - name: Run automatic paper-trading cycle
+        run: python paper_trading_runner.py
+
+      - name: Upload persistent paper-trading state
+        run: python paper_trading_storage.py upload
+
+      - name: Upload diagnostic report
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-trading-diagnostic-${{ github.run_id }}
+          path: |
+            reports/paper_trading_report.md
+            reports/paper_trading_open_positions.csv
+            reports/paper_trading_storage_status.json
+          if-no-files-found: warn
+          retention-days: 3

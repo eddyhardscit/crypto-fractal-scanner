@@ -154,6 +154,26 @@ jobs:
       - name: Run data quality coherence report
         run: python data_quality_coherence_report.py
 
+      - name: Install paper-trading report dependencies
+        run: python -m pip install -r requirements-paper-trading.txt
+
+      - name: Restore paper-trading state for daily report
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PAPER_TRADING_RELEASE_TAG: paper-trading-v1
+          PAPER_TRADING_CONFIG: paper_trading_config.json
+        run: python paper_trading_storage.py restore
+
+      - name: Audit paper-trading state
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PAPER_TRADING_RELEASE_TAG: paper-trading-v1
+          PAPER_TRADING_CONFIG: paper_trading_config.json
+        run: python paper_trading_storage.py audit
+
+      - name: Build paper-trading daily report
+        run: python paper_trading_report.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions[bot]"

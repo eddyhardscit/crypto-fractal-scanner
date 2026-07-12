@@ -21,6 +21,7 @@ HEADER_START = "<!-- COMPACT_REPORT_HEADER_START -->"
 HEADER_END = "<!-- COMPACT_REPORT_HEADER_END -->"
 SECTION_START = "<!-- COMPACT_SECTION_START:{key} -->"
 SECTION_END = "<!-- COMPACT_SECTION_END:{key} -->"
+# PAPER_TRADING_COMPACT_V1
 # MACRO_CYCLE_RELATIVE_STRENGTH_COMPACT_PATCH_V1
 # EXCHANGE_MICROSTRUCTURE_COMPACT_PATCH_V2_1
 
@@ -33,6 +34,13 @@ MARKER_SECTIONS = (
         "<!-- DECISION_REPORT_START -->",
         "<!-- DECISION_REPORT_END -->",
         "🧭 Decisione operativa — da leggere per prima",
+        True,
+    ),
+    (
+        "paper_trading",
+        "<!-- PAPER_TRADING_START -->",
+        "<!-- PAPER_TRADING_END -->",
+        "🧪 Paper trading automatico KuCoin",
         True,
     ),
     (
