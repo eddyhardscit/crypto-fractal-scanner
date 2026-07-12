@@ -1,0 +1,384 @@
+name: Apply KuCoin Candle Timestamp Fix Once
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-paper-trading.txt
+
+      - name: Fix KuCoin Futures kline timestamps
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("kucoin_public_data.py")
+          text = path.read_text(encoding="utf-8")
+
+          old = '''def fetch_klines(
+              session: requests.Session,
+              symbol: str,
+              timeframe_minutes: int,
+              limit: int = 420,
+              now: datetime | None = None,
+          ) -> pd.DataFrame:
+              end = int((now or utc_now()).timestamp())
+              # Add a buffer for missing intervals and exchange-side truncation.
+              start = end - int(timeframe_minutes * 60 * max(limit + 80, 200))
+              data = get_json(
+                  session,
+                  FUTURES_BASE,
+                  "/api/v1/kline/query",
+                  {
+                      "symbol": symbol,
+                      "granularity": int(timeframe_minutes),
+                      "from": start,
+                      "to": end,
+                  },
+              )
+              frame = _normalize_kline_rows(data)
+              frame = drop_incomplete_candle(frame, timeframe_minutes, now=now)
+              if len(frame) > limit:
+                  frame = frame.tail(limit)
+              return frame
+          '''
+
+          new = '''def fetch_klines(
+              session: requests.Session,
+              symbol: str,
+              timeframe_minutes: int,
+              limit: int = 420,
+              now: datetime | None = None,
+          ) -> pd.DataFrame:
+              current = now or utc_now()
+
+              # KuCoin Futures expects `from` and `to` in milliseconds.
+              # Sending Unix seconds returns an empty kline payload even though
+              # contracts and mark prices are available.
+              end = int(current.timestamp() * 1000)
+              # Add a buffer for missing intervals and exchange-side truncation.
+              start = end - int(
+                  timeframe_minutes
+                  * 60_000
+                  * max(limit + 80, 200)
+              )
+              data = get_json(
+                  session,
+                  FUTURES_BASE,
+                  "/api/v1/kline/query",
+                  {
+                      "symbol": symbol,
+                      "granularity": int(timeframe_minutes),
+                      "from": start,
+                      "to": end,
+                  },
+              )
+              frame = _normalize_kline_rows(data)
+
+              # Defensive fallback: the public endpoint also supports the most
+              # recent candles without an explicit time window.
+              if frame.empty:
+                  fallback_data = get_json(
+                      session,
+                      FUTURES_BASE,
+                      "/api/v1/kline/query",
+                      {
+                          "symbol": symbol,
+                          "granularity": int(timeframe_minutes),
+                      },
+                  )
+                  frame = _normalize_kline_rows(fallback_data)
+
+              frame = drop_incomplete_candle(
+                  frame,
+                  timeframe_minutes,
+                  now=current,
+              )
+              if len(frame) > limit:
+                  frame = frame.tail(limit)
+              return frame
+          '''
+
+          if new in text:
+              print("Correzione timestamp già presente.")
+          elif old not in text:
+              raise SystemExit(
+                  "Patch non applicabile: funzione fetch_klines diversa "
+                  "da quella attesa."
+              )
+          else:
+              text = text.replace(old, new, 1)
+              path.write_text(text, encoding="utf-8")
+              print("Timestamp KuCoin convertiti da secondi a millisecondi.")
+          PY
+
+      - name: Add candle collection status to diagnostics
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("paper_trading_diagnostics.py")
+          text = path.read_text(encoding="utf-8")
+
+          old = '''              freshness = dict(bundle["_paper_freshness"])
+              frames = bundle_frames(bundle)
+              freshness["timeframes"] = _timeframe_summary(
+                  frames,
+                  checked,
+                  config,
+              )
+
+              global_rows = _read_latest_by_asset(
+          '''
+
+          new = '''              freshness = dict(bundle["_paper_freshness"])
+              frames = bundle_frames(bundle)
+              freshness["timeframes"] = _timeframe_summary(
+                  frames,
+                  checked,
+                  config,
+              )
+              timeframe_statuses = [
+                  str(row.get("status", "NO_DATA"))
+                  for row in freshness["timeframes"].values()
+              ]
+              has_any_candles = any(
+                  row.get("assets_with_data", 0) > 0
+                  for row in freshness["timeframes"].values()
+              )
+              all_timeframes_ok = bool(timeframe_statuses) and all(
+                  status == "OK"
+                  for status in timeframe_statuses
+              )
+              freshness["candle_collection_status"] = (
+                  "OK"
+                  if all_timeframes_ok
+                  else (
+                      "PARTIAL"
+                      if has_any_candles
+                      else "NO_CANDLES"
+                  )
+              )
+              freshness["collection_failures"] = list(
+                  bundle.get("failures", [])
+              )
+              if not has_any_candles:
+                  freshness["new_entries_allowed"] = False
+
+              global_rows = _read_latest_by_asset(
+          '''
+
+          if new in text:
+              print("Diagnostica raccolta candele già presente.")
+          elif old not in text:
+              raise SystemExit(
+                  "Patch non applicabile: punto diagnostica non trovato."
+              )
+          else:
+              text = text.replace(old, new, 1)
+              path.write_text(text, encoding="utf-8")
+              print("Diagnostica raccolta candele aggiornata.")
+          PY
+
+      - name: Show collection failures in report
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("paper_trading_report.py")
+          text = path.read_text(encoding="utf-8")
+
+          old = '''    if freshness_status != "FRESH":
+              lines.extend(
+                  [
+                      (
+                          "> ⚠️ I prezzi non vengono marcati come "
+                          "aggiornati artificialmente. Se KuCoin non "
+                          "risponde e viene usata la cache, il report "
+                          "mostra l'età reale e blocca le nuove entrate."
+                      ),
+                      "",
+                  ]
+              )
+
+              timeframe_rows = []
+          '''
+
+          new = '''    if freshness_status != "FRESH":
+              lines.extend(
+                  [
+                      (
+                          "> ⚠️ I prezzi non vengono marcati come "
+                          "aggiornati artificialmente. Se KuCoin non "
+                          "risponde e viene usata la cache, il report "
+                          "mostra l'età reale e blocca le nuove entrate."
+                      ),
+                      "",
+                  ]
+              )
+
+              candle_status = str(
+                  freshness.get(
+                      "candle_collection_status",
+                      "UNKNOWN",
+                  )
+              )
+              lines.extend(
+                  [
+                      (
+                          "- Raccolta candele: "
+                          f"**{candle_status}**."
+                      ),
+                  ]
+              )
+              failures = freshness.get(
+                  "collection_failures",
+                  [],
+              )
+              if failures:
+                  lines.append(
+                      "- Errori raccolta recenti: "
+                      + " | ".join(
+                          str(item)
+                          for item in failures[:8]
+                      )
+                  )
+              lines.append("")
+
+              timeframe_rows = []
+          '''
+
+          if new in text:
+              print("Report errori candele già aggiornato.")
+          elif old not in text:
+              raise SystemExit(
+                  "Patch non applicabile: sezione freschezza report "
+                  "non trovata."
+              )
+          else:
+              text = text.replace(old, new, 1)
+              path.write_text(text, encoding="utf-8")
+              print("Report errori candele aggiornato.")
+          PY
+
+      - name: Compile modules
+        run: |
+          python -m py_compile             kucoin_public_data.py             paper_trading_diagnostics.py             paper_trading_report.py             paper_trading_runner.py
+
+      - name: Run offline timestamp self-test
+        run: |
+          python - <<'PY'
+          from datetime import datetime, timezone
+
+          import kucoin_public_data as module
+
+          captured = []
+          now = datetime(
+              2026,
+              7,
+              12,
+              11,
+              30,
+              tzinfo=timezone.utc,
+          )
+
+          def fake_get_json(
+              session,
+              base,
+              path,
+              params=None,
+          ):
+              captured.append(dict(params or {}))
+              timestamp_ms = int(
+                  datetime(
+                      2026,
+                      7,
+                      12,
+                      10,
+                      0,
+                      tzinfo=timezone.utc,
+                  ).timestamp()
+                  * 1000
+              )
+              return [
+                  [
+                      timestamp_ms,
+                      "63000",
+                      "63500",
+                      "62800",
+                      "63200",
+                      "100",
+                  ],
+                  [
+                      timestamp_ms + 3_600_000,
+                      "63200",
+                      "63600",
+                      "63100",
+                      "63400",
+                      "110",
+                  ],
+              ]
+
+          original = module.get_json
+          module.get_json = fake_get_json
+          try:
+              frame = module.fetch_klines(
+                  object(),
+                  "XBTUSDTM",
+                  60,
+                  limit=10,
+                  now=now,
+              )
+          finally:
+              module.get_json = original
+
+          assert captured, "Nessuna richiesta kline catturata"
+          params = captured[0]
+          assert params["from"] > 1_000_000_000_000, params
+          assert params["to"] > 1_000_000_000_000, params
+          assert params["to"] > params["from"], params
+          assert len(frame) == 2, frame
+          assert list(frame.columns) == [
+              "open",
+              "high",
+              "low",
+              "close",
+              "volume",
+          ]
+
+          print("KuCoin millisecond timestamp self-test: OK")
+          PY
+
+      - name: Commit KuCoin candle fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email             "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add             kucoin_public_data.py             paper_trading_diagnostics.py             paper_trading_report.py
+
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da pubblicare."
+          else
+            git commit -m               "Fix KuCoin Futures candle timestamp units"
+            git push
+          fi
