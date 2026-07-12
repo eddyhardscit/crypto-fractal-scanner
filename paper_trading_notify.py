@@ -300,114 +300,196 @@ def should_send_periodic(
 def build_status_message(
     state: dict[str, Any],
     config: dict[str, Any],
+    summary: dict[str, Any] | None = None,
 ) -> str:
+    # Separate compact account summary for Telegram.
     from paper_trading_report import portfolio_metrics
 
     metrics = portfolio_metrics(state, config)
     if not metrics:
-        return "📊 PAPER TRADING — stato non disponibile"
+        return "💼 RIEPILOGO CONTI — stato non disponibile"
 
-    main = next(
-        (row for row in metrics if row.get("is_main")),
-        metrics[0],
-    )
     initial = float(
         state.get(
             "initial_capital_eur",
             config.get("initial_capital_eur", 0.0),
         )
     )
-    equity = float(main.get("equity_eur", 0.0))
-    total_return = (
-        (equity / initial - 1.0) * 100.0
-        if initial > 0
-        else 0.0
+    by_name = {
+        str(row.get("portfolio", "")): row
+        for row in metrics
+    }
+
+    ordered_names = [
+        str(definition.get("name", ""))
+        for definition in config.get("portfolios", [])
+        if definition.get("enabled", True)
+        and str(definition.get("name", "")) in by_name
+    ]
+    ordered_names.extend(
+        name
+        for name in by_name
+        if name not in ordered_names
+    )
+    account_number = {
+        name: index
+        for index, name in enumerate(
+            ordered_names,
+            start=1,
+        )
+    }
+
+    activity = summary or {}
+    opened = list(activity.get("opened", []))
+    closed = list(activity.get("closed", []))
+
+    new_margin = sum(
+        float(row.get("margin_eur", 0.0))
+        for row in opened
+    )
+    new_exposure = sum(
+        float(row.get("notional_eur", 0.0))
+        for row in opened
+    )
+    closed_margin = sum(
+        float(row.get("margin_eur", 0.0))
+        for row in closed
+    )
+    realized = sum(
+        float(row.get("net_pnl_eur", 0.0))
+        for row in closed
+    )
+
+    total_open_margin = sum(
+        float(row.get("open_margin_eur", 0.0))
+        for row in metrics
+    )
+    total_open_pnl = sum(
+        float(row.get("unrealized_pnl_eur", 0.0))
+        for row in metrics
+    )
+    total_closed_pnl = sum(
+        float(row.get("net_pnl_closed_eur", 0.0))
+        for row in metrics
     )
 
     lines = [
-        "📊 PAPER TRADING KUCOIN — RIEPILOGO",
-        "",
-        "⭐ PRINCIPALE 4H",
+        "💼 RIEPILOGO SINTETICO CONTI PAPER",
         (
-            f"Equity {_fmt_eur(equity)} · "
-            f"rendimento {_fmt_pct(total_return, signed=True)}"
-        ),
-        (
-            f"P&L mese "
-            f"{_fmt_eur(main.get('month_pnl_eur'), signed=True)} "
-            f"/ target {_fmt_eur(main.get('monthly_target_eur'))}"
-        ),
-        (
-            f"Aperte {main.get('open_positions', 0)} · "
-            f"Chiuse {main.get('closed_trades', 0)} · "
-            f"Win rate {_fmt_pct(main.get('win_rate_pct'))}"
-        ),
-        (
-            f"Margine impegnato "
-            f"{_fmt_eur(main.get('open_margin_eur'))} · "
-            f"Esposizione "
-            f"{_fmt_eur(main.get('open_notional_eur'))} · "
-            f"Rischio agli stop "
-            f"{_fmt_eur(main.get('open_stop_risk_eur'))}"
-        ),
-        (
-            f"Profit factor {_fmt_num(main.get('profit_factor'))} · "
-            f"Max DD {_fmt_pct(main.get('max_drawdown_pct'))}"
-        ),
-        "",
-        "🧪 SIMULAZIONI DI CONFRONTO",
-        (
-            "Sono conti virtuali separati; possono diventare "
-            "candidati al reale soltanto dopo un campione sufficiente."
+            "Ogni conto è una simulazione separata; "
+            "le somme complessive sono solo un riepilogo tecnico."
         ),
     ]
 
-    for row in metrics:
-        if row.get("is_main"):
-            continue
+    if opened or closed:
         lines.extend(
             [
                 "",
-                f"• {portfolio_label(row.get('portfolio'))}",
-                portfolio_description(row.get("portfolio")),
+                "🔄 MOVIMENTI DELL’ULTIMO CICLO",
                 (
-                    f"Equity {_fmt_eur(row.get('equity_eur'))} · "
-                    f"aperte {row.get('open_positions', 0)} · "
-                    f"chiuse {row.get('closed_trades', 0)}"
+                    f"Entrate: {len(opened)} · "
+                    f"margine impiegato {_fmt_eur(new_margin)} · "
+                    f"esposizione {_fmt_eur(new_exposure)}"
                 ),
                 (
-                    f"Margine {_fmt_eur(row.get('open_margin_eur'))} · "
-                    f"esposizione {_fmt_eur(row.get('open_notional_eur'))} · "
-                    f"rischio stop {_fmt_eur(row.get('open_stop_risk_eur'))}"
-                ),
-                (
-                    f"PF {_fmt_num(row.get('profit_factor'))} · "
-                    f"strategia {strategy_label(row.get('strategy'))}"
+                    f"Uscite: {len(closed)} · "
+                    f"margine liberato {_fmt_eur(closed_margin)} · "
+                    f"P/L realizzato "
+                    f"{_fmt_eur(realized, signed=True)}"
                 ),
             ]
         )
 
-    open_lines: list[str] = []
-    for portfolio_name, portfolio in state.get("portfolios", {}).items():
-        for position in portfolio.get("open_positions", []):
-            open_lines.append(
+        for position in opened[:8]:
+            name = str(position.get("portfolio", ""))
+            number = account_number.get(name, "?")
+            lines.append(
                 (
-                    f"• {portfolio_label(portfolio_name)} — "
-                    f"{position.get('asset')} {position.get('side')} · "
-                    f"entry {float(position.get('entry_price', 0.0)):.6g} · "
-                    f"stop {float(position.get('stop_price', 0.0)):.6g} · "
-                    f"rischio residuo "
-                    f"{_fmt_eur(current_stop_risk_eur(position))}"
+                    f"↗ C{number} "
+                    f"{position.get('asset', '')} "
+                    f"{position.get('side', '')} · "
+                    f"entry "
+                    f"{float(position.get('entry_price', 0.0)):.6g} · "
+                    f"impiegato "
+                    f"{_fmt_eur(position.get('margin_eur'))}"
                 )
             )
-    lines.extend(["", "Posizioni aperte:"])
+
+        for trade in closed[:8]:
+            name = str(trade.get("portfolio", ""))
+            number = account_number.get(name, "?")
+            lines.append(
+                (
+                    f"↘ C{number} "
+                    f"{trade.get('asset', '')} "
+                    f"{trade.get('side', '')} · "
+                    f"{float(trade.get('entry_price', 0.0)):.6g}"
+                    f"→{float(trade.get('exit_price', 0.0)):.6g} · "
+                    f"P/L "
+                    f"{_fmt_eur(trade.get('net_pnl_eur'), signed=True)}"
+                )
+            )
+
+        hidden = max(0, len(opened) - 8) + max(
+            0,
+            len(closed) - 8,
+        )
+        if hidden:
+            lines.append(
+                f"…altri {hidden} movimenti nel messaggio dettagliato."
+            )
+
     lines.extend(
-        open_lines[:12]
-        if open_lines
-        else ["• Nessuna posizione virtuale aperta"]
+        [
+            "",
+            "📊 STATO DEI CONTI",
+            (
+                f"Margine aperto complessivo "
+                f"{_fmt_eur(total_open_margin)} · "
+                f"P/L aperto "
+                f"{_fmt_eur(total_open_pnl, signed=True)} · "
+                f"P/L chiuso "
+                f"{_fmt_eur(total_closed_pnl, signed=True)}"
+            ),
+        ]
     )
-    if len(open_lines) > 12:
-        lines.append(f"• …altre {len(open_lines) - 12} posizioni")
+
+    for name in ordered_names:
+        row = by_name[name]
+        number = account_number[name]
+        equity = float(row.get("equity_eur", 0.0))
+        total_pnl = equity - initial
+        icon = (
+            "🟢"
+            if total_pnl > 0
+            else "🔴"
+            if total_pnl < 0
+            else "⚪"
+        )
+        lines.extend(
+            [
+                "",
+                (
+                    f"{icon} Conto {number} — "
+                    f"{portfolio_label(name)}"
+                ),
+                (
+                    f"Impiegato "
+                    f"{_fmt_eur(row.get('open_margin_eur'))} · "
+                    f"Equity {_fmt_eur(equity)} · "
+                    f"aperte {row.get('open_positions', 0)}"
+                ),
+                (
+                    f"P/L aperto "
+                    f"{_fmt_eur(row.get('unrealized_pnl_eur'), signed=True)} · "
+                    f"chiuso "
+                    f"{_fmt_eur(row.get('net_pnl_closed_eur'), signed=True)} · "
+                    f"totale "
+                    f"{_fmt_eur(total_pnl, signed=True)}"
+                ),
+            ]
+        )
+
     return "\n".join(lines)
 
 
@@ -432,6 +514,7 @@ def notify(
         "configured": bool(token and chat_id),
         "sent": False,
         "event_messages": 0,
+        "account_summary_sent": False,
         "digest_sent": False,
         "sample_milestone_sent": False,
         "sample_milestones": [],
@@ -442,6 +525,8 @@ def notify(
     active_config = config or {}
     settings = _settings(active_config)
     messages: list[str] = []
+
+    event_messages: list[str] = []
     if settings.get("send_live_trade_events", True):
         event_messages = build_event_messages(summary)
         messages.extend(event_messages)
@@ -450,18 +535,58 @@ def notify(
     milestone_message = None
     reached_milestones: list[int] = []
     if state is not None and config is not None:
-        milestone_message, reached_milestones, _ = pending_milestone_notification(
+        (
+            milestone_message,
+            reached_milestones,
+            _,
+        ) = pending_milestone_notification(
             state,
             config,
         )
         if milestone_message:
-            messages.extend(_chunks(milestone_message.splitlines()))
-            result["sample_milestones"] = reached_milestones
+            messages.extend(
+                _chunks(milestone_message.splitlines())
+            )
+            result["sample_milestones"] = (
+                reached_milestones
+            )
 
-    current = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
-    digest_due = state is not None and config is not None and should_send_periodic(state, config, current)
-    if digest_due:
-        messages.extend(_chunks(build_status_message(state, config).splitlines()))
+    current = (
+        now or datetime.now(timezone.utc)
+    ).astimezone(timezone.utc)
+    digest_due = (
+        state is not None
+        and config is not None
+        and should_send_periodic(
+            state,
+            config,
+            current,
+        )
+    )
+
+    event_activity = bool(
+        summary.get("opened")
+        or summary.get("closed")
+        or summary.get("trailing_updates")
+        or summary.get("risk_alerts")
+        or summary.get("risk_recoveries")
+    )
+    account_summary_due = (
+        state is not None
+        and config is not None
+        and (digest_due or event_activity)
+    )
+    if account_summary_due:
+        messages.extend(
+            _chunks(
+                build_status_message(
+                    state,
+                    config,
+                    summary,
+                ).splitlines()
+            )
+        )
+        result["account_summary_sent"] = True
 
     if not messages:
         return result
@@ -471,10 +596,19 @@ def notify(
     result["sent"] = True
 
     if reached_milestones and state is not None:
-        mark_milestones_sent(state, reached_milestones)
+        mark_milestones_sent(
+            state,
+            reached_milestones,
+        )
         result["sample_milestone_sent"] = True
 
     if digest_due and state is not None:
-        state.setdefault("notifications", {})["telegram_last_digest_utc"] = current.isoformat(timespec="seconds")
+        state.setdefault(
+            "notifications",
+            {},
+        )["telegram_last_digest_utc"] = (
+            current.isoformat(timespec="seconds")
+        )
         result["digest_sent"] = True
     return result
+
