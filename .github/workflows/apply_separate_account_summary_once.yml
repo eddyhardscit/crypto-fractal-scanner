@@ -1,0 +1,160 @@
+name: Apply Separate Account Summary Once
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-paper-trading.txt
+
+      - name: Add separate numbered account summary
+        run: |
+          echo 'ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCmltcG9ydCByZQoKcGF0aCA9IFBhdGgoInBhcGVyX3RyYWRpbmdfbm90aWZ5LnB5IikKdGV4dCA9IHBhdGgucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCgpzdGF0dXNfZnVuY3Rpb24gPSByJycnZGVmIGJ1aWxkX3N0YXR1c19tZXNzYWdlKAogICAgc3RhdGU6IGRpY3Rbc3RyLCBBbnldLAogICAgY29uZmlnOiBkaWN0W3N0ciwgQW55XSwKICAgIHN1bW1hcnk6IGRpY3Rbc3RyLCBBbnldIHwgTm9uZSA9IE5vbmUsCikgLT4gc3RyOgogICAgIyBTZXBhcmF0ZSBjb21wYWN0IGFjY291bnQgc3VtbWFyeSBmb3IgVGVsZWdyYW0uCiAgICBmcm9tIHBhcGVyX3RyYWRpbmdfcmVwb3J0IGltcG9ydCBwb3J0Zm9saW9fbWV0cmljcwoKICAgIG1ldHJpY3MgPSBwb3J0Zm9saW9fbWV0cmljcyhzdGF0ZSwgY29uZmlnKQogICAgaWYgbm90IG1ldHJpY3M6CiAgICAgICAgcmV0dXJuICLwn5K8IFJJRVBJTE9HTyBDT05USSDigJQgc3RhdG8gbm9uIGRpc3BvbmliaWxlIgoKICAgIGluaXRpYWwgPSBmbG9hdCgKICAgICAgICBzdGF0ZS5nZXQoCiAgICAgICAgICAgICJpbml0aWFsX2NhcGl0YWxfZXVyIiwKICAgICAgICAgICAgY29uZmlnLmdldCgiaW5pdGlhbF9jYXBpdGFsX2V1ciIsIDAuMCksCiAgICAgICAgKQogICAgKQogICAgYnlfbmFtZSA9IHsKICAgICAgICBzdHIocm93LmdldCgicG9ydGZvbGlvIiwgIiIpKTogcm93CiAgICAgICAgZm9yIHJvdyBpbiBtZXRyaWNzCiAgICB9CgogICAgb3JkZXJlZF9uYW1lcyA9IFsKICAgICAgICBzdHIoZGVmaW5pdGlvbi5nZXQoIm5hbWUiLCAiIikpCiAgICAgICAgZm9yIGRlZmluaXRpb24gaW4gY29uZmlnLmdldCgicG9ydGZvbGlvcyIsIFtdKQogICAgICAgIGlmIGRlZmluaXRpb24uZ2V0KCJlbmFibGVkIiwgVHJ1ZSkKICAgICAgICBhbmQgc3RyKGRlZmluaXRpb24uZ2V0KCJuYW1lIiwgIiIpKSBpbiBieV9uYW1lCiAgICBdCiAgICBvcmRlcmVkX25hbWVzLmV4dGVuZCgKICAgICAgICBuYW1lCiAgICAgICAgZm9yIG5hbWUgaW4gYnlfbmFtZQogICAgICAgIGlmIG5hbWUgbm90IGluIG9yZGVyZWRfbmFtZXMKICAgICkKICAgIGFjY291bnRfbnVtYmVyID0gewogICAgICAgIG5hbWU6IGluZGV4CiAgICAgICAgZm9yIGluZGV4LCBuYW1lIGluIGVudW1lcmF0ZSgKICAgICAgICAgICAgb3JkZXJlZF9uYW1lcywKICAgICAgICAgICAgc3RhcnQ9MSwKICAgICAgICApCiAgICB9CgogICAgYWN0aXZpdHkgPSBzdW1tYXJ5IG9yIHt9CiAgICBvcGVuZWQgPSBsaXN0KGFjdGl2aXR5LmdldCgib3BlbmVkIiwgW10pKQogICAgY2xvc2VkID0gbGlzdChhY3Rpdml0eS5nZXQoImNsb3NlZCIsIFtdKSkKCiAgICBuZXdfbWFyZ2luID0gc3VtKAogICAgICAgIGZsb2F0KHJvdy5nZXQoIm1hcmdpbl9ldXIiLCAwLjApKQogICAgICAgIGZvciByb3cgaW4gb3BlbmVkCiAgICApCiAgICBuZXdfZXhwb3N1cmUgPSBzdW0oCiAgICAgICAgZmxvYXQocm93LmdldCgibm90aW9uYWxfZXVyIiwgMC4wKSkKICAgICAgICBmb3Igcm93IGluIG9wZW5lZAogICAgKQogICAgY2xvc2VkX21hcmdpbiA9IHN1bSgKICAgICAgICBmbG9hdChyb3cuZ2V0KCJtYXJnaW5fZXVyIiwgMC4wKSkKICAgICAgICBmb3Igcm93IGluIGNsb3NlZAogICAgKQogICAgcmVhbGl6ZWQgPSBzdW0oCiAgICAgICAgZmxvYXQocm93LmdldCgibmV0X3BubF9ldXIiLCAwLjApKQogICAgICAgIGZvciByb3cgaW4gY2xvc2VkCiAgICApCgogICAgdG90YWxfb3Blbl9tYXJnaW4gPSBzdW0oCiAgICAgICAgZmxvYXQocm93LmdldCgib3Blbl9tYXJnaW5fZXVyIiwgMC4wKSkKICAgICAgICBmb3Igcm93IGluIG1ldHJpY3MKICAgICkKICAgIHRvdGFsX29wZW5fcG5sID0gc3VtKAogICAgICAgIGZsb2F0KHJvdy5nZXQoInVucmVhbGl6ZWRfcG5sX2V1ciIsIDAuMCkpCiAgICAgICAgZm9yIHJvdyBpbiBtZXRyaWNzCiAgICApCiAgICB0b3RhbF9jbG9zZWRfcG5sID0gc3VtKAogICAgICAgIGZsb2F0KHJvdy5nZXQoIm5ldF9wbmxfY2xvc2VkX2V1ciIsIDAuMCkpCiAgICAgICAgZm9yIHJvdyBpbiBtZXRyaWNzCiAgICApCgogICAgbGluZXMgPSBbCiAgICAgICAgIvCfkrwgUklFUElMT0dPIFNJTlRFVElDTyBDT05USSBQQVBFUiIsCiAgICAgICAgKAogICAgICAgICAgICAiT2duaSBjb250byDDqCB1bmEgc2ltdWxhemlvbmUgc2VwYXJhdGE7ICIKICAgICAgICAgICAgImxlIHNvbW1lIGNvbXBsZXNzaXZlIHNvbm8gc29sbyB1biByaWVwaWxvZ28gdGVjbmljby4iCiAgICAgICAgKSwKICAgIF0KCiAgICBpZiBvcGVuZWQgb3IgY2xvc2VkOgogICAgICAgIGxpbmVzLmV4dGVuZCgKICAgICAgICAgICAgWwogICAgICAgICAgICAgICAgIiIsCiAgICAgICAgICAgICAgICAi8J+UhCBNT1ZJTUVOVEkgREVMTOKAmVVMVElNTyBDSUNMTyIsCiAgICAgICAgICAgICAgICAoCiAgICAgICAgICAgICAgICAgICAgZiJFbnRyYXRlOiB7bGVuKG9wZW5lZCl9IMK3ICIKICAgICAgICAgICAgICAgICAgICBmIm1hcmdpbmUgaW1waWVnYXRvIHtfZm10X2V1cihuZXdfbWFyZ2luKX0gwrcgIgogICAgICAgICAgICAgICAgICAgIGYiZXNwb3NpemlvbmUge19mbXRfZXVyKG5ld19leHBvc3VyZSl9IgogICAgICAgICAgICAgICAgKSwKICAgICAgICAgICAgICAgICgKICAgICAgICAgICAgICAgICAgICBmIlVzY2l0ZToge2xlbihjbG9zZWQpfSDCtyAiCiAgICAgICAgICAgICAgICAgICAgZiJtYXJnaW5lIGxpYmVyYXRvIHtfZm10X2V1cihjbG9zZWRfbWFyZ2luKX0gwrcgIgogICAgICAgICAgICAgICAgICAgIGYiUC9MIHJlYWxpenphdG8gIgogICAgICAgICAgICAgICAgICAgIGYie19mbXRfZXVyKHJlYWxpemVkLCBzaWduZWQ9VHJ1ZSl9IgogICAgICAgICAgICAgICAgKSwKICAgICAgICAgICAgXQogICAgICAgICkKCiAgICAgICAgZm9yIHBvc2l0aW9uIGluIG9wZW5lZFs6OF06CiAgICAgICAgICAgIG5hbWUgPSBzdHIocG9zaXRpb24uZ2V0KCJwb3J0Zm9saW8iLCAiIikpCiAgICAgICAgICAgIG51bWJlciA9IGFjY291bnRfbnVtYmVyLmdldChuYW1lLCAiPyIpCiAgICAgICAgICAgIGxpbmVzLmFwcGVuZCgKICAgICAgICAgICAgICAgICgKICAgICAgICAgICAgICAgICAgICBmIuKGlyBDe251bWJlcn0gIgogICAgICAgICAgICAgICAgICAgIGYie3Bvc2l0aW9uLmdldCgnYXNzZXQnLCAnJyl9ICIKICAgICAgICAgICAgICAgICAgICBmIntwb3NpdGlvbi5nZXQoJ3NpZGUnLCAnJyl9IMK3ICIKICAgICAgICAgICAgICAgICAgICBmImVudHJ5ICIKICAgICAgICAgICAgICAgICAgICBmIntmbG9hdChwb3NpdGlvbi5nZXQoJ2VudHJ5X3ByaWNlJywgMC4wKSk6LjZnfSDCtyAiCiAgICAgICAgICAgICAgICAgICAgZiJpbXBpZWdhdG8gIgogICAgICAgICAgICAgICAgICAgIGYie19mbXRfZXVyKHBvc2l0aW9uLmdldCgnbWFyZ2luX2V1cicpKX0iCiAgICAgICAgICAgICAgICApCiAgICAgICAgICAgICkKCiAgICAgICAgZm9yIHRyYWRlIGluIGNsb3NlZFs6OF06CiAgICAgICAgICAgIG5hbWUgPSBzdHIodHJhZGUuZ2V0KCJwb3J0Zm9saW8iLCAiIikpCiAgICAgICAgICAgIG51bWJlciA9IGFjY291bnRfbnVtYmVyLmdldChuYW1lLCAiPyIpCiAgICAgICAgICAgIGxpbmVzLmFwcGVuZCgKICAgICAgICAgICAgICAgICgKICAgICAgICAgICAgICAgICAgICBmIuKGmCBDe251bWJlcn0gIgogICAgICAgICAgICAgICAgICAgIGYie3RyYWRlLmdldCgnYXNzZXQnLCAnJyl9ICIKICAgICAgICAgICAgICAgICAgICBmInt0cmFkZS5nZXQoJ3NpZGUnLCAnJyl9IMK3ICIKICAgICAgICAgICAgICAgICAgICBmIntmbG9hdCh0cmFkZS5nZXQoJ2VudHJ5X3ByaWNlJywgMC4wKSk6LjZnfSIKICAgICAgICAgICAgICAgICAgICBmIuKGkntmbG9hdCh0cmFkZS5nZXQoJ2V4aXRfcHJpY2UnLCAwLjApKTouNmd9IMK3ICIKICAgICAgICAgICAgICAgICAgICBmIlAvTCAiCiAgICAgICAgICAgICAgICAgICAgZiJ7X2ZtdF9ldXIodHJhZGUuZ2V0KCduZXRfcG5sX2V1cicpLCBzaWduZWQ9VHJ1ZSl9IgogICAgICAgICAgICAgICAgKQogICAgICAgICAgICApCgogICAgICAgIGhpZGRlbiA9IG1heCgwLCBsZW4ob3BlbmVkKSAtIDgpICsgbWF4KAogICAgICAgICAgICAwLAogICAgICAgICAgICBsZW4oY2xvc2VkKSAtIDgsCiAgICAgICAgKQogICAgICAgIGlmIGhpZGRlbjoKICAgICAgICAgICAgbGluZXMuYXBwZW5kKAogICAgICAgICAgICAgICAgZiLigKZhbHRyaSB7aGlkZGVufSBtb3ZpbWVudGkgbmVsIG1lc3NhZ2dpbyBkZXR0YWdsaWF0by4iCiAgICAgICAgICAgICkKCiAgICBsaW5lcy5leHRlbmQoCiAgICAgICAgWwogICAgICAgICAgICAiIiwKICAgICAgICAgICAgIvCfk4ogU1RBVE8gREVJIENPTlRJIiwKICAgICAgICAgICAgKAogICAgICAgICAgICAgICAgZiJNYXJnaW5lIGFwZXJ0byBjb21wbGVzc2l2byAiCiAgICAgICAgICAgICAgICBmIntfZm10X2V1cih0b3RhbF9vcGVuX21hcmdpbil9IMK3ICIKICAgICAgICAgICAgICAgIGYiUC9MIGFwZXJ0byAiCiAgICAgICAgICAgICAgICBmIntfZm10X2V1cih0b3RhbF9vcGVuX3BubCwgc2lnbmVkPVRydWUpfSDCtyAiCiAgICAgICAgICAgICAgICBmIlAvTCBjaGl1c28gIgogICAgICAgICAgICAgICAgZiJ7X2ZtdF9ldXIodG90YWxfY2xvc2VkX3BubCwgc2lnbmVkPVRydWUpfSIKICAgICAgICAgICAgKSwKICAgICAgICBdCiAgICApCgogICAgZm9yIG5hbWUgaW4gb3JkZXJlZF9uYW1lczoKICAgICAgICByb3cgPSBieV9uYW1lW25hbWVdCiAgICAgICAgbnVtYmVyID0gYWNjb3VudF9udW1iZXJbbmFtZV0KICAgICAgICBlcXVpdHkgPSBmbG9hdChyb3cuZ2V0KCJlcXVpdHlfZXVyIiwgMC4wKSkKICAgICAgICB0b3RhbF9wbmwgPSBlcXVpdHkgLSBpbml0aWFsCiAgICAgICAgaWNvbiA9ICgKICAgICAgICAgICAgIvCfn6IiCiAgICAgICAgICAgIGlmIHRvdGFsX3BubCA+IDAKICAgICAgICAgICAgZWxzZSAi8J+UtCIKICAgICAgICAgICAgaWYgdG90YWxfcG5sIDwgMAogICAgICAgICAgICBlbHNlICLimqoiCiAgICAgICAgKQogICAgICAgIGxpbmVzLmV4dGVuZCgKICAgICAgICAgICAgWwogICAgICAgICAgICAgICAgIiIsCiAgICAgICAgICAgICAgICAoCiAgICAgICAgICAgICAgICAgICAgZiJ7aWNvbn0gQ29udG8ge251bWJlcn0g4oCUICIKICAgICAgICAgICAgICAgICAgICBmIntwb3J0Zm9saW9fbGFiZWwobmFtZSl9IgogICAgICAgICAgICAgICAgKSwKICAgICAgICAgICAgICAgICgKICAgICAgICAgICAgICAgICAgICBmIkltcGllZ2F0byAiCiAgICAgICAgICAgICAgICAgICAgZiJ7X2ZtdF9ldXIocm93LmdldCgnb3Blbl9tYXJnaW5fZXVyJykpfSDCtyAiCiAgICAgICAgICAgICAgICAgICAgZiJFcXVpdHkge19mbXRfZXVyKGVxdWl0eSl9IMK3ICIKICAgICAgICAgICAgICAgICAgICBmImFwZXJ0ZSB7cm93LmdldCgnb3Blbl9wb3NpdGlvbnMnLCAwKX0iCiAgICAgICAgICAgICAgICApLAogICAgICAgICAgICAgICAgKAogICAgICAgICAgICAgICAgICAgIGYiUC9MIGFwZXJ0byAiCiAgICAgICAgICAgICAgICAgICAgZiJ7X2ZtdF9ldXIocm93LmdldCgndW5yZWFsaXplZF9wbmxfZXVyJyksIHNpZ25lZD1UcnVlKX0gwrcgIgogICAgICAgICAgICAgICAgICAgIGYiY2hpdXNvICIKICAgICAgICAgICAgICAgICAgICBmIntfZm10X2V1cihyb3cuZ2V0KCduZXRfcG5sX2Nsb3NlZF9ldXInKSwgc2lnbmVkPVRydWUpfSDCtyAiCiAgICAgICAgICAgICAgICAgICAgZiJ0b3RhbGUgIgogICAgICAgICAgICAgICAgICAgIGYie19mbXRfZXVyKHRvdGFsX3BubCwgc2lnbmVkPVRydWUpfSIKICAgICAgICAgICAgICAgICksCiAgICAgICAgICAgIF0KICAgICAgICApCgogICAgcmV0dXJuICJcbiIuam9pbihsaW5lcykKJycnCgpzdGF0dXNfcGF0dGVybiA9IHJlLmNvbXBpbGUoCiAgICByImRlZiBidWlsZF9zdGF0dXNfbWVzc2FnZVwoLio/XG4oPz1kZWYgX3NlbmRfdGV4dFwoKSIsCiAgICByZS5ET1RBTEwsCikKaWYgbm90IHN0YXR1c19wYXR0ZXJuLnNlYXJjaCh0ZXh0KToKICAgIHJhaXNlIFN5c3RlbUV4aXQoCiAgICAgICAgIkZ1bnppb25lIGJ1aWxkX3N0YXR1c19tZXNzYWdlIG5vbiB0cm92YXRhLiIKICAgICkKdGV4dCA9IHN0YXR1c19wYXR0ZXJuLnN1YigKICAgIGxhbWJkYSBfOiBzdGF0dXNfZnVuY3Rpb24gKyAiXG5cbiIsCiAgICB0ZXh0LAogICAgY291bnQ9MSwKKQoKbm90aWZ5X2Z1bmN0aW9uID0gcicnJ2RlZiBub3RpZnkoCiAgICBzdW1tYXJ5OiBkaWN0W3N0ciwgQW55XSwKICAgIHN0YXRlOiBkaWN0W3N0ciwgQW55XSB8IE5vbmUgPSBOb25lLAogICAgY29uZmlnOiBkaWN0W3N0ciwgQW55XSB8IE5vbmUgPSBOb25lLAogICAgbm93OiBkYXRldGltZSB8IE5vbmUgPSBOb25lLAopIC0+IGRpY3Rbc3RyLCBBbnldOgogICAgdG9rZW4gPSBvcy5nZXRlbnYoIlRFTEVHUkFNX0JPVF9UT0tFTiIsICIiKS5zdHJpcCgpCiAgICBjaGF0X2lkID0gb3MuZ2V0ZW52KCJURUxFR1JBTV9DSEFUX0lEIiwgIiIpLnN0cmlwKCkKICAgIHJlc3VsdCA9IHsKICAgICAgICAiY29uZmlndXJlZCI6IGJvb2wodG9rZW4gYW5kIGNoYXRfaWQpLAogICAgICAgICJzZW50IjogRmFsc2UsCiAgICAgICAgImV2ZW50X21lc3NhZ2VzIjogMCwKICAgICAgICAiYWNjb3VudF9zdW1tYXJ5X3NlbnQiOiBGYWxzZSwKICAgICAgICAiZGlnZXN0X3NlbnQiOiBGYWxzZSwKICAgICAgICAic2FtcGxlX21pbGVzdG9uZV9zZW50IjogRmFsc2UsCiAgICAgICAgInNhbXBsZV9taWxlc3RvbmVzIjogW10sCiAgICB9CiAgICBpZiBub3QgdG9rZW4gb3Igbm90IGNoYXRfaWQ6CiAgICAgICAgcmV0dXJuIHJlc3VsdAoKICAgIGFjdGl2ZV9jb25maWcgPSBjb25maWcgb3Ige30KICAgIHNldHRpbmdzID0gX3NldHRpbmdzKGFjdGl2ZV9jb25maWcpCiAgICBtZXNzYWdlczogbGlzdFtzdHJdID0gW10KCiAgICBldmVudF9tZXNzYWdlczogbGlzdFtzdHJdID0gW10KICAgIGlmIHNldHRpbmdzLmdldCgic2VuZF9saXZlX3RyYWRlX2V2ZW50cyIsIFRydWUpOgogICAgICAgIGV2ZW50X21lc3NhZ2VzID0gYnVpbGRfZXZlbnRfbWVzc2FnZXMoc3VtbWFyeSkKICAgICAgICBtZXNzYWdlcy5leHRlbmQoZXZlbnRfbWVzc2FnZXMpCiAgICAgICAgcmVzdWx0WyJldmVudF9tZXNzYWdlcyJdID0gbGVuKGV2ZW50X21lc3NhZ2VzKQoKICAgIG1pbGVzdG9uZV9tZXNzYWdlID0gTm9uZQogICAgcmVhY2hlZF9taWxlc3RvbmVzOiBsaXN0W2ludF0gPSBbXQogICAgaWYgc3RhdGUgaXMgbm90IE5vbmUgYW5kIGNvbmZpZyBpcyBub3QgTm9uZToKICAgICAgICAoCiAgICAgICAgICAgIG1pbGVzdG9uZV9tZXNzYWdlLAogICAgICAgICAgICByZWFjaGVkX21pbGVzdG9uZXMsCiAgICAgICAgICAgIF8sCiAgICAgICAgKSA9IHBlbmRpbmdfbWlsZXN0b25lX25vdGlmaWNhdGlvbigKICAgICAgICAgICAgc3RhdGUsCiAgICAgICAgICAgIGNvbmZpZywKICAgICAgICApCiAgICAgICAgaWYgbWlsZXN0b25lX21lc3NhZ2U6CiAgICAgICAgICAgIG1lc3NhZ2VzLmV4dGVuZCgKICAgICAgICAgICAgICAgIF9jaHVua3MobWlsZXN0b25lX21lc3NhZ2Uuc3BsaXRsaW5lcygpKQogICAgICAgICAgICApCiAgICAgICAgICAgIHJlc3VsdFsic2FtcGxlX21pbGVzdG9uZXMiXSA9ICgKICAgICAgICAgICAgICAgIHJlYWNoZWRfbWlsZXN0b25lcwogICAgICAgICAgICApCgogICAgY3VycmVudCA9ICgKICAgICAgICBub3cgb3IgZGF0ZXRpbWUubm93KHRpbWV6b25lLnV0YykKICAgICkuYXN0aW1lem9uZSh0aW1lem9uZS51dGMpCiAgICBkaWdlc3RfZHVlID0gKAogICAgICAgIHN0YXRlIGlzIG5vdCBOb25lCiAgICAgICAgYW5kIGNvbmZpZyBpcyBub3QgTm9uZQogICAgICAgIGFuZCBzaG91bGRfc2VuZF9wZXJpb2RpYygKICAgICAgICAgICAgc3RhdGUsCiAgICAgICAgICAgIGNvbmZpZywKICAgICAgICAgICAgY3VycmVudCwKICAgICAgICApCiAgICApCgogICAgZXZlbnRfYWN0aXZpdHkgPSBib29sKAogICAgICAgIHN1bW1hcnkuZ2V0KCJvcGVuZWQiKQogICAgICAgIG9yIHN1bW1hcnkuZ2V0KCJjbG9zZWQiKQogICAgICAgIG9yIHN1bW1hcnkuZ2V0KCJ0cmFpbGluZ191cGRhdGVzIikKICAgICAgICBvciBzdW1tYXJ5LmdldCgicmlza19hbGVydHMiKQogICAgICAgIG9yIHN1bW1hcnkuZ2V0KCJyaXNrX3JlY292ZXJpZXMiKQogICAgKQogICAgYWNjb3VudF9zdW1tYXJ5X2R1ZSA9ICgKICAgICAgICBzdGF0ZSBpcyBub3QgTm9uZQogICAgICAgIGFuZCBjb25maWcgaXMgbm90IE5vbmUKICAgICAgICBhbmQgKGRpZ2VzdF9kdWUgb3IgZXZlbnRfYWN0aXZpdHkpCiAgICApCiAgICBpZiBhY2NvdW50X3N1bW1hcnlfZHVlOgogICAgICAgIG1lc3NhZ2VzLmV4dGVuZCgKICAgICAgICAgICAgX2NodW5rcygKICAgICAgICAgICAgICAgIGJ1aWxkX3N0YXR1c19tZXNzYWdlKAogICAgICAgICAgICAgICAgICAgIHN0YXRlLAogICAgICAgICAgICAgICAgICAgIGNvbmZpZywKICAgICAgICAgICAgICAgICAgICBzdW1tYXJ5LAogICAgICAgICAgICAgICAgKS5zcGxpdGxpbmVzKCkKICAgICAgICAgICAgKQogICAgICAgICkKICAgICAgICByZXN1bHRbImFjY291bnRfc3VtbWFyeV9zZW50Il0gPSBUcnVlCgogICAgaWYgbm90IG1lc3NhZ2VzOgogICAgICAgIHJldHVybiByZXN1bHQKCiAgICBmb3IgbWVzc2FnZSBpbiBtZXNzYWdlczoKICAgICAgICBfc2VuZF90ZXh0KHRva2VuLCBjaGF0X2lkLCBtZXNzYWdlKQogICAgcmVzdWx0WyJzZW50Il0gPSBUcnVlCgogICAgaWYgcmVhY2hlZF9taWxlc3RvbmVzIGFuZCBzdGF0ZSBpcyBub3QgTm9uZToKICAgICAgICBtYXJrX21pbGVzdG9uZXNfc2VudCgKICAgICAgICAgICAgc3RhdGUsCiAgICAgICAgICAgIHJlYWNoZWRfbWlsZXN0b25lcywKICAgICAgICApCiAgICAgICAgcmVzdWx0WyJzYW1wbGVfbWlsZXN0b25lX3NlbnQiXSA9IFRydWUKCiAgICBpZiBkaWdlc3RfZHVlIGFuZCBzdGF0ZSBpcyBub3QgTm9uZToKICAgICAgICBzdGF0ZS5zZXRkZWZhdWx0KAogICAgICAgICAgICAibm90aWZpY2F0aW9ucyIsCiAgICAgICAgICAgIHt9LAogICAgICAgIClbInRlbGVncmFtX2xhc3RfZGlnZXN0X3V0YyJdID0gKAogICAgICAgICAgICBjdXJyZW50Lmlzb2Zvcm1hdCh0aW1lc3BlYz0ic2Vjb25kcyIpCiAgICAgICAgKQogICAgICAgIHJlc3VsdFsiZGlnZXN0X3NlbnQiXSA9IFRydWUKICAgIHJldHVybiByZXN1bHQKJycnCgpub3RpZnlfcGF0dGVybiA9IHJlLmNvbXBpbGUoCiAgICByImRlZiBub3RpZnlcKC4qXFoiLAogICAgcmUuRE9UQUxMLAopCmlmIG5vdCBub3RpZnlfcGF0dGVybi5zZWFyY2godGV4dCk6CiAgICByYWlzZSBTeXN0ZW1FeGl0KCJGdW56aW9uZSBub3RpZnkgbm9uIHRyb3ZhdGEuIikKdGV4dCA9IG5vdGlmeV9wYXR0ZXJuLnN1YigKICAgIGxhbWJkYSBfOiBub3RpZnlfZnVuY3Rpb24gKyAiXG4iLAogICAgdGV4dCwKICAgIGNvdW50PTEsCikKCnBhdGgud3JpdGVfdGV4dCh0ZXh0LCBlbmNvZGluZz0idXRmLTgiKQpwcmludCgKICAgICJBZ2dpdW50byByaWVwaWxvZ28gVGVsZWdyYW0gc2VwYXJhdG8gZSBudW1lcmF0byBwZXIgY29udG8uIgopCg==' | base64 -d > /tmp/patch_account_summary.py
+          python /tmp/patch_account_summary.py
+
+      - name: Compile notification module
+        run: |
+          python -m py_compile paper_trading_notify.py
+
+      - name: Run offline Telegram summary self-test
+        run: |
+          python - <<'PY'
+          import paper_trading_notify as notify
+          import paper_trading_report as report
+
+          fake_metrics = [
+              {
+                  "portfolio": "MAIN",
+                  "is_main": True,
+                  "equity_eur": 10000.0,
+                  "open_positions": 0,
+                  "open_margin_eur": 0.0,
+                  "open_notional_eur": 0.0,
+                  "open_stop_risk_eur": 0.0,
+                  "unrealized_pnl_eur": 0.0,
+                  "net_pnl_closed_eur": 0.0,
+              },
+              {
+                  "portfolio": "SHADOW_1H_BALANCED",
+                  "is_main": False,
+                  "equity_eur": 10041.0,
+                  "open_positions": 2,
+                  "open_margin_eur": 700.0,
+                  "open_notional_eur": 2100.0,
+                  "open_stop_risk_eur": 100.0,
+                  "unrealized_pnl_eur": 11.0,
+                  "net_pnl_closed_eur": 30.0,
+              },
+              {
+                  "portfolio": "SHADOW_1H_FAST",
+                  "is_main": False,
+                  "equity_eur": 9980.0,
+                  "open_positions": 1,
+                  "open_margin_eur": 100.0,
+                  "open_notional_eur": 300.0,
+                  "open_stop_risk_eur": 20.0,
+                  "unrealized_pnl_eur": -5.0,
+                  "net_pnl_closed_eur": -15.0,
+              },
+          ]
+          report.portfolio_metrics = (
+              lambda state, config: fake_metrics
+          )
+
+          config = {
+              "initial_capital_eur": 10000.0,
+              "portfolios": [
+                  {"name": "MAIN", "enabled": True},
+                  {
+                      "name": "SHADOW_1H_BALANCED",
+                      "enabled": True,
+                  },
+                  {
+                      "name": "SHADOW_1H_FAST",
+                      "enabled": True,
+                  },
+              ],
+          }
+          state = {
+              "initial_capital_eur": 10000.0,
+              "portfolios": {},
+          }
+          summary = {
+              "opened": [
+                  {
+                      "portfolio": "SHADOW_1H_BALANCED",
+                      "asset": "DOGE",
+                      "side": "LONG",
+                      "entry_price": 0.0728,
+                      "margin_eur": 50.0,
+                      "notional_eur": 750.0,
+                  }
+              ],
+              "closed": [
+                  {
+                      "portfolio": "SHADOW_1H_FAST",
+                      "asset": "ZEC",
+                      "side": "LONG",
+                      "entry_price": 500.0,
+                      "exit_price": 530.0,
+                      "margin_eur": 100.0,
+                      "net_pnl_eur": 20.0,
+                  }
+              ],
+          }
+
+          rendered = notify.build_status_message(
+              state,
+              config,
+              summary,
+          )
+          assert "Conto 1 — Principale 4H" in rendered
+          assert "Conto 2 — Bilanciata 1H" in rendered
+          assert "Conto 3 — Rapida 1H" in rendered
+          assert "Entrate: 1" in rendered
+          assert "Uscite: 1" in rendered
+          assert "entry 0.0728" in rendered
+          assert "500→530" in rendered
+          assert "Impiegato €700,00" in rendered
+          assert "totale +€41,00" in rendered
+          assert "totale -€20,00" in rendered
+
+          print(rendered)
+          print("Separate account summary self-test: OK")
+          PY
+
+      - name: Commit separate account summary
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add paper_trading_notify.py
+
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da pubblicare."
+          else
+            git commit -m \
+              "Add separate numbered paper account summary"
+            git push
+          fi
