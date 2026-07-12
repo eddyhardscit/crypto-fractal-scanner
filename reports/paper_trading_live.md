@@ -1,6 +1,6 @@
 # Paper trading automatico KuCoin
 
-Generato: 2026-07-12T06:42:29+00:00
+Generato: 2026-07-12T11:17:37+00:00
 
 ## Configurazione attiva
 
@@ -10,8 +10,47 @@ Generato: 2026-07-12T06:42:29+00:00
 - Compounding: **ATTIVO**
 - Reinvestimento dei profitti: **100,00%**
 - Politica target: **solo monitoraggio; il bot non aumenta il rischio per inseguirlo**
-- Ultimi prezzi: **2026-07-12T06:42:29+00:00**; conversione EUR/USDT: **CONFIG_FALLBACK**
+- Snapshot prezzi usato: **2026-07-12T11:17:37+00:00**; stato dati: **FRESH**; età: **0,0 min**; conversione EUR/USDT: **CONFIG_FALLBACK**
 - Dashboard intraday: [apri la pagina live](https://github.com/eddyhardscit/crypto-fractal-scanner/blob/paper-trading-live/reports/paper_trading_live.md)
+
+## Freschezza dati di mercato
+
+| Stato | Fonte | Snapshot mercato | Controllato | Età | Limite | Nuove entrate |
+| --- | --- | --- | --- | --- | --- | --- |
+| FRESH | KUCOIN_PUBLIC_API | 2026-07-12T11:17:37+00:00 | 2026-07-12T11:17:37+00:00 | 0,0 min | 25,0 min | ABILITATE |
+
+| TF | Asset con dati | Candela più recente | Candela più vecchia | Età massima | Limite | Stato |
+| --- | --- | --- | --- | --- | --- | --- |
+| 15m | 0 | n/a | n/a | n/a | 40,0 min | NO_DATA |
+| 60m | 0 | n/a | n/a | n/a | 1,42 h | NO_DATA |
+| 240m | 0 | n/a | n/a | n/a | 4,42 h | NO_DATA |
+
+## Segnali quasi entrati / motivi di esclusione
+
+| Portafoglio | Asset | TF | Lato | Score | Soglia | Manca | Stato | Età candela | Motivo |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| MAIN | AAVE | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | ADA | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | BTC | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | ETH | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | EVAA | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | HYPE | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | LAB | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | PEPE | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | SOL | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | T | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | XRP | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| MAIN | ZEC | 240m | n/a | n/a | 6,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| SHADOW_1H_BALANCED | AAVE | 60m | n/a | n/a | 5,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| SHADOW_1H_FAST | AAVE | 60m | n/a | n/a | 4,50 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| SHADOW_4H_WIDE | AAVE | 240m | n/a | n/a | 5,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| SHADOW_RELATIVE_STRENGTH | AAVE | 60m | n/a | n/a | 4,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| SHADOW_1H_BALANCED | ADA | 60m | n/a | n/a | 5,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| SHADOW_1H_FAST | ADA | 60m | n/a | n/a | 4,50 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| SHADOW_4H_WIDE | ADA | 240m | n/a | n/a | 5,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+| SHADOW_RELATIVE_STRENGTH | ADA | 60m | n/a | n/a | 4,00 | n/a | NO_FEATURES | n/a | Dati insufficienti: servono almeno 60 candele utilizzabili. |
+
+**Manca** indica quanti punti servivano per raggiungere la soglia. `STRATEGY_FILTER` significa che lo score bastava, ma mancava breakout, momentum o forza relativa. `ALREADY_PROCESSED` significa che la stessa candela era già stata esaminata.
 
 ## Portafoglio principale
 
