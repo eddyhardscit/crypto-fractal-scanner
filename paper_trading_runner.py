@@ -29,6 +29,7 @@ from paper_trading_engine import (
 )
 from paper_trading_live_publish import publish_markdown
 from paper_trading_notify import notify
+from research_all_signals import run_research_cycle
 from paper_trading_report import LATEST_REPORT_PATH, REPORT_PATH, render_report, replace_block
 from telegram_scanner_notify import send_if_changed as send_scanner_if_changed
 
@@ -166,6 +167,7 @@ def main() -> None:
     )
     raw_signals = generate_signals(bundle, config)
     state = load_state(config)
+    research_result = run_research_cycle(raw_signals, bundle, config)
     signal_diagnostics = build_signal_diagnostics(
         bundle,
         config,
@@ -207,6 +209,9 @@ def main() -> None:
 
     current = datetime.now(timezone.utc)
     report = render_report(state, config)
+    research_markdown = str(research_result.get("report_markdown", "")).strip()
+    if research_markdown:
+        report = report.rstrip() + "\n\n" + research_markdown + "\n"
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     REPORT_PATH.write_text(report, encoding="utf-8")
     LIVE_REPORT_PATH.write_text(report, encoding="utf-8")
@@ -261,6 +266,12 @@ def main() -> None:
             "_paper_freshness",
             {},
         ),
+        "research_all_signals": {
+            "opened_this_cycle": research_result.get("opened_this_cycle", 0),
+            "closed_this_cycle": research_result.get("closed_this_cycle", 0),
+            "open_positions": research_result.get("open_positions", 0),
+            "closed_trades": research_result.get("closed_trades", 0),
+        },
         "signal_diagnostics": signal_diagnostics.get(
             "summary",
             {},

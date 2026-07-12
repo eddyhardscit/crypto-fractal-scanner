@@ -33,6 +33,10 @@ FILES = (
     "paper_trading_config_snapshot.json",
     "paper_trading_market_cache.json",
     "paper_trading_report.md",
+    "research_all_signals_state.json",
+    "research_all_signals_trades.csv",
+    "research_all_signals_report.md",
+    "research_all_signals_latest.json",
 )
 
 
