@@ -16,6 +16,11 @@ from typing import Any
 
 import requests
 
+from paper_trading_sample_watch import (
+    mark_milestones_sent,
+    pending_milestone_notification,
+)
+
 
 def _fmt_eur(value: Any, signed: bool = False) -> str:
     try:
@@ -249,6 +254,8 @@ def notify(
         "sent": False,
         "event_messages": 0,
         "digest_sent": False,
+        "sample_milestone_sent": False,
+        "sample_milestones": [],
     }
     if not token or not chat_id:
         return result
@@ -261,6 +268,17 @@ def notify(
         messages.extend(event_messages)
         result["event_messages"] = len(event_messages)
 
+    milestone_message = None
+    reached_milestones: list[int] = []
+    if state is not None and config is not None:
+        milestone_message, reached_milestones, _ = pending_milestone_notification(
+            state,
+            config,
+        )
+        if milestone_message:
+            messages.extend(_chunks(milestone_message.splitlines()))
+            result["sample_milestones"] = reached_milestones
+
     current = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
     digest_due = state is not None and config is not None and should_send_periodic(state, config, current)
     if digest_due:
@@ -272,6 +290,10 @@ def notify(
     for message in messages:
         _send_text(token, chat_id, message)
     result["sent"] = True
+
+    if reached_milestones and state is not None:
+        mark_milestones_sent(state, reached_milestones)
+        result["sample_milestone_sent"] = True
 
     if digest_due and state is not None:
         state.setdefault("notifications", {})["telegram_last_digest_utc"] = current.isoformat(timespec="seconds")

@@ -156,6 +156,13 @@
     "telegram_digest_interval_hours": 4,
     "live_report_interval_hours": 4,
     "send_daily_scanner_report": true,
-    "live_report_branch": "paper-trading-live"
+    "live_report_branch": "paper-trading-live",
+    "sample_milestones": [
+      30,
+      100,
+      200,
+      300
+    ],
+    "sample_threshold_basis": "MAIN_INDEPENDENT_CLOSED_EVENTS"
   }
 }

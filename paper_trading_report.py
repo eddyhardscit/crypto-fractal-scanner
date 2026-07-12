@@ -16,6 +16,7 @@ import pandas as pd
 
 from paper_trading_config import load_config
 from paper_trading_engine import STATE_PATH, TRADE_LOG_PATH
+from paper_trading_sample_watch import sample_snapshot
 
 REPORTS_DIR = Path("reports")
 REPORT_PATH = REPORTS_DIR / "paper_trading_report.md"
@@ -223,6 +224,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
     initial = float(state.get("initial_capital_eur", config["initial_capital_eur"]))
     configured_initial = float(config["initial_capital_eur"])
     target = float(config["monthly_target_eur"])
+    sample = sample_snapshot(state, config)
 
     lines = [
         "# Paper trading automatico KuCoin",
@@ -271,6 +273,55 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
             ]
         )
 
+    next_milestone = sample.get("next_milestone")
+    next_text = (
+        f"{next_milestone} (mancano {sample['remaining_to_next']})"
+        if next_milestone is not None
+        else "tutte le soglie raggiunte"
+    )
+    lines.extend(
+        [
+            "## Stato del campione statistico",
+            "",
+            md_table(
+                [
+                    "MAIN eventi indip.",
+                    "Sistema eventi indip.",
+                    "Stato",
+                    "Prossima soglia",
+                ],
+                [[
+                    sample["main_independent_events"],
+                    sample["system_independent_events"],
+                    sample["status"],
+                    next_text,
+                ]],
+            ),
+            "",
+            (
+                f"- Trade MAIN chiusi: **{sample['closed_trades']}**; "
+                f"win rate **{fmt_pct(sample['win_rate_pct'])}**; "
+                f"profit factor **{fmt_num(sample['profit_factor'])}**."
+            ),
+            (
+                f"- Expectancy: **{fmt_eur(sample['expectancy_eur'])}** "
+                f"per trade; P&L netto: "
+                f"**{fmt_eur(sample['net_pnl_eur'])}**; "
+                f"max drawdown: "
+                f"**{fmt_pct(sample['max_drawdown_pct'])}**."
+            ),
+            f"- Valutazione: **{sample['meaning']}**",
+            (
+                "- Soglie automatiche Telegram: **30, 100, 200 "
+                "e 300 eventi indipendenti chiusi del MAIN**."
+            ),
+            (
+                "- Una soglia richiede una valutazione; non attiva "
+                "automaticamente il trading reale."
+            ),
+            "",
+        ]
+    )
     lines.extend(["## Confronto portafogli", ""])
     ordered = sorted(metrics, key=lambda row: (not row["is_main"], -float(row["equity_eur"])))
     comparison_rows = []
