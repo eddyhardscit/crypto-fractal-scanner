@@ -12,6 +12,12 @@ from typing import Any
 
 from kucoin_public_data import CACHE_PATH, collect_market_bundle
 from paper_signal_engine import generate_signals
+from paper_trading_diagnostics import (
+    annotate_market_freshness,
+    build_signal_diagnostics,
+    finalize_signal_diagnostics,
+    write_signal_diagnostics,
+)
 from paper_trading_config import load_config
 from paper_trading_engine import (
     current_prices,
@@ -154,17 +160,50 @@ def collect_with_fallback(config: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> None:
     config = load_config()
-    bundle = collect_with_fallback(config)
-    signals = generate_signals(bundle, config)
+    bundle = annotate_market_freshness(
+        collect_with_fallback(config),
+        config,
+    )
+    raw_signals = generate_signals(bundle, config)
     state = load_state(config)
+    signal_diagnostics = build_signal_diagnostics(
+        bundle,
+        config,
+        raw_signals,
+        state,
+    )
+    executable_ids = set(
+        signal_diagnostics.get(
+            "executable_signal_ids",
+            [],
+        )
+    )
+    signals = [
+        signal
+        for signal in raw_signals
+        if signal.signal_id in executable_ids
+    ]
 
     before = _position_snapshot(state, bundle)
-    summary = run_execution_cycle(state, signals, bundle, config)
+    summary = run_execution_cycle(
+        state,
+        signals,
+        bundle,
+        config,
+    )
     after = _position_snapshot(state, bundle)
     summary["trailing_updates"] = _trailing_updates(before, after)
     risk_alerts, risk_recoveries = _risk_changes(state, bundle, config)
     summary["risk_alerts"] = risk_alerts
     summary["risk_recoveries"] = risk_recoveries
+    signal_diagnostics = finalize_signal_diagnostics(
+        signal_diagnostics,
+        summary,
+    )
+    write_signal_diagnostics(signal_diagnostics)
+    summary["signal_diagnostics"] = (
+        signal_diagnostics.get("summary", {})
+    )
 
     current = datetime.now(timezone.utc)
     report = render_report(state, config)
@@ -216,6 +255,16 @@ def main() -> None:
         "market_source": bundle.get("source"),
         "assets": len(bundle.get("assets", {})),
         "signals": len(signals),
+        "signals_generated": len(raw_signals),
+        "signals_executable": len(signals),
+        "market_freshness": bundle.get(
+            "_paper_freshness",
+            {},
+        ),
+        "signal_diagnostics": signal_diagnostics.get(
+            "summary",
+            {},
+        ),
         "opened": summary.get("opened", []),
         "closed": summary.get("closed", []),
         "trailing_updates": summary.get("trailing_updates", []),
@@ -234,6 +283,12 @@ def main() -> None:
                 "market_source": bundle.get("source"),
                 "assets": len(bundle.get("assets", {})),
                 "signals": len(signals),
+                "signals_generated": len(raw_signals),
+                "signals_executable": len(signals),
+                "market_data_status": bundle.get(
+                    "_paper_freshness",
+                    {},
+                ).get("status"),
                 "opened": len(summary.get("opened", [])),
                 "closed": len(summary.get("closed", [])),
                 "trailing_updates": len(summary.get("trailing_updates", [])),

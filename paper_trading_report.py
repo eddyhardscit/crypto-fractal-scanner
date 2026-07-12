@@ -17,6 +17,7 @@ import pandas as pd
 from paper_trading_config import load_config
 from paper_trading_engine import STATE_PATH, TRADE_LOG_PATH
 from paper_trading_sample_watch import sample_snapshot
+from paper_trading_diagnostics import DIAGNOSTICS_PATH
 
 REPORTS_DIR = Path("reports")
 REPORT_PATH = REPORTS_DIR / "paper_trading_report.md"
@@ -54,6 +55,16 @@ def fmt_num(value: Any, digits: int = 2) -> str:
         if math.isinf(number):
             return "∞"
         return f"{number:.{digits}f}".replace(".", ",")
+    except Exception:
+        return "n/a"
+
+
+def fmt_minutes(value: Any) -> str:
+    try:
+        minutes = float(value)
+        if minutes < 60:
+            return f"{minutes:.1f} min".replace(".", ",")
+        return f"{minutes / 60.0:.2f} h".replace(".", ",")
     except Exception:
         return "n/a"
 
@@ -225,6 +236,14 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
     configured_initial = float(config["initial_capital_eur"])
     target = float(config["monthly_target_eur"])
     sample = sample_snapshot(state, config)
+    diagnostics = read_json(DIAGNOSTICS_PATH, {})
+    freshness = diagnostics.get("market", {})
+    freshness_status = str(
+        freshness.get("status", "UNKNOWN")
+    )
+    freshness_age = freshness.get(
+        "snapshot_age_minutes"
+    )
 
     lines = [
         "# Paper trading automatico KuCoin",
@@ -239,7 +258,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
         f"- Compounding: **{'ATTIVO' if config.get('compounding_enabled') else 'DISATTIVO'}**",
         f"- Reinvestimento dei profitti: **{fmt_pct(float(config.get('reinvestment_rate', 1.0)) * 100)}**",
         "- Politica target: **solo monitoraggio; il bot non aumenta il rischio per inseguirlo**",
-        f"- Ultimi prezzi: **{market_generated}**; conversione EUR/USDT: **{rate_source}**",
+        f"- Snapshot prezzi usato: **{market_generated}**; stato dati: **{freshness_status}**; età: **{fmt_minutes(freshness_age)}**; conversione EUR/USDT: **{rate_source}**",
         (
             "- Dashboard intraday: "
             f"[apri la pagina live](https://github.com/{os.getenv('GITHUB_REPOSITORY', 'eddyhardscit/crypto-fractal-scanner')}/blob/"
@@ -247,6 +266,195 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
         ),
         "",
     ]
+
+    lines.extend(
+        [
+            "## Freschezza dati di mercato",
+            "",
+            md_table(
+                [
+                    "Stato",
+                    "Fonte",
+                    "Snapshot mercato",
+                    "Controllato",
+                    "Età",
+                    "Limite",
+                    "Nuove entrate",
+                ],
+                [[
+                    freshness_status,
+                    freshness.get("source", "n/a"),
+                    freshness.get(
+                        "snapshot_generated_utc",
+                        market_generated,
+                    ),
+                    freshness.get(
+                        "checked_utc",
+                        "n/a",
+                    ),
+                    fmt_minutes(freshness_age),
+                    fmt_minutes(
+                        freshness.get(
+                            "stale_limit_minutes"
+                        )
+                    ),
+                    (
+                        "ABILITATE"
+                        if freshness.get(
+                            "new_entries_allowed"
+                        )
+                        else "BLOCCATE"
+                    ),
+                ]],
+            ),
+            "",
+        ]
+    )
+    if freshness_status != "FRESH":
+        lines.extend(
+            [
+                (
+                    "> ⚠️ I prezzi non vengono marcati come "
+                    "aggiornati artificialmente. Se KuCoin non "
+                    "risponde e viene usata la cache, il report "
+                    "mostra l'età reale e blocca le nuove entrate."
+                ),
+                "",
+            ]
+        )
+
+    timeframe_rows = []
+    for item in freshness.get(
+        "timeframes",
+        {},
+    ).values():
+        timeframe_rows.append(
+            [
+                f"{item.get('timeframe_minutes', 'n/a')}m",
+                item.get("assets_with_data", 0),
+                item.get(
+                    "latest_closed_candle_utc",
+                    "n/a",
+                ),
+                item.get(
+                    "oldest_closed_candle_utc",
+                    "n/a",
+                ),
+                fmt_minutes(
+                    item.get(
+                        "max_candle_age_minutes"
+                    )
+                ),
+                fmt_minutes(
+                    item.get(
+                        "allowed_age_minutes"
+                    )
+                ),
+                item.get("status", "UNKNOWN"),
+            ]
+        )
+    if timeframe_rows:
+        lines.extend(
+            [
+                md_table(
+                    [
+                        "TF",
+                        "Asset con dati",
+                        "Candela più recente",
+                        "Candela più vecchia",
+                        "Età massima",
+                        "Limite",
+                        "Stato",
+                    ],
+                    timeframe_rows,
+                ),
+                "",
+            ]
+        )
+
+    lines.extend(
+        [
+            "## Segnali quasi entrati / motivi di esclusione",
+            "",
+        ]
+    )
+    diagnostic_rows = []
+    for row in diagnostics.get(
+        "display_rows",
+        [],
+    ):
+        score = row.get("score")
+        gap = row.get("score_gap")
+        diagnostic_rows.append(
+            [
+                row.get("portfolio", ""),
+                row.get("asset", ""),
+                f"{row.get('timeframe_minutes', '')}m",
+                row.get("side", ""),
+                (
+                    fmt_num(score)
+                    if score is not None
+                    else "n/a"
+                ),
+                fmt_num(
+                    row.get("minimum_abs_score")
+                ),
+                (
+                    fmt_num(gap)
+                    if gap is not None
+                    else "n/a"
+                ),
+                row.get("status", ""),
+                fmt_minutes(
+                    row.get(
+                        "candle_age_minutes"
+                    )
+                ),
+                row.get("reason", ""),
+            ]
+        )
+    if diagnostic_rows:
+        lines.extend(
+            [
+                md_table(
+                    [
+                        "Portafoglio",
+                        "Asset",
+                        "TF",
+                        "Lato",
+                        "Score",
+                        "Soglia",
+                        "Manca",
+                        "Stato",
+                        "Età candela",
+                        "Motivo",
+                    ],
+                    diagnostic_rows,
+                ),
+                "",
+                (
+                    "**Manca** indica quanti punti servivano "
+                    "per raggiungere la soglia. "
+                    "`STRATEGY_FILTER` significa che lo score "
+                    "bastava, ma mancava breakout, momentum "
+                    "o forza relativa. `ALREADY_PROCESSED` "
+                    "significa che la stessa candela era già "
+                    "stata esaminata."
+                ),
+                "",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                (
+                    "_Diagnostica non ancora disponibile: "
+                    "verrà creata alla prossima esecuzione "
+                    "del Paper Trading._"
+                ),
+                "",
+            ]
+        )
 
     if main:
         total_return = (float(main["equity_eur"]) / initial - 1.0) * 100.0 if initial > 0 else 0.0

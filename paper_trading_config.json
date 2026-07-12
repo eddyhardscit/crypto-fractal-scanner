@@ -163,6 +163,8 @@
       200,
       300
     ],
-    "sample_threshold_basis": "MAIN_INDEPENDENT_CLOSED_EVENTS"
+    "sample_threshold_basis": "MAIN_INDEPENDENT_CLOSED_EVENTS",
+    "near_miss_score_gap": 1.5,
+    "near_miss_max_rows": 20
   }
 }
