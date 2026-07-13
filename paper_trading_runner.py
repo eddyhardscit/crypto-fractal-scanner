@@ -35,6 +35,7 @@ from paper_trading_trade_log_repair import (
 )
 from paper_trading_live_publish import publish_markdown
 from paper_trading_notify import notify
+from paper_trading_open_positions_notify import send_open_positions_report
 from research_all_signals import run_research_cycle
 # DOGE_REJECTION_SHORT_IMPORT
 from doge_rejection_short import run_doge_rejection_cycle
@@ -312,6 +313,35 @@ def main() -> None:
         telegram_result = {"configured": True, "sent": False, "error": str(exc)}
         print(f"Telegram paper trading non inviato: {exc}")
 
+    # OPEN_POSITIONS_TELEGRAM_SEPARATE_V5
+    open_positions_telegram_result = {
+        "configured": False,
+        "sent": False,
+        "messages": 0,
+        "skipped": True,
+    }
+    if telegram_result.get("account_summary_sent"):
+        try:
+            open_positions_telegram_result = (
+                send_open_positions_report(
+                    state,
+                    config,
+                    bundle,
+                    current,
+                )
+            )
+        except Exception as exc:
+            open_positions_telegram_result = {
+                "configured": True,
+                "sent": False,
+                "messages": 0,
+                "error": str(exc),
+            }
+            print(
+                "Telegram posizioni aperte non inviato: "
+                f"{exc}"
+            )
+
     try:
         scanner_telegram_result = send_scanner_if_changed(state, config, current)
     except Exception as exc:
@@ -357,6 +387,7 @@ def main() -> None:
         "risk_alerts": summary.get("risk_alerts", []),
         "risk_recoveries": summary.get("risk_recoveries", []),
         "telegram_paper": telegram_result,
+        "telegram_open_positions": open_positions_telegram_result,
         "telegram_scanner": scanner_telegram_result,
         "live_publication": publish_result,
     }
