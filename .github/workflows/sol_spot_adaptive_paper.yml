@@ -1,0 +1,133 @@
+name: SOL Spot Adaptive Range Paper Trading
+
+on:
+  schedule:
+    - cron: "4,19,34,49 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sol-spot-adaptive-paper-state
+  cancel-in-progress: false
+
+jobs:
+  paper-trading:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+      GITHUB_TOKEN: ${{ github.token }}
+      SOL_SPOT_ADAPTIVE_RELEASE_TAG: sol-spot-adaptive-v1
+      SOL_SPOT_ADAPTIVE_ASSET_NAME: sol-spot-adaptive-state.zip
+      SOL_SPOT_ADAPTIVE_CONFIG: sol_spot_adaptive_config.json
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: python -m pip install numpy pandas requests
+
+      - name: Validate paper-only safety
+        run: |
+          python -m py_compile \
+            sol_spot_adaptive_bot.py \
+            sol_spot_adaptive_storage.py
+          python sol_spot_adaptive_bot.py --self-test
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          config = json.loads(
+              Path("sol_spot_adaptive_config.json").read_text(encoding="utf-8")
+          )
+          assert config["mode"] == "PAPER_ONLY"
+          assert config["asset"] == "SOL"
+          assert config["symbol"] == "SOL-USDT"
+          assert config["initial_capital_eur"] == 40000.0
+          assert config["leverage"] == 1.0
+          assert config["allow_short"] is False
+          assert config["real_orders_enabled"] is False
+          assert config["public_data_only"] is True
+
+          source = Path("sol_spot_adaptive_bot.py").read_text(encoding="utf-8")
+          forbidden = (
+              "/api/v1/orders",
+              "/api/v1/order",
+              "/api/v1/hf/orders",
+              "KUCOIN_API_SECRET",
+              "KUCOIN_API_KEY",
+              "KUCOIN_API_PASSPHRASE",
+              "KC-API-KEY",
+              "KC-API-SIGN",
+              "KC-API-PASSPHRASE",
+          )
+          found = [token for token in forbidden if token in source]
+          if found:
+              raise SystemExit(f"Forbidden real-order capability found: {found}")
+
+          post_count = source.count("requests.post(")
+          telegram_post = (
+              "https://api.telegram.org/bot" in source
+              and "/sendMessage" in source
+          )
+          if post_count != 1 or not telegram_post:
+              raise SystemExit(
+                  "Only one Telegram sendMessage POST is permitted; "
+                  f"found post_count={post_count}."
+              )
+
+          for method in ("requests.put(", "requests.patch(", "requests.delete("):
+              if method in source:
+                  raise SystemExit(
+                      f"Unexpected write-capable HTTP method found: {method}"
+                  )
+          PY
+
+      - name: Restore dedicated SOL spot paper state
+        run: python sol_spot_adaptive_storage.py restore
+
+      - name: Run SOL spot adaptive paper cycle
+        run: python sol_spot_adaptive_bot.py
+
+      - name: Upload dedicated persistent state
+        run: python sol_spot_adaptive_storage.py upload
+
+      - name: Publish periodic human-readable report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add reports/sol_spot_adaptive_report.md
+          if git diff --cached --quiet; then
+            echo "SOL spot adaptive report unchanged."
+          else
+            git commit -m "Update SOL spot adaptive paper report"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Upload diagnostic artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-spot-adaptive-${{ github.run_id }}
+          path: |
+            reports/sol_spot_adaptive_report.md
+            reports/sol_spot_adaptive_latest.json
+            reports/sol_spot_adaptive_storage_status.json
+          if-no-files-found: warn
+          retention-days: 7
