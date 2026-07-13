@@ -1,0 +1,158 @@
+name: Install DOGE Short Status Message
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Install status notifier
+        shell: bash
+        run: |
+          echo 'IyAtKi0gY29kaW5nOiB1dGYtOCAtKi0KIiIiUGVyaW9kaWMgVGVsZWdyYW0gc3RhdHVzIGZvciB0aGUgZGVkaWNhdGVkIERPR0UgcmVqZWN0aW9uLXNob3J0IHBhcGVyIHNldHVwLiIiIgoKZnJvbSBfX2Z1dHVyZV9fIGltcG9ydCBhbm5vdGF0aW9ucwoKaW1wb3J0IGpzb24KaW1wb3J0IG1hdGgKaW1wb3J0IG9zCmZyb20gZGF0ZXRpbWUgaW1wb3J0IGRhdGV0aW1lLCB0aW1lZGVsdGEsIHRpbWV6b25lCmZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aApmcm9tIHR5cGluZyBpbXBvcnQgQW55CgppbXBvcnQgcmVxdWVzdHMKCgpSRVBPUlRTX0RJUiA9IFBhdGgoInJlcG9ydHMiKQpET0dFX0NPTkZJR19QQVRIID0gUGF0aCgiZG9nZV9yZWplY3Rpb25fc2hvcnRfY29uZmlnLmpzb24iKQpET0dFX1NUQVRFX1BBVEggPSBSRVBPUlRTX0RJUiAvICJkb2dlX3JlamVjdGlvbl9zaG9ydF9zdGF0ZS5qc29uIgpTVEFUVVNfU1RBVEVfUEFUSCA9IFJFUE9SVFNfRElSIC8gImRvZ2VfcmVqZWN0aW9uX3Nob3J0X3N0YXR1c19zdGF0ZS5qc29uIgoKCmRlZiBfc2FmZV9mbG9hdCh2YWx1ZTogQW55LCBkZWZhdWx0OiBmbG9hdCA9IDAuMCkgLT4gZmxvYXQ6CiAgICB0cnk6CiAgICAgICAgbnVtYmVyID0gZmxvYXQodmFsdWUpCiAgICAgICAgcmV0dXJuIG51bWJlciBpZiBtYXRoLmlzZmluaXRlKG51bWJlcikgZWxzZSBkZWZhdWx0CiAgICBleGNlcHQgRXhjZXB0aW9uOgogICAgICAgIHJldHVybiBkZWZhdWx0CgoKZGVmIF9wYXJzZV9pc28odmFsdWU6IEFueSkgLT4gZGF0ZXRpbWUgfCBOb25lOgogICAgaWYgbm90IHZhbHVlOgogICAgICAgIHJldHVybiBOb25lCiAgICB0cnk6CiAgICAgICAgcGFyc2VkID0gZGF0ZXRpbWUuZnJvbWlzb2Zvcm1hdChzdHIodmFsdWUpLnJlcGxhY2UoIloiLCAiKzAwOjAwIikpCiAgICAgICAgaWYgcGFyc2VkLnR6aW5mbyBpcyBOb25lOgogICAgICAgICAgICBwYXJzZWQgPSBwYXJzZWQucmVwbGFjZSh0emluZm89dGltZXpvbmUudXRjKQogICAgICAgIHJldHVybiBwYXJzZWQuYXN0aW1lem9uZSh0aW1lem9uZS51dGMpCiAgICBleGNlcHQgRXhjZXB0aW9uOgogICAgICAgIHJldHVybiBOb25lCgoKZGVmIF9pc28odmFsdWU6IGRhdGV0aW1lKSAtPiBzdHI6CiAgICByZXR1cm4gdmFsdWUuYXN0aW1lem9uZSh0aW1lem9uZS51dGMpLmlzb2Zvcm1hdCh0aW1lc3BlYz0ic2Vjb25kcyIpCgoKZGVmIF9yZWFkX2pzb24ocGF0aDogUGF0aCwgZGVmYXVsdDogZGljdFtzdHIsIEFueV0pIC0+IGRpY3Rbc3RyLCBBbnldOgogICAgaWYgbm90IHBhdGguZXhpc3RzKCk6CiAgICAgICAgcmV0dXJuIGRpY3QoZGVmYXVsdCkKICAgIHRyeToKICAgICAgICBsb2FkZWQgPSBqc29uLmxvYWRzKHBhdGgucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpKQogICAgICAgIHJldHVybiBsb2FkZWQgaWYgaXNpbnN0YW5jZShsb2FkZWQsIGRpY3QpIGVsc2UgZGljdChkZWZhdWx0KQogICAgZXhjZXB0IEV4Y2VwdGlvbjoKICAgICAgICByZXR1cm4gZGljdChkZWZhdWx0KQoKCmRlZiBfd3JpdGVfanNvbihwYXRoOiBQYXRoLCBwYXlsb2FkOiBkaWN0W3N0ciwgQW55XSkgLT4gTm9uZToKICAgIHBhdGgucGFyZW50Lm1rZGlyKHBhcmVudHM9VHJ1ZSwgZXhpc3Rfb2s9VHJ1ZSkKICAgIHRlbXAgPSBwYXRoLndpdGhfc3VmZml4KHBhdGguc3VmZml4ICsgIi50bXAiKQogICAgdGVtcC53cml0ZV90ZXh0KAogICAgICAgIGpzb24uZHVtcHMocGF5bG9hZCwgZW5zdXJlX2FzY2lpPUZhbHNlLCBpbmRlbnQ9MiksCiAgICAgICAgZW5jb2Rpbmc9InV0Zi04IiwKICAgICkKICAgIHRlbXAucmVwbGFjZShwYXRoKQoKCmRlZiBfZm10X3ByaWNlKHZhbHVlOiBBbnkpIC0+IHN0cjoKICAgIG51bWJlciA9IF9zYWZlX2Zsb2F0KHZhbHVlKQogICAgcmV0dXJuIGYie251bWJlcjouNmZ9Ii5yc3RyaXAoIjAiKS5yc3RyaXAoIi4iKQoKCmRlZiBfZm10X2V1cih2YWx1ZTogQW55LCBzaWduZWQ6IGJvb2wgPSBGYWxzZSkgLT4gc3RyOgogICAgbnVtYmVyID0gX3NhZmVfZmxvYXQodmFsdWUpCiAgICBwcmVmaXggPSAiKyIgaWYgc2lnbmVkIGFuZCBudW1iZXIgPiAwIGVsc2UgIiIKICAgIHJlbmRlcmVkID0gZiJ7cHJlZml4feKCrHtudW1iZXI6LC4yZn0iCiAgICByZXR1cm4gcmVuZGVyZWQucmVwbGFjZSgiLCIsICJYIikucmVwbGFjZSgiLiIsICIsIikucmVwbGFjZSgiWCIsICIuIikKCgpkZWYgX2ZtdF9kaXN0YW5jZShtYXJrOiBmbG9hdCwgbGV2ZWw6IGZsb2F0KSAtPiBzdHI6CiAgICBpZiBtYXJrIDw9IDAgb3IgbGV2ZWwgPD0gMDoKICAgICAgICByZXR1cm4gIm4vYSIKICAgIHZhbHVlID0gKGxldmVsIC8gbWFyayAtIDEuMCkgKiAxMDAuMAogICAgcHJlZml4ID0gIisiIGlmIHZhbHVlID4gMCBlbHNlICIiCiAgICByZXR1cm4gZiJ7cHJlZml4fXt2YWx1ZTouMmZ9JSIucmVwbGFjZSgiLiIsICIsIikKCgpkZWYgX3BoYXNlX3RleHQocGhhc2U6IHN0ciwgbWFyazogZmxvYXQsIGNvbmZpZzogZGljdFtzdHIsIEFueV0pIC0+IHN0cjoKICAgIHByZWFsZXJ0ID0gX3NhZmVfZmxvYXQoY29uZmlnLmdldCgicHJlYWxlcnRfcHJpY2UiKSwgMC4wNzY1KQogICAgYXJtZWQgPSBfc2FmZV9mbG9hdChjb25maWcuZ2V0KCJhcm1lZF9wcmljZSIpLCAwLjA3NzUpCiAgICB0cmlnZ2VyID0gX3NhZmVfZmxvYXQoY29uZmlnLmdldCgidHJpZ2dlcl9wcmljZSIpLCAwLjA3ODApCiAgICBpbnZhbGlkYXRpb24gPSBfc2FmZV9mbG9hdCgKICAgICAgICBjb25maWcuZ2V0KCJiZWFyaXNoX2ludmFsaWRhdGlvbl9jbG9zZSIpLAogICAgICAgIDAuMDc5NjYsCiAgICApCgogICAgaWYgcGhhc2UgPT0gIk9QRU4iOgogICAgICAgIHJldHVybiAiUG9zaXppb25lIHBhcGVyIGFwZXJ0YSBlIGdlc3RpdGEgYXV0b21hdGljYW1lbnRlLiIKICAgIGlmIHBoYXNlID09ICJDT09MRE9XTiI6CiAgICAgICAgcmV0dXJuICJQYXVzYSBkb3BvIGxhIGNoaXVzdXJhOyBuZXNzdW4gbnVvdm8gaW5ncmVzc28uIgogICAgaWYgcGhhc2UgPT0gIklOVkFMSURBVEVEIjoKICAgICAgICByZXR1cm4gIlNldHVwIGFubnVsbGF0bzsgYXR0ZW5kZSBpbCByaWFybW8gc290dG8gMCwwNzU1MC4iCiAgICBpZiBtYXJrIDw9IDA6CiAgICAgICAgcmV0dXJuICJQcmV6em8gRE9HRSBub24gZGlzcG9uaWJpbGUuIgogICAgaWYgbWFyayA8IHByZWFsZXJ0OgogICAgICAgIHJldHVybiAoCiAgICAgICAgICAgICJGdW9yaSBkYWxsYSB6b25hOiBtYW5jYSAiCiAgICAgICAgICAgIGYie19mbXRfZGlzdGFuY2UobWFyaywgcHJlYWxlcnQpfSBhbCBwcmUtYWxsYXJtZS4iCiAgICAgICAgKQogICAgaWYgbWFyayA8IGFybWVkOgogICAgICAgIHJldHVybiAiUHJlLWFsbGFybWU6IERPR0Ugc2kgc3RhIGF2dmljaW5hbmRvIGFsbGEgem9uYSBzaG9ydC4iCiAgICBpZiBtYXJrIDwgdHJpZ2dlcjoKICAgICAgICByZXR1cm4gIlpvbmEgYXJtYXRhOiBhdHRlbmRlIGlsIHRlc3QgZGkgMCwwNzggZSBsYSByZWplY3Rpb24gMTVtLiIKICAgIGlmIG1hcmsgPCBpbnZhbGlkYXRpb246CiAgICAgICAgcmV0dXJuICJEZW50cm8gbGEgem9uYSB0cmlnZ2VyOiBhdHRlbmRlIHVuYSBjaGl1c3VyYSAxNW0gcmVzcGludGEuIgogICAgcmV0dXJuICJTb3ByYSBs4oCZaW52YWxpZGF6aW9uZTogbmVzc3VuYSBlbnRyYXRhIHNob3J0IGZpbmNow6kgbm9uIHJpZW50cmEuIgoKCmRlZiBfZHVlKAogICAgc3RhdHVzX3N0YXRlOiBkaWN0W3N0ciwgQW55XSwKICAgIGNvbmZpZzogZGljdFtzdHIsIEFueV0sCiAgICBjdXJyZW50OiBkYXRldGltZSwKKSAtPiB0dXBsZVtib29sLCBzdHJdOgogICAgbWFudWFsID0gb3MuZ2V0ZW52KCJHSVRIVUJfRVZFTlRfTkFNRSIsICIiKS5zdHJpcCgpID09ICJ3b3JrZmxvd19kaXNwYXRjaCIKICAgIGZvcmNlID0gKAogICAgICAgIG9zLmdldGVudigiRE9HRV9TVEFUVVNfRk9SQ0UiLCAiIikuc3RyaXAoKS5sb3dlcigpCiAgICAgICAgaW4geyIxIiwgInRydWUiLCAieWVzIn0KICAgICAgICBvciBvcy5nZXRlbnYoIlRFTEVHUkFNX0ZPUkNFX1NVTU1BUlkiLCAiIikuc3RyaXAoKS5sb3dlcigpCiAgICAgICAgaW4geyIxIiwgInRydWUiLCAieWVzIn0KICAgICkKICAgIGlmIGZvcmNlOgogICAgICAgIHJldHVybiBUcnVlLCAiZm9yY2VkIgogICAgaWYgbWFudWFsIGFuZCBib29sKGNvbmZpZy5nZXQoInRlbGVncmFtX3N0YXR1c19vbl9tYW51YWwiLCBUcnVlKSk6CiAgICAgICAgcmV0dXJuIFRydWUsICJtYW51YWwiCgogICAgaW50ZXJ2YWwgPSBfc2FmZV9mbG9hdCgKICAgICAgICBjb25maWcuZ2V0KCJ0ZWxlZ3JhbV9zdGF0dXNfaW50ZXJ2YWxfaG91cnMiKSwKICAgICAgICA0LjAsCiAgICApCiAgICBpZiBpbnRlcnZhbCA8PSAwOgogICAgICAgIHJldHVybiBGYWxzZSwgImRpc2FibGVkIgoKICAgIGxhc3QgPSBfcGFyc2VfaXNvKHN0YXR1c19zdGF0ZS5nZXQoImxhc3Rfc2VudF91dGMiKSkKICAgIGlmIGxhc3QgaXMgTm9uZSBvciBjdXJyZW50IC0gbGFzdCA+PSB0aW1lZGVsdGEoaG91cnM9aW50ZXJ2YWwpOgogICAgICAgIHJldHVybiBUcnVlLCAicGVyaW9kaWMiCiAgICByZXR1cm4gRmFsc2UsICJub3RfZHVlIgoKCmRlZiBfYnVpbGRfbWVzc2FnZSgKICAgIGJ1bmRsZTogZGljdFtzdHIsIEFueV0sCiAgICBjb25maWc6IGRpY3Rbc3RyLCBBbnldLAogICAgc3RhdGU6IGRpY3Rbc3RyLCBBbnldLAogICAgY3VycmVudDogZGF0ZXRpbWUsCikgLT4gc3RyOgogICAgYXNzZXRzID0gYnVuZGxlLmdldCgiYXNzZXRzIiwge30pCiAgICBtYXJrID0gX3NhZmVfZmxvYXQoYXNzZXRzLmdldCgiRE9HRSIsIHt9KS5nZXQoIm1hcmtfcHJpY2UiKSkKICAgIGV1cl9yYXRlID0gX3NhZmVfZmxvYXQoYnVuZGxlLmdldCgiZXVyX3VzZHRfcmF0ZSIpLCAxLjApIG9yIDEuMAogICAgcGhhc2UgPSBzdHIoc3RhdGUuZ2V0KCJwaGFzZSIsICJXQUlUSU5HIikpLnVwcGVyKCkKCiAgICBsYXN0X2NoZWNrcyA9IHN0YXRlLmdldCgibGFzdF9jaGVja3MiLCB7fSkKICAgIHN0YXRpYyA9IGxhc3RfY2hlY2tzLmdldCgic3RhdGljIiwge30pIGlmIGlzaW5zdGFuY2UobGFzdF9jaGVja3MsIGRpY3QpIGVsc2Uge30KICAgIHJlamVjdGlvbiA9ICgKICAgICAgICBsYXN0X2NoZWNrcy5nZXQoInJlamVjdGlvbiIsIHt9KQogICAgICAgIGlmIGlzaW5zdGFuY2UobGFzdF9jaGVja3MsIGRpY3QpCiAgICAgICAgZWxzZSB7fQogICAgKQogICAgY2hlY2tzID0gKAogICAgICAgIHN0YXRpYy5nZXQoImNoZWNrcyIsIHt9KQogICAgICAgIGlmIGlzaW5zdGFuY2Uoc3RhdGljLCBkaWN0KQogICAgICAgIGVsc2Uge30KICAgICkKCiAgICBmaWx0ZXJfa2V5cyA9IFsKICAgICAgICAiZnJlc2hfbWFya2V0IiwKICAgICAgICAiY2FuZGxlXzE1bV9mcmVzaCIsCiAgICAgICAgImdsb2JhbF9iZWFyaXNoIiwKICAgICAgICAiY2xhc3NpY19iZWFyaXNoIiwKICAgICAgICAicmVsYXRpdmVfd2VhayIsCiAgICAgICAgImJlYXJpc2hfcGF0dGVybl92YWxpZCIsCiAgICAgICAgImJ0Y19ub3RfYnJlYWtpbmdfb3V0IiwKICAgIF0KICAgIHBhc3NlZCA9IHN1bShib29sKGNoZWNrcy5nZXQoa2V5KSkgZm9yIGtleSBpbiBmaWx0ZXJfa2V5cykKCiAgICBwcmVhbGVydCA9IF9zYWZlX2Zsb2F0KGNvbmZpZy5nZXQoInByZWFsZXJ0X3ByaWNlIiksIDAuMDc2NSkKICAgIGFybWVkID0gX3NhZmVfZmxvYXQoY29uZmlnLmdldCgiYXJtZWRfcHJpY2UiKSwgMC4wNzc1KQogICAgdHJpZ2dlciA9IF9zYWZlX2Zsb2F0KGNvbmZpZy5nZXQoInRyaWdnZXJfcHJpY2UiKSwgMC4wNzgwKQogICAgcmVzaXN0YW5jZSA9IF9zYWZlX2Zsb2F0KGNvbmZpZy5nZXQoInJlc2lzdGFuY2VfcHJpY2UiKSwgMC4wNzkyMykKICAgIGludmFsaWRhdGlvbiA9IF9zYWZlX2Zsb2F0KAogICAgICAgIGNvbmZpZy5nZXQoImJlYXJpc2hfaW52YWxpZGF0aW9uX2Nsb3NlIiksCiAgICAgICAgMC4wNzk2NiwKICAgICkKICAgIG1pbl9zdG9wID0gX3NhZmVfZmxvYXQoY29uZmlnLmdldCgibWluaW11bV9zdG9wX3ByaWNlIiksIDAuMDgwNjApCiAgICBtYXhfc3RvcCA9IF9zYWZlX2Zsb2F0KGNvbmZpZy5nZXQoIm1heGltdW1fc3RvcF9wcmljZSIpLCAwLjA4MTIwKQoKICAgIGxpbmVzID0gWwogICAgICAgICLwn46vIERPR0UgU0hPUlQg4oKsMy42MDAgwrcgU1RBVE8gREVESUNBVE8iLAogICAgICAgICJQYXBlciBvbmx5IOKAlCBuZXNzdW4gb3JkaW5lIHJlYWxlLiIsCiAgICAgICAgIiIsCiAgICAgICAgZiJET0dFOiB7X2ZtdF9wcmljZShtYXJrKX0iLAogICAgICAgIGYiU3RhdG86IHtwaGFzZX0iLAogICAgICAgIF9waGFzZV90ZXh0KHBoYXNlLCBtYXJrLCBjb25maWcpLAogICAgICAgICIiLAogICAgICAgICJMSVZFTExJIERFTCBTRVRVUCIsCiAgICAgICAgKAogICAgICAgICAgICBmIlByZS1hbGxhcm1lIHtfZm10X3ByaWNlKHByZWFsZXJ0KX0gIgogICAgICAgICAgICBmIih7X2ZtdF9kaXN0YW5jZShtYXJrLCBwcmVhbGVydCl9IGRhbCBwcmV6em8pIgogICAgICAgICksCiAgICAgICAgKAogICAgICAgICAgICBmIlpvbmEgYXJtYXRhIHtfZm10X3ByaWNlKGFybWVkKX0gIgogICAgICAgICAgICBmIih7X2ZtdF9kaXN0YW5jZShtYXJrLCBhcm1lZCl9IGRhbCBwcmV6em8pIgogICAgICAgICksCiAgICAgICAgKAogICAgICAgICAgICBmIlRyaWdnZXIgcmVqZWN0aW9uIHtfZm10X3ByaWNlKHRyaWdnZXIpfSAiCiAgICAgICAgICAgIGYiKHtfZm10X2Rpc3RhbmNlKG1hcmssIHRyaWdnZXIpfSBkYWwgcHJlenpvKSIKICAgICAgICApLAogICAgICAgICgKICAgICAgICAgICAgZiJSZXNpc3RlbnphIHtfZm10X3ByaWNlKHJlc2lzdGFuY2UpfSDCtyAiCiAgICAgICAgICAgIGYiaW52YWxpZGF6aW9uZSAxNW0ge19mbXRfcHJpY2UoaW52YWxpZGF0aW9uKX0iCiAgICAgICAgKSwKICAgICAgICAoCiAgICAgICAgICAgIGYiU3RvcCBwcmV2aXN0byB7X2ZtdF9wcmljZShtaW5fc3RvcCl94oCTIgogICAgICAgICAgICBmIntfZm10X3ByaWNlKG1heF9zdG9wKX0iCiAgICAgICAgKSwKICAgICAgICAiVFAgMCwwNzEwNyAvIDAsMDY5NjEgLyAwLDA2NCAvIDAsMDYwIiwKICAgICAgICAiIiwKICAgICAgICBmIkZJTFRSSSBWQUxJREk6IHtwYXNzZWR9L3tsZW4oZmlsdGVyX2tleXMpfSIsCiAgICAgICAgKAogICAgICAgICAgICBmInsn4pyFJyBpZiBjaGVja3MuZ2V0KCdmcmVzaF9tYXJrZXQnKSBlbHNlICfinYwnfSBkYXRpIGZyZXNjaGkgwrcgIgogICAgICAgICAgICBmInsn4pyFJyBpZiBjaGVja3MuZ2V0KCdjYW5kbGVfMTVtX2ZyZXNoJykgZWxzZSAn4p2MJ30gY2FuZGVsYSAxNW0iCiAgICAgICAgKSwKICAgICAgICAoCiAgICAgICAgICAgIGYieyfinIUnIGlmIGNoZWNrcy5nZXQoJ2dsb2JhbF9iZWFyaXNoJykgZWxzZSAn4p2MJ30gIgogICAgICAgICAgICBmIkdsb2JhbCB7X3NhZmVfZmxvYXQoc3RhdGljLmdldCgnZ2xvYmFsX3Njb3JlJykpOisuMGZ9IMK3ICIKICAgICAgICAgICAgZiJ7J+KchScgaWYgY2hlY2tzLmdldCgnY2xhc3NpY19iZWFyaXNoJykgZWxzZSAn4p2MJ30gIgogICAgICAgICAgICBmIkNsYXNzaWMge19zYWZlX2Zsb2F0KHN0YXRpYy5nZXQoJ2NsYXNzaWNfcmF3X3Njb3JlJykpOisuMGZ9IgogICAgICAgICksCiAgICAgICAgKAogICAgICAgICAgICBmInsn4pyFJyBpZiBjaGVja3MuZ2V0KCdyZWxhdGl2ZV93ZWFrJykgZWxzZSAn4p2MJ30gIgogICAgICAgICAgICBmIkRPR0UvQlRDIHtfc2FmZV9mbG9hdChzdGF0aWMuZ2V0KCdyZWxhdGl2ZV9yYXdfc2NvcmUnKSk6Ky4wZn0gwrcgIgogICAgICAgICAgICBmInsn4pyFJyBpZiBjaGVja3MuZ2V0KCdiZWFyaXNoX3BhdHRlcm5fdmFsaWQnKSBlbHNlICfinYwnfSAiCiAgICAgICAgICAgIGYicGF0dGVybiB7c3RhdGljLmdldCgnYmVhcmlzaF9wYXR0ZXJuX3N0YXR1cycsICduL2EnKX0iCiAgICAgICAgKSwKICAgICAgICAoCiAgICAgICAgICAgIGYieyfinIUnIGlmIGNoZWNrcy5nZXQoJ2J0Y19ub3RfYnJlYWtpbmdfb3V0JykgZWxzZSAn4p2MJ30gIgogICAgICAgICAgICBmIkJUQyB7X2ZtdF9wcmljZShzdGF0aWMuZ2V0KCdidGNfbWFyaycpKX0gIgogICAgICAgICAgICBmIjwge19mbXRfcHJpY2UoY29uZmlnLmdldCgnYnRjX2JyZWFrb3V0X2ZpbHRlcicsIDY1NTQ0KSl9IgogICAgICAgICksCiAgICAgICAgIiIsCiAgICAgICAgIlVMVElNQSBDQU5ERUxBIDE1bSIsCiAgICAgICAgKAogICAgICAgICAgICBmIkhpZ2gge19mbXRfcHJpY2UocmVqZWN0aW9uLmdldCgnaGlnaCcpKX0gwrcgIgogICAgICAgICAgICBmImNsb3NlIHtfZm10X3ByaWNlKHJlamVjdGlvbi5nZXQoJ2Nsb3NlJykpfSIKICAgICAgICApLAogICAgICAgICgKICAgICAgICAgICAgZiJXaWNrIGFsdGEgIgogICAgICAgICAgICBmIntfc2FmZV9mbG9hdChyZWplY3Rpb24uZ2V0KCd1cHBlcl93aWNrX3JhdGlvJykpICogMTAwOi4xZn0lIMK3ICIKICAgICAgICAgICAgZiJ2b2x1bWUgeHtfc2FmZV9mbG9hdChyZWplY3Rpb24uZ2V0KCd2b2x1bWVfcmF0aW8nKSk6LjJmfSIKICAgICAgICApLAogICAgICAgICgKICAgICAgICAgICAgIlJlamVjdGlvbiBjb21wbGV0YTogIgogICAgICAgICAgICBmInsnU8OMJyBpZiByZWplY3Rpb24uZ2V0KCdhY2NlcHRlZCcpIGVsc2UgJ05PJ30iCiAgICAgICAgKSwKICAgIF0KCiAgICBwb3NpdGlvbiA9IHN0YXRlLmdldCgicG9zaXRpb24iKQogICAgaWYgaXNpbnN0YW5jZShwb3NpdGlvbiwgZGljdCk6CiAgICAgICAgZW50cnkgPSBfc2FmZV9mbG9hdChwb3NpdGlvbi5nZXQoImVudHJ5X3ByaWNlIikpCiAgICAgICAgcXVhbnRpdHkgPSBfc2FmZV9mbG9hdChwb3NpdGlvbi5nZXQoInJlbWFpbmluZ19xdWFudGl0eSIpKQogICAgICAgIHVucmVhbGl6ZWQgPSAoZW50cnkgLSBtYXJrKSAqIHF1YW50aXR5IC8gZXVyX3JhdGUKICAgICAgICBiYWxhbmNlID0gX3NhZmVfZmxvYXQoc3RhdGUuZ2V0KCJiYWxhbmNlX2V1ciIpKQogICAgICAgIGVxdWl0eSA9IGJhbGFuY2UgKyB1bnJlYWxpemVkCiAgICAgICAgbGluZXMuZXh0ZW5kKAogICAgICAgICAgICBbCiAgICAgICAgICAgICAgICAiIiwKICAgICAgICAgICAgICAgICLwn5OMIFBPU0laSU9ORSBQQVBFUiBBUEVSVEEiLAogICAgICAgICAgICAgICAgKAogICAgICAgICAgICAgICAgICAgIGYiRW50cnkge19mbXRfcHJpY2UoZW50cnkpfSDCtyAiCiAgICAgICAgICAgICAgICAgICAgZiJtYXJrIHtfZm10X3ByaWNlKG1hcmspfSIKICAgICAgICAgICAgICAgICksCiAgICAgICAgICAgICAgICAoCiAgICAgICAgICAgICAgICAgICAgZiJTdG9wIHtfZm10X3ByaWNlKHBvc2l0aW9uLmdldCgnc3RvcF9wcmljZScpKX0gwrcgIgogICAgICAgICAgICAgICAgICAgIGYibGlxdWlkYXppb25lIHN0aW1hdGEgIgogICAgICAgICAgICAgICAgICAgIGYie19mbXRfcHJpY2UocG9zaXRpb24uZ2V0KCdsaXF1aWRhdGlvbl9wcmljZScpKX0iCiAgICAgICAgICAgICAgICApLAogICAgICAgICAgICAgICAgKAogICAgICAgICAgICAgICAgICAgIGYiTWFyZ2luZSB7X2ZtdF9ldXIocG9zaXRpb24uZ2V0KCdtYXJnaW5fZXVyJykpfSDCtyAiCiAgICAgICAgICAgICAgICAgICAgZiJlc3Bvc2l6aW9uZSByZXNpZHVhICIKICAgICAgICAgICAgICAgICAgICBmIntfZm10X2V1cihwb3NpdGlvbi5nZXQoJ3JlbWFpbmluZ19ub3Rpb25hbF9ldXInKSl9IgogICAgICAgICAgICAgICAgKSwKICAgICAgICAgICAgICAgICgKICAgICAgICAgICAgICAgICAgICBmIlAmTCBhcGVydG8ge19mbXRfZXVyKHVucmVhbGl6ZWQsIHNpZ25lZD1UcnVlKX0gwrcgIgogICAgICAgICAgICAgICAgICAgIGYiZXF1aXR5IHtfZm10X2V1cihlcXVpdHkpfSIKICAgICAgICAgICAgICAgICksCiAgICAgICAgICAgIF0KICAgICAgICApCiAgICBlbHNlOgogICAgICAgIGxpbmVzLmV4dGVuZCgKICAgICAgICAgICAgWwogICAgICAgICAgICAgICAgIiIsCiAgICAgICAgICAgICAgICAiTmVzc3VuYSBwb3NpemlvbmUgYXBlcnRhLiIsCiAgICAgICAgICAgICAgICAoCiAgICAgICAgICAgICAgICAgICAgIklsIGJvdCBjb250aW51YSBhIGNvbnRyb2xsYXJlIGlsIHNldHVwIG9nbmkgMTUgbWludXRpICIKICAgICAgICAgICAgICAgICAgICAiZSBpbnZpZXLDoCBzdWJpdG8gcHJlLWFsbGFybWUsIHpvbmEgYXJtYXRhIG8gZW50cmF0YS4iCiAgICAgICAgICAgICAgICApLAogICAgICAgICAgICBdCiAgICAgICAgKQoKICAgIGxpbmVzLmV4dGVuZChbIiIsIGYiQ29udHJvbGxhdG86IHtfaXNvKGN1cnJlbnQpfSJdKQogICAgcmV0dXJuICJcbiIuam9pbihsaW5lcykKCgpkZWYgc2VuZF9kb2dlX3Nob3J0X3N0YXR1cygKICAgIGJ1bmRsZTogZGljdFtzdHIsIEFueV0sCiAgICBub3c6IGRhdGV0aW1lIHwgTm9uZSA9IE5vbmUsCikgLT4gZGljdFtzdHIsIEFueV06CiAgICBjdXJyZW50ID0gKG5vdyBvciBkYXRldGltZS5ub3codGltZXpvbmUudXRjKSkuYXN0aW1lem9uZSh0aW1lem9uZS51dGMpCiAgICBjb25maWcgPSBfcmVhZF9qc29uKAogICAgICAgIERPR0VfQ09ORklHX1BBVEgsCiAgICAgICAgewogICAgICAgICAgICAidGVsZWdyYW1fc3RhdHVzX2ludGVydmFsX2hvdXJzIjogNC4wLAogICAgICAgICAgICAidGVsZWdyYW1fc3RhdHVzX29uX21hbnVhbCI6IFRydWUsCiAgICAgICAgfSwKICAgICkKICAgIHN0YXR1c19zdGF0ZSA9IF9yZWFkX2pzb24oU1RBVFVTX1NUQVRFX1BBVEgsIHt9KQogICAgZHVlLCByZWFzb24gPSBfZHVlKHN0YXR1c19zdGF0ZSwgY29uZmlnLCBjdXJyZW50KQoKICAgIHJlc3VsdDogZGljdFtzdHIsIEFueV0gPSB7CiAgICAgICAgImNvbmZpZ3VyZWQiOiBGYWxzZSwKICAgICAgICAic2VudCI6IEZhbHNlLAogICAgICAgICJkdWUiOiBkdWUsCiAgICAgICAgInJlYXNvbiI6IHJlYXNvbiwKICAgIH0KICAgIGlmIG5vdCBkdWU6CiAgICAgICAgcmV0dXJuIHJlc3VsdAoKICAgIHRva2VuID0gb3MuZ2V0ZW52KCJURUxFR1JBTV9CT1RfVE9LRU4iLCAiIikuc3RyaXAoKQogICAgY2hhdF9pZCA9IG9zLmdldGVudigiVEVMRUdSQU1fQ0hBVF9JRCIsICIiKS5zdHJpcCgpCiAgICByZXN1bHRbImNvbmZpZ3VyZWQiXSA9IGJvb2wodG9rZW4gYW5kIGNoYXRfaWQpCiAgICBpZiBub3QgdG9rZW4gb3Igbm90IGNoYXRfaWQ6CiAgICAgICAgcmVzdWx0WyJlcnJvciJdID0gIlRlbGVncmFtIG5vbiBjb25maWd1cmF0byIKICAgICAgICByZXR1cm4gcmVzdWx0CgogICAgZG9nZV9zdGF0ZSA9IF9yZWFkX2pzb24oRE9HRV9TVEFURV9QQVRILCB7fSkKICAgIG1lc3NhZ2UgPSBfYnVpbGRfbWVzc2FnZSgKICAgICAgICBidW5kbGUsCiAgICAgICAgY29uZmlnLAogICAgICAgIGRvZ2Vfc3RhdGUsCiAgICAgICAgY3VycmVudCwKICAgICkKICAgIHJlc3BvbnNlID0gcmVxdWVzdHMucG9zdCgKICAgICAgICBmImh0dHBzOi8vYXBpLnRlbGVncmFtLm9yZy9ib3R7dG9rZW59L3NlbmRNZXNzYWdlIiwKICAgICAgICBqc29uPXsKICAgICAgICAgICAgImNoYXRfaWQiOiBjaGF0X2lkLAogICAgICAgICAgICAidGV4dCI6IG1lc3NhZ2UsCiAgICAgICAgICAgICJkaXNhYmxlX3dlYl9wYWdlX3ByZXZpZXciOiBUcnVlLAogICAgICAgIH0sCiAgICAgICAgdGltZW91dD0yMCwKICAgICkKICAgIHJlc3BvbnNlLnJhaXNlX2Zvcl9zdGF0dXMoKQoKICAgIHN0YXR1c19zdGF0ZVsibGFzdF9zZW50X3V0YyJdID0gX2lzbyhjdXJyZW50KQogICAgc3RhdHVzX3N0YXRlWyJsYXN0X3JlYXNvbiJdID0gcmVhc29uCiAgICBzdGF0dXNfc3RhdGVbImxhc3RfcHJpY2UiXSA9IF9zYWZlX2Zsb2F0KAogICAgICAgIGJ1bmRsZS5nZXQoImFzc2V0cyIsIHt9KS5nZXQoIkRPR0UiLCB7fSkuZ2V0KCJtYXJrX3ByaWNlIikKICAgICkKICAgIF93cml0ZV9qc29uKFNUQVRVU19TVEFURV9QQVRILCBzdGF0dXNfc3RhdGUpCgogICAgcmVzdWx0WyJzZW50Il0gPSBUcnVlCiAgICByZXN1bHRbInByaWNlIl0gPSBzdGF0dXNfc3RhdGVbImxhc3RfcHJpY2UiXQogICAgcmV0dXJuIHJlc3VsdAo=' | base64 --decode > doge_short_status_notify.py
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          runner_path = Path("paper_trading_runner.py")
+          storage_path = Path("paper_trading_storage.py")
+          config_path = Path("doge_rejection_short_config.json")
+
+          if not runner_path.exists():
+              raise SystemExit("paper_trading_runner.py non trovato")
+          if not storage_path.exists():
+              raise SystemExit("paper_trading_storage.py non trovato")
+          if not config_path.exists():
+              raise SystemExit(
+                  "doge_rejection_short_config.json non trovato: "
+                  "installare prima la strategia DOGE"
+              )
+
+          runner = runner_path.read_text(encoding="utf-8")
+          import_line = (
+              "from doge_short_status_notify "
+              "import send_doge_short_status\n"
+          )
+          if import_line not in runner:
+              anchor = (
+                  "from doge_rejection_short "
+                  "import run_doge_rejection_cycle\n"
+              )
+              if anchor not in runner:
+                  raise SystemExit("Anchor import DOGE non trovato")
+              runner = runner.replace(
+                  anchor,
+                  anchor + import_line,
+                  1,
+              )
+
+          marker = "# DOGE_SHORT_STATUS_TELEGRAM_START"
+          if marker not in runner:
+              anchor = "    # DOGE_REJECTION_SHORT_CYCLE_END\n"
+              if anchor not in runner:
+                  raise SystemExit("Anchor ciclo DOGE non trovato")
+              block = """    # DOGE_SHORT_STATUS_TELEGRAM_START
+              try:
+                  doge_status_result = send_doge_short_status(bundle)
+              except Exception as exc:
+                  doge_status_result = {
+                      "configured": True,
+                      "sent": False,
+                      "error": str(exc),
+                  }
+                  print(f"Stato Telegram DOGE non inviato: {exc}")
+              # DOGE_SHORT_STATUS_TELEGRAM_END
+
+          """
+              runner = runner.replace(
+                  anchor,
+                  anchor + block,
+                  1,
+              )
+          runner_path.write_text(runner, encoding="utf-8")
+
+          storage = storage_path.read_text(encoding="utf-8")
+          status_file = '    "doge_rejection_short_status_state.json",\n'
+          if status_file not in storage:
+              anchor = '    "doge_rejection_short_latest.json",\n'
+              if anchor not in storage:
+                  raise SystemExit("Anchor storage DOGE non trovato")
+              storage = storage.replace(
+                  anchor,
+                  anchor + status_file,
+                  1,
+              )
+          storage_path.write_text(storage, encoding="utf-8")
+
+          config = json.loads(
+              config_path.read_text(encoding="utf-8")
+          )
+          config["telegram_status_interval_hours"] = 4.0
+          config["telegram_status_on_manual"] = True
+          config_path.write_text(
+              json.dumps(
+                  config,
+                  ensure_ascii=False,
+                  indent=2,
+              ) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Validate installation
+        shell: bash
+        run: |
+          python -m py_compile             doge_short_status_notify.py             paper_trading_runner.py             paper_trading_storage.py
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          runner = Path("paper_trading_runner.py").read_text(
+              encoding="utf-8"
+          )
+          storage = Path("paper_trading_storage.py").read_text(
+              encoding="utf-8"
+          )
+          config = json.loads(
+              Path("doge_rejection_short_config.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+
+          assert "send_doge_short_status" in runner
+          assert "# DOGE_SHORT_STATUS_TELEGRAM_START" in runner
+          assert "doge_rejection_short_status_state.json" in storage
+          assert float(
+              config["telegram_status_interval_hours"]
+          ) == 4.0
+          assert config["telegram_status_on_manual"] is True
+          print("Self-test completato.")
+          PY
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email             "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add             doge_short_status_notify.py             doge_rejection_short_config.json             paper_trading_runner.py             paper_trading_storage.py
+
+          if git diff --cached --quiet; then
+            echo "Installazione già presente."
+          else
+            git commit -m               "Add periodic DOGE short Telegram status"
+            git push origin HEAD:main
+          fi
