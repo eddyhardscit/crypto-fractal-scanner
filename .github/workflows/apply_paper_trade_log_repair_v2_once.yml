@@ -1,0 +1,432 @@
+name: Repair Paper Trade Log CSV V2
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install paper-trading dependencies
+        run: python -m pip install -r requirements-paper-trading.txt
+
+      - name: Install resilient trade-log repair
+        shell: bash
+        run: |
+          echo 'IyAtKi0gY29kaW5nOiB1dGYtOCAtKi0KIiIiUmVwYWlyIGFuZCByZXNpbGllbnRseSByZWFkIHRoZSBwZXJzaXN0ZW50IHBhcGVyLXRyYWRpbmcgY2xvc2VkLXRyYWRlIENTVi4KClRoZSByZXBhaXIgaXMgZGVsaWJlcmF0ZWx5IGNvbnNlcnZhdGl2ZToKLSB0aGUgb3JpZ2luYWwgZmlsZSBpcyBiYWNrZWQgdXAgYmVmb3JlIHRoZSBmaXJzdCByZXdyaXRlOwotIGJhbGFuY2VzIGFuZCBvcGVuIHBvc2l0aW9ucyBhcmUgbmV2ZXIgY2hhbmdlZDsKLSByb3dzIHRoYXQgY2Fubm90IGJlIG1hcHBlZCBzYWZlbHkgYXJlIHF1YXJhbnRpbmVkIGluc3RlYWQgb2YgZ3Vlc3NlZDsKLSBrbm93biBoaXN0b3JpY2FsIHNjaGVtYXMgYXJlIG5vcm1hbGl6ZWQgdG8gdGhlIGN1cnJlbnQgVFJBREVfRklFTERTIHNjaGVtYS4KIiIiCgpmcm9tIF9fZnV0dXJlX18gaW1wb3J0IGFubm90YXRpb25zCgppbXBvcnQgY3N2CmltcG9ydCBqc29uCmltcG9ydCBtYXRoCmZyb20gY29sbGVjdGlvbnMgaW1wb3J0IGRlZmF1bHRkaWN0CmZyb20gZGF0ZXRpbWUgaW1wb3J0IGRhdGV0aW1lLCB0aW1lem9uZQpmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGgKZnJvbSB0eXBpbmcgaW1wb3J0IEFueSwgSXRlcmFibGUKCmltcG9ydCBwYW5kYXMgYXMgcGQKCgpSRVBPUlRTX0RJUiA9IFBhdGgoInJlcG9ydHMiKQpCQUNLVVBfUEFUSCA9IFJFUE9SVFNfRElSIC8gInBhcGVyX3RyYWRpbmdfdHJhZGVfbG9nX2JlZm9yZV9yZXBhaXIuY3N2IgpRVUFSQU5USU5FX1BBVEggPSBSRVBPUlRTX0RJUiAvICJwYXBlcl90cmFkaW5nX3RyYWRlX2xvZ19xdWFyYW50aW5lLmNzdiIKU1RBVFVTX1BBVEggPSBSRVBPUlRTX0RJUiAvICJwYXBlcl90cmFkaW5nX3RyYWRlX2xvZ19yZXBhaXJfc3RhdHVzLmpzb24iCgpLTk9XTl9PUFRJT05BTF9GSUVMRFMgPSAoCiAgICAiZXhwZXJpbWVudF9ncm91cF9pZCIsCiAgICAibGlxdWlkYXRpb25fcHJpY2UiLAopCgoKZGVmIF9pc29fbm93KCkgLT4gc3RyOgogICAgcmV0dXJuIGRhdGV0aW1lLm5vdyh0aW1lem9uZS51dGMpLmlzb2Zvcm1hdCh0aW1lc3BlYz0ic2Vjb25kcyIpCgoKZGVmIF9zYWZlX2Zsb2F0KHZhbHVlOiBBbnksIGRlZmF1bHQ6IGZsb2F0ID0gMC4wKSAtPiBmbG9hdDoKICAgIHRyeToKICAgICAgICBudW1iZXIgPSBmbG9hdCh2YWx1ZSkKICAgICAgICByZXR1cm4gbnVtYmVyIGlmIG1hdGguaXNmaW5pdGUobnVtYmVyKSBlbHNlIGRlZmF1bHQKICAgIGV4Y2VwdCBFeGNlcHRpb246CiAgICAgICAgcmV0dXJuIGRlZmF1bHQKCgpkZWYgX3dyaXRlX3N0YXR1cyhwYXlsb2FkOiBkaWN0W3N0ciwgQW55XSkgLT4gTm9uZToKICAgIFNUQVRVU19QQVRILnBhcmVudC5ta2RpcihwYXJlbnRzPVRydWUsIGV4aXN0X29rPVRydWUpCiAgICBTVEFUVVNfUEFUSC53cml0ZV90ZXh0KAogICAgICAgIGpzb24uZHVtcHMocGF5bG9hZCwgZW5zdXJlX2FzY2lpPUZhbHNlLCBpbmRlbnQ9MiksCiAgICAgICAgZW5jb2Rpbmc9InV0Zi04IiwKICAgICkKCgpkZWYgX2NhbmRpZGF0ZV9zY2hlbWFzKAogICAgY2Fub25pY2FsX2ZpZWxkczogbGlzdFtzdHJdLAogICAgZmlsZV9oZWFkZXI6IGxpc3Rbc3RyXSwKKSAtPiBsaXN0W2xpc3Rbc3RyXV06CiAgICBjYW5kaWRhdGVzOiBsaXN0W2xpc3Rbc3RyXV0gPSBbXQoKICAgIGRlZiBhZGQoZmllbGRzOiBJdGVyYWJsZVtzdHJdKSAtPiBOb25lOgogICAgICAgIGNhbmRpZGF0ZSA9IGxpc3QoZmllbGRzKQogICAgICAgIGlmIGNhbmRpZGF0ZSBhbmQgY2FuZGlkYXRlIG5vdCBpbiBjYW5kaWRhdGVzOgogICAgICAgICAgICBjYW5kaWRhdGVzLmFwcGVuZChjYW5kaWRhdGUpCgogICAgYWRkKGZpbGVfaGVhZGVyKQogICAgYWRkKGNhbm9uaWNhbF9maWVsZHMpCgogICAgZm9yIG1pc3NpbmcgaW4gS05PV05fT1BUSU9OQUxfRklFTERTOgogICAgICAgIGFkZChmaWVsZCBmb3IgZmllbGQgaW4gY2Fub25pY2FsX2ZpZWxkcyBpZiBmaWVsZCAhPSBtaXNzaW5nKQoKICAgIGFkZCgKICAgICAgICBmaWVsZAogICAgICAgIGZvciBmaWVsZCBpbiBjYW5vbmljYWxfZmllbGRzCiAgICAgICAgaWYgZmllbGQgbm90IGluIHNldChLTk9XTl9PUFRJT05BTF9GSUVMRFMpCiAgICApCgogICAgaWYgc2V0KGZpbGVfaGVhZGVyKS5pc3N1YnNldChzZXQoY2Fub25pY2FsX2ZpZWxkcykpOgogICAgICAgIGFkZChmaWxlX2hlYWRlcikKCiAgICByZXR1cm4gY2FuZGlkYXRlcwoKCmRlZiBfbG9va3NfbGlrZV9oZWFkZXIocm93OiBsaXN0W3N0cl0sIGNhbm9uaWNhbF9maWVsZHM6IGxpc3Rbc3RyXSkgLT4gYm9vbDoKICAgIHZhbHVlcyA9IHtzdHIodmFsdWUpLnN0cmlwKCkgZm9yIHZhbHVlIGluIHJvdyBpZiBzdHIodmFsdWUpLnN0cmlwKCl9CiAgICByZXR1cm4gKAogICAgICAgICJ0cmFkZV9pZCIgaW4gdmFsdWVzCiAgICAgICAgYW5kICJwb3J0Zm9saW8iIGluIHZhbHVlcwogICAgICAgIGFuZCAoIm5ldF9wbmxfZXVyIiBpbiB2YWx1ZXMgb3IgImNsb3NlZF9hdCIgaW4gdmFsdWVzKQogICAgICAgIGFuZCBsZW4odmFsdWVzLmludGVyc2VjdGlvbihjYW5vbmljYWxfZmllbGRzKSkgPj0gNQogICAgKQoKCmRlZiBfbWFwX3JvdygKICAgIHJvdzogbGlzdFtzdHJdLAogICAgZmlsZV9oZWFkZXI6IGxpc3Rbc3RyXSwKICAgIGNhbm9uaWNhbF9maWVsZHM6IGxpc3Rbc3RyXSwKKSAtPiB0dXBsZVtkaWN0W3N0ciwgc3RyXSB8IE5vbmUsIHN0cl06CiAgICBjYW5kaWRhdGVzID0gX2NhbmRpZGF0ZV9zY2hlbWFzKGNhbm9uaWNhbF9maWVsZHMsIGZpbGVfaGVhZGVyKQogICAgZXhhY3QgPSBbc2NoZW1hIGZvciBzY2hlbWEgaW4gY2FuZGlkYXRlcyBpZiBsZW4oc2NoZW1hKSA9PSBsZW4ocm93KV0KCiAgICBpZiBsZW4ocm93KSA9PSBsZW4oY2Fub25pY2FsX2ZpZWxkcyk6CiAgICAgICAgc2NoZW1hID0gY2Fub25pY2FsX2ZpZWxkcwogICAgICAgIHJlYXNvbiA9ICJjdXJyZW50X3dpZHRoIgogICAgZWxpZiBleGFjdDoKICAgICAgICBzY2hlbWEgPSBleGFjdFswXQogICAgICAgIHJlYXNvbiA9ICJtYXRjaGluZ19zY2hlbWEiCiAgICBlbGlmIGxlbihyb3cpIDwgbGVuKGZpbGVfaGVhZGVyKToKICAgICAgICBzY2hlbWEgPSBmaWxlX2hlYWRlcgogICAgICAgIHJvdyA9IHJvdyArIFsiIl0gKiAobGVuKHNjaGVtYSkgLSBsZW4ocm93KSkKICAgICAgICByZWFzb24gPSAicGFkZGVkX2xlZ2FjeV9yb3ciCiAgICBlbHNlOgogICAgICAgIHJldHVybiBOb25lLCAidW5zdXBwb3J0ZWRfd2lkdGgiCgogICAgbWFwcGVkID0ge2ZpZWxkOiAiIiBmb3IgZmllbGQgaW4gY2Fub25pY2FsX2ZpZWxkc30KICAgIGZvciBmaWVsZCwgdmFsdWUgaW4gemlwKHNjaGVtYSwgcm93KToKICAgICAgICBpZiBmaWVsZCBpbiBtYXBwZWQ6CiAgICAgICAgICAgIG1hcHBlZFtmaWVsZF0gPSB2YWx1ZQoKICAgIHJlcXVpcmVkID0gKCJ0cmFkZV9pZCIsICJwb3J0Zm9saW8iLCAiYXNzZXQiLCAic2lkZSIsICJjbG9zZWRfYXQiKQogICAgaWYgYW55KG5vdCBzdHIobWFwcGVkLmdldChmaWVsZCwgIiIpKS5zdHJpcCgpIGZvciBmaWVsZCBpbiByZXF1aXJlZCk6CiAgICAgICAgcmV0dXJuIE5vbmUsICJtaXNzaW5nX3JlcXVpcmVkX2ZpZWxkcyIKCiAgICBzaWRlID0gc3RyKG1hcHBlZC5nZXQoInNpZGUiLCAiIikpLnVwcGVyKCkKICAgIGlmIHNpZGUgbm90IGluIHsiTE9ORyIsICJTSE9SVCJ9OgogICAgICAgIHJldHVybiBOb25lLCAiaW52YWxpZF9zaWRlIgoKICAgIHJldHVybiBtYXBwZWQsIHJlYXNvbgoKCmRlZiBfZGVkdXBlX2tleShyZWNvcmQ6IGRpY3Rbc3RyLCBzdHJdKSAtPiB0dXBsZVtzdHIsIHN0ciwgc3RyXToKICAgIHJldHVybiAoCiAgICAgICAgc3RyKHJlY29yZC5nZXQoInRyYWRlX2lkIiwgIiIpKS5zdHJpcCgpLAogICAgICAgIHN0cihyZWNvcmQuZ2V0KCJwb3J0Zm9saW8iLCAiIikpLnN0cmlwKCksCiAgICAgICAgc3RyKHJlY29yZC5nZXQoImNsb3NlZF9hdCIsICIiKSkuc3RyaXAoKSwKICAgICkKCgpkZWYgX3dyaXRlX2Nhbm9uaWNhbCgKICAgIHBhdGg6IFBhdGgsCiAgICBjYW5vbmljYWxfZmllbGRzOiBsaXN0W3N0cl0sCiAgICByZWNvcmRzOiBsaXN0W2RpY3Rbc3RyLCBzdHJdXSwKKSAtPiBOb25lOgogICAgcGF0aC5wYXJlbnQubWtkaXIocGFyZW50cz1UcnVlLCBleGlzdF9vaz1UcnVlKQogICAgdGVtcCA9IHBhdGgud2l0aF9zdWZmaXgocGF0aC5zdWZmaXggKyAiLnRtcCIpCiAgICB3aXRoIHRlbXAub3BlbigidyIsIGVuY29kaW5nPSJ1dGYtOCIsIG5ld2xpbmU9IiIpIGFzIGhhbmRsZToKICAgICAgICB3cml0ZXIgPSBjc3YuRGljdFdyaXRlcigKICAgICAgICAgICAgaGFuZGxlLAogICAgICAgICAgICBmaWVsZG5hbWVzPWNhbm9uaWNhbF9maWVsZHMsCiAgICAgICAgICAgIGV4dHJhc2FjdGlvbj0iaWdub3JlIiwKICAgICAgICApCiAgICAgICAgd3JpdGVyLndyaXRlaGVhZGVyKCkKICAgICAgICB3cml0ZXIud3JpdGVyb3dzKHJlY29yZHMpCiAgICB0ZW1wLnJlcGxhY2UocGF0aCkKCgpkZWYgX3dyaXRlX3F1YXJhbnRpbmUocm93czogbGlzdFtkaWN0W3N0ciwgQW55XV0pIC0+IE5vbmU6CiAgICBpZiBub3Qgcm93czoKICAgICAgICBpZiBRVUFSQU5USU5FX1BBVEguZXhpc3RzKCk6CiAgICAgICAgICAgIFFVQVJBTlRJTkVfUEFUSC51bmxpbmsoKQogICAgICAgIHJldHVybgogICAgUVVBUkFOVElORV9QQVRILnBhcmVudC5ta2RpcihwYXJlbnRzPVRydWUsIGV4aXN0X29rPVRydWUpCiAgICB3aXRoIFFVQVJBTlRJTkVfUEFUSC5vcGVuKAogICAgICAgICJ3IiwKICAgICAgICBlbmNvZGluZz0idXRmLTgiLAogICAgICAgIG5ld2xpbmU9IiIsCiAgICApIGFzIGhhbmRsZToKICAgICAgICB3cml0ZXIgPSBjc3YuRGljdFdyaXRlcigKICAgICAgICAgICAgaGFuZGxlLAogICAgICAgICAgICBmaWVsZG5hbWVzPSgibGluZV9udW1iZXIiLCAicmVhc29uIiwgInJhd19qc29uIiksCiAgICAgICAgKQogICAgICAgIHdyaXRlci53cml0ZWhlYWRlcigpCiAgICAgICAgd3JpdGVyLndyaXRlcm93cyhyb3dzKQoKCmRlZiByZXBhaXJfdHJhZGVfbG9nKAogICAgcGF0aDogUGF0aCwKICAgIGNhbm9uaWNhbF9maWVsZHM6IGxpc3Rbc3RyXSwKKSAtPiBkaWN0W3N0ciwgQW55XToKICAgICIiIk5vcm1hbGl6ZSB0aGUgdHJhZGUgbG9nIGFuZCByZXR1cm4gcmVjb3ZlcmVkIHJlY29yZHMgcGx1cyBhIHN1bW1hcnkuIiIiCiAgICBwYXRoID0gUGF0aChwYXRoKQogICAgY2Fub25pY2FsX2ZpZWxkcyA9IGxpc3QoY2Fub25pY2FsX2ZpZWxkcykKICAgIHJlc3VsdDogZGljdFtzdHIsIEFueV0gPSB7CiAgICAgICAgImdlbmVyYXRlZF91dGMiOiBfaXNvX25vdygpLAogICAgICAgICJwYXRoIjogc3RyKHBhdGgpLAogICAgICAgICJleGlzdHMiOiBwYXRoLmV4aXN0cygpLAogICAgICAgICJyZXdyaXR0ZW4iOiBGYWxzZSwKICAgICAgICAiYmFja3VwX2NyZWF0ZWQiOiBGYWxzZSwKICAgICAgICAicm93c19iZWZvcmUiOiAwLAogICAgICAgICJyb3dzX2FmdGVyIjogMCwKICAgICAgICAicm93c19yZWNvdmVyZWQiOiAwLAogICAgICAgICJyb3dzX3F1YXJhbnRpbmVkIjogMCwKICAgICAgICAiZHVwbGljYXRlc19yZW1vdmVkIjogMCwKICAgICAgICAiaGVhZGVyX2JlZm9yZSI6IFtdLAogICAgICAgICJoZWFkZXJfYWZ0ZXIiOiBjYW5vbmljYWxfZmllbGRzLAogICAgICAgICJyZWNvcmRzIjogW10sCiAgICB9CgogICAgaWYgbm90IHBhdGguZXhpc3RzKCkgb3IgcGF0aC5zdGF0KCkuc3Rfc2l6ZSA9PSAwOgogICAgICAgIF93cml0ZV9zdGF0dXMoe2s6IHYgZm9yIGssIHYgaW4gcmVzdWx0Lml0ZW1zKCkgaWYgayAhPSAicmVjb3JkcyJ9KQogICAgICAgIHJldHVybiByZXN1bHQKCiAgICByYXdfYnl0ZXMgPSBwYXRoLnJlYWRfYnl0ZXMoKQogICAgdGV4dCA9IHJhd19ieXRlcy5kZWNvZGUoInV0Zi04LXNpZyIsIGVycm9ycz0icmVwbGFjZSIpCiAgICByb3dzID0gbGlzdChjc3YucmVhZGVyKHRleHQuc3BsaXRsaW5lcygpKSkKICAgIG5vbmVtcHR5ID0gWwogICAgICAgIChsaW5lX251bWJlciwgcm93KQogICAgICAgIGZvciBsaW5lX251bWJlciwgcm93IGluIGVudW1lcmF0ZShyb3dzLCBzdGFydD0xKQogICAgICAgIGlmIHJvdyBhbmQgYW55KHN0cih2YWx1ZSkuc3RyaXAoKSBmb3IgdmFsdWUgaW4gcm93KQogICAgXQogICAgaWYgbm90IG5vbmVtcHR5OgogICAgICAgIF93cml0ZV9zdGF0dXMoe2s6IHYgZm9yIGssIHYgaW4gcmVzdWx0Lml0ZW1zKCkgaWYgayAhPSAicmVjb3JkcyJ9KQogICAgICAgIHJldHVybiByZXN1bHQKCiAgICBfLCBmaWxlX2hlYWRlciA9IG5vbmVtcHR5WzBdCiAgICBmaWxlX2hlYWRlciA9IFtzdHIodmFsdWUpLnN0cmlwKCkgZm9yIHZhbHVlIGluIGZpbGVfaGVhZGVyXQogICAgcmVzdWx0WyJoZWFkZXJfYmVmb3JlIl0gPSBmaWxlX2hlYWRlcgoKICAgIHJlY292ZXJlZDogbGlzdFtkaWN0W3N0ciwgc3RyXV0gPSBbXQogICAgcXVhcmFudGluZTogbGlzdFtkaWN0W3N0ciwgQW55XV0gPSBbXQogICAgc2Vlbjogc2V0W3R1cGxlW3N0ciwgc3RyLCBzdHJdXSA9IHNldCgpCgogICAgZm9yIGxpbmVfbnVtYmVyLCByb3cgaW4gbm9uZW1wdHlbMTpdOgogICAgICAgIGlmIF9sb29rc19saWtlX2hlYWRlcihyb3csIGNhbm9uaWNhbF9maWVsZHMpOgogICAgICAgICAgICBjb250aW51ZQoKICAgICAgICBtYXBwZWQsIHJlYXNvbiA9IF9tYXBfcm93KAogICAgICAgICAgICBbc3RyKHZhbHVlKSBmb3IgdmFsdWUgaW4gcm93XSwKICAgICAgICAgICAgZmlsZV9oZWFkZXIsCiAgICAgICAgICAgIGNhbm9uaWNhbF9maWVsZHMsCiAgICAgICAgKQogICAgICAgIGlmIG1hcHBlZCBpcyBOb25lOgogICAgICAgICAgICBxdWFyYW50aW5lLmFwcGVuZCgKICAgICAgICAgICAgICAgIHsKICAgICAgICAgICAgICAgICAgICAibGluZV9udW1iZXIiOiBsaW5lX251bWJlciwKICAgICAgICAgICAgICAgICAgICAicmVhc29uIjogcmVhc29uLAogICAgICAgICAgICAgICAgICAgICJyYXdfanNvbiI6IGpzb24uZHVtcHMocm93LCBlbnN1cmVfYXNjaWk9RmFsc2UpLAogICAgICAgICAgICAgICAgfQogICAgICAgICAgICApCiAgICAgICAgICAgIGNvbnRpbnVlCgogICAgICAgIGtleSA9IF9kZWR1cGVfa2V5KG1hcHBlZCkKICAgICAgICBpZiBrZXkgaW4gc2VlbjoKICAgICAgICAgICAgcmVzdWx0WyJkdXBsaWNhdGVzX3JlbW92ZWQiXSArPSAxCiAgICAgICAgICAgIGNvbnRpbnVlCiAgICAgICAgc2Vlbi5hZGQoa2V5KQogICAgICAgIHJlY292ZXJlZC5hcHBlbmQobWFwcGVkKQoKICAgIHJlc3VsdFsicm93c19iZWZvcmUiXSA9IG1heCgwLCBsZW4obm9uZW1wdHkpIC0gMSkKICAgIHJlc3VsdFsicm93c19hZnRlciJdID0gbGVuKHJlY292ZXJlZCkKICAgIHJlc3VsdFsicm93c19yZWNvdmVyZWQiXSA9IGxlbihyZWNvdmVyZWQpCiAgICByZXN1bHRbInJvd3NfcXVhcmFudGluZWQiXSA9IGxlbihxdWFyYW50aW5lKQogICAgcmVzdWx0WyJyZWNvcmRzIl0gPSByZWNvdmVyZWQKCiAgICBuZWVkc19yZXdyaXRlID0gKAogICAgICAgIGZpbGVfaGVhZGVyICE9IGNhbm9uaWNhbF9maWVsZHMKICAgICAgICBvciBib29sKHF1YXJhbnRpbmUpCiAgICAgICAgb3IgcmVzdWx0WyJkdXBsaWNhdGVzX3JlbW92ZWQiXSA+IDAKICAgICAgICBvciByZXN1bHRbInJvd3NfYmVmb3JlIl0gIT0gcmVzdWx0WyJyb3dzX2FmdGVyIl0KICAgICkKCiAgICBpZiBuZWVkc19yZXdyaXRlOgogICAgICAgIGlmIG5vdCBCQUNLVVBfUEFUSC5leGlzdHMoKToKICAgICAgICAgICAgQkFDS1VQX1BBVEgucGFyZW50Lm1rZGlyKHBhcmVudHM9VHJ1ZSwgZXhpc3Rfb2s9VHJ1ZSkKICAgICAgICAgICAgQkFDS1VQX1BBVEgud3JpdGVfYnl0ZXMocmF3X2J5dGVzKQogICAgICAgICAgICByZXN1bHRbImJhY2t1cF9jcmVhdGVkIl0gPSBUcnVlCiAgICAgICAgX3dyaXRlX2Nhbm9uaWNhbChwYXRoLCBjYW5vbmljYWxfZmllbGRzLCByZWNvdmVyZWQpCiAgICAgICAgX3dyaXRlX3F1YXJhbnRpbmUocXVhcmFudGluZSkKICAgICAgICByZXN1bHRbInJld3JpdHRlbiJdID0gVHJ1ZQoKICAgIF93cml0ZV9zdGF0dXMoe2s6IHYgZm9yIGssIHYgaW4gcmVzdWx0Lml0ZW1zKCkgaWYgayAhPSAicmVjb3JkcyJ9KQogICAgcmV0dXJuIHJlc3VsdAoKCmRlZiBlbnN1cmVfdHJhZGVfbG9nX3NjaGVtYSgKICAgIHBhdGg6IFBhdGgsCiAgICBjYW5vbmljYWxfZmllbGRzOiBsaXN0W3N0cl0sCikgLT4gZGljdFtzdHIsIEFueV06CiAgICAiIiJSZXBhaXIgdGhlIGZpbGUgYmVmb3JlIGFwcGVuZGluZyBhbm90aGVyIGNsb3NlZCB0cmFkZS4iIiIKICAgIHJldHVybiByZXBhaXJfdHJhZGVfbG9nKHBhdGgsIGNhbm9uaWNhbF9maWVsZHMpCgoKZGVmIGxvYWRfdHJhZGVfZnJhbWVfcmVzaWxpZW50KAogICAgcGF0aDogUGF0aCwKICAgIGNhbm9uaWNhbF9maWVsZHM6IGxpc3Rbc3RyXSwKKSAtPiBwZC5EYXRhRnJhbWU6CiAgICByZXN1bHQgPSByZXBhaXJfdHJhZGVfbG9nKHBhdGgsIGNhbm9uaWNhbF9maWVsZHMpCiAgICByZWNvcmRzID0gbGlzdChyZXN1bHQuZ2V0KCJyZWNvcmRzIiwgW10pKQogICAgaWYgbm90IHJlY29yZHM6CiAgICAgICAgcmV0dXJuIHBkLkRhdGFGcmFtZShjb2x1bW5zPWxpc3QoY2Fub25pY2FsX2ZpZWxkcykpCiAgICByZXR1cm4gcGQuRGF0YUZyYW1lKHJlY29yZHMsIGNvbHVtbnM9bGlzdChjYW5vbmljYWxfZmllbGRzKSkKCgpkZWYgZmFsbGJhY2tfbWV0cmljc19mcm9tX3BvcnRmb2xpbygKICAgIHBvcnRmb2xpbzogZGljdFtzdHIsIEFueV0sCikgLT4gZGljdFtzdHIsIEFueV06CiAgICBjbG9zZWQgPSBpbnQocG9ydGZvbGlvLmdldCgiY2xvc2VkX3RyYWRlcyIsIDApIG9yIDApCiAgICB3aW5zID0gaW50KHBvcnRmb2xpby5nZXQoIndpbm5pbmdfdHJhZGVzIiwgMCkgb3IgMCkKICAgIGdyb3NzX3Byb2ZpdCA9IF9zYWZlX2Zsb2F0KHBvcnRmb2xpby5nZXQoImdyb3NzX3Byb2ZpdF9ldXIiKSwgMC4wKQogICAgZ3Jvc3NfbG9zcyA9IF9zYWZlX2Zsb2F0KHBvcnRmb2xpby5nZXQoImdyb3NzX2xvc3NfZXVyIiksIDAuMCkKICAgIG5ldCA9IGdyb3NzX3Byb2ZpdCAtIGdyb3NzX2xvc3MKICAgIHJldHVybiB7CiAgICAgICAgImNsb3NlZF90cmFkZXMiOiBjbG9zZWQsCiAgICAgICAgIndpbm5pbmdfdHJhZGVzIjogd2lucywKICAgICAgICAibmV0X3BubF9ldXIiOiBuZXQsCiAgICAgICAgImV4cGVjdGFuY3lfZXVyIjogbmV0IC8gY2xvc2VkIGlmIGNsb3NlZCBlbHNlIDAuMCwKICAgICAgICAid2luX3JhdGVfcGN0Ijogd2lucyAvIGNsb3NlZCAqIDEwMC4wIGlmIGNsb3NlZCBlbHNlIDAuMCwKICAgICAgICAicHJvZml0X2ZhY3RvciI6ICgKICAgICAgICAgICAgZ3Jvc3NfcHJvZml0IC8gZ3Jvc3NfbG9zcwogICAgICAgICAgICBpZiBncm9zc19sb3NzID4gMAogICAgICAgICAgICBlbHNlIChtYXRoLmluZiBpZiBncm9zc19wcm9maXQgPiAwIGVsc2UgMC4wKQogICAgICAgICksCiAgICB9CgoKZGVmIHJlY29uY2lsZV9zdGF0ZV9jb3VudGVycygKICAgIHN0YXRlOiBkaWN0W3N0ciwgQW55XSwKICAgIHJlY29yZHM6IGxpc3RbZGljdFtzdHIsIEFueV1dLAopIC0+IGRpY3Rbc3RyLCBBbnldOgogICAgIiIiUmVidWlsZCBhZ2dyZWdhdGUgY2xvc2VkLXRyYWRlIGNvdW50ZXJzIHdpdGhvdXQgdG91Y2hpbmcgYmFsYW5jZXMuIiIiCiAgICBncm91cGVkOiBkaWN0W3N0ciwgbGlzdFtkaWN0W3N0ciwgQW55XV1dID0gZGVmYXVsdGRpY3QobGlzdCkKICAgIGZvciByZWNvcmQgaW4gcmVjb3JkczoKICAgICAgICBncm91cGVkW3N0cihyZWNvcmQuZ2V0KCJwb3J0Zm9saW8iLCAiIikpXS5hcHBlbmQocmVjb3JkKQoKICAgIHVwZGF0ZWQ6IGxpc3Rbc3RyXSA9IFtdCiAgICBza2lwcGVkOiBsaXN0W3N0cl0gPSBbXQogICAgZm9yIG5hbWUsIHBvcnRmb2xpbyBpbiBzdGF0ZS5nZXQoInBvcnRmb2xpb3MiLCB7fSkuaXRlbXMoKToKICAgICAgICByb3dzID0gZ3JvdXBlZC5nZXQoc3RyKG5hbWUpLCBbXSkKICAgICAgICBpZiBub3Qgcm93czoKICAgICAgICAgICAgc2tpcHBlZC5hcHBlbmQoc3RyKG5hbWUpKQogICAgICAgICAgICBjb250aW51ZQoKICAgICAgICBleGlzdGluZ19jb3VudCA9IGludChwb3J0Zm9saW8uZ2V0KCJjbG9zZWRfdHJhZGVzIiwgMCkgb3IgMCkKICAgICAgICBpZiBsZW4ocm93cykgPCBleGlzdGluZ19jb3VudDoKICAgICAgICAgICAgc2tpcHBlZC5hcHBlbmQoc3RyKG5hbWUpKQogICAgICAgICAgICBjb250aW51ZQoKICAgICAgICBwbmwgPSBbX3NhZmVfZmxvYXQocm93LmdldCgibmV0X3BubF9ldXIiKSwgMC4wKSBmb3Igcm93IGluIHJvd3NdCiAgICAgICAgcG9ydGZvbGlvWyJjbG9zZWRfdHJhZGVzIl0gPSBsZW4ocm93cykKICAgICAgICBwb3J0Zm9saW9bIndpbm5pbmdfdHJhZGVzIl0gPSBzdW0odmFsdWUgPiAwIGZvciB2YWx1ZSBpbiBwbmwpCiAgICAgICAgcG9ydGZvbGlvWyJncm9zc19wcm9maXRfZXVyIl0gPSBzdW0odmFsdWUgZm9yIHZhbHVlIGluIHBubCBpZiB2YWx1ZSA+IDApCiAgICAgICAgcG9ydGZvbGlvWyJncm9zc19sb3NzX2V1ciJdID0gYWJzKAogICAgICAgICAgICBzdW0odmFsdWUgZm9yIHZhbHVlIGluIHBubCBpZiB2YWx1ZSA8IDApCiAgICAgICAgKQogICAgICAgIHVwZGF0ZWQuYXBwZW5kKHN0cihuYW1lKSkKCiAgICByZXR1cm4gewogICAgICAgICJ1cGRhdGVkX3BvcnRmb2xpb3MiOiB1cGRhdGVkLAogICAgICAgICJza2lwcGVkX3BvcnRmb2xpb3MiOiBza2lwcGVkLAogICAgfQo=' | base64 --decode > paper_trading_trade_log_repair.py
+
+          python - <<'PY'
+          from pathlib import Path
+
+          engine_path = Path("paper_trading_engine.py")
+          runner_path = Path("paper_trading_runner.py")
+          report_path = Path("paper_trading_report.py")
+          sample_path = Path("paper_trading_sample_watch.py")
+          storage_path = Path("paper_trading_storage.py")
+
+          required = [
+              engine_path,
+              runner_path,
+              report_path,
+              sample_path,
+              storage_path,
+          ]
+          missing = [str(path) for path in required if not path.exists()]
+          if missing:
+              raise SystemExit(f"File mancanti: {missing}")
+
+          engine = engine_path.read_text(encoding="utf-8")
+          marker = "# TRADE_LOG_SCHEMA_GUARD_V1"
+          if marker not in engine:
+              anchor = '''def append_csv(path: Path, fieldnames: list[str], row: dict[str, Any]) -> None:
+              path.parent.mkdir(parents=True, exist_ok=True)
+          '''
+              replacement = '''def append_csv(path: Path, fieldnames: list[str], row: dict[str, Any]) -> None:
+              # TRADE_LOG_SCHEMA_GUARD_V1
+              if path == TRADE_LOG_PATH:
+                  from paper_trading_trade_log_repair import (
+                      ensure_trade_log_schema,
+                  )
+                  ensure_trade_log_schema(path, fieldnames)
+              path.parent.mkdir(parents=True, exist_ok=True)
+          '''
+              if anchor not in engine:
+                  raise SystemExit("Anchor append_csv non trovato")
+              engine = engine.replace(anchor, replacement, 1)
+          engine_path.write_text(engine, encoding="utf-8")
+
+          runner = runner_path.read_text(encoding="utf-8")
+          if "TRADE_FIELDS," not in runner:
+              anchor = '''from paper_trading_engine import (
+              current_prices,
+          '''
+              replacement = '''from paper_trading_engine import (
+              TRADE_FIELDS,
+              TRADE_LOG_PATH,
+              current_prices,
+          '''
+              if anchor not in runner:
+                  raise SystemExit("Anchor import engine nel runner non trovato")
+              runner = runner.replace(anchor, replacement, 1)
+
+          repair_import = '''from paper_trading_trade_log_repair import (
+              reconcile_state_counters,
+              repair_trade_log,
+          )
+          '''
+          if repair_import not in runner:
+              anchor = "from paper_trading_live_publish import publish_markdown\n"
+              if anchor not in runner:
+                  raise SystemExit("Anchor import publish non trovato")
+              runner = runner.replace(
+                  anchor,
+                  repair_import + anchor,
+                  1,
+              )
+
+          if "# TRADE_LOG_REPAIR_STARTUP_V1" not in runner:
+              anchor = '''def main() -> None:
+              config = load_config()
+              bundle = annotate_market_freshness(
+          '''
+              replacement = '''def main() -> None:
+              config = load_config()
+              # TRADE_LOG_REPAIR_STARTUP_V1
+              trade_log_repair = repair_trade_log(
+                  TRADE_LOG_PATH,
+                  TRADE_FIELDS,
+              )
+              bundle = annotate_market_freshness(
+          '''
+              if anchor not in runner:
+                  raise SystemExit("Anchor main/config non trovato")
+              runner = runner.replace(anchor, replacement, 1)
+
+              anchor = '''    state = load_state(config)
+              signal_diagnostics = build_signal_diagnostics(
+          '''
+              replacement = '''    state = load_state(config)
+              trade_log_reconcile = reconcile_state_counters(
+                  state,
+                  list(trade_log_repair.get("records", [])),
+              )
+              signal_diagnostics = build_signal_diagnostics(
+          '''
+              if anchor not in runner:
+                  raise SystemExit("Anchor load_state non trovato")
+              runner = runner.replace(anchor, replacement, 1)
+
+          runner_path.write_text(runner, encoding="utf-8")
+
+          report = report_path.read_text(encoding="utf-8")
+          report = report.replace(
+              "from paper_trading_engine import STATE_PATH, TRADE_LOG_PATH\n",
+              (
+                  "from paper_trading_engine import "
+                  "STATE_PATH, TRADE_FIELDS, TRADE_LOG_PATH\n"
+              ),
+          )
+          repair_report_import = '''from paper_trading_trade_log_repair import (
+              fallback_metrics_from_portfolio,
+              load_trade_frame_resilient,
+          )
+          '''
+          if repair_report_import not in report:
+              anchor = "from paper_trading_sample_watch import sample_snapshot\n"
+              if anchor not in report:
+                  raise SystemExit("Anchor report sample_watch non trovato")
+              report = report.replace(
+                  anchor,
+                  anchor + repair_report_import,
+                  1,
+              )
+
+          old_loader = '''def load_trades() -> pd.DataFrame:
+              if not TRADE_LOG_PATH.exists():
+                  return pd.DataFrame()
+              try:
+                  return pd.read_csv(TRADE_LOG_PATH)
+              except Exception:
+                  return pd.DataFrame()
+          '''
+          new_loader = '''def load_trades() -> pd.DataFrame:
+              # TRADE_LOG_RESILIENT_READER_V1
+              return load_trade_frame_resilient(
+                  TRADE_LOG_PATH,
+                  TRADE_FIELDS,
+              )
+          '''
+          if old_loader in report:
+              report = report.replace(old_loader, new_loader, 1)
+          elif "# TRADE_LOG_RESILIENT_READER_V1" not in report:
+              raise SystemExit("Loader report non riconosciuto")
+
+          old_empty = '''        if subset.empty:
+                      trade_count = wins = unique_events = 0
+                      net = expectancy = win_rate = 0.0
+                      profit_factor = 0.0
+                  else:
+          '''
+          new_empty = '''        state_fallback = fallback_metrics_from_portfolio(portfolio)
+                  if (
+                      subset.empty
+                      or int(state_fallback["closed_trades"]) > len(subset)
+                  ):
+                      # State fallback prevents a false all-zero or partial
+                      # display if historical CSV rows are unrecoverable.
+                      trade_count = int(state_fallback["closed_trades"])
+                      wins = int(state_fallback["winning_trades"])
+                      unique_events = (
+                          subset.get(
+                              "experiment_group_id",
+                              pd.Series(dtype=str),
+                          ).astype(str).nunique()
+                          if not subset.empty
+                          else 0
+                      )
+                      net = float(state_fallback["net_pnl_eur"])
+                      expectancy = float(state_fallback["expectancy_eur"])
+                      win_rate = float(state_fallback["win_rate_pct"])
+                      profit_factor = float(state_fallback["profit_factor"])
+                  else:
+          '''
+          if old_empty in report:
+              report = report.replace(old_empty, new_empty, 1)
+          elif "State fallback prevents a false all-zero display" not in report:
+              raise SystemExit("Blocco subset.empty report non riconosciuto")
+          report_path.write_text(report, encoding="utf-8")
+
+          sample = sample_path.read_text(encoding="utf-8")
+          sample = sample.replace(
+              "from paper_trading_engine import TRADE_LOG_PATH\n",
+              (
+                  "from paper_trading_engine import "
+                  "TRADE_FIELDS, TRADE_LOG_PATH\n"
+              ),
+          )
+          repair_sample_import = (
+              "from paper_trading_trade_log_repair "
+              "import load_trade_frame_resilient\n"
+          )
+          if repair_sample_import not in sample:
+              anchor = (
+                  "from paper_trading_engine import "
+                  "TRADE_FIELDS, TRADE_LOG_PATH\n"
+              )
+              if anchor not in sample:
+                  raise SystemExit("Anchor sample engine non trovato")
+              sample = sample.replace(
+                  anchor,
+                  anchor + repair_sample_import,
+                  1,
+              )
+
+          old_sample_loader = '''def _load_trades() -> pd.DataFrame:
+              if not TRADE_LOG_PATH.exists():
+                  return pd.DataFrame()
+              try:
+                  return pd.read_csv(TRADE_LOG_PATH)
+              except Exception:
+                  return pd.DataFrame()
+          '''
+          new_sample_loader = '''def _load_trades() -> pd.DataFrame:
+              # TRADE_LOG_RESILIENT_SAMPLE_READER_V1
+              return load_trade_frame_resilient(
+                  TRADE_LOG_PATH,
+                  TRADE_FIELDS,
+              )
+          '''
+          if old_sample_loader in sample:
+              sample = sample.replace(
+                  old_sample_loader,
+                  new_sample_loader,
+                  1,
+              )
+          elif "# TRADE_LOG_RESILIENT_SAMPLE_READER_V1" not in sample:
+              raise SystemExit("Loader sample non riconosciuto")
+          sample_path.write_text(sample, encoding="utf-8")
+
+          storage = storage_path.read_text(encoding="utf-8")
+          extra_files = [
+              "paper_trading_trade_log_before_repair.csv",
+              "paper_trading_trade_log_quarantine.csv",
+              "paper_trading_trade_log_repair_status.json",
+          ]
+          for filename in extra_files:
+              line = f'    "{filename}",\n'
+              if line in storage:
+                  continue
+              anchor = '    "paper_trading_trade_log.csv",\n'
+              if anchor not in storage:
+                  raise SystemExit("Anchor storage trade log non trovato")
+              storage = storage.replace(
+                  anchor,
+                  anchor + line,
+                  1,
+              )
+          storage_path.write_text(storage, encoding="utf-8")
+          PY
+
+      - name: Validate code and repair behavior
+        shell: bash
+        run: |
+          python -m py_compile \
+            paper_trading_trade_log_repair.py \
+            paper_trading_engine.py \
+            paper_trading_runner.py \
+            paper_trading_report.py \
+            paper_trading_sample_watch.py \
+            paper_trading_storage.py
+
+          python - <<'PY'
+          import csv
+          import tempfile
+          from pathlib import Path
+
+          from paper_trading_engine import TRADE_FIELDS
+          from paper_trading_trade_log_repair import repair_trade_log
+
+          legacy = [
+              field
+              for field in TRADE_FIELDS
+              if field != "liquidation_price"
+          ]
+
+          old_record = {field: "" for field in legacy}
+          old_record.update(
+              {
+                  "trade_id": "OLD-1",
+                  "experiment_group_id": "EVENT-OLD",
+                  "portfolio": "MAIN",
+                  "is_main": "True",
+                  "strategy": "confluence_trend",
+                  "asset": "ZEC",
+                  "symbol": "ZEC-USDT",
+                  "side": "LONG",
+                  "timeframe_minutes": "240",
+                  "opened_at": "2026-07-12T00:00:00+00:00",
+                  "closed_at": "2026-07-12T04:00:00+00:00",
+                  "entry_price": "500",
+                  "exit_price": "510",
+                  "net_pnl_eur": "20",
+                  "close_reason": "TARGET",
+              }
+          )
+
+          new_record = {field: "" for field in TRADE_FIELDS}
+          new_record.update(
+              {
+                  "trade_id": "NEW-1",
+                  "experiment_group_id": "EVENT-NEW",
+                  "portfolio": "SHADOW_RELATIVE_STRENGTH",
+                  "is_main": "False",
+                  "strategy": "relative_strength",
+                  "asset": "LAB",
+                  "symbol": "LAB-USDT",
+                  "side": "SHORT",
+                  "timeframe_minutes": "60",
+                  "opened_at": "2026-07-12T00:00:00+00:00",
+                  "closed_at": "2026-07-13T08:00:00+00:00",
+                  "entry_price": "0.473335",
+                  "exit_price": "0.348444",
+                  "liquidation_price": "0.70",
+                  "net_pnl_eur": "109.64",
+                  "close_reason": "TARGET",
+              }
+          )
+
+          with tempfile.TemporaryDirectory() as tmp:
+              path = Path(tmp) / "paper_trading_trade_log.csv"
+              with path.open("w", encoding="utf-8", newline="") as handle:
+                  writer = csv.writer(handle)
+                  writer.writerow(legacy)
+                  writer.writerow([old_record[field] for field in legacy])
+                  writer.writerow(
+                      [new_record[field] for field in TRADE_FIELDS]
+                  )
+
+              result = repair_trade_log(path, TRADE_FIELDS)
+              assert result["rows_after"] == 2, result
+              assert result["rows_quarantined"] == 0, result
+              assert result["rewritten"] is True, result
+
+              with path.open("r", encoding="utf-8", newline="") as handle:
+                  rows = list(csv.DictReader(handle))
+              assert len(rows) == 2
+              assert rows[0]["trade_id"] == "OLD-1"
+              assert rows[0]["liquidation_price"] == ""
+              assert rows[1]["trade_id"] == "NEW-1"
+              assert rows[1]["liquidation_price"] == "0.70"
+              assert rows[1]["net_pnl_eur"] == "109.64"
+
+          print("Test CSV legacy/corrente superato.")
+          PY
+
+          python - <<'PY'
+          from pathlib import Path
+
+          checks = {
+              "paper_trading_engine.py": [
+                  "# TRADE_LOG_SCHEMA_GUARD_V1",
+              ],
+              "paper_trading_runner.py": [
+                  "# TRADE_LOG_REPAIR_STARTUP_V1",
+                  "reconcile_state_counters",
+              ],
+              "paper_trading_report.py": [
+                  "# TRADE_LOG_RESILIENT_READER_V1",
+                  "State fallback prevents a false all-zero or partial",
+              ],
+              "paper_trading_sample_watch.py": [
+                  "# TRADE_LOG_RESILIENT_SAMPLE_READER_V1",
+              ],
+              "paper_trading_storage.py": [
+                  "paper_trading_trade_log_before_repair.csv",
+                  "paper_trading_trade_log_quarantine.csv",
+                  "paper_trading_trade_log_repair_status.json",
+              ],
+          }
+          for filename, markers in checks.items():
+              text = Path(filename).read_text(encoding="utf-8")
+              for marker in markers:
+                  assert marker in text, (filename, marker)
+          print("Self-test installazione completato.")
+          PY
+
+      - name: Commit installation
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            paper_trading_trade_log_repair.py \
+            paper_trading_engine.py \
+            paper_trading_runner.py \
+            paper_trading_report.py \
+            paper_trading_sample_watch.py \
+            paper_trading_storage.py
+
+          if git diff --cached --quiet; then
+            echo "Riparazione già installata."
+          else
+            git commit -m \
+              "Repair persistent paper trade log schema"
+            git push origin HEAD:main
+          fi
