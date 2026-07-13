@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-13T22:42:55.013673+00:00",
+  "generated_utc": "2026-07-13T22:46:01.204949+00:00",
   "initial_capital_eur": 40000.0,
   "equity_eur": 39992.80743252,
   "total_pnl_eur": -7.192567480000434,
@@ -28,6 +28,12 @@
     "average_cost_eur": 74.70955892399999,
     "break_even_eur": 74.79921039470878,
     "unrealized_pnl_eur": -7.192567480508887,
+    "cash_eur": 34000.0,
+    "sol_units": 80.311008208516,
+    "sol_value_eur": 5992.80743252,
+    "capital_invested_eur": 5992.80743252,
+    "position_cost_basis_eur": 5999.999999999974,
+    "position_return_pct": -0.11987612467514452,
     "current_weight_pct": 14.984713,
     "target_weight_pct": 58.02817804104432,
     "action": "BUY",
@@ -39,6 +45,8 @@
     "range_upper_eur": 77.84923259470187,
     "maximum_single_trade_eur": 5998.921114878,
     "minimum_cash_reserve_eur": 3999.2807432520003,
+    "remaining_buying_capacity_eur": 30000.719256748,
+    "estimated_remaining_tranches": 5,
     "defensive_plan": {
       "automatic_stop_enabled": false,
       "level_1_price_eur": 72.3814,

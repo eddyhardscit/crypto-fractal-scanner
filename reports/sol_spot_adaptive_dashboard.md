@@ -1,6 +1,6 @@
 # SOL Spot Adaptive — dashboard giornaliera
 
-Generato: 2026-07-13T22:42:55.013673+00:00
+Generato: 2026-07-13T22:46:01.204949+00:00
 
 ## Prestazioni
 
@@ -29,6 +29,21 @@ Generato: 2026-07-13T22:42:55.013673+00:00
 | Equity buy & hold | €40.000,00 |
 | Rendimento buy & hold | +0,00% |
 | Differenza bot - buy & hold | -0,02% |
+
+## Posizione attuale
+
+| Voce | Valore |
+| --- | ---: |
+| SOL posseduti | 80,311008 SOL |
+| Valore posizione | €5.992,81 |
+| Capitale investito al costo medio | €6.000,00 |
+| Liquidità disponibile | €34.000,00 |
+| Prezzo medio | €74,71 |
+| Prezzo attuale | €74,62 |
+| P/L posizione | €-7,19 (-0,12%) |
+| Capacità residua per acquisti | €30.000,72 |
+| Tranche massima successiva | €5.998,92 |
+| Tranche residue stimate | 5 |
 
 ## Piano operativo corrente
 
