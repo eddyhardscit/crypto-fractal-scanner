@@ -1,6 +1,6 @@
 # SOL Spot Adaptive — dashboard giornaliera
 
-Generato: 2026-07-13T22:38:15.021810+00:00
+Generato: 2026-07-13T22:42:55.013673+00:00
 
 ## Prestazioni
 
