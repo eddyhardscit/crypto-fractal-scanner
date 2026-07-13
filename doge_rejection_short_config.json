@@ -53,5 +53,7 @@
       "price": 0.06,
       "fraction": 0.25
     }
-  ]
+  ],
+  "telegram_status_interval_hours": 4.0,
+  "telegram_status_on_manual": true
 }

@@ -43,6 +43,7 @@ FILES = (
     "doge_rejection_short_trades.csv",
     "doge_rejection_short_report.md",
     "doge_rejection_short_latest.json",
+    "doge_rejection_short_status_state.json",
 )
 
 

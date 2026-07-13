@@ -32,6 +32,7 @@ from paper_trading_notify import notify
 from research_all_signals import run_research_cycle
 # DOGE_REJECTION_SHORT_IMPORT
 from doge_rejection_short import run_doge_rejection_cycle
+from doge_short_status_notify import send_doge_short_status
 from paper_trading_report import LATEST_REPORT_PATH, REPORT_PATH, render_report, replace_block
 from telegram_scanner_notify import send_if_changed as send_scanner_if_changed
 
@@ -236,6 +237,18 @@ def main() -> None:
         }
         print(f"DOGE rejection short non eseguito: {exc}")
     # DOGE_REJECTION_SHORT_CYCLE_END
+    # DOGE_SHORT_STATUS_TELEGRAM_START
+    try:
+        doge_status_result = send_doge_short_status(bundle)
+    except Exception as exc:
+        doge_status_result = {
+            "configured": True,
+            "sent": False,
+            "error": str(exc),
+        }
+        print(f"Stato Telegram DOGE non inviato: {exc}")
+    # DOGE_SHORT_STATUS_TELEGRAM_END
+
 
     current = datetime.now(timezone.utc)
     report = render_report(state, config)
