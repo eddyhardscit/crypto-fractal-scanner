@@ -227,12 +227,22 @@ def get_asset_section(map_section, asset_name):
 
 
 def extract_bold_value(section, label_regex):
-    pattern = rf"{label_regex}:\s*\*\*(.*?)\*\*"
-    m = re.search(pattern, section, flags=re.IGNORECASE)
-    if not m:
-        return None
-    return m.group(1).strip()
+    """Legge sia il vecchio sia il nuovo formato Markdown delle etichette."""
+    patterns = [
+        rf"(?im)^\s*[-*]?\s*\*\*{label_regex}:\*\*\s*\*\*(.*?)\*\*\s*$",
+        rf"(?im)^\s*[-*]?\s*\*\*{label_regex}:\*\*\s*([^\n]+?)\s*$",
+        rf"(?im)^\s*[-*]?\s*\*\*{label_regex}\*\*\s*:\s*\*\*(.*?)\*\*\s*$",
+        rf"(?im)^\s*[-*]?\s*\*\*{label_regex}\*\*\s*:\s*([^\n]+?)\s*$",
+        rf"(?im)^\s*[-*]?\s*{label_regex}:\s*\*\*(.*?)\*\*\s*$",
+        rf"(?im)^\s*[-*]?\s*{label_regex}:\s*([^\n]+?)\s*$",
+    ]
 
+    for pattern in patterns:
+        match = re.search(pattern, section, flags=re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
+
+    return None
 
 def extract_price_pct(block, label):
     pattern = rf"{re.escape(label)}:\s*\*\*(.*?)\*\*\s*\(([-+0-9\.,]+)%\)"

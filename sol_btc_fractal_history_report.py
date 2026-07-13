@@ -549,6 +549,47 @@ def parse_fractal_report(latest_report):
     if row["total_similarity_pct"] is None:
         row["total_similarity_pct"] = parse_number(row.get("total_price_adherence_pct"))
 
+    # HISTORY_FALLBACK_CURRENT_SOL_PRICE_V2
+    # Fallback per il formato attuale del report principale.
+    # Il blocco frattale mostra gap e livelli, ma non sempre ripete
+    # esplicitamente il prezzo SOL o la tabella del Path Tracker.
+    if row["gap_pct"] is None:
+        row["gap_pct"] = parse_number(
+            extract_label_value(fractal_block, "Gap prezzo corrente")
+        )
+
+    if row["sol_price"] is None:
+        sol_section = section_between(
+            latest_report,
+            "# Solana — mappa semplice",
+            "# Dogecoin — mappa semplice",
+        )
+        price_match = re.search(
+            r"\*\*Prezzo attuale:\*\*\s*(?:\*\*)?([0-9\.,]+)\s*\$?",
+            sol_section,
+            flags=re.IGNORECASE,
+        )
+        if price_match:
+            row["sol_price"] = parse_number(price_match.group(1))
+
+    if row["sol_price"] is None:
+        price_match = re.search(
+            r"\|\s*Prezzo SOL\s*\|\s*([0-9\.,]+)\s*\$",
+            latest_report,
+            flags=re.IGNORECASE,
+        )
+        if price_match:
+            row["sol_price"] = parse_number(price_match.group(1))
+
+    if (
+        row["btc_scaled_today"] is None
+        and row["sol_price"] is not None
+        and row["gap_pct"] is not None
+    ):
+        denominator = 1.0 + float(row["gap_pct"]) / 100.0
+        if denominator > 0:
+            row["btc_scaled_today"] = float(row["sol_price"]) / denominator
+
     return row
 
 
