@@ -260,9 +260,23 @@ def fetch_spot_klines(
             if not isinstance(row, (list, tuple)) or len(row) < 6:
                 continue
 
+            raw_timestamp = safe_float(row[0])
+            if not math.isfinite(raw_timestamp) or raw_timestamp <= 0:
+                continue
+
+            absolute_timestamp = abs(raw_timestamp)
+            if absolute_timestamp >= 1e17:
+                timestamp_unit = "ns"
+            elif absolute_timestamp >= 1e14:
+                timestamp_unit = "us"
+            elif absolute_timestamp >= 1e11:
+                timestamp_unit = "ms"
+            else:
+                timestamp_unit = "s"
+
             timestamp = pd.to_datetime(
-                row[0],
-                unit="s",
+                raw_timestamp,
+                unit=timestamp_unit,
                 utc=True,
                 errors="coerce",
             )
