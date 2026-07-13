@@ -1,0 +1,79 @@
+name: Manual fix SOL spot KuCoin candles v2
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manual-fix-sol-spot-kucoin-candles-v2
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Replace KuCoin candle function
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("sol_spot_adaptive_bot.py")
+          source = path.read_text(encoding="utf-8")
+
+          start_marker = "def fetch_spot_klines("
+          end_marker = "\n\ndef add_indicators("
+
+          start = source.find(start_marker)
+          end = source.find(end_marker, start)
+
+          if start == -1 or end == -1:
+              raise SystemExit(
+                  "Could not locate fetch_spot_klines function boundaries."
+              )
+
+          replacement = 'def fetch_spot_klines(\n    session: requests.Session,\n    symbol: str,\n    timeframe_minutes: int,\n    limit: int,\n    now: datetime | None = None,\n) -> pd.DataFrame:\n    interval_names = {\n        1: "1min",\n        3: "3min",\n        5: "5min",\n        15: "15min",\n        30: "30min",\n        60: "1hour",\n        240: "4hour",\n    }\n    if timeframe_minutes not in interval_names:\n        raise RuntimeError(\n            f"Unsupported KuCoin spot timeframe: {timeframe_minutes} minutes"\n        )\n\n    current = now or utc_now()\n    count = min(max(int(limit), 220), 1500)\n    end_at = int(current.timestamp())\n    start_at = end_at - count * timeframe_minutes * 60\n\n    request_variants = [\n        {\n            "symbol": symbol,\n            "type": interval_names[timeframe_minutes],\n            "startAt": start_at,\n            "endAt": end_at,\n        },\n        {\n            "symbol": symbol,\n            "type": interval_names[timeframe_minutes],\n        },\n    ]\n\n    normalized: list[dict[str, Any]] = []\n    diagnostics: list[str] = []\n\n    for request_params in request_variants:\n        try:\n            rows = get_public_json(\n                session,\n                "/api/v1/market/candles",\n                request_params,\n            )\n        except Exception as exc:\n            diagnostics.append(\n                f"params={request_params}: request failed: {exc}"\n            )\n            continue\n\n        raw_count = len(rows) if isinstance(rows, list) else 0\n        accepted_before = len(normalized)\n\n        for row in rows if isinstance(rows, list) else []:\n            if not isinstance(row, (list, tuple)) or len(row) < 6:\n                continue\n\n            timestamp = pd.to_datetime(\n                row[0],\n                unit="s",\n                utc=True,\n                errors="coerce",\n            )\n            opened = safe_float(row[1])\n            closed = safe_float(row[2])\n            high = safe_float(row[3])\n            low = safe_float(row[4])\n            volume = safe_float(row[5], 0.0)\n            turnover = (\n                safe_float(row[6], 0.0)\n                if len(row) >= 7\n                else 0.0\n            )\n\n            if pd.isna(timestamp):\n                continue\n            if not all(\n                math.isfinite(value) and value > 0\n                for value in (opened, high, low, closed)\n            ):\n                continue\n\n            normalized.append(\n                {\n                    "time": timestamp,\n                    "open": opened,\n                    "high": high,\n                    "low": low,\n                    "close": closed,\n                    "volume": max(0.0, volume),\n                    "turnover": max(0.0, turnover),\n                }\n            )\n\n        diagnostics.append(\n            f"params={request_params}: raw={raw_count}, "\n            f"accepted={len(normalized) - accepted_before}"\n        )\n        if normalized:\n            break\n\n    if not normalized:\n        raise RuntimeError(\n            "KuCoin returned no usable SOL spot candles after "\n            "windowed and fallback requests. "\n            + " | ".join(diagnostics)\n        )\n\n    frame = (\n        pd.DataFrame(normalized)\n        .drop_duplicates("time")\n        .set_index("time")\n        .sort_index()\n    )\n\n    last_start = pd.Timestamp(frame.index[-1])\n    if last_start.tzinfo is None:\n        last_start = last_start.tz_localize("UTC")\n\n    if (\n        last_start + pd.Timedelta(minutes=timeframe_minutes)\n        > pd.Timestamp(current) - pd.Timedelta(seconds=20)\n    ):\n        frame = frame.iloc[:-1].copy()\n\n    if frame.empty:\n        raise RuntimeError("No fully closed SOL spot candle is available.")\n\n    return frame.tail(count)\n'
+          updated = source[:start] + replacement + source[end:]
+          path.write_text(updated, encoding="utf-8")
+          PY
+
+      - name: Validate patched bot
+        run: |
+          python -m pip install numpy pandas requests
+          python -m py_compile sol_spot_adaptive_bot.py
+          python sol_spot_adaptive_bot.py \
+            --config sol_spot_adaptive_config.json \
+            --self-test
+          git diff --check
+
+      - name: Commit candle fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add sol_spot_adaptive_bot.py
+          git diff --cached --check
+
+          if git diff --cached --quiet; then
+            echo "KuCoin candle fallback already installed."
+          else
+            git commit -m "Fix SOL spot KuCoin candle fallback"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
