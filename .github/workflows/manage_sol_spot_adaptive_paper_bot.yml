@@ -1,0 +1,433 @@
+name: Manage SOL Spot Adaptive Range paper bot
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/apply_sol_spot_adaptive_once*.yml
+      - .github/workflows/manage_sol_spot_adaptive*.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manage-sol-spot-adaptive-paper-bot
+  cancel-in-progress: false
+
+jobs:
+  install-or-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install validation dependencies
+        run: python -m pip install numpy pandas requests PyYAML
+
+      - name: Materialize SOL spot paper bot
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+          import gzip
+
+          payloads = {
+              'sol_spot_adaptive_config.json': (
+                  'H4sIAKpOVWoC/31US0/jMBC+8yuqnqFqqxZt94a03NCCYDnsyXLsSTLCsbN+tFSI/77j2EmT8ugl6jfffPPyzNvFbDZ3ooaGsz1Y'
+                  'h0bPf85WlxFujAT6M3+4ebh9ZPe/7/7OO9x5yz1UR6Z50xGe7u9mT63xsxvJW497mD1yXUFic+fAZ1b2PzaFURm6en769SfhBXfA'
+                  'RLAWtDhG8+3zY7KgRo9cMcFb9PSFYMm+WdJvsewYbSgUCia558xoFd29DdDZLJCLsZLKY6B5oUCSueTKJTtXyhyYq431E1wBdYRX'
+                  'scRVDuOxgdJS2axBHTy4aNsmtjEvBRcvlKSWqrNsfiQvSpcFJz0jbdVxYgNHsqglCu6NjV5vhBBWcucZjaXTuUyYAO3BZnR3nVEX'
+                  '00/YarfOIPeWtWDRyLGA8/KE7q4JfE8t6uY1xI7ONVclO6D0NWuC8tiqSNikjLPU55zVYps51CRsQjPmtSI2mca2Hkj89SvSqq/G'
+                  '05uQLKblaws0KiVP7UtP0uiKfU5bL7ZDoXHW1On0zN+mWTqj2AGwqnPws/zOzLts1hBoH9S5ua8utCmpArmbyOaUezu8kspHljQH'
+                  'PRG4+qBwokw0rr4M1dc7ynYYxgfNvvoR+bonWyi44loAK+jNM1oMkTtL892ctY9SkzBwmCkZ/Avoj6nc8xeT2GnP19vlMOjeLrir'
+                  'GY0Y7B6mgVfDrOEVRJiOugTKte229qTpFLYt7Xm2rBfLQaI7K65GXZ00LLR0KRjGVdzT4GsTur09rYaFuKipBkdEllxi1PUgrY3H'
+                  'EtNbHK29BwUVXZjRpeoPWUw1jiT3Zk8x3CfmtN/xGGIFzk8ZCfsu+U4DrE3HaOSKWqhAgbtbwSR4juoLSqy2NArNGS0Wf/F+8R/N'
+                  'bhAddQYAAA=='
+              ),
+              'sol_spot_adaptive_bot.py': (
+                  'H4sIAKpOVWoC/919227cSLLgu76Cw8bCRZlVutjuS01XY9W22i2M2vKRyp4zqykQVBVL4phF1pAs2bK6gMV52Id93D3AAvsyB/uy'
+                  'B4vztNg/mD+ZLzifsBGR9wtLktsze7CNhlUkIyMzIyMjIiMjI78I+tv9YFrN8vJyGKzaef9rfLMVhuHZyXG/KoubIJ2lyza/zvp1'
+                  'Wl5mQbOs2mCZLrM6aOt0ltWDra3xVRYsqtmqyIJVkzXBcnVR5NPgN6vnVV6yEou0fpe1wSxt0yAtZ0GTL1ZF2gLwPC+KJiiqaVoU'
+                  'N4Otoza4SpugrIJ01V5lZZtPAWwWZB+mV9SAaZHDW0Iyrco2zUuCrrO06Fc1NAha114NsA9bW/O6WgRJMl+1qzpLkiBfLKsaC5dV'
+                  'm7Z5VTZbW+JdfblM6yYTz9PmWvz8Q1OV4vcCkIvfVcMqwF5Ni7TBvvNP8pWEyNp8kWmf6TkO8N9ZVrQp+/mxKjNWBHtR5BeixGus'
+                  'lz60N0sYLvH+oLyRXShXiyUMGNBjKV4tgU7wAv5fzsS7OvvjKmta3jTxNKCBzmrZhR/H49cH7B2DXNUFNOjJYNXmxaDO2vpGgJ7i'
+                  'w9bW85NXPxy9TF4fjH8MRtTiXtUMLrM2K697yFHJ2euTcXLw4uD1+OjtYcLgwzgIm6pIkE8SwW0JjO08vxwg6cMo2jo9fH1yOj5L'
+                  'XhydCtRhnWHlTRhtnY0PxoeiXh10x4e6gaHPGOat8enBi8Ozexcllm8GwBvh1uHfvTka/+7eRYHMeXvDih5Dc8/G9y5KE6XlLWbQ'
+                  '9y7LiDRYzEIxPGevDl6f/XhyfxRsKJKmTJfNVSXasUVj+f3B2SHg0Ib5N2+enxy9SuTX5M3pMQ7xVdsum+HOTrrMB+9WU5AMg2m1'
+                  'gMGjIUh+ODo8fnEGqM63AvgvJEon+SyM+TNMjmTVTsVzk88y8RvmPjaJPzFRkyzrfApUX9XiffYhm65wzruf/rhKQdC0Nwl0Xry7'
+                  'rKum0YHmmVFmmjZXSTqH2aG/RerRS/Eivc7q9BKJ2LQuOEqt/GM2S5Zlob9vQRpBHxDb+yy/vGpVgUsghHxCiZgU1XsLK72egpj0'
+                  'vV8tl/L1RHCxQ36L3A7JqPtWx1dlDtNRe3GdFitzDGgS2OXMLi6z9F3iAs7q9P2seg+jN23vT6bJ1tYWyeHgLJ1n7c1hXVd173RV'
+                  'YgfpIRpSkSXK6q2tfy8Fdw9k3sesHI3rVRZxHKdIwDM+D1g5Qahh0LQ1wyRINQzmRZW29FKOkf5SjZD+Vo6P/vIqLebJ+3zWXmH/'
+                  '9S9p6wBfVyAx8gIJaAG3dVbOEiiiv2TEUh1wqCqAt7Zm2RzMhGlSVu97UdD/TiqyIccEeraULwcIJrQaqI1pxFHkTYU06xF/DJV2'
+                  '/Bm01GAMv0BEL5bw+AoKAlPiH6oOmshqmq7qGs2AUUA4gnwufqA10LKCWdFkqrlyuBjykVFXjyNkUIBNAg7aj3k5rxAxImXV26h0'
+                  '6IRsGZjVvfDN+HkY6ZQx4ECugnBoOdgAiDKvarAveoJMDbBsQqQXlAJtHwfwKV0VYlSgdrRJBmVaEonoJefN+kY1F4yDCzCORoGG'
+                  'kLUNTKts2QaH9AfkoyojxpNVqHeEYwNCUeV5M89h8mc99j5ipBflWG9gCgGdeUeoETGbFvKJOJ8/2X3h9S7yskdgMVT8oUflYzb0'
+                  'kSAbFJpxpdVDK2pI9gL0XLNPGPPm0/YcWCpGuk6EHLjB8gCNam6AvxvCAhYPoG2zD20vK5nJPArJZEb7hKYdjDqysqqbUBkMwN/x'
+                  'ltol2J+h1TBqq+K96VU2fddAA2/lOIVgfYMJvmra4CILXh+8PjxNTl4d/y6kSc3RoobuESSqY2j0gAgJ83g0CkKtUKzwok3bSsRg'
+                  'wXkwEowPJYJruJqbxUVV6Mj6b85ejD0YGWQHSlZIw4uMl6dFMAXLok1VBYdvToOnu/Hu7i5Uwbl0WlRN1pNl8T9tkult4FgTjpU0'
+                  'URQHu4Nd+PcpIIVfMYxqkbRVMaKH9KKhh72s/42sItJaytdFtAjCtRW0S6+SfU7wc0KfIxQ6qH80HGgxBLTOaYBNmvSiyGYWHgRJ'
+                  'GEiSlQyCUP2QwqzUR+QKTENcS3QgghVZ9T4hKD+CImPWDSziPsAaDYTR3odPIbbAoyi8t4m6e/s2edf07zzNoRNoxICUbahdVR3w'
+                  '33FQvQtgOcqmzwCE1aIBrgIJhvqiejcRkp9h0YRgmoMs082H8E2JHUEWZqtb1pdVTUvKYRAGj4Pw10E4+ANYuT2GD6UTqesC1QPC'
+                  'QTttYrMPwPi3ayY1QNzBQnkBoBrlFCSf0gxIN4OAgn0gIUeSfrgHEgZkIdkXOOqsyerr7H4NIduQl0jmdTqlXhlt4mTvwdAG345k'
+                  'P7+VjYWXCLxxGJD+Gj2LfAH2J5v/dbZIYbAvsvZ9lpXBLvkL9gaht3bRuW+xSoI0WxH0JcjjgPhvc7ueQ/9lCZg2OeiLBeiQHOZY'
+                  '8D4HXSTwmz3A5jHFsEjfwToVGBfeMkNLLtPP2FvWAA4SjJzvPal2YJk+Yit0NRfbCmTa6Gmsafp0pj8DZ5bZtNVfXaTTd9V8nsxh'
+                  'PKsaJuVX6hsuqVdNAtNtmhV50456T/e/iYNnu7v4zz7+8wT/eaqJQ5IusPRZZO1VNWtGvfDlIQh2DYJIC6IwYehHmviJ9O4PFhUY'
+                  '9D25xIQJpDkvekDsBOmQZ82I6BGZpa8y9GM1oGhQF/duwzcwcv2DSzAHQZiF0/pm2VZ94uO06DfTFEhT92Gi9HHy98kZtgNsEq4N'
+                  'Vc/R8xFFi5oLeDQsenoLhs7oxdwWQeMF7QD+WKeLxrYOTCs53iJugQ/CbII2lg1NXN5dnKpq7f6Yaok58hH7AwoGRBDzSFWrdrT/'
+                  'LDKwDdjIwHDzoeHcpownCUmdNWZd3uQllCqnmbCQYupShLXyN0yeTNFWiYJfgeLfR40LityadvpCztQ085C7H7nSZV6BPuneDMFR'
+                  'W91i39cwxlZRrHh0q7flEb56ROqiu/1k9D4qd9JHa4XRZ/6x7mFb5IwH8TGlBXWyamZtUiMndrMHKKmiwAmpW8vtallk59yWBv7g'
+                  'Fm1WXptiW3PWgI2UoD2VnB6MD1FCy6WEGDHTvIdCEQlIRPpdsOssFeA9mG2Hr94OTdTueoRGYuSfF1Ks6LNBWh3oQtq53tthQ7pD'
+                  'ls5FVb3bQTOi2AtN8FthTsIwQ5uY+biOrfGRC3eTVNhIbpzhx9BmAPxujD6tVCVGh36EhVGQ1WbQUGcU/AqU5N6012++Pz56PpTt'
+                  'v2PdRs4Mac4wTkFdtrtx/iB5dhC9KoNsKA3qZdXk6BAcmGtaAQyt5QusHw6Oj78/eP6b0OBtciq+K/Iya+4l/diwafIPWwpSeJEl'
+                  'YC6s2gxEYV627Bvpfu0ZVvyGX8EVkbD6fwGj9wMiZGTJ0RsDS7KkhFe0wNoDntmDykChPIGfT9jPZ/DzGfu5h7/3+MOTXYTZZQ9f'
+                  '4sPeVYUOrGD/KT49pae17mEwusOkY2m1Y+OQzdEUhQUSWOhg+OobLhL7MLh1aloH/AcfSeVNAbqhGDadJlNUrwFZaahMe9DAHhEc'
+                  'LcR9MtdB03NnAvmXABiBON6BdHv0hOpt07plcLxAn9ey7aHLNlCTcVz1vtkkMxx5YcsK0N2zIms0EXFryhYpK9gPS/K0N8ssHFoD'
+                  'dO40eGIVo94etLTSZf22AIAG9JnRQn1c68ZOic4h8hYPA7Sxzk07YILrHraIwVUPkAp5iShmyix8FRMGLrPOJ0NdYlk6GsDjoIfg'
+                  'MdMwESnqIivxUwRG81emBMNdOaBD5nWUwaxrq0RMTMRwvjuJA/Qcj0IYF+Q8crnGTEs3I1DGWY2iV+KrlllJyzxNUCOivYmCobWn'
+                  'B2Zfg7mCVY4L8USDAAPVBXiqAVxXxWqRuTDPJmwhq2gAkrK6Jv+bBfqlDQpDAFTKmzLtScoRyXFgQNb2TJXCFTKpYxr5axz3HiNS'
+                  'TJ0kP1vMaRJFdwyX4rNBugQsM1MnmxNGbhYA98rWxi4INgdAeKvc79hM+E6tdb9C8+EjdsL9Rr1CxwX1zgPAxojcEh965EpgbyIP'
+                  'rBgmHVq8s+DXlgXBZ442SzfqWi6rmQ4FTi2rYEVOGM2rwISVULckYoB/1HDoKqynKlasNJjV1TKZwaylXfSmx4ZKA2hAlOblLPvg'
+                  '+QRKhX+LNDFUpE2bkByzXejUwAGVOO+LyQhkUSU6fekGUgPe6003kOIShjWD9tF7XAiPHLEcBd/5ff6gfAwMTQaTAlak+7r/QZCf'
+                  '9xKadT6EXg6m1fJGLXDY12yxbG82j/+rKpiviuJGSCpr1JFE6XWaF8gStsFFdbTwsUc6Uywh0tkMxwuHGgRnj2t/nUniYIOH2TWI'
+                  'YF2bw8pcOqrOQ4U+ZKoGVoeSJhollnV2nVerJqHe4Qbxqj3nU3UyaK7yedvb4zsyIOwTFltC/ARVQQ2Kyc+NWUd4SFhMYNToCYWD'
+                  'pXF7JpjZmmiQXsCC1VeCUN1dQKst/ZA3oz2upgcoM9ibaEu2Nm3rEJWz6ugge7/oNcu0HKGRxKlMgAl7CCdgU6WzP4DhzZ0eaHvx'
+                  'j82GUtCELBXrbao9W6TJHOYKNcEYBX8jEDaBQg9pglbG3wC20XnfJoht0Yc1wijlb0bDxvdejUDYhzZBK2M0oGlnvAC3i1UJ+SWc'
+                  'aI2tqwLWSZcJCKQ8Ld0m8+89VdxslXqP7UAcPQ92gPplqOF3bzar5qNdQz4BPi6RWMCBCBzpCRuehNJZhg652NpE1+Uz+2a4RMRW'
+                  'IV+W+GQZX955turZxjzicq0w0f9I7ql3wNFsjozt+0XqgdPZnrvhaSA8oPZoc2KqUdpQhsaQr7z4TO9oDBMCCrTxGrfaPBFj+sdV'
+                  'XpMp3VMEjCWJYo0MMe9jrDc+lg2LZb2xOaqGAeWxcGl3l1m5tMcvLV2241/KRkabde4RrJXn83xKAYRM7/a5ur2C9U1V3xBaEfjE'
+                  '2DdQOo/889rIcxbZHXz5DNaoGjs8hndP8B2jByMkC8qZX2rqlN5xTapFeHC8qE2UohEsuW0MmUDK9ICGY7Eq2hxWayi/FFE0nurC'
+                  'gxP8Ljx6/7vwiM0gM3JFoom6Op1r63nr8wMbwHe0NjaAxeVoBKftndiooG+3I9LidHhRHf6xDc+kD3nP2LYfRUJo0wmqUA2Jgh1q'
+                  'iYZf/xzzHShaNdJGKWdKGduDU1UKg76cdAKvmrkMESt8VWcgKQtb1ihySvSJhBUyAmRvBVx1Nw4B2I0K/WKyH9+NHNS6wxmjlgIM'
+                  'Chifnrx6mbx5PT49fPWC+0YLG9NGFJvKfjsK+g9oxouT377ajGwjFqd4k/nATg9evTwMO7eUz/Xt5Ml9tpLPfdvIk3ttIJ/7No95'
+                  'URZLxuYW4eiribAd9NRbXrvkAt5VEO63cnRiZ6zXWjgWq+lxZyNXSzYMF3naaOwmaOoy0gNwc/4QVWQf2jo1KrJp0WMP8T0RirGR'
+                  'xPXSSfFO7GHHh9AKAy3vSS1VwcPppaq5i2KgFe5HMYVSMKVFM4mTSWGBlVM4FozKhaoM5sTFqZLXO6YBY0VzWvrAB6xpCFbA1oS+'
+                  'Qty+NkzbnuFmRSN6JKIrxQtNccvujOSvWPd2svaPXEWIjexbrXYNAiyrfqrPMqRV+2qqSQPc1NgjlzSm+t+jWCzDUsKqpMVkkTLW'
+                  'vbdanKxeQBtqB78U5iP5K7Yk9Ij9iS1G1uTjiPMdN0XYcqnM3rPDCR2BgLHYqOna2uqMaizJ1heMYcS6irC5kRucde6NgpsYiz0t'
+                  'CLGZXqGtcZ3VuAkTDoM9PdasRdpfqpi3c/mKtlF0Fw4LUhxuDErEz94AQ/7BCROc1hkeJKKg9iESRPvGIj/833wkGAqq6fhFQLzv'
+                  'o4qOHwYGM5nnA1hxE8A5ImADzLOsSZZpPvN+taPpfa0TktIIsbcRkcOVrZYSeTpgyHdUTSh1WMD/nS17nG/syAe5NLF2J3CSWTND'
+                  'UHQMC51s0ZqhbeqHsJLM57xIo8rM8sus8ZRZ66HDm6Zg5wzjq1d1EmmQfYA1ZdOLnBgJe5rLLdE2M8OONWR3Bh9D/RhGy842dUb6'
+                  '/sqM9N0YxfYa53HT4lqZtY2H1tNW6kyLMtai6qwmeEODf8VDgz+pcnEsUW6KwHr9XXZDW17amRR9xmkDwBwGhqRTrQU0Rogi7xIr'
+                  '8y18yPpfW7EaTrvnbsPVIcXsMiW3wi3UtLZ8+gQrw/7FITXWOo8auE+cuD+4XAj95ooborSK9BJE0ZOH5fJ1L1L17sLaAOilCeJc'
+                  'oUYHJD7oH1VR/Eq/9M+6tJ5oao1VoB1nGyzezfK6t0xR2zViWxmnZVK94wd7sIg2z97XOVCMJhpNxNlqsWxYt6Bo2eAx0rSZ5rlw'
+                  'BuN2V9mOcD3uzExC7jt111ENG6FPqIfxDYrDeVXklfK4dvCPfUTJkmr0jsu1/4ecIg6QCR4AU0w2nC2OSa1xBgJ7Upagr8zQwtku'
+                  'Ee2IIjCv+S/0JVIUBFTcYdcYmr256lDr9Nf6ps6/DVUrNBhDL7MHCwNfvAx5b0xtxbbnk2lzrZ1zgeHLs2LW8CARjAOMmdN9o7Sg'
+                  'Iy5sptx32jAFhwsjLCvUHQtuwzc4xD3cJUgaMGCQ0mxcMACaADAaAJRE6LJ0jEoSQ8VGoDrw9PIVGR5K/NIEooVWcz14AR37Lb3o'
+                  'MThOAwrPGTFyYA/AwGhYMPoozC/Lqtb3u7kCZ90w5TyrjE1aFizci7Z8H4HMPZTuQyS4UCqk/nRFxRq0FtOWnUvFk7oXaUEhN0rY'
+                  'uZsb9Elsa5hLwc27IvhtO+YsPq3q2TC4qCq0+9kJE49lwxcX91AnMn6sSwbFstEDOYcjaxIzJOf6rJCHMjiUL4bRtBsoM4FshZzv'
+                  'zHrQIxgf4DrjqzdpPYieOKs6kFCsQio2y+fzDLpEQaUGjr7qrCkmJo4z1tgEuMNzxwxotkZTcoSTYLurtOS75AImjzqvYTrKYQxw'
+                  'F1z1CSO/vJ5MEp/IN8ItjY2icEGM9rujMWIpwkqJtiTVnK9hxOoTD2PXzGD2LFvlUe9wck7nti+W6FcC+b/HTm6xaVTkyyWuve6J'
+                  'SMJ7sYkD63yLV9Nv+roGFFwU4SmSLUFVjUusgGpx4uZOmm08dqO50xpUFxRjpOlkyYmaSSbPu0TmiZGEMHB/nGp4rA9yrKoxhKuO'
+                  '4NuHcLI3Ppr4S3K4ebJfn6LKf7cd9PAoz2Nz2FUT6bw/TlStnTuijGA3BQ5vLOA+QyEhRFIBDFgl3Dt2Q1VEYzFLhLFkSAZuBRuA'
+                  '6CnoWsO47oTIii7ExaeoSlX7WLbWACQs1EcDelu147FOAuM4kGPke/lsQ2lzFSDbbYM5PRbQWuN3tG7nc+3Bsf74WSjyuNDWrnqN'
+                  'GSdw6+X7N78LTa7hLlxz+FlSCiwwPjh9eThOfnt49PLHcfL94fHJbxPav0len5wdjY9OXvn2ehhmwwPe75xyXeok+qQ50u+aIxpL'
+                  'Y3t8rBqbDXd43p1wEul25/yAMWPQn1lwsEnMUG/LSa55y6tpllEAHIPpI4xyNGuc9+kTUuM2WV9fJ4qO4cEz7LFEunl6uepA/67a'
+                  'Y4h0DyY8MIkbBybtvVXqc+uu+WzMQwbn+EUnnWPggPIxAOqIT84sPzs8Pv4l0/zg+5O3h840190Ypt+2u/UmnGq6YEWOTrcyWLgh'
+                  's0eYnTtnq6WHm+dqmDWuYt6wrzAo3ccD9FXnAd/ZXTw6SQnG8vI6rXNgr+A6xw0ZPEhOzRU5wmaUI0za7NQxM/2BTBY0lN3W/crK'
+                  'W61Md/5OX27ntOmAf0z3e0NeZ/bD8JpbeYZw1bcqZz2XlHHwtZ4HwJeJSBS2vlkljURFooh4GQcYFqKAVQYjASnfWGhFaiMBB88W'
+                  'hJXtSADSG501rGIqHZJVwtAYZrM7MiZJ6j5IzFrt8WymMKzigwXvJhhyBtkBcaq8ZMcjZAl7c9BJ4+TUIT/ZuO1ET05JbTfWV1Tl'
+                  'gnJKyk+q4FpFAZADQWlC5YjSEqrFgZ7ai1ssZjocfCNiRQknX+Z9ugukc4Pml/gocBONK0k/+9m7bJL7vE4NhlTstmG4lhcM96Gx'
+                  '4j4FeYmNaDofhK8d25WLYrstqAzwnQ7j3fGb2OF3/r56y4oOq+O9/KvuQ6hpF/r2wZL5E0Ss5rNlJTzGkUdWCWeuVWaDtLLdvJ6S'
+                  'mj1uKwLd/2uV1EfQ01JLHBkViogXq5i7FczK4nsL1NoJZnBySP/GMpKJHU3GaJkX48BIYEeebkPEwLPYHsHsnkneVFoyLSOHmeHu'
+                  '5O5gBrrVtYgwTrRTBWjHy/xnmDZTpfXCzVEWywzdWxbpNOuF/wH3Kh/v7g53d8VOrjgDSNg6T0wZFXJYgZWVGZmZ1+wD5qxI2gio'
+                  'ngt+Z2Iw5uUT4hv4jyfI7Knj2ERh33FVg8ya1ujeN+enWw2ai1NZyxnbIrdU0D37cT7ZfH7LgHJPYbGz0JL8t+USUyjwAIOIDrxC'
+                  '33tVjYHno5BpukalfliQyWKzpcx1JzO32fngtJWkaFT4l3/4l1tWYBgP9ufrUPFajLz296HGfQN8E+tv/h7fDIymgQjobJqs9tbf'
+                  'tuFjbMO/C90qt3gNbVZkl0DKZFpnuMOZp0XT09JZEMOoZBa8QqWjtGQW48Pjw5enBz8l35+Mk/HJbw5fsdCDARTPl/oBLl+h5z8e'
+                  'jJOjF74iMh8fCiDZYJ5Xqoe7uCxLQfDAmBEjSMVKB2UGsKiMUGzCqE/cxSwaZeT7oplVe+TXbSgyVlHOL77FHDYs4414lEufUOYH'
+                  'Y6K4rd5loAWmV2nLHN7+QdQnOBURh5h5wV/cLJCtDR1nyKBeUM5rO+WNTCyxhGWB4pm5kYxWNH5Q1Zc7F1V7S21d7+Bo/8TGWIsj'
+                  'w+36kZU0gPcH94fZLzttAHAILk3hj/WF6SQR7vbj+KdjK3uJID3ozYuEPHJ0NjHD89BmZjgt+kml7TGsr8+RvMdIYFO9C6M70lOM'
+                  'OXGDg9dH7ET/MBCJddZmCIw1+mzbWQw+Pq1tkcHW+mIeKudAx5LhU1cTnqSjn+BH4VkKu7w8HfkGeaZBHrpMznJYunbtlsJSgePR'
+                  '4Dl5R1rxHdkcbVEhXjnril/u51yVmpfTY7xDu/XyuNbx+iGhld737lKIefHQ4iKO4IEmuYyIY2MyZZ67f/3Tn/5HSJ4uKsZ9/Awj'
+                  'fPzH/8McgWxDDQscPAej82x8Erw9Oh2/OTg+7Cz99vDVi6PxgQLcsny+GjW1lnZ5LMVEXhVtguERRjqAefh655jj/pi2FWZbqNOP'
+                  'OdqNwbcX390KQ0Ngj9bf7lx8FxouXdEH0//JOrMZPVgemG0TUQY93GmnT0G6WsB4pW0ahVtOPqzw9yXPkniudeMWB2aNOPFUPHoK'
+                  'gwNxJu8v//Efg1s2Eqz12jJC+z0PT2TrgnJA3cdtWZvSj4S/8BHtzEY2znn4E2jb64oRUCvHtBCUevTIU+iUp1TGQtaaxgX+O+a/'
+                  '+/M/cXgfRzzSPX+Pomg4+HK+xmhIB9vrOvv4sRLO08oceQ2hxwn5yNf/51XZ1hXYdFWddSKTjkUvih+yTLQn7UTBfZAeBBq/dw32'
+                  'Idsix1hLq8dCXjxScvLRxDdiOVaCbE1i0u6qEJ3ROujdCqtYl6/ROnKHwpwv05VvSJQMfWTP+kc8HG7txVxWpY4dF3IOciV4PUiO'
+                  'cyDJTDGeQzLhKvESDKfmDI1oYCJWXpaTovnRhPjUKfuWuAnZt6Nmw23irf511lQKgVGQuRgeTZhyG9IKhKTSX/7TfwmqizxrcUab'
+                  'c9MXymMU7pQzZDGAUSPH03HaAs+Q1HIglHO2E0R6YaO1b5Y7FPSYHy7tXgjP4yIFA3qh8QxytcaQPldfF1PqVAGl+T//V3BGU56J'
+                  'YHVjDF01U4LNtipTTYUQK+M5tuuc7ojhycwGHOskso0/HspvWH+fHDMnj9X4UglI++9z2HAy3E2PNuJp0giJ60V2bD+O4/8fY6+L'
+                  'Fk5kMJko9wbuiu31WR3Asv/1P3ebHHWeLfOiuqx4UhywUDZKBaaQzLnJhs0zH1+u0ll6WVY7gBvkcfpXU0H/VjSPZhBkQi0CpTub'
+                  'Z2yBd7dNmny5xD6Ulp+GTtsqZ2bfZkvyDj3J88MKXRndS1d2MLGmOrmN91DdqdAo/RndqT83NYer0yjaoBI5Pqlch59Lu/4iPUeS'
+                  'HtN58Db9jXX0gxYBb8VZ1D//U3AwPrVKWTe6+IdAqnXo78qQHygpjHG9j0L/29kJVVGZBgJlQovR3/oxDYrsOoXfV3TjGl59ALqL'
+                  'iR/HOOA2wWz1wJNTnoO1pPkxQP5zu2rJiSyUCLdi7nDXkudToNR81y+Pxj+++T45fHv4apy8OvjpkDk3aP3+vqrfzTEf1Sxvlmk7'
+                  'vQodtFiXTOkndpFog0xT9Z7O8TsbrPOUwqfCc6PyS3FYQj1MfNuMNCHjoQtHJXOrUhkyn+SJIN5uai7fEEOXsnDL9dmX70ayEXJv'
+                  'qpzBDGUHRv9KluJdRy+601jhCxCNq3qa6cmOaSMtaa/yJpneTHE2+3bR/u2ZqNIC5faOZn+6gQydZijbTiRftL6vSEmFeWw+HQpu'
+                  'rkBchBPhNdNggZP4iIe0Z895iPJPy3vOSAh9Ebg2H1MdKO8NwdSpp15mJdgeaATdyuOI6y6p98UXwVu8E6LIgVXAVAHigpZLu8D7'
+                  'wU/VLC2YAbK9TQdvAzx4u71tgh3gcVsEoWSSFcy8sq1soJ+yekpWm3QQbW9T4klxaN4u8JyxCq7N8o856ZXt7b/8w788hbHa3bWh'
+                  'j0FaI8Den/9b0BPLPBThkQ15hhIdQWmLA5UbiAMb6EQT9wiLF06CLkLwXwd5QXeXTvHa0VR2GEV4jmn/8cx4Hrw8tHpkjcQZOX2Q'
+                  'T9J5dVnkVRfsz8HbaopBAtwC+9n82O/3A/p3aHyZwyfunfo5cJYCDugpiKocHabCDyVKuca+U1bZqXpVXm+OU1a3ULF0py/HKans'
+                  'UW+tjifHQSAsUWG2ONX7/DndWJSDB/DczwJ1kZmOO61f91kzOeieVwvaqtQXJh1I/SsdB6Ntmelccl+7zEHqWT4h3jsXT+ZMsKaX'
+                  'aYPDfKWBzT7/JFMrBYO0nnWCZ+IsckwxUM7RLKszLwJ9qeAMcIY+cm8xY/3QUXGzWm6oWFteuNM2W+QFsPYV6g+D4a0LI/18DgsN'
+                  'b5U8hQ55GjauQSKPALtkoVTb286iZ3vbAR+jbSaTZtNs441SU1feWUnBJK50FbdWQCHTyiJ51bvVDKx11M2sx2nAM9Lkqdi1Ci6B'
+                  '20Eo4UOG+mYpxEyZFUWKJjO8v4BJmIL4LHjGyCyABU2dz1bAyTpcCgpqEBwJsCbH86cweilajtRvvDPxOuceUUzAP0vrGby9zsG+'
+                  'wHukwHxJScUVLA+RWCQt0hyVYI0ILnLcnAuuyeplkhk9Nqg4sxnI94GHAhOVfc+2O1V+KDKdHoPthBP7p+qaFBXZMBRmAbM7nxYV'
+                  'LULUkTU8+MxC9vNyE3ZZgzfrPBvsPnIV4QDNkM+yRxPkqVtts+zc3CibqI2yIA3Mbadz7xYYaKhfW/cBiTuB1D6Yg0ntf0H5mM4V'
+                  '2SBifwsABib+aMvb/zDULVZB9jcFhSpKx3mukZvHaDAzeNiBNXnl+t7F5lyQglVap5TFiuZCOkh4K8zDaapNZrTKz8EXMA0xjXjw'
+                  'Zvwcfh4z/Sm3OLl85sIaVaNGVY/iFeLEDosRSkBphEB/5f1jYOlg0BpvIoRp0mNEjB7Gn1xb3rnJjKJK/8xDnvlusvWVGF1+8bHm'
+                  'vbaMeUAes+GCB+wId1V61zZwRy2O2eTSg6kL2WffbPEwoG15vAJrOVhkbTWriuoyn3aur45AVrPN35xE7GpWlRXN4UwehNSveMQc'
+                  'gbgpDeK5CnAmNWqja4BeCViK8C/LuqINKpSRtTLtMxLIZBIhjrSY2hNyVRQwHtMrShffKa+d/QwiSyTdHpQgC71hd/k8NnkuHNeY'
+                  '5qBIrmgyZDyZBPdGKLeZUCgSToQAarfYdwf8SgfV397tpWccs51eWuKxBzm9fI4LPMe4ZBdtGH6vyWfxe61KpmU78wluuCarM2r1'
+                  'HolAKEFc121S6s5K85ZL100W674xvGbCc0eec/dT1x2zspi4r4zKhxFPoaxEC7szhOd17ri6zHvZlMxryPIQagkNdbeVcy2JkaxD'
+                  'hyyq6h01VNxapQMCPUc6tWO7B+JaDuqJfjcH6rsp3oBTsqxpdDVPzK/gidllO7G4V8e+AOWclZwI7PLZl69UtMN3MYlwxRv33CYi'
+                  'DTs7a4XE4MnfjXTvvttIBvS1EReM8bt0xNUkeA9Omfaa1UWTtSOWxR/6KPPi8988YT9/ajglrPz82hst+z5eSZOVrG+YGsXuEU4D'
+                  'atM9LoexbqM8wVOytwr7WtwZw/lCXRTza7zUsshQGtxaDVgHuDgQifIH+v2URvpBJwOidusPn9VegelNDynFIzrpyOtq3L9DVwWx'
+                  'saWfOLacSPQ84YfvStoTgtIMyoAXuMWVQNRGTUgSIB7BWN7IW8cwMkACT4wbhYzilMmK1a6d8pHN4b/O+3vDydZDnPbqpjb0sWB+'
+                  'LP+WgymQ9QIZDy/YdBWsnOySVk5f2IE8TnK80UgjO/73BbphVshhNa5e8YQNBdmBjYzHssGSwUvW04vqGiOfq6C9yvhnkvA1T9y4'
+                  'F1zBQnSg3fZk9Bq9/OZFIXTnHLWF3wSus6J+BtzNncXDsK0qXAzCMjENfGcAhbGvnV11hoHtUmiHV/1tiOwMBt4pM6ELsIyC8kik'
+                  'F4E6HOkraibMs8vy+yc85RI6spQkW2p2mGPmv8KLsZp1L5g+pdXFYPdiBFEUeRNKxlotHZxhj0x3pH4nqTqQifuh77oNzz1mee8z'
+                  'w0Z91plhz2111ilNd0Xq9ME5YPygI80bm8dvk2CbfE5LIjeP9sYDpM4UcE6QunjkKVK7sH3g3r6+T5Os5vnkS7arJzNDWwm0adZG'
+                  'f+W81cz6xa/GXcAJXeF98PpIhzVMMEwp6c97bsIlsgbtSU+ljLmUyOCQhuiQbB2uTiI7hbMuP0VGDv2dfiRZzE41ak4aTJEtuktE'
+                  '6bSiDCOY7nnL4gxYWNE90Y08IScOlJmQdCl9QsEmHRB4yTQGL2J+c5ud+bIR7zdNE0xu0nVKa/2pqWqPD8aHZxuTyDIyfUoSWZnc'
+                  'QboNuKQUeWmN9Qat8nvO4EbGMh4xkXp0AjAMdWRS0dbdW53iLLZvMsVmGu86ZoAVdxFvNgJ8l4XrDgxtIFgXu3IByw7jvZuwQk9X'
+                  'hc/XcO74GSZu9n4mfCxVJd0JPEcyFZQOD8uH212CBRwxk1bEW7NTGM1dFu1nDpTi+byucVawKCkzQuohuwvGwXH50uqfMPi6zvp6'
+                  'jx7SUxx02H3SSIlM1rROpWOaW3h3/yZuPDApTsvSmUu6ebruAfZoHTn4wfBBp7U6q8kIqg9JMIcVJnr5bgHHWuV7twPu/LJCEwnO'
+                  'GHAMrGsYc7SZ7lbUf5e1b0iJyLUSN5OVX/PNQ9KAUTFGRWumRUNFB/ZZsm8bRu5ouvPfMy3OnfC6uyXAvfjpAZ3+DNzlcBZD7uUm'
+                  'IY5EC1kSM6u53FdhJcg3x/evqCINZyzikIkBinmCz9xnkqh03NAJngGe8lGYSbcZtHnpg4Zh460PdBhWg5X5tymO7va+Rql5CQuz'
+                  'QX2xcL/ckPVfpMIjD53LPjbYUPcz5zabcp1mnJ792bEjPVek4TUpe7YZ6LkPDeG+ceA2Zu71ou7K1kzXtTztaEdnNmWq4llHq1Qu'
+                  'zWGw/8wYpLUvmx1dsyKyLQNZKZ+kmTUZEA12DRt4026C8EnaF6bEcsuit7+7/2UcfAWrzydx4Mt7wzBdrG50L8NdN2iFiLa/+1V/'
+                  '78mYcvPA/zxJj+8uLWthq+7R+sZ4r12StbdnfFH3Y+09MT5YN2HtfT3Y+9q96WpfL2JdarXvv7rKqIVfWsUvFdx0a9Xu4OtdfacB'
+                  '6LrJC6eTXZkGzFnGBC6/bxcECiwUEBv6XOHvOTusP5Hn6XU4NyHldyMSJJS7di/rf+mBtvIF8K2oovgFfLH37A6+2H8wX+w+6+CL'
+                  '/Y188XSw/83D+GJv8OVXn5Ux9gzGQMpu4gyD8vdgDcKHvIE/DOZQiQo2ccfuXRxhgcg9OKEmqDLh2bKAdE0zwTWKOrBhQfo0l1WC'
+                  '2UyatXIbSvOCqfGzM7LOVIY7p8exmc3O7e86EkECizQve85dIHVDCadgmOn34KC+pIC41/RFJozBhwHu7qX8ey/s91lfoYncwB2h'
+                  'cajbQBtLY1/7LbNAxV0duIEFVhwYAdwGgwKN2IiqB2w/Ct/xhmlmEUChFdbDrwNdt+B9BvhO0naobex6rDk7gZppv9GumaHBtELG'
+                  'mkcudOzNeX+qMseIl1bfHcdzaB1F5rl33dy5Hvavv7ye5fBf//Tf/7n7yCxVnuHpr9+Xvy9DL4p5eFSwqEHrABjGx/z5n4lzMWh4'
+                  'sSwy/DnoRkRbp3jmDQzl7LtbsSI5H4Lo3J2sv92h991NCVlcHDtgJo6jL1d//t9BhnM4421hB9SrQRh7sfh8UKbjqGuUaSRvEq8H'
+                  'wFlHEW07VugK0VpzO9E2s1/AMJb0LYdISgDHJbQ6SBISuEmCMiNJeGQNEyBb/xfXPzt0S6YAAA=='
+              ),
+              'sol_spot_adaptive_storage.py': (
+                  'H4sIAKpOVWoC/71Ya2/byhH9rl+xZT9cMpUo270tbgUwgFIridE0FiTloq1gELS4tPea4rLcpW1F1X/vzD74EuUYcNEggMnV7OzM'
+                  'mddZ/p6M3o3Ihscsu5uQUiajX3Bl4DjOJY3ZJpI0Jp+Y/FzekgVNaSQoEZIX0R0lCS/I8voLETmXJIqjXLJHSvIopwXIwE4ftAwG'
+                  'ScG3JAyTUpYFDUPCtjkvYEOWcRBiPBODgVlj3D79Jnhmn7mwT2JXPX5necJSqrXnkbxP2a1VPYfXIZnDcXMu2DO+ajm5y8FPKzbN'
+                  'dtXJBf13SYUEUxaz+fVitQwvrxYkUKpcp6AoJBxvsFxNV9+W4Xy6+gy/NmXHxBE8DRGM0IIRGqhChKMUPnrlDKbL5WwVfp3+fQYq'
+                  'uPDvqKTZo+sAluFyfr0Kp5fT+erq11lYSzpDpX6E6kdW/UijDFCAZYvZl9l0OQtX008/UtsQ7df7eA4KP159mS1BlTsg8K/XOTxd'
+                  '+TQ8JSOLKKbC34jH0zIAPZO7l2VSOErIHxymw+Rv49MiG54l7C4UWZSLe14p9AaDwSaNhCBLHbFZUfDCXZSZZFv94k2UzhyEQDim'
+                  'CcHjwizaUtcjo/eQ8oUWeYzSkrZj8Olq9fnbhxDzZXm1ul78E3F3PB/2sNz11DaWEKgIsxtKyxk7aoFlek0rx39FxKAMW5Yen0C2'
+                  'TAjMdlDFMtDAYt/RJxUUStFoNb5I/kCzV/uxuv7b7OsPXHiVuUqRtfQF8wQFCW4MtLXqL/WqPmmTMppJMLf7s7FN/+7fU0jIQvhl'
+                  'HkNKuZWR++pJZc60lPe8YN9Vg3ImJHE+0KiAxrY3SB1MjtU7NhuaSxB1ojxPsXPCzvFjFvt3TN6Xt39o5G616R8j3VtH05yNfgW7'
+                  '9GnOxdnFxej8fHTxS3fHN0GL0fQOXEG5TbHLJR8lRbSREVTxBroq/F5VtOk/43P/rKHooJ5aYGt0DNpRzsKySF1sqxPMh3ZemC2J'
+                  'cy9lLibjMcgbJ/0N346xLsR43yiPwx5VHZyqcFSEQkTE1SdPjsI2JFsKMYiVAUMC9pind+8enqLiTkywgSvL4K+1DLzOBCatCbfR'
+                  '6mpdSs2QYE3zUgZ/PKu1VQlsdfi6Z0PHiCl5H5Cfz85eTOnEMWNyr886kD0cdpiQfZ/GQ2NZ0me5nvzp7Ozm0K6ASkIB5bWsg0Ym'
+                  'Md9pCoZ85ZmtFKjUkBfhpqCQ3tAR1cg+CbKCD8a8XCtoAcibU0iCYtcmRuKMjWYxltEdBLsxUsCJJsQvAxsE5KIFbK/nL6r4Hcbm'
+                  '5x/ExnKXlPOHMidJBNwhfltsGjlcna2xqivNgW68alSeBbDGD8CqfkVdQacRAbyqiKDaGxh3moIRwFFPlsjGppaNLaIMmNpccbIl'
+                  'zutuP7nl8Q63zrH5CJVSaq4rdifvKTK8Ec/SnaZ5ht2xbZmqBudD7hH6vLlX5/BC9dbuGXERJdiuPkaQrJ3fcmiqGopjgcPQNCqd'
+                  '2gnL4hDGLySi2TLp5G5POpP/qOpoda4Mguq6SpNyUz8xDKpSq3LdUasCptz6RpWeetc/Kbw9TN6aoUHS40HW2NuSpWBtsbmHMOi5'
+                  'dbsDDqMNuS2TBHAMgPH6H3D56tpk+RP0UUtu/X+x/CP8dbU4zNsnMAdaLICmyjeoBK/m4eXs45fpanbpgaXEHFxXBfqJZqObitlN'
+                  'WnHA/nxEaFG+JQUooKBPnyFVBHgVZbFeYSJEQ1yvrVblvDbFfyoYDNxccXNYQ+VBYqn1eI/vnRrTbiPkigu4FlsRJcAanyVOPVC4'
+                  'S3kEtazgVUCnYB1mQN3LoBlguVc/gKvrG/VjlKb8Ce44AdkfGXMM2uF0jBqRNCZ5pyPBsoSjUosNvqNxXfwyXmyBuX1XBoLhbutS'
+                  '4+I2H61AIz2vG6vGbkMkrbfGBAxbzIq+qOF8YVnZjr+ESUmlvRbV6r0eKT8HvgRzY/uAJ+gXEayKkg6Jyp+QP6jX3s0qWUIVUteC'
+                  'BCMtVi53PLXx9YF40Sw+squeKUrMJJE+Qbd9FxIJiaQmGPwBkolzIAoxlTAoertM3VQaNfNaZxu3SOMpzhm3NQj8uNzmwm15une0'
+                  'odAq9QO0BP4Ab/xhqEZFZ0oQ3cRgte5TSHm0X4d2K6aZwAt6JDaMBT2tGroveBVc1KuN0UUz/Q0hcNQ3BKfduQ30bge5irKLFlP/'
+                  'P3KPFnFoZYRjbIaGq8O4tysxwLm+AWy3YDVQDJyeCSuEJEWZOYc6N/OCZTAsYEAWdMslrT+WNL6RkB1ku+N1CNDbyehCG/sWpqPH'
+                  'YtCeuy1e1rr1KYn/CZr6YNSpaWyMIPUg28HTpIUuOKG6NKSBgVlP736gY/6UYcPuJBzuWDuQcw7YZ+6Nwf7ERY9vJMX7Fhi8dQ51'
+                  'Ev7ZJKE9w1fRCmEIWGy81pDCamiOt2qfIfyGJbweXPtom0HIcLVBZuDdM9gaXBd2YOIVH/77v3GWuVaRvYdoc9X9w8mgph1b7WWO'
+                  'Br+62HXQghdvLlpWBRY/aQQ9XLDKRSvVvFQc3TfBq0toGyv8sNbXWTT5G++tsvVPLP4JK8MApSc8GNLhec2CsMzkxQ8hnRw2iggT'
+                  'hG5zubMZqzFFMw0RMJZCfla/ODeeLyAjIYJ7x1uf3ZzopnA7b8yaen/dzWGARVvMdXOxqKdHY2bEkYwC42O9WtfJX3XCjla7nHar'
+                  'BT9ZNlTZYvnL2bDxaeJN/e+bcust7a9dYxqmRokpbgJ+AfmqCF+7xjrN8kS1WVOhlvrmA5jePOGgaW5Va1EZQ7w7pdaok7Wir0c8'
+                  'FrF1j8m+VzF7nTvKAqAu+BX4Fd+6q8/BtZ4eJJXJAKRVjmBaiwE1+4gfppVE9AgxjG5TTCK7p4Vggy3tX9gDCnuOOXgWym3Esi6S'
+                  'mmVhye2ED8z0cX1+g9hhSOySR96Tc9MHtW9qqyx2dYri9dGoCkjVryd9NNatRxRN2/tMDra32W57cpe2qb3JpE1jj6Ada3qLKnvI'
+                  'YB4RS5f3+sFWDH3GyUhm6g8eD9cfWDvBCSyD1VQTkwBPUQErXNjmNQa+sgbiBJ6F6nNIGCrfwhCjFobGPR3CwX8BQ4xuCtUaAAA='
+              ),
+              '.github/workflows/sol_spot_adaptive_paper.yml': (
+                  'H4sIAKpOVWoC/51XbW/bNhD+7l/BCQOabqFStymWug1QN3ESo60txEqBoCsEWqJsthKpklRSL81/31GUYkm23Gzxh0i6V949x7vj'
+                  'JKUDNJt+QLNMaDSMSKbZDUWXhC8o8khGJfIliRhf9HqCD3oIqXBJozyh5hkhjEIJ35FzuN9/tf/icP/wFfrD/hxguBXyW5yI2yBi'
+                  'KiM6XA56PdCZMqWY4MroCAXXlGs1QLeSadrrwYcwl5LycGXoCynybICUSLACHzEpfcSZ8Q4rTUAI1BAe0gQzjjMpFpIqUBiTRIHC'
+                  'r2JeWLIC2h7Hui9zrrDxP5/nXOc4AWVKFyTNUipyjVPGc/g4QP2XvYJA+Y0VRsi79i+mkyv/7Agi0HcaX8fT0eRkejqenAMt1zE+'
+                  'qujnY//i6l3gT9+PJgP0+90dWjC9zOeuFt8oR/f3JR+kJZh5Uz8Yng49f/xpFFyOPoyGs1HgD8+3ReSm3yk5nM1GfjAZfhxtEyyC'
+                  '6P7Dsk75k+nkbGyNBkY2qGQDSFfMFu5XJXgp7YOX55fDj8E70FA7paKhpFq5m/T1mR9oJxdDPxifdkiWVCNXCCpNM1VlBSNewPpk'
+                  'ScNvkEKUElb5hlCuTDJJqA0AD8KS5+3N4QPHLWRj8PAGIKHxoKkDoZgCmHFEM2BFz3otyzOqUZ4hb6WXosuyojrPcFawvL152Wnd'
+                  'cuAbKk3JAJZeuH2AWsvimEMOkwSBR5RHUDuMqgclgPJBqQfhFGUsQ6zk53maraAyeEQUHPR7DvBXbeWfSMIiQEhZQYInK6QIhGDV'
+                  'NPFzw+3C3AowkmYsoejvGgPagqW50C648ys2pYUkCwqsmwY7lWKsaBLjh/puuonevHniXT+pUViaCalRDddF3qWAExG9TNi8YvHg'
+                  'tVfjsRWBjgtZNxEkUnuNE6FCZM/ZWUzOU1dSEgWa/tB7kFBhbq3j8iZ5WtNXfyZKUfDIqvnspCKizhd0fIwcb+iNLoPp5MO1081v'
+                  'XnUpAHfADk61SuciWbPiq9mpv4OfcaYZSYKQZAyAF9BcWuHDZ/DnPuuWTChAH7Jt2fu7WAHQ0GrUEpIC3Eyhs6IBdPJDfJNAyAhK'
+                  'K6CczBMaPUouy+cJCwMoCRKYYrBCvsxpHQZK5DKkAIOuZFtgPjrPsZBzFkFtg8o2npwDiOvBTf/AnsbZ30nvJi/jTg3vr06m40kw'
+                  '9MbBbHRyOfJ3srwfXe+ke9CQvItLaGZb2E4wsODtKixtNj6fdBI7dDdjmfMI4vjZtlwILbJPjNfizOL1V5vNL/ULIrZqBi03JGGK'
+                  'otkKelI6+sH0XuycPag0kMNFiGFiycicJUyvSj3orvh/D1mv31BCabgXYDwBf60XbvG651T3tWt49hpg0TShC0nSwJC2AWapNXTM'
+                  'A5N4t2J2hVwcACqd9YFbYtAnACwKWsxHmLBMVW5lfdoMU+0Iv0EJI4g2h2mz4eMvo9iiF4eYmk4kOEV+qQrVXEPedOabwiwGTq1p'
+                  '9Bo5W7TEjkXD2svju/XzvduWaWTHICel0EMiE4h6SnLIyD6qfTDjb/NTBF5rColrHx5itlZqozvY4vljYmRPeMXpj4yGEAM7ZeMC'
+                  'fNCRL3zfq2xVKLSv99tiVU+sd92eEy6p6cwUhpCIhcQYM5uFufTs5ICqYX1zLNnV5KFoCr0b5nK+NlDJlZbCVZg81pK9h9varzLT'
+                  'uWtnycwEpsyu8n/PkRcq24Y8003U0uhncPmHaJmnhGPTFIoUSWqmjO5JC5aHauSACVO6Rity7EqBy2nzM5zxi7NDiMJ8m8AW1z96'
+                  'dfT86PmfW8TfGkblcshElqzccmeB0c7ptRSTKCq9hjF3IyCW4qZR85IwghGLYxjUQmJ2THj4njOqXyO9pLwBRhouRTF2tHJvVaOc'
+                  'h0uzwEaN2qXNnl7FIIW7wYypzlVWzLhdiLK6nQ0NWQ5jNIZ0zQkUo5BsATXb2hYqTshyyXAxGp4O2jsF68IgIwsONxJgg0jNYshK'
+                  'x1JhEYYrrl1bjbWwuQvW9lGAWsCi9XJWtCNiNp6fjcP9t1zv4rf7t9saundJlOUVmJLMVVuSxZgLHMPuoXB5vd0SyRvLnaloCB6O'
+                  'yAoi+VfvXwfbr9gUEQAA'
+              ),
+              'reports/sol_spot_adaptive_installation_status.md': (
+                  'H4sIAKpOVWoC/4VSS27bMBDd6xQDdCdEjgN0lZ3gGIURNQosFUVX9lia2INQJEFSTptV0TMU6LYH6C1yk5wkQ8Zukm664ue9N/Pm'
+                  'ke+gqStorAlQ9mgD7wmWqLcEj99/AmsfUCkMbDTINow+yxpZzTnk+eKqacuqKtsaruYVLOfXdbNo6+WXPM+yAmZoWdQkVfieZRM1'
+                  'jz/+vJ9OptOpcAoovacQr6MJb1RAHUxCPpLrDm18NCeE4lNz0YLnYRRDz6yK9hgpZw+/0rnZGZfq9exxw0r6B05I7XqxAY5Q8b8E'
+                  'INAyHw9W0UD6r+YiYV+7XcwjisrrBdhxs1Hc7Qgux5lhfQJOTkw+EHyYt2+nSFGBJedZcB2kiiNF6Ak8WXQYENaiKOKMBR4eoNif'
+                  'rUX82bjbG2XuAMdgBvHSSRzryZbDbtyc3h1Qfyr6VdSvjvqVRWk5+TaoN2XSLQSHksQW6MVSnsfxB9PzDXfHaGdGB2eUMq/ai3kr'
+                  'Af9Hm1UI1vGAwqNuvJe/Qy9FEDpH5B5+g5T2z/kkY69SkgdhdWxmBBDh3kBPfeoxyZ4AE0euIbYCAAA='
+              ),
+          }
+
+          for relative_path, encoded in payloads.items():
+              path = Path(relative_path)
+              path.parent.mkdir(parents=True, exist_ok=True)
+              path.write_bytes(gzip.decompress(base64.b64decode(encoded)))
+
+          gitignore_path = Path(".gitignore")
+          existing = (
+              gitignore_path.read_text(encoding="utf-8")
+              if gitignore_path.exists()
+              else ""
+          )
+          marker = "# SOL Spot Adaptive Range paper state"
+          block = '# SOL Spot Adaptive Range paper state (dedicated GitHub Release asset)\n/reports/sol_spot_adaptive_state.json\n/reports/sol_spot_adaptive_trades.csv\n/reports/sol_spot_adaptive_equity.csv\n/reports/sol_spot_adaptive_latest.json\n/reports/sol_spot_adaptive_config_snapshot.json\n/reports/sol_spot_adaptive_storage_status.json\n'
+          if marker not in existing:
+              separator = "" if not existing or existing.endswith("\n") else "\n"
+              gitignore_path.write_text(
+                  existing + separator + "\n" + block,
+                  encoding="utf-8",
+              )
+          PY
+
+      - name: Validate programs and strategy
+        run: |
+          test -f sol_spot_adaptive_config.json
+          test -f sol_spot_adaptive_bot.py
+          test -f sol_spot_adaptive_storage.py
+          test -f .github/workflows/sol_spot_adaptive_paper.yml
+          test -f reports/sol_spot_adaptive_installation_status.md
+
+          python -m py_compile             sol_spot_adaptive_bot.py             sol_spot_adaptive_storage.py
+
+          python sol_spot_adaptive_bot.py             --config sol_spot_adaptive_config.json             --self-test
+
+      - name: Validate paper-only safety and Telegram isolation
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import yaml
+
+          config = json.loads(
+              Path("sol_spot_adaptive_config.json").read_text(encoding="utf-8")
+          )
+          required = {
+              "mode": "PAPER_ONLY",
+              "asset": "SOL",
+              "symbol": "SOL-USDT",
+              "initial_capital_eur": 40000.0,
+              "public_data_only": True,
+              "real_orders_enabled": False,
+              "allow_short": False,
+              "leverage": 1.0,
+          }
+          for key, expected in required.items():
+              actual = config.get(key)
+              if actual != expected:
+                  raise SystemExit(
+                      f"Unsafe configuration: {key}={actual!r}, "
+                      f"expected {expected!r}"
+                  )
+
+          source = Path("sol_spot_adaptive_bot.py").read_text(encoding="utf-8")
+          forbidden = (
+              "/api/v1/orders",
+              "/api/v1/order",
+              "/api/v1/hf/orders",
+              "KUCOIN_API_SECRET",
+              "KUCOIN_API_KEY",
+              "KUCOIN_API_PASSPHRASE",
+              "KC-API-KEY",
+              "KC-API-SIGN",
+              "KC-API-PASSPHRASE",
+          )
+          found = [token for token in forbidden if token in source]
+          if found:
+              raise SystemExit(f"Exchange-order capability found: {found}")
+
+          post_count = source.count("requests.post(")
+          if post_count != 1:
+              raise SystemExit(
+                  "Exactly one POST call is allowed for Telegram; "
+                  f"found {post_count}."
+              )
+          if (
+              "https://api.telegram.org/bot" not in source
+              or "/sendMessage" not in source
+          ):
+              raise SystemExit("The permitted POST is not Telegram sendMessage.")
+
+          for method in ("requests.put(", "requests.patch(", "requests.delete("):
+              if method in source:
+                  raise SystemExit(
+                      f"Unexpected write-capable HTTP method: {method}"
+                  )
+
+          workflow_path = Path(
+              ".github/workflows/sol_spot_adaptive_paper.yml"
+          )
+          workflow_text = workflow_path.read_text(encoding="utf-8")
+          workflow = yaml.safe_load(workflow_text)
+          if not isinstance(workflow, dict) or "jobs" not in workflow:
+              raise SystemExit("Permanent SOL workflow is not valid YAML.")
+
+          required_tokens = (
+              "SOL_SPOT_ADAPTIVE_RELEASE_TAG",
+              "sol-spot-adaptive-v1",
+              "sol-spot-adaptive-paper-state",
+              "TELEGRAM_BOT_TOKEN",
+              "TELEGRAM_CHAT_ID",
+          )
+          missing = [
+              token for token in required_tokens
+              if token not in workflow_text
+          ]
+          if missing:
+              raise SystemExit(
+                  f"Permanent workflow missing isolation: {missing}"
+              )
+
+          forbidden_workflow_tokens = (
+              "PAPER_TRADING_RELEASE_TAG",
+              "paper-trading-persistent-state",
+              "KUCOIN_API_KEY",
+              "KUCOIN_API_SECRET",
+              "KUCOIN_API_PASSPHRASE",
+          )
+          found = [
+              token for token in forbidden_workflow_tokens
+              if token in workflow_text
+          ]
+          if found:
+              raise SystemExit(
+                  f"Permanent workflow shares unsafe state: {found}"
+              )
+          PY
+
+          git diff --check
+
+      - name: Commit installation or update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email             "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add             sol_spot_adaptive_config.json             sol_spot_adaptive_bot.py             sol_spot_adaptive_storage.py             .gitignore             .github/workflows/sol_spot_adaptive_paper.yml             reports/sol_spot_adaptive_installation_status.md
+
+          git diff --cached --check
+
+          if git diff --cached --quiet; then
+            echo "SOL Spot Adaptive Range is already fully installed."
+          else
+            git commit -m "Install or update SOL spot adaptive paper bot"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
