@@ -141,13 +141,61 @@ def _risk_assessment(
     pnl_eur: float,
     stop_distance_pct: float | None,
 ) -> tuple[str, str]:
+    """Classify residual position risk, recognizing protected stops first."""
     margin = max(_safe_float(position.get("margin_eur")), 1e-9)
     leverage = _safe_float(position.get("leverage"))
-    atr_pct = max(_safe_float(position.get("atr_pct")), 0.0)
+    entry = _safe_float(position.get("entry_price"))
+    stop = _safe_float(position.get("stop_price"))
+    side = str(position.get("side", "")).upper()
     pnl_on_margin = pnl_eur / margin * 100.0
 
-    red_stop_threshold = max(1.0, atr_pct * 0.60)
-    yellow_stop_threshold = max(2.5, atr_pct * 1.20)
+    # A profitable trade with the stop at entry is not "high risk":
+    # it is protected around break-even. If the stop has crossed entry
+    # in the profitable direction, part of the profit is already locked.
+    if pnl_eur > 0 and entry > 0 and stop > 0 and side in {"LONG", "SHORT"}:
+        stop_vs_entry_pct = (stop - entry) / entry * 100.0
+        entry_tolerance_pct = 0.10
+
+        if abs(stop_vs_entry_pct) <= entry_tolerance_pct:
+            return (
+                "🟢 BREAK-EVEN",
+                (
+                    "stop sull'entry: perdita residua limitata "
+                    "a costi/slippage; profitto aperto non ancora bloccato"
+                ),
+            )
+
+        profit_locked = (
+            side == "LONG" and stop_vs_entry_pct > entry_tolerance_pct
+        ) or (
+            side == "SHORT" and stop_vs_entry_pct < -entry_tolerance_pct
+        )
+        if profit_locked:
+            return (
+                "🟢 PROFITTO PROTETTO",
+                "stop oltre l'entry: una parte del profitto è già bloccata",
+            )
+
+    # Normalize ATR defensively. Some historical positions may contain
+    # a decimal ratio (0.039) while others contain percent points (3.9).
+    # Malformed/extreme values must never turn a 25% stop distance into
+    # a false "stop very close" warning.
+    atr_raw = abs(_safe_float(position.get("atr_pct")))
+    if 0 < atr_raw <= 0.50:
+        atr_pct = atr_raw * 100.0
+    elif atr_raw <= 25.0:
+        atr_pct = atr_raw
+    else:
+        atr_pct = 0.0
+
+    red_stop_threshold = max(
+        1.0,
+        min(3.0, atr_pct * 0.60),
+    )
+    yellow_stop_threshold = max(
+        2.5,
+        min(6.0, atr_pct * 1.20),
+    )
 
     if (
         stop_distance_pct is not None
