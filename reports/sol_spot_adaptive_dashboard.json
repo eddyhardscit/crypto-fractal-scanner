@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-13T22:46:01.204949+00:00",
+  "generated_utc": "2026-07-13T22:56:33.760900+00:00",
   "initial_capital_eur": 40000.0,
   "equity_eur": 39992.80743252,
   "total_pnl_eur": -7.192567480000434,
@@ -23,6 +23,13 @@
   "observation_days": 1,
   "fees_paid_eur": 5.99400599400542,
   "realized_pnl_eur": 0.0,
+  "cycle": {
+    "start_utc": "2026-07-13T22:00:00+00:00",
+    "duration_days": 0.03927963986111111,
+    "buy_count": 1,
+    "sell_count": 0,
+    "realized_pnl_eur": 0.0
+  },
   "plan": {
     "current_price_eur": 74.62,
     "average_cost_eur": 74.70955892399999,
@@ -47,6 +54,41 @@
     "minimum_cash_reserve_eur": 3999.2807432520003,
     "remaining_buying_capacity_eur": 30000.719256748,
     "estimated_remaining_tranches": 5,
+    "used_tranches_estimate": 1,
+    "total_tranches_estimate": 7,
+    "sale_plan": {
+      "indicative_only": true,
+      "levels": [
+        {
+          "level": 1,
+          "price_eur": 75.95047082409938,
+          "quantity_sol": 20.077752052129,
+          "fraction_of_position_pct": 25.0,
+          "estimated_net_proceeds_eur": 1523.0848237829869,
+          "estimated_pnl_eur": 23.084823782993453
+        },
+        {
+          "level": 2,
+          "price_eur": 77.84923259470187,
+          "quantity_sol": 28.1088528729806,
+          "fraction_of_position_pct": 35.0,
+          "estimated_net_proceeds_eur": 2185.626722128586,
+          "estimated_pnl_eur": 85.6267221285957
+        },
+        {
+          "level": 3,
+          "price_eur": 79.74799436530436,
+          "quantity_sol": 32.1244032834064,
+          "fraction_of_position_pct": 40.0,
+          "estimated_net_proceeds_eur": 2558.782503955418,
+          "estimated_pnl_eur": 158.78250395542864
+        }
+      ],
+      "estimated_total_net_proceeds_eur": 6267.494049866991,
+      "estimated_total_pnl_eur": 267.4940498670185,
+      "estimated_roi_pct": 4.458234164450328,
+      "note": "Tre livelli indicativi derivati dal range corrente. Il bot non piazza take-profit fissi: ricalcola peso obiettivo e quantità a ogni candela."
+    },
     "defensive_plan": {
       "automatic_stop_enabled": false,
       "level_1_price_eur": 72.3814,

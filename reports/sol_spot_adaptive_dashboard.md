@@ -1,6 +1,6 @@
 # SOL Spot Adaptive — dashboard giornaliera
 
-Generato: 2026-07-13T22:46:01.204949+00:00
+Generato: 2026-07-13T22:56:33.760900+00:00
 
 ## Prestazioni
 
@@ -45,6 +45,16 @@ Generato: 2026-07-13T22:46:01.204949+00:00
 | Tranche massima successiva | €5.998,92 |
 | Tranche residue stimate | 5 |
 
+## Avanzamento acquisti e stato algoritmo
+
+| Voce | Valore |
+| --- | ---: |
+| Esposizione reale | 14,98% |
+| Esposizione ideale calcolata | 58,03% |
+| Differenza | 43,04% |
+| Tranche utilizzate stimate | 1 / 7 |
+| Tranche residue stimate | 5 |
+
 ## Piano operativo corrente
 
 | Voce | Valore |
@@ -60,6 +70,29 @@ Generato: 2026-07-13T22:46:01.204949+00:00
 | Quantità stimata | 80,392939 SOL |
 | Motivo | Peso SOL inferiore al peso obiettivo. |
 | Range | €74,05 — €75,95 — €77,85 |
+
+## Ciclo operativo corrente
+
+| Voce | Valore |
+| --- | ---: |
+| Inizio ciclo | 2026-07-13T22:00:00+00:00 |
+| Durata | 0,0 giorni |
+| Acquisti eseguiti | 1 |
+| Vendite eseguite | 0 |
+| P/L realizzato ciclo | €0,00 |
+
+## Piano di vendita indicativo
+
+| Livello | Prezzo | Quantità | Quota posizione | Incasso netto stimato | P/L stimato |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | €75,95 | 20,077752 SOL | 25,00% | €1.523,08 | €23,08 |
+| 2 | €77,85 | 28,108853 SOL | 35,00% | €2.185,63 | €85,63 |
+| 3 | €79,75 | 32,124403 SOL | 40,00% | €2.558,78 | €158,78 |
+
+| Profitto netto teorico complessivo | €267,49 |
+| ROI teorico della posizione | +4,46% |
+
+> Il piano di vendita è indicativo: non sono ordini piazzati e cambia con il range adattivo.
 
 ## Piano difensivo indicativo
 
