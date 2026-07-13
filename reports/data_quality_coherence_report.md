@@ -1,6 +1,6 @@
 # Data quality / coherence check
 
-Generato: 2026-07-12 07:40 UTC
+Generato: 2026-07-13 06:28 UTC
 
 Questo controllo non modifica punteggi o decisioni. Verifica che tutti i moduli usino lo stesso prezzo corrente e che le nuove regole Technical/Classic Visual siano integre.
 
@@ -8,34 +8,34 @@ Questo controllo non modifica punteggi o decisioni. Verifica che tutti i moduli 
 
 ## Avvisi
 
-- 1 campi prezzo superano la tolleranza specifica del modulo.
+- 3 campi prezzo superano la tolleranza specifica del modulo.
 
 ## Prezzo unico per modulo
 
 | Modulo                  | Asset   | Campo             | Stato   | Prezzo snapshot   | Prezzo modulo   | Differenza   |
 |:------------------------|:--------|:------------------|:--------|:------------------|:----------------|:-------------|
-| Scanner                 | BTC     | current_price     | OK      | 63.827 $          | 63.827 $        | +0,0000%     |
-| Scanner                 | DOGE    | current_price     | OK      | 0.07282 $         | 0.07282 $       | -0,0000%     |
-| Scanner                 | SOL     | current_price     | OK      | 76,45 $           | 76,45 $         | +0,0000%     |
-| Scanner Forecast        | BTC     | current_price     | OK      | 63.827 $          | 63.827 $        | +0,0000%     |
-| Scanner Forecast        | SOL     | current_price     | OK      | 76,45 $           | 76,45 $         | +0,0000%     |
-| Scanner Forecast        | DOGE    | current_price     | OK      | 0.07282 $         | 0.07282 $       | -0,0000%     |
-| Technical Structure     | BTC     | price             | OK      | 63.827 $          | 63.827 $        | +0,0000%     |
-| Technical Structure     | SOL     | price             | OK      | 76,45 $           | 76,45 $         | +0,0000%     |
-| Technical Structure     | DOGE    | price             | OK      | 0.07282 $         | 0.07282 $       | -0,0000%     |
-| Classic Technical       | BTC     | price             | OK      | 63.827 $          | 63.827 $        | +0,0000%     |
-| Classic Technical       | SOL     | price             | OK      | 76,45 $           | 76,45 $         | +0,0000%     |
-| Classic Technical       | DOGE    | price             | OK      | 0.07282 $         | 0.07282 $       | -0,0000%     |
-| Classic Visual          | BTC     | price             | OK      | 63.827 $          | 63.827 $        | +0,0000%     |
-| Classic Visual          | SOL     | price             | OK      | 76,45 $           | 76,45 $         | +0,0000%     |
-| Classic Visual          | DOGE    | price             | OK      | 0.07282 $         | 0.07282 $       | -0,0000%     |
-| Exchange Microstructure | BTC     | price             | OK      | 63.827 $          | 63.744 $        | -0,1315%     |
-| Exchange Microstructure | SOL     | price             | WARN    | 76,45 $           | 76,17 $         | -0,3700%     |
-| Exchange Microstructure | DOGE    | price             | OK      | 0.07282 $         | 0.07276 $       | -0,0824%     |
-| RSI top-cycle           | SOL     | current_price     | OK      | 76,45 $           | 76,45 $         | +0,0000%     |
-| RSI top-cycle           | SOL     | current_price     | OK      | 76,45 $           | 76,45 $         | +0,0000%     |
-| Frattale BTC/SOL        | SOL     | sol_current_price | OK      | 76,45 $           | 76,45 $         | +0,0000%     |
-| Fractal path            | SOL     | current_price     | OK      | 76,45 $           | 76,45 $         | +0,0000%     |
+| Scanner                 | BTC     | current_price     | OK      | 62.682 $          | 62.682 $        | +0,0000%     |
+| Scanner                 | DOGE    | current_price     | OK      | 0.07214 $         | 0.07214 $       | -0,0000%     |
+| Scanner                 | SOL     | current_price     | OK      | 76,29 $           | 76,29 $         | +0,0000%     |
+| Scanner Forecast        | BTC     | current_price     | OK      | 62.682 $          | 62.682 $        | +0,0000%     |
+| Scanner Forecast        | SOL     | current_price     | OK      | 76,29 $           | 76,29 $         | +0,0000%     |
+| Scanner Forecast        | DOGE    | current_price     | OK      | 0.07214 $         | 0.07214 $       | -0,0000%     |
+| Technical Structure     | BTC     | price             | OK      | 62.682 $          | 62.682 $        | +0,0000%     |
+| Technical Structure     | SOL     | price             | OK      | 76,29 $           | 76,29 $         | +0,0000%     |
+| Technical Structure     | DOGE    | price             | OK      | 0.07214 $         | 0.07214 $       | -0,0000%     |
+| Classic Technical       | BTC     | price             | OK      | 62.682 $          | 62.682 $        | +0,0000%     |
+| Classic Technical       | SOL     | price             | OK      | 76,29 $           | 76,29 $         | +0,0000%     |
+| Classic Technical       | DOGE    | price             | OK      | 0.07214 $         | 0.07214 $       | -0,0000%     |
+| Classic Visual          | BTC     | price             | OK      | 62.682 $          | 62.682 $        | +0,0000%     |
+| Classic Visual          | SOL     | price             | OK      | 76,29 $           | 76,29 $         | +0,0000%     |
+| Classic Visual          | DOGE    | price             | OK      | 0.07214 $         | 0.07214 $       | -0,0000%     |
+| Exchange Microstructure | BTC     | price             | WARN    | 62.682 $          | 62.839 $        | +0,2502%     |
+| Exchange Microstructure | SOL     | price             | WARN    | 76,29 $           | 75,84 $         | -0,5872%     |
+| Exchange Microstructure | DOGE    | price             | WARN    | 0.07214 $         | 0.07198 $       | -0,2218%     |
+| RSI top-cycle           | SOL     | current_price     | OK      | 76,29 $           | 76,29 $         | +0,0000%     |
+| RSI top-cycle           | SOL     | current_price     | OK      | 76,29 $           | 76,29 $         | +0,0000%     |
+| Frattale BTC/SOL        | SOL     | sol_current_price | OK      | 76,29 $           | 76,29 $         | +0,0000%     |
+| Fractal path            | SOL     | current_price     | OK      | 76,29 $           | 76,29 $         | +0,0000%     |
 
 ## Integrità Technical / Classic Visual
 

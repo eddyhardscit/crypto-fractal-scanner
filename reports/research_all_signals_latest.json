@@ -1,0 +1,107 @@
+{
+  "generated_utc": "2026-07-13T04:49:52+00:00",
+  "current_regime": {
+    "generated_utc": "2026-07-13T04:49:50+00:00",
+    "regime": "RANGE_HIGH_VOL",
+    "regime_family": "RANGE",
+    "confidence_pct": 87.6,
+    "volatility_state": "HIGH",
+    "rotation_mode": "OBSERVATION_ONLY",
+    "features": {
+      "btc_timeframe_minutes": 240,
+      "market_timeframe_minutes": 60,
+      "btc_trend_score": 0.0,
+      "btc_adx": 16.435,
+      "btc_atr_pct": 1.0327,
+      "btc_volatility_ratio": 0.8404,
+      "btc_return_24h_pct": -2.1984,
+      "breadth_above_ema20_pct": 8.333,
+      "breadth_above_ema50_pct": 16.667,
+      "breadth_above_ema200_pct": 25.0,
+      "breadth_breakout_up_pct": 0.0,
+      "breadth_breakout_down_pct": 50.0,
+      "alt_relative_median_pct": 0.6591,
+      "alt_outperform_share_pct": 45.455,
+      "alt_underperform_share_pct": 18.182,
+      "cross_asset_dispersion_pct": 6.8917,
+      "market_volatility_ratio": 1.28,
+      "assets_used": 12
+    },
+    "reason": "Direzione poco definita: score BTC +0.0, breadth EMA50 17%, ADX 16.4."
+  },
+  "opened_this_cycle": 0,
+  "closed_this_cycle": 7,
+  "open_positions": 8,
+  "closed_trades": 7,
+  "metrics": [
+    {
+      "profile": "SHADOW_1H_BALANCED",
+      "regime": "ALL",
+      "open": 4,
+      "closed": 3,
+      "independent_events": 3,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "expectancy_r": -1.084032833634938,
+      "net_pnl_eur": -32.52098500904814
+    },
+    {
+      "profile": "SHADOW_1H_FAST",
+      "regime": "ALL",
+      "open": 2,
+      "closed": 1,
+      "independent_events": 1,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "expectancy_r": -1.0777752392803837,
+      "net_pnl_eur": -10.777752392803837
+    },
+    {
+      "profile": "SHADOW_RELATIVE_STRENGTH",
+      "regime": "ALL",
+      "open": 2,
+      "closed": 3,
+      "independent_events": 3,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "expectancy_r": -1.084032833634938,
+      "net_pnl_eur": -32.52098500904814
+    }
+  ],
+  "regime_matrix": [
+    {
+      "profile": "SHADOW_1H_BALANCED",
+      "regime": "ALT_ROTATION_UP",
+      "open": 4,
+      "closed": 3,
+      "independent_events": 3,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "expectancy_r": -1.084032833634938,
+      "net_pnl_eur": -32.52098500904814
+    },
+    {
+      "profile": "SHADOW_1H_FAST",
+      "regime": "ALT_ROTATION_UP",
+      "open": 2,
+      "closed": 1,
+      "independent_events": 1,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "expectancy_r": -1.0777752392803837,
+      "net_pnl_eur": -10.777752392803837
+    },
+    {
+      "profile": "SHADOW_RELATIVE_STRENGTH",
+      "regime": "ALT_ROTATION_UP",
+      "open": 2,
+      "closed": 3,
+      "independent_events": 3,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "expectancy_r": -1.084032833634938,
+      "net_pnl_eur": -32.52098500904814
+    }
+  ],
+  "report_markdown": "## 🔬 Research All Signals\n\nRegistro parallelo senza limite globale di quattro posizioni. Considera soltanto segnali validi con dati freschi; non modifica i conti paper e non genera ordini reali.\n\n### Regime di mercato osservato\n\n- Regime: **RANGE_HIGH_VOL**\n- Famiglia: **RANGE**\n- Confidenza: **87,60%**\n- Volatilità: **HIGH**\n- Rotazione strategie: **SOLO OSSERVAZIONE — nessun peso operativo viene ancora modificato**\n- Motivo: Direzione poco definita: score BTC +0.0, breadth EMA50 17%, ADX 16.4.\n- BTC trend score: **0,00**; ADX: **16,43**; breadth sopra EMA50: **16,67%**\n- Mediana alt vs BTC: **0,66%**; dispersione: **6,89%**\n\n- Aperti in questo ciclo: **0**\n- Chiusi in questo ciclo: **7**\n- Posizioni research aperte: **8**\n- Trade research chiusi: **7**\n- Eventi di mercato indipendenti chiusi: **3**\n- Segnali sovrapposti saltati sullo stesso asset/profilo: **0**\n- Posizioni Research V1 senza regime scartate durante la migrazione: **28**\n\n### Risultati complessivi per strategia\n\n| Profilo | Aperte | Chiuse | Eventi indip. | Win rate | PF | Expectancy R | P&L norm. |\n| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n| SHADOW_1H_BALANCED | 4 | 3 | 3 | 0,00% | 0,00 | -1,08R | €-32,52 |\n| SHADOW_1H_FAST | 2 | 1 | 1 | 0,00% | 0,00 | -1,08R | €-10,78 |\n| SHADOW_RELATIVE_STRENGTH | 2 | 3 | 3 | 0,00% | 0,00 | -1,08R | €-32,52 |\n\n### Matrice strategia × regime all’entrata\n\n| Profilo | Regime entrata | Aperte | Chiuse | Eventi indip. | Win rate | PF | Expectancy R | P&L norm. |\n| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n| SHADOW_1H_BALANCED | ALT_ROTATION_UP | 4 | 3 | 3 | 0,00% | 0,00 | -1,08R | €-32,52 |\n| SHADOW_1H_FAST | ALT_ROTATION_UP | 2 | 1 | 1 | 0,00% | 0,00 | -1,08R | €-10,78 |\n| SHADOW_RELATIVE_STRENGTH | ALT_ROTATION_UP | 2 | 3 | 3 | 0,00% | 0,00 | -1,08R | €-32,52 |\n\nIl P&L è normalizzato a **€10 di rischio per evento**, così leva e size non falsano il confronto.\nLa matrice diventerà utilizzabile per una rotazione automatica soltanto dopo un campione sufficiente per ciascuna coppia strategia-regime."
+}
