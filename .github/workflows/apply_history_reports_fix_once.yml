@@ -1,0 +1,80 @@
+name: Fix History Reports Parser
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: python -m pip install pandas
+
+      - name: Correct forecast history parser
+        shell: bash
+        run: |
+          echo 'ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpwYXRoID0gUGF0aCgiZm9yZWNhc3RfMzBkX2hpc3RvcnlfcmVwb3J0LnB5IikKaWYgbm90IHBhdGguZXhpc3RzKCk6CiAgICByYWlzZSBTeXN0ZW1FeGl0KCJmb3JlY2FzdF8zMGRfaGlzdG9yeV9yZXBvcnQucHkgbm9uIHRyb3ZhdG8uIikKCnRleHQgPSBwYXRoLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQpzdGFydCA9IHRleHQuZmluZCgiZGVmIGV4dHJhY3RfYm9sZF92YWx1ZSgiKQplbmQgPSB0ZXh0LmZpbmQoIlxuZGVmIGV4dHJhY3RfcHJpY2VfcGN0KCIsIHN0YXJ0KQoKaWYgc3RhcnQgPCAwIG9yIGVuZCA8IDA6CiAgICByYWlzZSBTeXN0ZW1FeGl0KCJGdW56aW9uZSBleHRyYWN0X2JvbGRfdmFsdWUgbm9uIHRyb3ZhdGEuIikKCnJlcGxhY2VtZW50ID0gJ2RlZiBleHRyYWN0X2JvbGRfdmFsdWUoc2VjdGlvbiwgbGFiZWxfcmVnZXgpOlxuICAgICIiIkxlZ2dlIHNpYSBpbCB2ZWNjaGlvIHNpYSBpbCBudW92byBmb3JtYXRvIE1hcmtkb3duIGRlbGxlIGV0aWNoZXR0ZS4iIiJcbiAgICBwYXR0ZXJucyA9IFtcbiAgICAgICAgcmYiKD9pbSleXFxzKlstKl0/XFxzKlxcKlxcKntsYWJlbF9yZWdleH06XFwqXFwqXFxzKlxcKlxcKiguKj8pXFwqXFwqXFxzKiQiLFxuICAgICAgICByZiIoP2ltKV5cXHMqWy0qXT9cXHMqXFwqXFwqe2xhYmVsX3JlZ2V4fTpcXCpcXCpcXHMqKFteXFxuXSs/KVxccyokIixcbiAgICAgICAgcmYiKD9pbSleXFxzKlstKl0/XFxzKlxcKlxcKntsYWJlbF9yZWdleH1cXCpcXCpcXHMqOlxccypcXCpcXCooLio/KVxcKlxcKlxccyokIixcbiAgICAgICAgcmYiKD9pbSleXFxzKlstKl0/XFxzKlxcKlxcKntsYWJlbF9yZWdleH1cXCpcXCpcXHMqOlxccyooW15cXG5dKz8pXFxzKiQiLFxuICAgICAgICByZiIoP2ltKV5cXHMqWy0qXT9cXHMqe2xhYmVsX3JlZ2V4fTpcXHMqXFwqXFwqKC4qPylcXCpcXCpcXHMqJCIsXG4gICAgICAgIHJmIig/aW0pXlxccypbLSpdP1xccyp7bGFiZWxfcmVnZXh9OlxccyooW15cXG5dKz8pXFxzKiQiLFxuICAgIF1cblxuICAgIGZvciBwYXR0ZXJuIGluIHBhdHRlcm5zOlxuICAgICAgICBtYXRjaCA9IHJlLnNlYXJjaChwYXR0ZXJuLCBzZWN0aW9uLCBmbGFncz1yZS5JR05PUkVDQVNFKVxuICAgICAgICBpZiBtYXRjaDpcbiAgICAgICAgICAgIHJldHVybiBtYXRjaC5ncm91cCgxKS5zdHJpcCgpXG5cbiAgICByZXR1cm4gTm9uZVxuXG4nCnVwZGF0ZWQgPSB0ZXh0WzpzdGFydF0gKyByZXBsYWNlbWVudCArIHRleHRbZW5kICsgMTpdCnBhdGgud3JpdGVfdGV4dCh1cGRhdGVkLCBlbmNvZGluZz0idXRmLTgiKQo=' | base64 --decode > /tmp/fix_history_parser.py
+          python /tmp/fix_history_parser.py
+
+      - name: Validate both history parsers
+        shell: bash
+        run: |
+          python -m py_compile             forecast_30d_history_report.py             sol_btc_fractal_history_report.py
+
+          python - <<'PY'
+          from pathlib import Path
+
+          import forecast_30d_history_report as forecast
+          import sol_btc_fractal_history_report as fractal
+
+          report_path = Path("reports/latest_report.md")
+          assert report_path.exists(), "reports/latest_report.md mancante"
+          text = report_path.read_text(encoding="utf-8")
+
+          rows = forecast.parse_latest_report(text)
+          assert len(rows) == 3, (
+              f"Attese 3 previsioni BTC/SOL/DOGE, trovate {len(rows)}"
+          )
+          assert {row["asset"] for row in rows} == {
+              "BTC", "SOL", "DOGE"
+          }
+          assert all(row["current_price"] for row in rows)
+
+          fractal_row = fractal.parse_fractal_report(text)
+          assert fractal_row is not None
+          assert fractal_row.get("sol_price") is not None
+
+          print("Parser forecast: 3 asset letti.")
+          print("Parser frattale SOL/BTC: lettura valida.")
+          PY
+
+      - name: Commit parser correction
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add forecast_30d_history_report.py
+
+          if git diff --cached --quiet; then
+            echo "Correzione parser già installata."
+          else
+            git commit -m "Fix daily forecast history parser"
+            git push origin HEAD:main
+          fi
