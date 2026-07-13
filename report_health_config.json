@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "enabled": true,
+  "repeat_alert_hours": 168,
+  "critical_reports": [
+    {
+      "path": "reports/latest_report.md",
+      "label": "Report principale",
+      "max_age_hours": 36
+    },
+    {
+      "path": "reports/decision_report.md",
+      "label": "Decisione operativa",
+      "max_age_hours": 36
+    },
+    {
+      "path": "reports/global_confluence_report.md",
+      "label": "Global Confluence",
+      "max_age_hours": 36
+    },
+    {
+      "path": "reports/technical_structure_report.md",
+      "label": "Struttura tecnica",
+      "max_age_hours": 36
+    },
+    {
+      "path": "reports/latest_market_snapshot.json",
+      "label": "Snapshot mercato",
+      "max_age_hours": 36
+    },
+    {
+      "path": "reports/data_quality_coherence.json",
+      "label": "Coerenza dati",
+      "max_age_hours": 36
+    }
+  ],
+  "watch_checks": [
+    {
+      "type": "forbidden_text",
+      "path": "reports/forecast_30d_history.md",
+      "label": "Storico forecast 30 giorni",
+      "forbidden_text": [
+        "Nessuna previsione leggibile trovata"
+      ],
+      "level": "WARNING"
+    },
+    {
+      "type": "csv_latest_timestamp",
+      "path": "reports/sol_btc_fractal_history.csv",
+      "label": "Storico frattale SOL/BTC",
+      "column": "generated_at_utc",
+      "max_age_hours": 72,
+      "level": "WARNING"
+    }
+  ]
+}
