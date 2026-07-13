@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "mode": "PAPER_ONLY",
+  "strategy_name": "SOL Spot Adaptive Range",
+  "asset": "SOL",
+  "symbol": "SOL-USDT",
+  "base_currency": "EUR",
+  "initial_capital_eur": 40000.0,
+  "public_data_only": true,
+  "real_orders_enabled": false,
+  "allow_short": false,
+  "leverage": 1.0,
+  "timeframe_minutes": 15,
+  "lookback_candles": 480,
+  "eur_usdt_fallback_rate": 1.0,
+  "indicators": {
+    "fast_ema": 48,
+    "center_ema": 96,
+    "slow_ema": 192,
+    "atr_period": 48,
+    "std_period": 96
+  },
+  "range": {
+    "atr_half_width_multiple": 4.0,
+    "std_half_width_multiple": 1.5,
+    "minimum_half_width_pct": 0.025,
+    "maximum_half_width_pct": 0.12,
+    "trend_atr_threshold": 1.0,
+    "strong_trend_atr_threshold": 2.5
+  },
+  "allocation": {
+    "minimum_sol_weight": 0.1,
+    "maximum_sol_weight": 0.9,
+    "neutral_sol_weight": 0.5,
+    "uptrend_bias": 0.1,
+    "strong_uptrend_extra_bias": 0.1,
+    "downtrend_bias": -0.1,
+    "strong_downtrend_extra_bias": -0.1,
+    "strong_uptrend_minimum_weight": 0.25,
+    "strong_downtrend_maximum_weight": 0.65,
+    "rebalance_band_fraction": 0.04,
+    "maximum_trade_fraction_of_equity": 0.15,
+    "minimum_trade_eur": 250.0,
+    "minimum_cash_reserve_fraction": 0.1
+  },
+  "execution": {
+    "fee_bps": 10.0,
+    "slippage_bps": 2.0
+  },
+  "publishing": {
+    "report_interval_hours": 4.0,
+    "recent_trades_in_report": 12
+  },
+  "notifications": {
+    "telegram_enabled": true,
+    "send_trade_events": true,
+    "send_periodic_digest": true,
+    "digest_interval_hours": 4.0,
+    "send_errors": true,
+    "include_range_details": true,
+    "include_portfolio_details": true
+  }
+}

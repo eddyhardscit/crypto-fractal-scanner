@@ -17,3 +17,11 @@ reports/paper_trading_shadow_metrics.csv
 reports/paper_trading_config_snapshot.json
 reports/paper_trading_market_cache.json
 reports/paper_trading_storage_status.json
+
+# SOL Spot Adaptive Range paper state (dedicated GitHub Release asset)
+/reports/sol_spot_adaptive_state.json
+/reports/sol_spot_adaptive_trades.csv
+/reports/sol_spot_adaptive_equity.csv
+/reports/sol_spot_adaptive_latest.json
+/reports/sol_spot_adaptive_config_snapshot.json
+/reports/sol_spot_adaptive_storage_status.json
