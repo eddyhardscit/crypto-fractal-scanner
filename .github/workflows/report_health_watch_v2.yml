@@ -1,0 +1,111 @@
+name: Report History and Health Watch
+
+on:
+  workflow_run:
+    workflows:
+      - Daily crypto scanner
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: report-history-health-watch
+  cancel-in-progress: false
+
+jobs:
+  refresh-and-audit:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: python -m pip install pandas requests
+
+      - name: Validate programs
+        run: |
+          test -f forecast_30d_history_report.py
+          test -f sol_btc_fractal_history_report.py
+          test -f report_health_audit.py
+          test -f report_health_config.json
+
+          python -m py_compile             forecast_30d_history_report.py             sol_btc_fractal_history_report.py             report_health_audit.py
+
+      - name: Refresh 30-day forecast history
+        run: python forecast_30d_history_report.py
+
+      - name: Refresh SOL BTC fractal history
+        run: python sol_btc_fractal_history_report.py
+
+      - name: Validate refreshed histories
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+
+          forecast_md = Path("reports/forecast_30d_history.md")
+          forecast_csv = Path("reports/forecast_30d_history.csv")
+          fractal_csv = Path("reports/sol_btc_fractal_history.csv")
+
+          assert forecast_md.exists()
+          assert forecast_csv.exists()
+          assert fractal_csv.exists()
+
+          text = forecast_md.read_text(encoding="utf-8")
+          assert "Nessuna previsione leggibile trovata" not in text
+
+          forecast = pd.read_csv(forecast_csv)
+          latest_forecast = forecast.sort_values(
+              "forecast_date"
+          ).groupby("asset").tail(1)
+          assert set(latest_forecast["asset"]) >= {
+              "BTC", "SOL", "DOGE"
+          }
+
+          fractal = pd.read_csv(fractal_csv)
+          latest = fractal.sort_values(
+              "generated_at_utc"
+          ).iloc[-1]
+          assert pd.notna(latest["sol_price"])
+          assert pd.notna(latest["gap_pct"])
+          assert pd.notna(latest["btc_scaled_today"])
+
+          print("Storico forecast aggiornato per BTC, SOL e DOGE.")
+          print("Storico frattale SOL/BTC aggiornato con prezzo e gap.")
+          PY
+
+      - name: Audit reports and notify Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python report_health_audit.py
+
+      - name: Commit refreshed histories and health status
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add             reports/latest_report.md             reports/forecast_30d_history.csv             reports/forecast_30d_history.md             reports/sol_btc_fractal_history.csv             reports/sol_btc_fractal_history.md             reports/report_health_audit.md             reports/report_health_audit.json             reports/report_health_state.json
+
+          if git diff --cached --quiet; then
+            echo "Storici e controllo report già aggiornati."
+          else
+            git commit -m "Refresh forecast and fractal histories"
+            git push origin HEAD:main
+          fi
