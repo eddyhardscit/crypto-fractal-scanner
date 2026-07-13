@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-07-13T18:50:42+00:00",
-  "status": "ATTENTION",
+  "generated_utc": "2026-07-13T19:25:23+00:00",
+  "status": "OK",
   "telegram_sent": true,
   "checks": [
     {
@@ -8,72 +8,57 @@
       "path": "reports/latest_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 12.4 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 13.0 ore fa; rigenerato in questo ciclo."
     },
     {
       "label": "Decisione operativa",
       "path": "reports/decision_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 12.4 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 13.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Global Confluence",
       "path": "reports/global_confluence_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 12.4 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 13.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Struttura tecnica",
       "path": "reports/technical_structure_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 12.4 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 13.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Snapshot mercato",
       "path": "reports/latest_market_snapshot.json",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 12.4 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 13.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Coerenza dati",
       "path": "reports/data_quality_coherence.json",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 12.4 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 13.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Storico forecast 30 giorni",
       "path": "reports/forecast_30d_history.md",
-      "level": "WARNING",
-      "status": "CONTENT_WARNING",
-      "detail": "Contiene ancora: “Nessuna previsione leggibile trovata”."
+      "level": "OK",
+      "status": "OK",
+      "detail": "Nessun errore noto nel contenuto."
     },
     {
       "label": "Storico frattale SOL/BTC",
       "path": "reports/sol_btc_fractal_history.csv",
-      "level": "WARNING",
-      "status": "STALE",
-      "detail": "Ultima riga utile vecchia di 91.1 ore; limite 72."
+      "level": "OK",
+      "status": "OK",
+      "detail": "Ultima riga utile 13.0 ore fa."
     }
   ],
-  "active_anomalies": [
-    {
-      "label": "Storico forecast 30 giorni",
-      "path": "reports/forecast_30d_history.md",
-      "level": "WARNING",
-      "status": "CONTENT_WARNING",
-      "detail": "Contiene ancora: “Nessuna previsione leggibile trovata”."
-    },
-    {
-      "label": "Storico frattale SOL/BTC",
-      "path": "reports/sol_btc_fractal_history.csv",
-      "level": "WARNING",
-      "status": "STALE",
-      "detail": "Ultima riga utile vecchia di 91.1 ore; limite 72."
-    }
-  ]
+  "active_anomalies": []
 }
