@@ -205,62 +205,132 @@ def fetch_spot_klines(
     limit: int,
     now: datetime | None = None,
 ) -> pd.DataFrame:
-    interval_names = {1: "1min", 3: "3min", 5: "5min", 15: "15min", 30: "30min", 60: "1hour", 240: "4hour"}
+    interval_names = {
+        1: "1min",
+        3: "3min",
+        5: "5min",
+        15: "15min",
+        30: "30min",
+        60: "1hour",
+        240: "4hour",
+    }
     if timeframe_minutes not in interval_names:
-        raise RuntimeError(f"Unsupported KuCoin spot timeframe: {timeframe_minutes} minutes")
+        raise RuntimeError(
+            f"Unsupported KuCoin spot timeframe: {timeframe_minutes} minutes"
+        )
+
     current = now or utc_now()
     count = min(max(int(limit), 220), 1500)
     end_at = int(current.timestamp())
     start_at = end_at - count * timeframe_minutes * 60
-    rows = get_public_json(
-        session,
-        "/api/v1/market/candles",
+
+    request_variants = [
         {
             "symbol": symbol,
             "type": interval_names[timeframe_minutes],
             "startAt": start_at,
             "endAt": end_at,
         },
-    )
+        {
+            "symbol": symbol,
+            "type": interval_names[timeframe_minutes],
+        },
+    ]
+
     normalized: list[dict[str, Any]] = []
-    for row in rows if isinstance(rows, list) else []:
-        if not isinstance(row, (list, tuple)) or len(row) < 7:
+    diagnostics: list[str] = []
+
+    for request_params in request_variants:
+        try:
+            rows = get_public_json(
+                session,
+                "/api/v1/market/candles",
+                request_params,
+            )
+        except Exception as exc:
+            diagnostics.append(
+                f"params={request_params}: request failed: {exc}"
+            )
             continue
-        timestamp = pd.to_datetime(row[0], unit="s", utc=True, errors="coerce")
-        opened = safe_float(row[1])
-        closed = safe_float(row[2])
-        high = safe_float(row[3])
-        low = safe_float(row[4])
-        volume = safe_float(row[5], 0.0)
-        turnover = safe_float(row[6], 0.0)
-        if pd.isna(timestamp) or not all(math.isfinite(v) and v > 0 for v in (opened, high, low, closed)):
-            continue
-        normalized.append(
-            {
-                "time": timestamp,
-                "open": opened,
-                "high": high,
-                "low": low,
-                "close": closed,
-                "volume": max(0.0, volume),
-                "turnover": max(0.0, turnover),
-            }
+
+        raw_count = len(rows) if isinstance(rows, list) else 0
+        accepted_before = len(normalized)
+
+        for row in rows if isinstance(rows, list) else []:
+            if not isinstance(row, (list, tuple)) or len(row) < 6:
+                continue
+
+            timestamp = pd.to_datetime(
+                row[0],
+                unit="s",
+                utc=True,
+                errors="coerce",
+            )
+            opened = safe_float(row[1])
+            closed = safe_float(row[2])
+            high = safe_float(row[3])
+            low = safe_float(row[4])
+            volume = safe_float(row[5], 0.0)
+            turnover = (
+                safe_float(row[6], 0.0)
+                if len(row) >= 7
+                else 0.0
+            )
+
+            if pd.isna(timestamp):
+                continue
+            if not all(
+                math.isfinite(value) and value > 0
+                for value in (opened, high, low, closed)
+            ):
+                continue
+
+            normalized.append(
+                {
+                    "time": timestamp,
+                    "open": opened,
+                    "high": high,
+                    "low": low,
+                    "close": closed,
+                    "volume": max(0.0, volume),
+                    "turnover": max(0.0, turnover),
+                }
+            )
+
+        diagnostics.append(
+            f"params={request_params}: raw={raw_count}, "
+            f"accepted={len(normalized) - accepted_before}"
         )
+        if normalized:
+            break
+
     if not normalized:
-        raise RuntimeError("KuCoin returned no usable SOL spot candles.")
+        raise RuntimeError(
+            "KuCoin returned no usable SOL spot candles after "
+            "windowed and fallback requests. "
+            + " | ".join(diagnostics)
+        )
+
     frame = (
         pd.DataFrame(normalized)
         .drop_duplicates("time")
         .set_index("time")
         .sort_index()
     )
+
     last_start = pd.Timestamp(frame.index[-1])
     if last_start.tzinfo is None:
         last_start = last_start.tz_localize("UTC")
-    if last_start + pd.Timedelta(minutes=timeframe_minutes) > pd.Timestamp(current) - pd.Timedelta(seconds=20):
+
+    if (
+        last_start + pd.Timedelta(minutes=timeframe_minutes)
+        > pd.Timestamp(current) - pd.Timedelta(seconds=20)
+    ):
         frame = frame.iloc[:-1].copy()
+
     if frame.empty:
         raise RuntimeError("No fully closed SOL spot candle is available.")
+
     return frame.tail(count)
 
 
