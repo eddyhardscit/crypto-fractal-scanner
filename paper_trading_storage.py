@@ -39,6 +39,10 @@ FILES = (
     "research_all_signals_latest.json",
     "market_regime_latest.json",
     "market_regime_history.csv",
+    "doge_rejection_short_state.json",
+    "doge_rejection_short_trades.csv",
+    "doge_rejection_short_report.md",
+    "doge_rejection_short_latest.json",
 )
 
 

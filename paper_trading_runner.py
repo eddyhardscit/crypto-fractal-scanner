@@ -30,6 +30,8 @@ from paper_trading_engine import (
 from paper_trading_live_publish import publish_markdown
 from paper_trading_notify import notify
 from research_all_signals import run_research_cycle
+# DOGE_REJECTION_SHORT_IMPORT
+from doge_rejection_short import run_doge_rejection_cycle
 from paper_trading_report import LATEST_REPORT_PATH, REPORT_PATH, render_report, replace_block
 from telegram_scanner_notify import send_if_changed as send_scanner_if_changed
 
@@ -222,8 +224,28 @@ def main() -> None:
         signal_diagnostics.get("summary", {})
     )
 
+    # DOGE_REJECTION_SHORT_CYCLE_START
+    try:
+        doge_rejection_result = run_doge_rejection_cycle(bundle, config)
+    except Exception as exc:
+        doge_rejection_result = {
+            "report_markdown": "",
+            "phase": "ERROR",
+            "position_open": False,
+            "error": str(exc),
+        }
+        print(f"DOGE rejection short non eseguito: {exc}")
+    # DOGE_REJECTION_SHORT_CYCLE_END
+
     current = datetime.now(timezone.utc)
     report = render_report(state, config)
+    # DOGE_REJECTION_SHORT_REPORT_START
+    doge_rejection_markdown = str(
+        doge_rejection_result.get("report_markdown", "")
+    ).strip()
+    if doge_rejection_markdown:
+        report = report.rstrip() + "\n\n" + doge_rejection_markdown + "\n"
+    # DOGE_REJECTION_SHORT_REPORT_END
     research_markdown = str(research_result.get("report_markdown", "")).strip()
     if research_markdown:
         report = report.rstrip() + "\n\n" + research_markdown + "\n"
@@ -286,6 +308,16 @@ def main() -> None:
             "closed_this_cycle": research_result.get("closed_this_cycle", 0),
             "open_positions": research_result.get("open_positions", 0),
             "closed_trades": research_result.get("closed_trades", 0),
+        },
+        # DOGE_REJECTION_SHORT_PAYLOAD
+        "doge_rejection_short": {
+            "phase": doge_rejection_result.get("phase"),
+            "position_open": doge_rejection_result.get("position_open", False),
+            "equity_eur": doge_rejection_result.get("equity_eur"),
+            "opened_this_cycle": doge_rejection_result.get("opened_this_cycle", 0),
+            "management_events": doge_rejection_result.get("management_events", 0),
+            "telegram": doge_rejection_result.get("telegram", {}),
+            "error": doge_rejection_result.get("error"),
         },
         "signal_diagnostics": signal_diagnostics.get(
             "summary",

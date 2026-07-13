@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "enabled": true,
+  "paper_only": true,
+  "asset": "DOGE",
+  "symbol": "DOGE-USDT",
+  "timeframe_minutes": 15,
+  "initial_capital_eur": 3600.0,
+  "fixed_margin_eur": 3600.0,
+  "leverage": 5.0,
+  "prealert_price": 0.0765,
+  "armed_price": 0.0775,
+  "trigger_price": 0.078,
+  "entry_min_price": 0.077,
+  "entry_max_price": 0.0785,
+  "resistance_price": 0.07923,
+  "bearish_invalidation_close": 0.07966,
+  "minimum_stop_price": 0.0806,
+  "maximum_stop_price": 0.0812,
+  "stop_above_rejection_high_pct": 0.002,
+  "rearm_below_price": 0.0755,
+  "btc_breakout_filter": 65544.0,
+  "minimum_global_score": -5.0,
+  "maximum_classic_raw_score": -5.0,
+  "maximum_relative_raw_score": -5.0,
+  "minimum_upper_wick_ratio": 0.3,
+  "maximum_normal_volume_ratio": 1.8,
+  "high_volume_close_location_max": 0.35,
+  "entry_slippage_bps": 2.0,
+  "exit_slippage_bps": 2.0,
+  "taker_fee_bps": 6.0,
+  "liquidation_buffer_fraction": 0.005,
+  "max_holding_hours": 168,
+  "cooldown_hours": 24,
+  "targets": [
+    {
+      "name": "TP1",
+      "price": 0.07107,
+      "fraction": 0.25
+    },
+    {
+      "name": "TP2",
+      "price": 0.06961,
+      "fraction": 0.25
+    },
+    {
+      "name": "TP3",
+      "price": 0.064,
+      "fraction": 0.25
+    },
+    {
+      "name": "TP4",
+      "price": 0.06,
+      "fraction": 0.25
+    }
+  ]
+}
