@@ -1,0 +1,21 @@
+{
+  "active_signature": "c00aa647d13ed82b00ff4d9d325d093747d19bf684a63a5c6b6aefc963c49e57",
+  "active_anomalies": [
+    {
+      "label": "Storico forecast 30 giorni",
+      "path": "reports/forecast_30d_history.md",
+      "level": "WARNING",
+      "status": "CONTENT_WARNING",
+      "detail": "Contiene ancora: “Nessuna previsione leggibile trovata”."
+    },
+    {
+      "label": "Storico frattale SOL/BTC",
+      "path": "reports/sol_btc_fractal_history.csv",
+      "level": "WARNING",
+      "status": "STALE",
+      "detail": "Ultima riga utile vecchia di 91.1 ore; limite 72."
+    }
+  ],
+  "last_alert_utc": "2026-07-13T18:50:42+00:00",
+  "last_run_utc": "2026-07-13T18:50:42+00:00"
+}
