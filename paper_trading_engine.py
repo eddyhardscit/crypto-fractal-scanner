@@ -63,6 +63,12 @@ def parse_time(value: Any) -> datetime:
 
 
 def append_csv(path: Path, fieldnames: list[str], row: dict[str, Any]) -> None:
+    # TRADE_LOG_SCHEMA_GUARD_V1
+    if path == TRADE_LOG_PATH:
+        from paper_trading_trade_log_repair import (
+            ensure_trade_log_schema,
+        )
+        ensure_trade_log_schema(path, fieldnames)
     path.parent.mkdir(parents=True, exist_ok=True)
     exists = path.exists() and path.stat().st_size > 0
     with path.open("a", encoding="utf-8", newline="") as handle:

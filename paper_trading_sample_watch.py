@@ -9,7 +9,8 @@ from typing import Any
 
 import pandas as pd
 
-from paper_trading_engine import TRADE_LOG_PATH
+from paper_trading_engine import TRADE_FIELDS, TRADE_LOG_PATH
+from paper_trading_trade_log_repair import load_trade_frame_resilient
 
 DEFAULT_MILESTONES = [30, 100, 200, 300]
 
@@ -41,12 +42,11 @@ def _main_name(state: dict[str, Any], config: dict[str, Any]) -> str:
 
 
 def _load_trades() -> pd.DataFrame:
-    if not TRADE_LOG_PATH.exists():
-        return pd.DataFrame()
-    try:
-        return pd.read_csv(TRADE_LOG_PATH)
-    except Exception:
-        return pd.DataFrame()
+    # TRADE_LOG_RESILIENT_SAMPLE_READER_V1
+    return load_trade_frame_resilient(
+        TRADE_LOG_PATH,
+        TRADE_FIELDS,
+    )
 
 
 def _event_ids(frame: pd.DataFrame) -> set[str]:

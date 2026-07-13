@@ -26,6 +26,9 @@ RELEASE_TAG = os.getenv("PAPER_TRADING_RELEASE_TAG", "paper-trading-v1")
 FILES = (
     "paper_trading_state.json",
     "paper_trading_trade_log.csv",
+    "paper_trading_trade_log_repair_status.json",
+    "paper_trading_trade_log_quarantine.csv",
+    "paper_trading_trade_log_before_repair.csv",
     "paper_trading_signal_log.csv",
     "paper_trading_equity.csv",
     "paper_trading_open_positions.csv",

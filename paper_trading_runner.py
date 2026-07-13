@@ -20,12 +20,18 @@ from paper_trading_diagnostics import (
 )
 from paper_trading_config import load_config
 from paper_trading_engine import (
+    TRADE_FIELDS,
+    TRADE_LOG_PATH,
     current_prices,
     load_state,
     portfolio_equity,
     risk_gate,
     run_execution_cycle,
     save_state,
+)
+from paper_trading_trade_log_repair import (
+    reconcile_state_counters,
+    repair_trade_log,
 )
 from paper_trading_live_publish import publish_markdown
 from paper_trading_notify import notify
@@ -164,12 +170,21 @@ def collect_with_fallback(config: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> None:
     config = load_config()
+    # TRADE_LOG_REPAIR_STARTUP_V1
+    trade_log_repair = repair_trade_log(
+        TRADE_LOG_PATH,
+        TRADE_FIELDS,
+    )
     bundle = annotate_market_freshness(
         collect_with_fallback(config),
         config,
     )
     raw_signals = generate_signals(bundle, config)
     state = load_state(config)
+    trade_log_reconcile = reconcile_state_counters(
+        state,
+        list(trade_log_repair.get("records", [])),
+    )
     signal_diagnostics = build_signal_diagnostics(
         bundle,
         config,

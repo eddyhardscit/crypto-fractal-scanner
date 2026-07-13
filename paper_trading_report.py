@@ -15,8 +15,12 @@ from typing import Any
 import pandas as pd
 
 from paper_trading_config import load_config
-from paper_trading_engine import STATE_PATH, TRADE_LOG_PATH
+from paper_trading_engine import STATE_PATH, TRADE_FIELDS, TRADE_LOG_PATH
 from paper_trading_sample_watch import sample_snapshot
+from paper_trading_trade_log_repair import (
+    fallback_metrics_from_portfolio,
+    load_trade_frame_resilient,
+)
 from paper_trading_diagnostics import DIAGNOSTICS_PATH
 from paper_trading_display import (
     aggregate_positions,
@@ -91,12 +95,11 @@ def read_json(path: Path, default: Any) -> Any:
 
 
 def load_trades() -> pd.DataFrame:
-    if not TRADE_LOG_PATH.exists():
-        return pd.DataFrame()
-    try:
-        return pd.read_csv(TRADE_LOG_PATH)
-    except Exception:
-        return pd.DataFrame()
+    # TRADE_LOG_RESILIENT_READER_V1
+    return load_trade_frame_resilient(
+        TRADE_LOG_PATH,
+        TRADE_FIELDS,
+    )
 
 
 def market_prices() -> tuple[dict[str, float], float, str, str]:
@@ -151,10 +154,27 @@ def portfolio_metrics(
             if not trades.empty and "portfolio" in trades.columns
             else pd.DataFrame()
         )
-        if subset.empty:
-            trade_count = wins = unique_events = 0
-            net = expectancy = win_rate = 0.0
-            profit_factor = 0.0
+        state_fallback = fallback_metrics_from_portfolio(portfolio)
+        if (
+            subset.empty
+            or int(state_fallback["closed_trades"]) > len(subset)
+        ):
+            # State fallback prevents a false all-zero or partial
+            # display if historical CSV rows are unrecoverable.
+            trade_count = int(state_fallback["closed_trades"])
+            wins = int(state_fallback["winning_trades"])
+            unique_events = (
+                subset.get(
+                    "experiment_group_id",
+                    pd.Series(dtype=str),
+                ).astype(str).nunique()
+                if not subset.empty
+                else 0
+            )
+            net = float(state_fallback["net_pnl_eur"])
+            expectancy = float(state_fallback["expectancy_eur"])
+            win_rate = float(state_fallback["win_rate_pct"])
+            profit_factor = float(state_fallback["profit_factor"])
         else:
             pnl = pd.to_numeric(
                 subset.get("net_pnl_eur"),
