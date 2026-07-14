@@ -1,0 +1,81 @@
+name: Manual fix Daily Scanner push race
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Patch daily workflow
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64
+          from pathlib import Path
+          import yaml
+
+          path = Path(".github/workflows/daily.yml")
+          source = path.read_text(encoding="utf-8")
+
+          old = base64.b64decode("ICAgICAgLSBuYW1lOiBDb21taXQgcmVwb3J0cwogICAgICAgIHJ1bjogfAogICAgICAgICAgZ2l0IGNvbmZpZyB1c2VyLm5hbWUgImdpdGh1Yi1hY3Rpb25zW2JvdF0iCiAgICAgICAgICBnaXQgY29uZmlnIHVzZXIuZW1haWwgIjQxODk4MjgyK2dpdGh1Yi1hY3Rpb25zW2JvdF1AdXNlcnMubm9yZXBseS5naXRodWIuY29tIgoKICAgICAgICAgIGdpdCBhZGQgcmVwb3J0cy8KCiAgICAgICAgICBpZiBnaXQgZGlmZiAtLWNhY2hlZCAtLXF1aWV0OyB0aGVuCiAgICAgICAgICAgIGVjaG8gIk5vIHJlcG9ydCBjaGFuZ2VzIHRvIGNvbW1pdC4iCiAgICAgICAgICBlbHNlCiAgICAgICAgICAgIGdpdCBjb21taXQgLW0gIlVwZGF0ZSBkYWlseSBjcnlwdG8gcmVwb3J0cyIKICAgICAgICAgICAgZ2l0IHB1c2gKICAgICAgICAgIGZpCg==").decode("utf-8")
+          new = base64.b64decode("ICAgICAgLSBuYW1lOiBDb21taXQgcmVwb3J0cwogICAgICAgIHNoZWxsOiBiYXNoCiAgICAgICAgcnVuOiB8CiAgICAgICAgICBzZXQgLWV1byBwaXBlZmFpbAoKICAgICAgICAgIGdpdCBjb25maWcgdXNlci5uYW1lICJnaXRodWItYWN0aW9uc1tib3RdIgogICAgICAgICAgZ2l0IGNvbmZpZyB1c2VyLmVtYWlsICAgICAgICAgICAgICI0MTg5ODI4MitnaXRodWItYWN0aW9uc1tib3RdQHVzZXJzLm5vcmVwbHkuZ2l0aHViLmNvbSIKCiAgICAgICAgICBnaXQgYWRkIHJlcG9ydHMvCiAgICAgICAgICBnaXQgZGlmZiAtLWNhY2hlZCAtLWNoZWNrCgogICAgICAgICAgaWYgZ2l0IGRpZmYgLS1jYWNoZWQgLS1xdWlldDsgdGhlbgogICAgICAgICAgICBlY2hvICJObyByZXBvcnQgY2hhbmdlcyB0byBjb21taXQuIgogICAgICAgICAgICBleGl0IDAKICAgICAgICAgIGZpCgogICAgICAgICAgZ2l0IGNvbW1pdCAtbSAiVXBkYXRlIGRhaWx5IGNyeXB0byByZXBvcnRzIgoKICAgICAgICAgIGZvciBhdHRlbXB0IGluIDEgMiAzOyBkbwogICAgICAgICAgICBlY2hvICJQdXNoIGF0dGVtcHQgJHthdHRlbXB0fS8zIgoKICAgICAgICAgICAgZ2l0IGZldGNoIG9yaWdpbiBtYWluCiAgICAgICAgICAgIGdpdCByZWJhc2Ugb3JpZ2luL21haW4KCiAgICAgICAgICAgIGlmIGdpdCBwdXNoIG9yaWdpbiBIRUFEOm1haW47IHRoZW4KICAgICAgICAgICAgICBlY2hvICJEYWlseSByZXBvcnRzIHB1c2hlZCBzdWNjZXNzZnVsbHkuIgogICAgICAgICAgICAgIGV4aXQgMAogICAgICAgICAgICBmaQoKICAgICAgICAgICAgaWYgWyAiJHthdHRlbXB0fSIgLWx0IDMgXTsgdGhlbgogICAgICAgICAgICAgIGVjaG8gIlJlbW90ZSBjaGFuZ2VkIGFnYWluOyByZXRyeWluZyBpbiA1IHNlY29uZHMuIgogICAgICAgICAgICAgIHNsZWVwIDUKICAgICAgICAgICAgZmkKICAgICAgICAgIGRvbmUKCiAgICAgICAgICBlY2hvICJVbmFibGUgdG8gcHVzaCBkYWlseSByZXBvcnRzIGFmdGVyIDMgYXR0ZW1wdHMuIgogICAgICAgICAgZXhpdCAxCg==").decode("utf-8")
+
+          if new in source:
+              print("Daily workflow already fixed.")
+          elif old in source:
+              source = source.replace(old, new, 1)
+              yaml.safe_load(source)
+              path.write_text(source, encoding="utf-8")
+              print("Daily workflow patched.")
+          else:
+              raise SystemExit(
+                  "Expected Commit reports block not found in daily.yml"
+              )
+          PY
+
+      - name: Validate workflow
+        run: |
+          python -m pip install pyyaml
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+
+          path = Path(".github/workflows/daily.yml")
+          payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+          assert payload
+          text = path.read_text(encoding="utf-8")
+          assert "git fetch origin main" in text
+          assert "git rebase origin/main" in text
+          assert "Push attempt ${attempt}/3" in text
+          print("PASS: Daily Scanner push protection installed")
+          PY
+
+          git diff --check
+
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email             "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .github/workflows/daily.yml
+          git diff --cached --check
+
+          if git diff --cached --quiet; then
+            echo "No changes needed."
+          else
+            git commit -m "Fix Daily Scanner concurrent push"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
