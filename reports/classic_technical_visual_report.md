@@ -1,6 +1,6 @@
 # Classic technical visual report
 
-Generato: 2026-07-14 09:34 UTC
+Generato: 2026-07-14 11:44 UTC
 
 Questo report crea grafici visivi dei pattern tecnici principali. Serve per vedere il grafico e il ciclo di vita dei pattern; non aggiunge automaticamente punteggio al Global.
 
@@ -23,9 +23,9 @@ Pattern controllati:
 
 | Asset | Prezzo | Pattern principale | Stato | Famiglia | Breakout | Target | Progresso | Distanza neckline | Fibonacci | Stato prezzo | Supporto |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 62.583 $ | Doppio massimo | CANDIDATO | ribassista | n/a | 49.952 $ | n/a | 8,37% | Fib 23,6% TESTATO (0) @ 63.028 $ | NEL RANGE | 62.553 $ |
-| SOL | 75,06 $ | Doppio minimo | CONFERMATO RECENTE | rialzista | 2026-07-01 | 91,46 $ | -5,66% | n/a | Fib 38,2% TESTATO (0) @ 74,87 $ | NEL RANGE | 68,69 $ |
-| DOGE | 0.07209 $ | Triplo massimo | MATURO | ribassista | 2026-06-24 | 0.05847 $ | 30,60% | n/a | Fib 23,6% NON ATTIVO (0) @ 0.08220 $ | NEL RANGE | 0.07107 $ |
+| BTC | 62.768 $ | Doppio massimo | CANDIDATO | ribassista | n/a | 49.952 $ | n/a | 8,69% | Fib 23,6% TESTATO (0) @ 63.028 $ | NEL RANGE | 62.553 $ |
+| SOL | 75,34 $ | Doppio minimo | CONFERMATO RECENTE | rialzista | 2026-07-01 | 91,46 $ | -3,86% | n/a | Fib 38,2% TESTATO (0) @ 74,87 $ | NEL RANGE | 68,69 $ |
+| DOGE | 0.07220 $ | Triplo massimo | MATURO | ribassista | 2026-06-24 | 0.05847 $ | 30,04% | n/a | Fib 23,6% NON ATTIVO (0) @ 0.08220 $ | NEL RANGE | 0.07107 $ |
 
 ## BTC
 
@@ -42,7 +42,7 @@ Pattern controllati:
 - Neckline: **57.748 $**
 - Target teorico: **49.952 $**
 - Progresso verso target: **n/a**
-- Distanza dalla neckline: **8,37%**
+- Distanza dalla neckline: **8,69%**
 - Fonte lifecycle: **technical_structure_metrics.csv**
 - Fibonacci: **Fib 23,6% TESTATO (0) @ 63.028 $** — Swing UP 2026-07-01 57.748 -> 2026-07-10 64.659; livello più vicino 23.6% a 63.028; stato TESTATO; confluenza: nessuna confluenza indipendente.
 - Invalidazione: **58.903 $**
@@ -54,19 +54,19 @@ Pattern controllati:
 - Resistenza: **64.659 $**
 - Breakout 60g: **82.326 $**
 - Breakdown 60g: **57.748 $**
-- RSI14: **47.24**
+- RSI14: **48.07**
 - ATR14: **2,91%**
-- Volume ratio 20g: **0.91**
-- Rendimento 30g: **-4,76%**
-- Rendimento 90g: **-16,34%**
+- Volume ratio 20g: **0.88**
+- Rendimento 30g: **-4,48%**
+- Rendimento 90g: **-16,09%**
 
 ### Pattern trovati
 
 | Pattern | Stato | Score | Famiglia | Neckline | Breakout | Età | Target | Progresso | Distanza neckline | Invalidazione | Dettaglio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Doppio massimo | CANDIDATO | 0 | ribassista | 57.748 $ | n/a | n/a | 49.952 $ | n/a | 8,37% | 58.903 $ | Due massimi simili a 65.544 $ e 64.659 $. Neckline circa 57.748 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 4 giorni. |
+| Doppio massimo | CANDIDATO | 0 | ribassista | 57.748 $ | n/a | n/a | 49.952 $ | n/a | 8,69% | 58.903 $ | Due massimi simili a 65.544 $ e 64.659 $. Neckline circa 57.748 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 4 giorni. |
 | Triangolo discendente possibile | CANDIDATO | 0 | ribassista | n/a | n/a | n/a | n/a | n/a | n/a | n/a | Massimi decrescenti e supporto quasi piatto. Stato: CANDIDATO; il pattern non ha una neckline univoca da usare per il lifecycle. |
-| Doppio minimo | CANDIDATO | 0 | rialzista | 67.248 $ | n/a | n/a | 76.748 $ | n/a | 7,45% | 65.903 $ | Due minimi simili a 59.109 $ e 57.748 $. Neckline circa 67.248 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 13 giorni. |
+| Doppio minimo | CANDIDATO | 0 | rialzista | 67.248 $ | n/a | n/a | 76.748 $ | n/a | 7,14% | 65.903 $ | Due minimi simili a 59.109 $ e 57.748 $. Neckline circa 67.248 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 13 giorni. |
 
 ## SOL
 
@@ -82,33 +82,33 @@ Pattern controllati:
 - Età breakout: **13 giorni**
 - Neckline: **75,94 $**
 - Target teorico: **91,46 $**
-- Progresso verso target: **-5,66%**
+- Progresso verso target: **-3,86%**
 - Distanza dalla neckline: **n/a**
 - Fonte lifecycle: **technical_structure_metrics.csv**
 - Fibonacci: **Fib 38,2% TESTATO (0) @ 74,87 $** — Swing UP 2026-06-06 60,41 -> 2026-07-04 83,81; livello più vicino 38.2% a 74,87; stato TESTATO; confluenza: neckline rialzista, invalidazione rialzista.
 - Invalidazione: **74,42 $**
-- Relazione prezzo/neckline: **sotto neckline**
-- Dettaglio: Due minimi simili vicino a 60,41 tra 2026-06-06 e 2026-06-25. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (13 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: -5,66%. Relazione prezzo/neckline: sotto neckline. Fonte lifecycle: technical_structure_metrics.csv.
+- Relazione prezzo/neckline: **vicino alla neckline**
+- Dettaglio: Due minimi simili vicino a 60,41 tra 2026-06-06 e 2026-06-25. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (13 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: -3,86%. Relazione prezzo/neckline: vicino alla neckline. Fonte lifecycle: technical_structure_metrics.csv.
 - Candela più recente: **Nessuna candela forte**
 - Stato prezzo: **NEL RANGE**
 - Supporto: **68,69 $**
 - Resistenza: **75,94 $**
 - Breakout 60g: **98,27 $**
 - Breakdown 60g: **60,41 $**
-- RSI14: **47.03**
-- ATR14: **4,01%**
-- Volume ratio 20g: **0.62**
-- Rendimento 30g: **+5,47%**
-- Rendimento 90g: **-11,61%**
+- RSI14: **47.79**
+- ATR14: **4,00%**
+- Volume ratio 20g: **0.65**
+- Rendimento 30g: **+5,86%**
+- Rendimento 90g: **-11,28%**
 
 ### Pattern trovati
 
 | Pattern | Stato | Score | Famiglia | Neckline | Breakout | Età | Target | Progresso | Distanza neckline | Invalidazione | Dettaglio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Doppio minimo | CONFERMATO RECENTE | +2 | rialzista | 75,94 $ | 2026-07-01 | 13g | 91,46 $ | -5,66% | n/a | 74,42 $ | Due minimi simili vicino a 60,41 tra 2026-06-06 e 2026-06-25. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (13 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: -5,66%. Relazione prezzo/neckline: sotto neckline. Fonte lifecycle: technical_structure_metrics.csv. |
-| Doppio massimo | CANDIDATO | 0 | ribassista | 60,41 $ | n/a | n/a | 33,04 $ | n/a | 24,24% | 61,62 $ | Due massimi simili a 87,79 $ e 83,81 $. Neckline circa 60,41 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 10 giorni. |
-| Doppio minimo | CANDIDATO | 0 | rialzista | 98,27 $ | n/a | n/a | 114,91 $ | n/a | 30,92% | 96,30 $ | Due minimi simili a 81,63 $ e 81,69 $. Neckline circa 98,27 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 52 giorni. |
-| Testa e spalle | TARGET RAGGIUNTO | 0 | ribassista | 82,57 $ | 2026-05-28 | 47g | 66,88 $ | 47,87% | n/a | 84,22 $ | Spalla sinistra 88,05 $, testa 98,27 $, spalla destra 87,79 $. Neckline circa 82,57 $. Breakout neckline: 2026-05-28 (47 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 66,88 $; progresso: 47,87%; prezzo sotto neckline. |
+| Doppio minimo | CONFERMATO RECENTE | +2 | rialzista | 75,94 $ | 2026-07-01 | 13g | 91,46 $ | -3,86% | n/a | 74,42 $ | Due minimi simili vicino a 60,41 tra 2026-06-06 e 2026-06-25. Neckline stimata: 75,94. Breakout neckline: 2026-07-01 (13 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 91,46; progresso corrente: -3,86%. Relazione prezzo/neckline: vicino alla neckline. Fonte lifecycle: technical_structure_metrics.csv. |
+| Doppio massimo | CANDIDATO | 0 | ribassista | 60,41 $ | n/a | n/a | 33,04 $ | n/a | 24,70% | 61,62 $ | Due massimi simili a 87,79 $ e 83,81 $. Neckline circa 60,41 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 10 giorni. |
+| Doppio minimo | CANDIDATO | 0 | rialzista | 98,27 $ | n/a | n/a | 114,91 $ | n/a | 30,43% | 96,30 $ | Due minimi simili a 81,63 $ e 81,69 $. Neckline circa 98,27 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 52 giorni. |
+| Testa e spalle | TARGET RAGGIUNTO | 0 | ribassista | 82,57 $ | 2026-05-28 | 47g | 66,88 $ | 46,08% | n/a | 84,22 $ | Spalla sinistra 88,05 $, testa 98,27 $, spalla destra 87,79 $. Neckline circa 82,57 $. Breakout neckline: 2026-05-28 (47 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 66,88 $; progresso: 46,08%; prezzo sotto neckline. |
 
 ## DOGE
 
@@ -124,33 +124,33 @@ Pattern controllati:
 - Età breakout: **20 giorni**
 - Neckline: **0.07809 $**
 - Target teorico: **0.05847 $**
-- Progresso verso target: **30,60%**
+- Progresso verso target: **30,04%**
 - Distanza dalla neckline: **n/a**
 - Fonte lifecycle: **technical_structure_metrics.csv**
 - Fibonacci: **Fib 23,6% NON ATTIVO (0) @ 0.08220 $** — Swing DOWN 2026-05-14 0.11825 -> 2026-07-08 0.07107; livello più vicino 23.6% a 0.08220; stato NON ATTIVO; confluenza: nessuna confluenza indipendente.
 - Invalidazione: **0.07966 $**
 - Relazione prezzo/neckline: **sotto neckline**
-- Dettaglio: Tre massimi simili vicino a 0.09772 dal 2026-03-25 al 2026-06-12. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (20 giorni fa). Stato: MATURO. Target teorico: 0.05847; progresso corrente: 30,60%. Relazione prezzo/neckline: sotto neckline. Fonte lifecycle: technical_structure_metrics.csv.
+- Dettaglio: Tre massimi simili vicino a 0.09772 dal 2026-03-25 al 2026-06-12. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (20 giorni fa). Stato: MATURO. Target teorico: 0.05847; progresso corrente: 30,04%. Relazione prezzo/neckline: sotto neckline. Fonte lifecycle: technical_structure_metrics.csv.
 - Candela più recente: **Nessuna candela forte**
 - Stato prezzo: **NEL RANGE**
 - Supporto: **0.07107 $**
 - Resistenza: **0.07923 $**
 - Breakout 60g: **0.11825 $**
 - Breakdown 60g: **0.06961 $**
-- RSI14: **34.07**
+- RSI14: **34.52**
 - ATR14: **3,71%**
-- Volume ratio 20g: **0.70**
-- Rendimento 30g: **-18,79%**
-- Rendimento 90g: **-24,05%**
+- Volume ratio 20g: **0.69**
+- Rendimento 30g: **-18,66%**
+- Rendimento 90g: **-23,94%**
 
 ### Pattern trovati
 
 | Pattern | Stato | Score | Famiglia | Neckline | Breakout | Età | Target | Progresso | Distanza neckline | Invalidazione | Dettaglio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Triplo massimo | MATURO | -1 | ribassista | 0.07809 $ | 2026-06-24 | 20g | 0.05847 $ | 30,60% | n/a | 0.07966 $ | Tre massimi simili vicino a 0.09772 dal 2026-03-25 al 2026-06-12. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (20 giorni fa). Stato: MATURO. Target teorico: 0.05847; progresso corrente: 30,60%. Relazione prezzo/neckline: sotto neckline. Fonte lifecycle: technical_structure_metrics.csv. |
-| Doppio massimo | MATURO | -1 | ribassista | 0.07809 $ | 2026-06-24 | 20g | 0.06035 $ | 33,85% | n/a | 0.07966 $ | Due massimi simili a 0.09584 $ e 0.09169 $. Neckline circa 0.07809 $. Breakout neckline: 2026-06-24 (20 giorni fa). Stato: MATURO. Target teorico: 0.06035 $; progresso: 33,85%; prezzo sotto neckline. |
+| Triplo massimo | MATURO | -1 | ribassista | 0.07809 $ | 2026-06-24 | 20g | 0.05847 $ | 30,04% | n/a | 0.07966 $ | Tre massimi simili vicino a 0.09772 dal 2026-03-25 al 2026-06-12. Neckline ribassista stimata: 0.07809. Breakout neckline: 2026-06-24 (20 giorni fa). Stato: MATURO. Target teorico: 0.05847; progresso corrente: 30,04%. Relazione prezzo/neckline: sotto neckline. Fonte lifecycle: technical_structure_metrics.csv. |
+| Doppio massimo | MATURO | -1 | ribassista | 0.07809 $ | 2026-06-24 | 20g | 0.06035 $ | 33,23% | n/a | 0.07966 $ | Due massimi simili a 0.09584 $ e 0.09169 $. Neckline circa 0.07809 $. Breakout neckline: 2026-06-24 (20 giorni fa). Stato: MATURO. Target teorico: 0.06035 $; progresso: 33,23%; prezzo sotto neckline. |
 | Triangolo discendente possibile | CANDIDATO | 0 | ribassista | n/a | n/a | n/a | n/a | n/a | n/a | n/a | Massimi decrescenti e supporto quasi piatto. Stato: CANDIDATO; il pattern non ha una neckline univoca da usare per il lifecycle. |
-| Doppio minimo | CANDIDATO | 0 | rialzista | 0.11825 $ | n/a | n/a | 0.14377 $ | n/a | 64,04% | 0.11589 $ | Due minimi simili a 0.09274 $ e 0.09675 $. Neckline circa 0.11825 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 47 giorni. |
+| Doppio minimo | CANDIDATO | 0 | rialzista | 0.11825 $ | n/a | n/a | 0.14377 $ | n/a | 63,79% | 0.11589 $ | Due minimi simili a 0.09274 $ e 0.09675 $. Neckline circa 0.11825 $. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età formazione: 47 giorni. |
 
 ## Stati del ciclo di vita
 

@@ -1,6 +1,6 @@
 # Bitcoin Macro Cycle — Power Law e Four-Year Spiral
 
-Generato: 2026-07-14 09:34 UTC
+Generato: 2026-07-14 11:45 UTC
 
 Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche, non autorizza leva e pesa **0** nel Global Confluence.
 
@@ -8,12 +8,12 @@ Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche
 
 | Voce | Valore | Lettura |
 | --- | --- | --- |
-| Prezzo BTC | 62.544 $ | prezzo corrente |
-| Power Law centrale | 122.154 $ | deviazione -48,80% |
+| Prezzo BTC | 62.784 $ | prezzo corrente |
+| Power Law centrale | 122.155 $ | deviazione -48,60% |
 | Banda p10-p90 | 76.203 $ / 306.781 $ | SOTTO LA BANDA P10 |
-| Percentile residuo | 0,58% | posizione storica nel corridoio |
+| Percentile residuo | 0,72% | posizione storica nel corridoio |
 | Esponente β | 5,8455 | R² log-log 92,00% |
-| Stabilità β | BASSA | range 1,3055 cambiando finestra |
+| Stabilità β | BASSA | range 1,3054 cambiando finestra |
 | Ultimo halving | 2024-04-19 | 816 giorni fa |
 | Fase ciclo | 55,85% | percentuale indicativa del ciclo quadriennale |
 | Peso Global | 0 | CONTESTO MACRO / DIAGNOSTICO |
@@ -24,9 +24,9 @@ La Power Law viene trattata come regressione empirica, non come legge fisica. Il
 
 - Campione: 2014-09-17 → 2026-07-14 (4319 osservazioni)
 - Formula stimata: prezzo ≈ exp(-39.3967) × giorni^5.8455
-- Prezzo centrale oggi: **122.154 $**
-- Posizione corrente: **SOTTO LA BANDA P10**, percentile 0,58%
-- Scarto dal centro: **-48,80%**
+- Prezzo centrale oggi: **122.155 $**
+- Posizione corrente: **SOTTO LA BANDA P10**, percentile 0,72%
+- Scarto dal centro: **-48,60%**
 
 ![Bitcoin Power Law](btc_power_law_chart.png)
 
@@ -73,8 +73,8 @@ Campione molto piccolo: questi rendimenti sono contesto di ciclo, non probabilit
 
 | Asset | Coppia | Forza vs BTC | Score raw | Candidato | 30g | Peso Global |
 | --- | --- | --- | --- | --- | --- | --- |
-| SOL | SOL/BTC | RELATIVA MISTA / NON CONFERMATA | -1 | 0 | 10.729461859147339 | 0 |
-| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -8 | -1 | -14.730408238351922 | 0 |
+| SOL | SOL/BTC | RELATIVA MISTA / NON CONFERMATA | -1 | 0 | 10.747929220773011 | 0 |
+| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -8 | -1 | -14.883753889654116 | 0 |
 
 ## Tracker live Power Law
 

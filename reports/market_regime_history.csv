@@ -20,3 +20,4 @@ generated_utc,regime,regime_family,confidence_pct,volatility_state,btc_timeframe
 2026-07-14T05:35:41+00:00,RANGE,RANGE,80.4,NORMAL,240,1.0,25.523,1.004,0.869,0.1261,50.0,16.667,33.333,0.0,0.0,-0.4983,9.091,45.455,10.4193,12,"Direzione poco definita: score BTC +1.0, breadth EMA50 17%, ADX 25.5."
 2026-07-14T06:44:29+00:00,RANGE,RANGE,80.4,NORMAL,240,1.0,25.523,1.004,0.869,-0.1193,75.0,25.0,33.333,8.333,0.0,-0.3159,9.091,36.364,9.921,12,"Direzione poco definita: score BTC +1.0, breadth EMA50 25%, ADX 25.5."
 2026-07-14T09:28:10+00:00,RANGE,RANGE,80.4,NORMAL,240,1.0,25.709,0.9768,0.8576,-0.7927,41.667,8.333,33.333,0.0,0.0,-0.2219,9.091,45.455,8.6627,12,"Direzione poco definita: score BTC +1.0, breadth EMA50 8%, ADX 25.7."
+2026-07-14T11:10:06+00:00,RANGE,RANGE,80.4,NORMAL,240,1.0,25.709,0.9768,0.8576,-0.0994,75.0,16.667,25.0,16.667,0.0,-0.763,18.182,36.364,14.8877,12,"Direzione poco definita: score BTC +1.0, breadth EMA50 17%, ADX 25.7."

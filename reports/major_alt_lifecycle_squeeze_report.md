@@ -16,18 +16,18 @@ Report separato completo: **[major_alt_lifecycle_squeeze_report.md](major_alt_li
 | Trend squeeze score | 0 |
 | Confronto precedente | 2026-07-13 |
 | Fonte prezzi | Yahoo Finance SOL-USD weekly |
-| Prezzo SOL | 75,06 $ |
+| Prezzo SOL | 75,34 $ |
 | EMA200 weekly target | 113,12 $ |
-| Upside verso EMA200 | +50,96% |
-| Distanza prezzo da EMA200 | -33,76% |
-| Gap EMA50/EMA200 | -2,20% |
+| Upside verso EMA200 | +50,13% |
+| Distanza prezzo da EMA200 | -33,39% |
+| Gap EMA50/EMA200 | -2,19% |
 | Stato cross | EMA50 SOTTO EMA200 |
-| RSI weekly | 39,17 |
+| RSI weekly | 39,37 |
 | Età SOL | 6,3 anni |
 | Analoghi storici usati | 30 |
 | Max analoghi per asset | 3 |
-| Hit EMA200 12w analoghi | +16,67% |
-| Max gain mediano 12w | +23,66% |
+| Hit EMA200 12w analoghi | +20,00% |
+| Max gain mediano 12w | +25,06% |
 | Drawdown mediano 12w | -21,62% |
 
 Lettura semplice:
@@ -42,5 +42,5 @@ Nota importante: **questo modulo ora NON pesa più nel Global Confluence**. Rest
 
 Nota: se EMA50/EMA200 sono dentro ±2%, il modulo parla di medie sovrapposte / incrocio in corso, perché exchange diversi possono mostrare il cross leggermente prima o dopo.
 
-<!-- Generato: 2026-07-14 09:34 UTC -->
+<!-- Generato: 2026-07-14 11:44 UTC -->
 <!-- MAJOR_ALT_LIFECYCLE_SQUEEZE_END -->
