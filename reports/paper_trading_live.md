@@ -1,6 +1,6 @@
 # Paper trading automatico KuCoin
 
-Generato: 2026-07-14T11:46:01+00:00
+Generato: 2026-07-14T12:34:03+00:00
 
 ## Configurazione attiva
 
@@ -10,45 +10,45 @@ Generato: 2026-07-14T11:46:01+00:00
 - Compounding: **ATTIVO**
 - Reinvestimento dei profitti: **100,00%**
 - Politica target: **solo monitoraggio; il bot non aumenta il rischio per inseguirlo**
-- Snapshot prezzi usato: **2026-07-14T11:45:52+00:00**; stato dati: **FRESH**; età: **0,0 min**; conversione EUR/USDT: **CONFIG_FALLBACK**
+- Snapshot prezzi usato: **2026-07-14T12:33:52+00:00**; stato dati: **FRESH**; età: **0,0 min**; conversione EUR/USDT: **CONFIG_FALLBACK**
 - Dashboard intraday: [apri la pagina live](https://github.com/eddyhardscit/crypto-fractal-scanner/blob/paper-trading-live/reports/paper_trading_live.md)
 
 ## Freschezza dati di mercato
 
 | Stato | Fonte | Snapshot mercato | Controllato | Età | Limite | Nuove entrate |
 | --- | --- | --- | --- | --- | --- | --- |
-| FRESH | KUCOIN_PUBLIC_API | 2026-07-14T11:45:52+00:00 | 2026-07-14T11:45:53+00:00 | 0,0 min | 25,0 min | ABILITATE |
+| FRESH | KUCOIN_PUBLIC_API | 2026-07-14T12:33:52+00:00 | 2026-07-14T12:33:52+00:00 | 0,0 min | 25,0 min | ABILITATE |
 
 | TF | Asset con dati | Candela più recente | Candela più vecchia | Età massima | Limite | Stato |
 | --- | --- | --- | --- | --- | --- | --- |
-| 15m | 12 | 2026-07-14T11:30:00+00:00 | 2026-07-14T11:30:00+00:00 | 15,9 min | 40,0 min | OK |
-| 60m | 12 | 2026-07-14T10:00:00+00:00 | 2026-07-14T10:00:00+00:00 | 1,77 h | 1,42 h | STALE_CANDLE |
-| 240m | 12 | 2026-07-14T04:00:00+00:00 | 2026-07-14T04:00:00+00:00 | 7,77 h | 4,42 h | STALE_CANDLE |
+| 15m | 12 | 2026-07-14T12:15:00+00:00 | 2026-07-14T12:15:00+00:00 | 18,9 min | 40,0 min | OK |
+| 60m | 12 | 2026-07-14T11:00:00+00:00 | 2026-07-14T11:00:00+00:00 | 1,57 h | 1,42 h | STALE_CANDLE |
+| 240m | 12 | 2026-07-14T08:00:00+00:00 | 2026-07-14T08:00:00+00:00 | 4,57 h | 4,42 h | STALE_CANDLE |
 
 ## Segnali quasi entrati / motivi di esclusione
 
 | Portafoglio | Asset | TF | Lato | Score | Soglia | Manca | Stato | Età candela | RSI D/W (peso 0) | Motivo |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Principale 4H | DOGE | 240m | SHORT | -7,72 | 6,00 | 0,00 | STALE_CANDLE | 7,77 h | D: Hidden bearish [CONFERMATA] | W: Conferma ribassista [CONTESTO] | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | LAB | 240m | SHORT | -6,75 | 6,00 | 0,00 | STALE_CANDLE | 7,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | EVAA | 240m | SHORT | -6,25 | 6,00 | 0,00 | STALE_CANDLE | 7,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | XRP | 240m | SHORT | -6,11 | 6,00 | 0,00 | STALE_CANDLE | 7,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | PEPE | 240m | LONG | 5,04 | 6,00 | 0,96 | STALE_CANDLE | 7,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | HYPE | 240m | SHORT | -4,35 | 6,00 | 1,65 | STALE_CANDLE | 7,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | ALLO | 240m | LONG | 4,00 | 6,00 | 2,00 | STALE_CANDLE | 7,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | SOL | 240m | SHORT | -3,99 | 6,00 | 2,01 | STALE_CANDLE | 7,77 h | D: Momentum in indebolimento, divergenza non confermata [CONTESTO] | W: Hidden bearish [CONFERMATA] | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | VELVET | 240m | LONG | 2,39 | 6,00 | 3,61 | STALE_CANDLE | 7,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | ETH | 240m | LONG | 2,28 | 6,00 | 3,72 | STALE_CANDLE | 7,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | ZEC | 240m | LONG | 2,26 | 6,00 | 3,74 | STALE_CANDLE | 7,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Principale 4H | BTC | 240m | SHORT | -1,25 | 6,00 | 4,75 | STALE_CANDLE | 7,77 h | D: Hidden bearish [CONFERMATA] | W: Bullish regolare [CONFERMATA] | peso 0 | Ultima candela chiusa troppo vecchia: 465.9 minuti; limite 265. |
-| Scalp RSI Short 75 · €10 · 15x | EVAA | 15m | SHORT | 9,00 | 8,00 | 0,00 | STRATEGY_FILTER | 15,9 min | D: n/a | W: n/a | peso 0 | Filtro scalp RSI estremo: servono RSI estremo, shock, volume e conferma della candela successiva; manca: RSI ≤70.0 in rientro. RSI 78.5→77.9; volume x5.04; shock 5.97 ATR. |
-| Scalp RSI Short 75 · €50 · 15x | EVAA | 15m | SHORT | 9,00 | 8,00 | 0,00 | STRATEGY_FILTER | 15,9 min | D: n/a | W: n/a | peso 0 | Filtro scalp RSI estremo: servono RSI estremo, shock, volume e conferma della candela successiva; manca: RSI ≤70.0 in rientro. RSI 78.5→77.9; volume x5.04; shock 5.97 ATR. |
-| Scalp RSI Short 75 · prudente · 5x | EVAA | 15m | SHORT | 9,00 | 8,00 | 0,00 | STRATEGY_FILTER | 15,9 min | D: n/a | W: n/a | peso 0 | Filtro scalp RSI estremo: servono RSI estremo, shock, volume e conferma della candela successiva; manca: RSI ≤70.0 in rientro. RSI 78.5→77.9; volume x5.04; shock 5.97 ATR. |
-| Scalp RSI Short 80 · €10 · 15x | EVAA | 15m | SHORT | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 15,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
-| Scalp RSI Short 80 · €50 · 15x | EVAA | 15m | SHORT | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 15,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
-| Scalp RSI Short 80 · prudente · 5x | EVAA | 15m | SHORT | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 15,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
-| Bilanciata 1H | LAB | 60m | SHORT | -7,75 | 5,00 | 0,00 | STALE_CANDLE | 1,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 105.9 minuti; limite 85. |
-| Rapida 1H | LAB | 60m | SHORT | -7,75 | 4,50 | 0,00 | STALE_CANDLE | 1,77 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 105.9 minuti; limite 85. |
+| Principale 4H | DOGE | 240m | SHORT | -7,06 | 6,00 | 0,00 | STALE_CANDLE | 4,57 h | D: Hidden bearish [CONFERMATA] | W: Conferma ribassista [CONTESTO] | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | LAB | 240m | SHORT | -6,75 | 6,00 | 0,00 | STALE_CANDLE | 4,57 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | XRP | 240m | SHORT | -6,15 | 6,00 | 0,00 | STALE_CANDLE | 4,57 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | HYPE | 240m | SHORT | -5,19 | 6,00 | 0,81 | STALE_CANDLE | 4,57 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | EVAA | 240m | SHORT | -4,25 | 6,00 | 1,75 | STALE_CANDLE | 4,57 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | ETH | 240m | LONG | 4,25 | 6,00 | 1,75 | STALE_CANDLE | 4,57 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | SOL | 240m | SHORT | -4,18 | 6,00 | 1,82 | STALE_CANDLE | 4,57 h | D: Momentum in indebolimento, divergenza non confermata [CONTESTO] | W: Hidden bearish [CONFERMATA] | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | ZEC | 240m | LONG | 4,05 | 6,00 | 1,95 | STALE_CANDLE | 4,57 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | ALLO | 240m | LONG | 3,50 | 6,00 | 2,50 | STALE_CANDLE | 4,57 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | PEPE | 240m | LONG | 2,63 | 6,00 | 3,37 | STALE_CANDLE | 4,57 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | VELVET | 240m | SHORT | -1,52 | 6,00 | 4,48 | STALE_CANDLE | 4,57 h | D: n/a | W: n/a | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Principale 4H | BTC | 240m | LONG | 0,25 | 6,00 | 5,75 | STALE_CANDLE | 4,57 h | D: Hidden bearish [CONFERMATA] | W: Bullish regolare [CONFERMATA] | peso 0 | Ultima candela chiusa troppo vecchia: 273.9 minuti; limite 265. |
+| Scalp RSI Long 15 · €10 · 15x | ZEC | 15m | LONG | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 18,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
+| Scalp RSI Long 20 · €10 · 15x | ZEC | 15m | LONG | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 18,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
+| Scalp RSI Long 25 · €10 · 15x | ZEC | 15m | LONG | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 18,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
+| Scalp RSI Long 15 · €50 · 15x | ZEC | 15m | LONG | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 18,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
+| Scalp RSI Long 20 · €50 · 15x | ZEC | 15m | LONG | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 18,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
+| Scalp RSI Long 25 · €50 · 15x | ZEC | 15m | LONG | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 18,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
+| Scalp RSI Long 15 · prudente · 5x | ZEC | 15m | LONG | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 18,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
+| Scalp RSI Long 20 · prudente · 5x | ZEC | 15m | LONG | 7,00 | 8,00 | 1,00 | BELOW_SCORE | 18,9 min | D: n/a | W: n/a | peso 0 | Punteggio +7.00; soglia ±8.00; mancano 1.00 punti. |
 
 **Manca** indica quanti punti servivano per raggiungere la soglia. `STRATEGY_FILTER` significa che lo score bastava, ma mancava breakout, momentum o forza relativa. `ALREADY_PROCESSED` significa che la stessa candela era già stata esaminata.
 
@@ -56,16 +56,16 @@ Generato: 2026-07-14T11:46:01+00:00
 
 | Equity | Rendimento | P&L mese | Target | Progresso | Aperte | Chiuse | Win rate | PF | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| €10.044,81 | +0,45% | €44,81 | €3.000,00 | 1,49% | 2 | 5 | 40,00% | 1,29 | 1,72% |
+| €10.014,35 | +0,14% | €14,35 | €3.000,00 | 0,48% | 2 | 5 | 40,00% | 1,29 | 1,98% |
 
 ## Stato del campione statistico
 
 | Principale 4H — eventi indip. | Sistema eventi indip. | Stato | Prossima soglia |
 | --- | --- | --- | --- |
-| 5 | 19 | CAMPIONE INSUFFICIENTE | 30 (mancano 25) |
+| 5 | 20 | CAMPIONE INSUFFICIENTE | 30 (mancano 25) |
 
 - Trade del Principale 4H chiusi: **5**; win rate **40,00%**; profit factor **1,29**.
-- Expectancy: **€8,91** per trade; P&L netto: **€44,53**; max drawdown: **1,72%**.
+- Expectancy: **€8,91** per trade; P&L netto: **€44,53**; max drawdown: **1,98%**.
 - Valutazione: **Servono altri eventi indipendenti prima di trarre conclusioni.**
 - Soglie automatiche Telegram: **30, 100, 200 e 300 eventi indipendenti chiusi del portafoglio principale**.
 - Una soglia richiede una valutazione; non attiva automaticamente il trading reale.
@@ -74,11 +74,11 @@ Generato: 2026-07-14T11:46:01+00:00
 
 | Tipo | Portafoglio | Posizioni | Equity | Margine impegnato | Esposizione con leva | Rischio agli stop | P&L aperto |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| PRINCIPALE | Principale 4H | 2 | €10.044,81 | €977,91 | €2.933,74 | €100,55 | €1,42 |
-| TEST | Forza relativa 1H | 3 | €10.115,63 | €2.662,52 | €5.325,04 | €150,62 | €-26,00 |
-| TEST | Bilanciata 1H | 3 | €10.094,38 | €2.008,52 | €6.025,55 | €150,55 | €-33,80 |
-| TEST | Ampia 4H | 2 | €10.071,23 | €982,01 | €1.964,03 | €99,99 | €-15,02 |
-| TEST | Rapida 1H | 3 | €10.067,53 | €2.561,21 | €7.683,64 | €150,78 | €-8,67 |
+| PRINCIPALE | Principale 4H | 2 | €10.014,35 | €977,91 | €2.933,74 | €100,55 | €-29,05 |
+| TEST | Forza relativa 1H | 3 | €10.088,45 | €2.662,52 | €5.325,04 | €150,62 | €-53,17 |
+| TEST | Rapida 1H | 2 | €10.087,81 | €2.421,22 | €7.263,67 | €100,38 | €62,38 |
+| TEST | Ampia 4H | 2 | €10.070,28 | €982,01 | €1.964,03 | €99,99 | €-15,97 |
+| TEST | Bilanciata 1H | 3 | €10.063,34 | €2.008,52 | €6.025,55 | €150,55 | €-64,84 |
 | TEST | Scalp RSI Long 15 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scalp RSI Long 20 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scalp RSI Long 25 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
@@ -102,8 +102,8 @@ Generato: 2026-07-14T11:46:01+00:00
 | TEST | Scanner Top 5 Long 1H | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scanner Top 5 + forza BTC 1H | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Global Confluence puro 1H | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Benchmark trend following EMA 1H | 1 | €9.986,13 | €208,33 | €416,67 | €50,00 | €-13,62 |
-| TEST | Scanner Bottom 5 Short 1H | 1 | €9.986,13 | €208,33 | €416,67 | €50,00 | €-13,62 |
+| TEST | Benchmark trend following EMA 1H | 0 | €9.949,38 | €0,00 | €0,00 | €0,00 | €0,00 |
+| TEST | Scanner Bottom 5 Short 1H | 0 | €9.949,38 | €0,00 | €0,00 | €0,00 | €0,00 |
 
 **Importante:** ogni riga è un conto virtuale separato da €10.000. I margini dei diversi portafogli non vanno sommati come se appartenessero a un unico conto.
 
@@ -148,11 +148,11 @@ Generato: 2026-07-14T11:46:01+00:00
 
 | Tipo | Portafoglio | Strategia | Equity | P&L chiuso | Trade | Eventi indip. | Win rate | PF | Expectancy | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| PRINCIPALE | Principale 4H | Confluenza trend | €10.044,81 | €44,53 | 5 | 5 | 40,00% | 1,29 | €8,91 | 1,72% |
-| TEST | Forza relativa 1H | Forza relativa vs BTC | €10.115,63 | €142,69 | 6 | 6 | 66,67% | 2,37 | €23,78 | 1,11% |
-| TEST | Bilanciata 1H | Confluenza trend | €10.094,38 | €129,94 | 7 | 7 | 57,14% | 2,25 | €18,56 | 0,86% |
-| TEST | Ampia 4H | Confluenza trend | €10.071,23 | €87,07 | 3 | 3 | 33,33% | 2,66 | €29,02 | 1,35% |
-| TEST | Rapida 1H | Momentum / breakout | €10.067,53 | €80,81 | 12 | 12 | 50,00% | 1,38 | €6,73 | 1,54% |
+| PRINCIPALE | Principale 4H | Confluenza trend | €10.014,35 | €44,53 | 5 | 5 | 40,00% | 1,29 | €8,91 | 1,98% |
+| TEST | Forza relativa 1H | Forza relativa vs BTC | €10.088,45 | €142,69 | 6 | 6 | 66,67% | 2,37 | €23,78 | 1,32% |
+| TEST | Rapida 1H | Momentum / breakout | €10.087,81 | €29,79 | 13 | 13 | 46,15% | 1,11 | €2,29 | 1,54% |
+| TEST | Ampia 4H | Confluenza trend | €10.070,28 | €87,07 | 3 | 3 | 33,33% | 2,66 | €29,02 | 1,36% |
+| TEST | Bilanciata 1H | Confluenza trend | €10.063,34 | €129,94 | 7 | 7 | 57,14% | 2,25 | €18,56 | 1,06% |
 | TEST | Scalp RSI Long 15 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Scalp RSI Long 20 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Scalp RSI Long 25 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
@@ -176,8 +176,8 @@ Generato: 2026-07-14T11:46:01+00:00
 | TEST | Scanner Top 5 Long 1H | Scanner Top 5 Long | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Scanner Top 5 + forza BTC 1H | Scanner Top 5 + forza BTC | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Global Confluence puro 1H | Global Confluence puro | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
-| TEST | Benchmark trend following EMA 1H | Trend following EMA | €9.986,13 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,14% |
-| TEST | Scanner Bottom 5 Short 1H | Scanner Bottom 5 Short | €9.986,13 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,14% |
+| TEST | Benchmark trend following EMA 1H | Trend following EMA | €9.949,38 | €-50,62 | 1 | 1 | 0,00% | 0,00 | €-50,62 | 0,51% |
+| TEST | Scanner Bottom 5 Short 1H | Scanner Bottom 5 Short | €9.949,38 | €-50,62 | 1 | 1 | 0,00% | 0,00 | €-50,62 | 0,51% |
 
 **Eventi indip.** conta gli eventi di mercato distinti; varianti dello stesso movimento restano collegate allo stesso evento sperimentale.
 
@@ -185,38 +185,35 @@ Generato: 2026-07-14T11:46:01+00:00
 
 | Portafoglio | Asset | Lato | Metodo | TF | Leva | Entry | Mark | Stop | Liquidazione | Target | Margine | Esposizione | Rischio stop | P&L |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Principale 4H | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07237 | 0,07224 | 0,07451 | 0,09613 | 0,06808 | €562,89 | €1.688,66 | €50,00 | €2,95 |
-| Principale 4H | HYPE | SHORT | Confluenza trend | 240m | 3,0x | 63,85923 | 63,93800 | 66,45178 | 84,82634 | 58,67412 | €415,02 | €1.245,07 | €50,55 | €-1,54 |
+| Principale 4H | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07237 | 0,07302 | 0,07451 | 0,09613 | 0,06808 | €562,89 | €1.688,66 | €50,00 | €-15,25 |
+| Principale 4H | HYPE | SHORT | Confluenza trend | 240m | 3,0x | 63,85923 | 64,56700 | 66,45178 | 84,82634 | 58,67412 | €415,02 | €1.245,07 | €50,55 | €-13,80 |
 | Bilanciata 1H | AAVE | LONG | Confluenza trend | 60m | 3,0x | 98,87929 | 98,87929 | 96,58018 | n/a | 103,47752 | €716,68 | €2.150,03 | €49,99 | €0,00 |
 | Bilanciata 1H | T | LONG | Confluenza trend | 60m | 3,0x | 0,00540 | 0,00540 | 0,00479 | n/a | 0,00663 | €146,15 | €438,46 | €49,94 | €0,00 |
-| Bilanciata 1H | SOL | SHORT | Confluenza trend | 60m | 3,0x | 74,63707 | 75,37100 | 75,73639 | 99,14291 | 72,43843 | €1.145,69 | €3.437,06 | €50,62 | €-33,80 |
+| Bilanciata 1H | SOL | SHORT | Confluenza trend | 60m | 3,0x | 74,63707 | 76,04500 | 75,73639 | 99,14291 | 72,43843 | €1.145,69 | €3.437,06 | €50,62 | €-64,84 |
 | Rapida 1H | AAVE | LONG | Momentum / breakout | 60m | 3,0x | 98,87929 | 98,87929 | 97,09109 | n/a | 101,56159 | €921,40 | €2.764,20 | €49,99 | €0,00 |
-| Rapida 1H | LAB | SHORT | Momentum / breakout | 60m | 3,0x | 0,26925 | 0,27805 | 0,30156 | 0,35765 | 0,22078 | €139,99 | €419,96 | €50,40 | €-13,73 |
-| Rapida 1H | ETH | LONG | Momentum / breakout | 60m | 3,0x | 1796,06914 | 1798,09000 | 1775,95317 | 1206,35977 | 1826,24310 | €1.499,82 | €4.499,47 | €50,39 | €5,06 |
-| Ampia 4H | DOGE | SHORT | Confluenza trend | 240m | 2,0x | 0,07237 | 0,07224 | 0,07515 | 0,10819 | 0,06457 | €649,49 | €1.298,97 | €50,00 | €2,27 |
-| Ampia 4H | ZEC | LONG | Confluenza trend | 240m | 2,0x | 522,36445 | 508,78000 | 483,09844 | 263,79405 | 632,30930 | €332,53 | €665,06 | €49,99 | €-17,30 |
+| Rapida 1H | ETH | LONG | Momentum / breakout | 60m | 3,0x | 1796,06914 | 1820,97000 | 1775,95317 | 1206,35977 | 1826,24310 | €1.499,82 | €4.499,47 | €50,39 | €62,38 |
+| Ampia 4H | DOGE | SHORT | Confluenza trend | 240m | 2,0x | 0,07237 | 0,07302 | 0,07515 | 0,10819 | 0,06457 | €649,49 | €1.298,97 | €50,00 | €-11,73 |
+| Ampia 4H | ZEC | LONG | Confluenza trend | 240m | 2,0x | 522,36445 | 519,03000 | 483,09844 | 263,79405 | 632,30930 | €332,53 | €665,06 | €49,99 | €-4,25 |
 | Forza relativa 1H | AAVE | LONG | Forza relativa vs BTC | 60m | 2,0x | 98,87929 | 98,87929 | 96,58018 | n/a | 103,93735 | €1.075,02 | €2.150,03 | €49,99 | €0,00 |
 | Forza relativa 1H | T | LONG | Forza relativa vs BTC | 60m | 2,0x | 0,00540 | 0,00540 | 0,00479 | n/a | 0,00676 | €219,23 | €438,46 | €49,94 | €0,00 |
-| Forza relativa 1H | HYPE | SHORT | Forza relativa vs BTC | 60m | 2,0x | 63,33633 | 63,93800 | 64,50951 | 94,68781 | 60,75532 | €1.368,27 | €2.736,55 | €50,69 | €-26,00 |
-| Benchmark trend following EMA 1H | LAB | SHORT | Trend following EMA | 60m | 2,0x | 0,26925 | 0,27805 | 0,30156 | 0,40252 | 0,19817 | €208,33 | €416,67 | €50,00 | €-13,62 |
-| Scanner Bottom 5 Short 1H | LAB | SHORT | Scanner Bottom 5 Short | 60m | 2,0x | 0,26925 | 0,27805 | 0,30156 | 0,40252 | 0,20463 | €208,33 | €416,67 | €50,00 | €-13,62 |
+| Forza relativa 1H | HYPE | SHORT | Forza relativa vs BTC | 60m | 2,0x | 63,33633 | 64,56700 | 64,50951 | 94,68781 | 60,75532 | €1.368,27 | €2.736,55 | €50,69 | €-53,17 |
 
 ## Ultime operazioni chiuse
 
 | Portafoglio | Asset | Lato | Chiusura UTC | Exit | P&L netto | R | Motivo |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| Scanner Bottom 5 Short 1H | LAB | SHORT | 2026-07-14T12:33:59+00:00 | 0,30162 | €-50,62 | -1,01 | STOP |
+| Benchmark trend following EMA 1H | LAB | SHORT | 2026-07-14T12:33:59+00:00 | 0,30162 | €-50,62 | -1,01 | STOP |
+| Rapida 1H | LAB | SHORT | 2026-07-14T12:33:59+00:00 | 0,30162 | €-51,02 | -1,01 | STOP |
 | Forza relativa 1H | VELVET | LONG | 2026-07-14T11:10:12+00:00 | 0,59610 | €0,36 | 0,01 | STOP |
 | Ampia 4H | EVAA | SHORT | 2026-07-14T11:10:12+00:00 | 0,92547 | €-1,00 | -0,02 | STOP |
 | Rapida 1H | SOL | SHORT | 2026-07-14T11:10:12+00:00 | 75,50720 | €-57,06 | -1,13 | STOP |
 | Bilanciata 1H | VELVET | LONG | 2026-07-14T11:10:12+00:00 | 0,59666 | €4,94 | 0,10 | STOP |
 | Principale 4H | EVAA | SHORT | 2026-07-14T11:10:12+00:00 | 0,94431 | €-51,67 | -1,02 | STOP |
-| Rapida 1H | VELVET | LONG | 2026-07-14T05:35:47+00:00 | 0,60448 | €15,27 | 0,30 | STOP |
 | Rapida 1H | HYPE | SHORT | 2026-07-14T05:35:47+00:00 | 63,51717 | €14,59 | 0,29 | STOP |
+| Rapida 1H | VELVET | LONG | 2026-07-14T05:35:47+00:00 | 0,60448 | €15,27 | 0,30 | STOP |
 | Ampia 4H | ALLO | LONG | 2026-07-14T03:20:27+00:00 | 0,41592 | €-51,45 | -1,01 | STOP |
 | Principale 4H | ALLO | LONG | 2026-07-14T03:20:27+00:00 | 0,41592 | €-51,51 | -1,01 | STOP |
-| Principale 4H | ZEC | LONG | 2026-07-13T21:06:38+00:00 | 492,06139 | €-51,21 | -1,02 | STOP |
-| Forza relativa 1H | EVAA | SHORT | 2026-07-13T18:11:31+00:00 | 0,78053 | €-51,47 | -1,01 | STOP |
-| Ampia 4H | LAB | SHORT | 2026-07-13T18:11:31+00:00 | 0,23085 | €139,52 | 2,79 | TARGET |
 
 ## Regole invarianti
 
@@ -231,7 +228,7 @@ Generato: 2026-07-14T11:46:01+00:00
 Simulazione separata **paper only**: capitale/margine iniziale **€3.600**, leva **5x**, esposizione iniziale **€18.000**. Non modifica i conti paper da €10.000 e non invia ordini reali.
 
 - Stato: **WAITING**
-- Prezzo DOGE: **0.07224**
+- Prezzo DOGE: **0.07302**
 - Pre-allarme: **0.0765**; zona armata: **0.0775**; trigger rejection: **0.078**
 - Invalidazione prima dell’entrata: chiusura 15m sopra **0.07966**
 
@@ -244,17 +241,17 @@ Simulazione separata **paper only**: capitale/margine iniziale **€3.600**, lev
 | Filtro | Valore | Stato |
 | --- | --- | --- |
 | Dati mercato | FRESH | OK |
-| Candela 15m | 16.0 min | OK |
+| Candela 15m | 19.0 min | OK |
 | Global DOGE | -5.0 | OK |
 | Classic raw | -7.0 | OK |
 | DOGE/BTC raw | -8.0 | OK |
 | Pattern ribassista | MATURO | OK |
-| BTC sotto filtro | 62838.6 | OK |
+| BTC sotto filtro | 63450.85 | OK |
 
 ### Ultima candela 15m valutata
 
-- Rejection accettata: **NO**; motivo: **trigger_touched, entry_not_chased**
-- High **0.07231**; close **0.07227**; wick alta **42.9%**; volume **x0.37**
+- Rejection accettata: **NO**; motivo: **trigger_touched, entry_not_chased, bearish_confirmation, volume_valid**
+- High **0.07248**; close **0.0723**; wick alta **52.9%**; volume **x1.89**
 
 ### Gestione
 
@@ -276,15 +273,15 @@ Registro parallelo senza limite globale di quattro posizioni. Considera soltanto
 - Confidenza: **80,40%**
 - Volatilità: **NORMAL**
 - Rotazione strategie: **SOLO OSSERVAZIONE — nessun peso operativo viene ancora modificato**
-- Motivo: Direzione poco definita: score BTC +1.0, breadth EMA50 17%, ADX 25.7.
-- BTC trend score: **1,00**; ADX: **25,71**; breadth sopra EMA50: **16,67%**
-- Mediana alt vs BTC: **-0,76%**; dispersione: **14,89%**
+- Motivo: Direzione poco definita: score BTC +1.0, breadth EMA50 17%, ADX 25.8.
+- BTC trend score: **1,00**; ADX: **25,78**; breadth sopra EMA50: **16,67%**
+- Mediana alt vs BTC: **-0,40%**; dispersione: **14,22%**
 
 - Aperti in questo ciclo: **0**
-- Chiusi in questo ciclo: **0**
-- Posizioni research aperte: **26**
-- Trade research chiusi: **69**
-- Eventi di mercato indipendenti chiusi: **35**
+- Chiusi in questo ciclo: **2**
+- Posizioni research aperte: **24**
+- Trade research chiusi: **71**
+- Eventi di mercato indipendenti chiusi: **36**
 - Segnali sovrapposti saltati sullo stesso asset/profilo: **121**
 - Posizioni Research V1 senza regime scartate durante la migrazione: **28**
 
@@ -292,10 +289,10 @@ Registro parallelo senza limite globale di quattro posizioni. Considera soltanto
 
 | Profilo | Aperte | Chiuse | Eventi indip. | Win rate | PF | Expectancy R | P&L norm. |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| MAIN | 4 | 6 | 6 | 33,33% | 0,98 | -0,02R | €-0,94 |
+| MAIN | 3 | 7 | 7 | 28,57% | 0,78 | -0,16R | €-11,08 |
 | SHADOW_1H_BALANCED | 6 | 22 | 22 | 27,27% | 0,69 | -0,24R | €-52,75 |
 | SHADOW_1H_FAST | 4 | 24 | 24 | 25,00% | 0,46 | -0,43R | €-103,13 |
-| SHADOW_4H_WIDE | 7 | 3 | 3 | 33,33% | 1,38 | 0,25R | €7,60 |
+| SHADOW_4H_WIDE | 6 | 4 | 4 | 25,00% | 0,92 | -0,06R | €-2,53 |
 | SHADOW_EMA_TREND_1H | 1 | 0 | 0 | 0,00% | 0,00 | 0,00R | €0,00 |
 | SHADOW_RELATIVE_STRENGTH | 3 | 14 | 14 | 14,29% | 0,35 | -0,58R | €-80,57 |
 | SHADOW_SCANNER_BOTTOM5_SHORT | 1 | 0 | 0 | 0,00% | 0,00 | 0,00R | €0,00 |
@@ -304,14 +301,14 @@ Registro parallelo senza limite globale di quattro posizioni. Considera soltanto
 
 | Profilo | Regime entrata | Aperte | Chiuse | Eventi indip. | Win rate | PF | Expectancy R | P&L norm. |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| MAIN | RANGE | 4 | 6 | 6 | 33,33% | 0,98 | -0,02R | €-0,94 |
+| MAIN | RANGE | 3 | 7 | 7 | 28,57% | 0,78 | -0,16R | €-11,08 |
 | SHADOW_1H_BALANCED | ALT_ROTATION_UP | 0 | 7 | 7 | 42,86% | 1,35 | 0,22R | €15,08 |
 | SHADOW_1H_BALANCED | RANGE | 3 | 9 | 9 | 33,33% | 0,94 | -0,04R | €-3,45 |
 | SHADOW_1H_BALANCED | RANGE_HIGH_VOL | 3 | 6 | 6 | 0,00% | 0,00 | -1,07R | €-64,38 |
 | SHADOW_1H_FAST | ALT_ROTATION_UP | 0 | 3 | 3 | 33,33% | 0,71 | -0,20R | €-6,12 |
 | SHADOW_1H_FAST | RANGE | 3 | 12 | 12 | 41,67% | 1,02 | 0,01R | €1,52 |
 | SHADOW_1H_FAST | RANGE_HIGH_VOL | 1 | 9 | 9 | 0,00% | 0,00 | -1,09R | €-98,53 |
-| SHADOW_4H_WIDE | RANGE | 7 | 3 | 3 | 33,33% | 1,38 | 0,25R | €7,60 |
+| SHADOW_4H_WIDE | RANGE | 6 | 4 | 4 | 25,00% | 0,92 | -0,06R | €-2,53 |
 | SHADOW_EMA_TREND_1H | RANGE | 1 | 0 | 0 | 0,00% | 0,00 | 0,00R | €0,00 |
 | SHADOW_RELATIVE_STRENGTH | ALT_ROTATION_UP | 0 | 5 | 5 | 20,00% | 0,51 | -0,42R | €-20,82 |
 | SHADOW_RELATIVE_STRENGTH | RANGE | 3 | 7 | 7 | 14,29% | 0,36 | -0,56R | €-39,42 |
