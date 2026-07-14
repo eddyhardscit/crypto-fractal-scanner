@@ -16,6 +16,8 @@ from typing import Any
 
 import requests
 
+from paper_trading_event_enrichment import opening_status_lines
+
 from paper_trading_sample_watch import (
     mark_milestones_sent,
     pending_milestone_notification,
@@ -210,6 +212,8 @@ def build_event_messages(summary: dict[str, Any]) -> list[str]:
                             f"· Rischio massimo "
                             f"{_fmt_eur(position.get('initial_risk_eur'))}"
                         ),
+                        # TELEGRAM_OPENING_STATUS_LINES_V1
+                        *opening_status_lines(position),
                     ]
                 )
 

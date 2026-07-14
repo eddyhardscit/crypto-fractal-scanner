@@ -34,6 +34,7 @@ from paper_trading_trade_log_repair import (
     repair_trade_log,
 )
 from paper_trading_live_publish import publish_markdown
+from paper_trading_event_enrichment import enrich_opened_positions
 from paper_trading_notify import notify
 from paper_trading_open_positions_notify import send_open_positions_report
 from research_all_signals import run_research_cycle
@@ -229,6 +230,8 @@ def main() -> None:
     )
     after = _position_snapshot(state, bundle)
     summary["trailing_updates"] = _trailing_updates(before, after)
+    # TELEGRAM_OPENING_PNL_ENRICHMENT_V1
+    enrich_opened_positions(summary, bundle, config)
     risk_alerts, risk_recoveries = _risk_changes(state, bundle, config)
     summary["risk_alerts"] = risk_alerts
     summary["risk_recoveries"] = risk_recoveries
