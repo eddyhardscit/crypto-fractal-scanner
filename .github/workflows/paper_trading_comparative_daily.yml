@@ -1,0 +1,92 @@
+name: Paper Trading Comparative Daily Report
+
+on:
+  schedule:
+    - cron: "30 8 * * *"
+      timezone: "Europe/Rome"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-trading-comparative-daily
+  cancel-in-progress: false
+
+jobs:
+  comparative-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+      GITHUB_TOKEN: ${{ github.token }}
+      PAPER_TRADING_RELEASE_TAG: paper-trading-v1
+      PAPER_TRADING_ASSET_NAME: paper-trading-state.zip
+      PAPER_TRADING_CONFIG: paper_trading_config.json
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pandas requests
+
+      - name: Validate report
+        run: |
+          python -m py_compile \
+            paper_trading_comparative_report.py \
+            paper_trading_report.py \
+            paper_trading_engine.py \
+            paper_trading_trade_log_repair.py
+
+      - name: Restore persistent paper state
+        run: python paper_trading_storage.py restore
+
+      - name: Build comparative report and notify Telegram
+        run: python paper_trading_comparative_report.py
+
+      - name: Commit comparative reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            reports/paper_trading_comparative_report.md \
+            reports/paper_trading_comparative_ranking.csv \
+            reports/paper_trading_comparative_latest.json
+
+          git diff --cached --check
+
+          if git diff --cached --quiet; then
+            echo "Comparative report unchanged."
+          else
+            git commit -m "Update paper trading comparative ranking"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Upload diagnostic artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-comparative-${{ github.run_id }}
+          path: |
+            reports/paper_trading_comparative_report.md
+            reports/paper_trading_comparative_ranking.csv
+            reports/paper_trading_comparative_latest.json
+          if-no-files-found: error
+          retention-days: 30
