@@ -1,49 +1,49 @@
 {
-  "generated_utc": "2026-07-13T19:25:23+00:00",
+  "generated_utc": "2026-07-14T07:23:59+00:00",
   "status": "OK",
-  "telegram_sent": true,
+  "telegram_sent": false,
   "checks": [
     {
       "label": "Report principale",
       "path": "reports/latest_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 13.0 ore fa; rigenerato in questo ciclo."
+      "detail": "Ultimo dato 0.0 ore fa; rigenerato in questo ciclo."
     },
     {
       "label": "Decisione operativa",
       "path": "reports/decision_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 13.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Global Confluence",
       "path": "reports/global_confluence_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 13.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Struttura tecnica",
       "path": "reports/technical_structure_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 13.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Snapshot mercato",
       "path": "reports/latest_market_snapshot.json",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 13.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.1 ore fa; dato interno ancora recente."
     },
     {
       "label": "Coerenza dati",
       "path": "reports/data_quality_coherence.json",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 13.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Storico forecast 30 giorni",
@@ -57,7 +57,7 @@
       "path": "reports/sol_btc_fractal_history.csv",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultima riga utile 13.0 ore fa."
+      "detail": "Ultima riga utile 0.0 ore fa."
     }
   ],
   "active_anomalies": []
