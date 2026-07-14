@@ -20,6 +20,9 @@ PORTFOLIO_LABELS = {
     "SHADOW_RSI_SHORT_15X_10": "Scalp RSI Short €10 · 15x",
     "SHADOW_RSI_SHORT_15X_50": "Scalp RSI Short €50 · 15x",
     "SHADOW_RSI_SHORT_5X": "Scalp RSI Short prudente 5x",
+    "SHADOW_DONCHIAN_1H": "Benchmark Donchian breakout 1H",
+    "SHADOW_BOLLINGER_MR_1H": "Benchmark Bollinger mean reversion 1H",
+    "SHADOW_EMA_TREND_1H": "Benchmark trend following EMA 1H",
 }
 
 PORTFOLIO_DESCRIPTIONS = {
@@ -57,6 +60,15 @@ PORTFOLIO_DESCRIPTIONS = {
     "SHADOW_RSI_SHORT_5X": (
         "Versione prudente short dello scalp RSI 15m, leva 5x e rischio ridotto."
     ),
+    "SHADOW_DONCHIAN_1H": (
+        "Benchmark puro: breakout o breakdown dei massimi/minimi delle 20 barre precedenti, con filtro ADX."
+    ),
+    "SHADOW_BOLLINGER_MR_1H": (
+        "Benchmark puro: ritorno verso la media dopo uscita dalle Bollinger e conferma RSI estrema."
+    ),
+    "SHADOW_EMA_TREND_1H": (
+        "Benchmark puro: trend following con prezzo, EMA20, EMA50 e filtro ADX."
+    ),
 }
 
 STRATEGY_LABELS = {
@@ -64,6 +76,9 @@ STRATEGY_LABELS = {
     "momentum_breakout": "Momentum / breakout",
     "relative_strength": "Forza relativa vs BTC",
     "rsi_extreme_reversal": "Inversione RSI estrema 15m",
+    "donchian_breakout": "Donchian breakout 20 barre",
+    "bollinger_mean_reversion": "Bollinger mean reversion",
+    "ema_trend_following": "Trend following EMA",
 }
 
 

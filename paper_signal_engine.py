@@ -134,6 +134,10 @@ def compute_features(frame: pd.DataFrame, btc_frame: pd.DataFrame | None = None)
     ema20 = ema(close, 20)
     ema50 = ema(close, 50)
     ema200 = ema(close, 200)
+    bollinger_mid = close.rolling(20, min_periods=20).mean()
+    bollinger_std = close.rolling(20, min_periods=20).std(ddof=0)
+    bollinger_upper = bollinger_mid + 2.0 * bollinger_std
+    bollinger_lower = bollinger_mid - 2.0 * bollinger_std
     rsi14 = rsi(close, 14)
     atr14 = atr(data, 14)
     adx14 = adx(data, 14)
@@ -168,6 +172,22 @@ def compute_features(frame: pd.DataFrame, btc_frame: pd.DataFrame | None = None)
         "ema20": _safe_num(ema20.iloc[-1], current),
         "ema50": _safe_num(ema50.iloc[-1], current),
         "ema200": _safe_num(ema200.iloc[-1], current),
+        "bollinger_mid": _safe_num(
+            bollinger_mid.iloc[-1],
+            current,
+        ),
+        "bollinger_upper": _safe_num(
+            bollinger_upper.iloc[-1],
+            current,
+        ),
+        "bollinger_lower": _safe_num(
+            bollinger_lower.iloc[-1],
+            current,
+        ),
+        "bollinger_zscore": (
+            (current - _safe_num(bollinger_mid.iloc[-1], current))
+            / max(_safe_num(bollinger_std.iloc[-1], 0.0), 1e-12)
+        ),
         "rsi14": _safe_num(rsi14.iloc[-1], 50.0),
         "atr_pct": max(0.0, atr_pct),
         "adx14": _safe_num(adx14.iloc[-1], 0.0),
@@ -281,6 +301,87 @@ def confidence_from_score(score: float) -> str:
 def deterministic_id(*parts: Any, length: int = 20) -> str:
     raw = "|".join(str(part) for part in parts)
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:length]
+
+
+def benchmark_strategy_score(
+    strategy: str,
+    features: dict[str, Any],
+) -> tuple[bool, float, list[str]]:
+    """Pure benchmark rules, independent from global/exchange overlays."""
+    price = float(features["price"])
+    rsi14_value = float(features["rsi14"])
+    adx14_value = float(features["adx14"])
+    volume_ratio = float(features["volume_ratio"])
+    ret_medium = float(features["ret_medium_pct"])
+
+    if strategy == "donchian_breakout":
+        state = str(features["breakout_state"])
+        if state == "UP" and adx14_value >= 18:
+            score = 5.0 + min(2.0, adx14_value / 25.0)
+            score += min(1.0, max(0.0, volume_ratio - 1.0))
+            return True, score, [
+                "breakout Donchian 20 barre",
+                f"ADX {adx14_value:.1f}",
+                f"volume x{volume_ratio:.1f}",
+            ]
+        if state == "DOWN" and adx14_value >= 18:
+            score = 5.0 + min(2.0, adx14_value / 25.0)
+            score += min(1.0, max(0.0, volume_ratio - 1.0))
+            return True, -score, [
+                "breakdown Donchian 20 barre",
+                f"ADX {adx14_value:.1f}",
+                f"volume x{volume_ratio:.1f}",
+            ]
+        return False, 0.0, []
+
+    if strategy == "bollinger_mean_reversion":
+        upper = float(features["bollinger_upper"])
+        lower = float(features["bollinger_lower"])
+        zscore = float(features["bollinger_zscore"])
+        if price <= lower and rsi14_value <= 30:
+            score = 5.0 + min(2.5, abs(zscore))
+            return True, score, [
+                "prezzo sotto Bollinger inferiore",
+                f"RSI {rsi14_value:.1f}",
+                f"z-score {zscore:.2f}",
+            ]
+        if price >= upper and rsi14_value >= 70:
+            score = 5.0 + min(2.5, abs(zscore))
+            return True, -score, [
+                "prezzo sopra Bollinger superiore",
+                f"RSI {rsi14_value:.1f}",
+                f"z-score {zscore:.2f}",
+            ]
+        return False, 0.0, []
+
+    if strategy == "ema_trend_following":
+        ema20_value = float(features["ema20"])
+        ema50_value = float(features["ema50"])
+        if (
+            price > ema20_value > ema50_value
+            and adx14_value >= 20
+            and ret_medium > 0
+        ):
+            score = 5.0 + min(2.0, adx14_value / 25.0)
+            return True, score, [
+                "prezzo>EMA20>EMA50",
+                f"ADX {adx14_value:.1f}",
+                f"ritorno medio {ret_medium:+.1f}%",
+            ]
+        if (
+            price < ema20_value < ema50_value
+            and adx14_value >= 20
+            and ret_medium < 0
+        ):
+            score = 5.0 + min(2.0, adx14_value / 25.0)
+            return True, -score, [
+                "prezzo<EMA20<EMA50",
+                f"ADX {adx14_value:.1f}",
+                f"ritorno medio {ret_medium:+.1f}%",
+            ]
+        return False, 0.0, []
+
+    return False, 0.0, []
 
 
 def strategy_accepts(
@@ -535,13 +636,30 @@ def generate_signals(
                 )
                 continue
 
-            score, reasons = score_features(
-                features,
-                global_overlay,
-                exchange_overlay,
-            )
-            if abs(score) < minimum_score:
-                continue
+            benchmark_strategies = {
+                "donchian_breakout",
+                "bollinger_mean_reversion",
+                "ema_trend_following",
+            }
+            if strategy in benchmark_strategies:
+                accepted, score, reasons = benchmark_strategy_score(
+                    strategy,
+                    features,
+                )
+                if not accepted or abs(score) < minimum_score:
+                    continue
+                reasons = reasons + [
+                    global_reason + " (solo contesto, peso 0)",
+                    exchange_reason + " (solo contesto, peso 0)",
+                ]
+            else:
+                score, reasons = score_features(
+                    features,
+                    global_overlay,
+                    exchange_overlay,
+                )
+                if abs(score) < minimum_score:
+                    continue
 
             side = "LONG" if score > 0 else "SHORT"
             if (
@@ -620,10 +738,17 @@ def generate_signals(
                 0.65 * features["relative_medium_pct"]
                 + 0.35 * features["relative_long_pct"]
             )
-            reason = "; ".join(
-                reasons
-                + [global_reason, exchange_reason]
-            )
+            if strategy in benchmark_strategies:
+                reason = "; ".join(reasons)
+                signal_global_overlay = 0.0
+                signal_exchange_overlay = 0.0
+            else:
+                reason = "; ".join(
+                    reasons
+                    + [global_reason, exchange_reason]
+                )
+                signal_global_overlay = global_overlay
+                signal_exchange_overlay = exchange_overlay
 
             signals.append(
                 Signal(
@@ -697,11 +822,11 @@ def generate_signals(
                         features["breakout_state"]
                     ),
                     global_overlay=round(
-                        global_overlay,
+                        signal_global_overlay,
                         4,
                     ),
                     exchange_overlay=round(
-                        exchange_overlay,
+                        signal_exchange_overlay,
                         4,
                     ),
                 )
