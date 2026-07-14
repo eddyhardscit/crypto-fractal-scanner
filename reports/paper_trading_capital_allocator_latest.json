@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "generated_utc": "2026-07-14T22:14:46+00:00",
+  "source_generated_utc": "2026-07-14T22:14:45+00:00",
+  "mode": "OBSERVATION",
+  "paper_only": true,
+  "orders_enabled": false,
+  "source_portfolios_modified": false,
+  "initial_capital_eur": 10000.0,
+  "evaluable_count": 0,
+  "qualified_count": 0,
+  "selected_count": 0,
+  "cash_weight_pct": 100.0,
+  "cash_eur": 10000.0,
+  "allocations": [],
+  "rules": {
+    "min_evaluable_strategies": 3,
+    "min_closed_trades": 30,
+    "max_selected": 5,
+    "cash_reserve_pct": 20.0,
+    "max_weight_pct": 30.0,
+    "max_drawdown_pct": 15.0,
+    "min_profit_factor": 1.1,
+    "positive_expectancy_required": true,
+    "positive_return_required": true,
+    "rebalance_frequency": "MONTHLY_RECOMMENDATION"
+  },
+  "reasons": [
+    "Strategie valutabili: 0/3 richieste.",
+    "Strategie che superano tutti i filtri: 0/3 richieste."
+  ]
+}
