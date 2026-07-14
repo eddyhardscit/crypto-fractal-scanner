@@ -254,6 +254,16 @@ def build_event_messages(summary: dict[str, Any]) -> list[str]:
                     f"Exit {float(trade.get('exit_price', 0.0)):.6g} · "
                     f"Durata {_fmt_num(trade.get('holding_hours'))} h"
                 ),
+                (
+                    f"MFE netto {_fmt_eur(trade.get('mfe_net_eur'), signed=True)} · "
+                    f"MAE netto {_fmt_eur(trade.get('mae_net_eur'), signed=True)}"
+                ),
+                (
+                    f"Profitto trattenuto "
+                    f"{_fmt_pct(trade.get('profit_retained_pct'), signed=True)} · "
+                    f"Giveback dal picco "
+                    f"{_fmt_eur(trade.get('peak_profit_giveback_eur'))}"
+                ),
             ]
         )
 

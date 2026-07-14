@@ -31,7 +31,11 @@ TRADE_FIELDS = [
     "timeframe_minutes", "opened_at", "closed_at", "holding_hours", "entry_price", "exit_price",
     "quantity", "notional_eur", "margin_eur", "leverage", "liquidation_price", "initial_stop_price", "final_stop_price",
     "target_price", "gross_pnl_eur", "entry_fee_eur", "exit_fee_eur", "funding_pnl_eur",
-    "net_pnl_eur", "return_on_margin_pct", "r_multiple", "close_reason", "signal_score", "confidence",
+    "net_pnl_eur", "return_on_margin_pct", "r_multiple",
+    "max_favorable_price", "max_adverse_price",
+    "mfe_gross_eur", "mae_gross_eur", "mfe_net_eur", "mae_net_eur",
+    "profit_retained_pct", "peak_profit_giveback_eur",
+    "close_reason", "signal_score", "confidence",
     "source", "eur_usdt_rate"
 ]
 SIGNAL_FIELDS = [
@@ -583,6 +587,12 @@ def build_position(
         "initial_risk_eur": risk_budget,
         "entry_fee_eur": entry_fee_eur,
         "funding_pnl_eur": 0.0,
+        "max_favorable_price": entry_price,
+        "max_adverse_price": entry_price,
+        "mfe_gross_eur": 0.0,
+        "mae_gross_eur": 0.0,
+        "mfe_net_eur": -entry_fee_eur,
+        "mae_net_eur": -entry_fee_eur,
         "last_funding_time": iso_utc(when),
         "last_processed_candle": "",
         "max_holding_hours": (
@@ -622,6 +632,85 @@ def apply_funding(position: dict[str, Any], portfolio: dict[str, Any], bundle: d
     portfolio["balance_eur"] = float(portfolio["balance_eur"]) + funding
     position["funding_pnl_eur"] = float(position.get("funding_pnl_eur", 0.0)) + funding
     position["last_funding_time"] = iso_utc(last + pd.Timedelta(hours=intervals * interval_hours).to_pytimedelta())
+
+
+def update_position_excursions(
+    position: dict[str, Any],
+    candle: pd.Series,
+    config: dict[str, Any],
+) -> None:
+    """Track favorable and adverse excursion from completed 15m candles."""
+    entry = float(position["entry_price"])
+    quantity = abs(float(position["quantity"]))
+    rate = max(float(position.get("eur_usdt_rate", 1.0)), 1e-12)
+    direction = 1.0 if position["side"] == "LONG" else -1.0
+
+    high = float(candle.get("high", entry))
+    low = float(candle.get("low", entry))
+    favorable_price = high if direction > 0 else low
+    adverse_price = low if direction > 0 else high
+
+    old_favorable = float(position.get("max_favorable_price", entry))
+    old_adverse = float(position.get("max_adverse_price", entry))
+
+    if direction > 0:
+        max_favorable_price = max(old_favorable, favorable_price)
+        max_adverse_price = min(old_adverse, adverse_price)
+    else:
+        max_favorable_price = min(old_favorable, favorable_price)
+        max_adverse_price = max(old_adverse, adverse_price)
+
+    def gross_pnl(price: float) -> float:
+        return (price - entry) * quantity * direction / rate
+
+    fee_rate = (
+        float(config["execution"]["taker_fee_bps"])
+        / 10_000.0
+    )
+    entry_fee = float(position.get("entry_fee_eur", 0.0))
+    funding = float(position.get("funding_pnl_eur", 0.0))
+
+    favorable_gross = gross_pnl(max_favorable_price)
+    adverse_gross = gross_pnl(max_adverse_price)
+    favorable_exit_fee = (
+        abs(max_favorable_price * quantity / rate)
+        * fee_rate
+    )
+    adverse_exit_fee = (
+        abs(max_adverse_price * quantity / rate)
+        * fee_rate
+    )
+    favorable_net = (
+        favorable_gross
+        - favorable_exit_fee
+        - entry_fee
+        + funding
+    )
+    adverse_net = (
+        adverse_gross
+        - adverse_exit_fee
+        - entry_fee
+        + funding
+    )
+
+    position["max_favorable_price"] = max_favorable_price
+    position["max_adverse_price"] = max_adverse_price
+    position["mfe_gross_eur"] = max(
+        float(position.get("mfe_gross_eur", 0.0)),
+        favorable_gross,
+    )
+    position["mae_gross_eur"] = min(
+        float(position.get("mae_gross_eur", 0.0)),
+        adverse_gross,
+    )
+    position["mfe_net_eur"] = max(
+        float(position.get("mfe_net_eur", -entry_fee)),
+        favorable_net,
+    )
+    position["mae_net_eur"] = min(
+        float(position.get("mae_net_eur", -entry_fee)),
+        adverse_net,
+    )
 
 
 def maybe_trail(position: dict[str, Any], candle: pd.Series, mark: float) -> None:
@@ -671,6 +760,17 @@ def close_position(
 
     opened = parse_time(position["opened_at"])
     initial_risk = max(float(position.get("initial_risk_eur", 0.0)), 1e-9)
+    mfe_net = float(position.get("mfe_net_eur", 0.0))
+    profit_retained_pct = (
+        net_total / mfe_net * 100.0
+        if mfe_net > 0
+        else 0.0
+    )
+    peak_profit_giveback = (
+        mfe_net - net_total
+        if mfe_net > 0
+        else 0.0
+    )
     record = {
         **position,
         "closed_at": iso_utc(when),
@@ -682,6 +782,20 @@ def close_position(
         "net_pnl_eur": net_total,
         "return_on_margin_pct": net_total / max(float(position["margin_eur"]), 1e-9) * 100.0,
         "r_multiple": net_total / initial_risk,
+        "max_favorable_price": position.get(
+            "max_favorable_price",
+            position["entry_price"],
+        ),
+        "max_adverse_price": position.get(
+            "max_adverse_price",
+            position["entry_price"],
+        ),
+        "mfe_gross_eur": position.get("mfe_gross_eur", 0.0),
+        "mae_gross_eur": position.get("mae_gross_eur", 0.0),
+        "mfe_net_eur": mfe_net,
+        "mae_net_eur": position.get("mae_net_eur", 0.0),
+        "profit_retained_pct": profit_retained_pct,
+        "peak_profit_giveback_eur": peak_profit_giveback,
         "close_reason": reason,
         "eur_usdt_rate": rate,
     }
@@ -715,6 +829,7 @@ def update_positions(
             remaining.append(position)
             continue
         position["last_processed_candle"] = candle_time
+        update_position_excursions(position, candle, config)
         maybe_trail(position, candle, mark)
 
         stop = float(position["stop_price"])
@@ -881,6 +996,8 @@ def write_open_positions(state: dict[str, Any], bundle: dict[str, Any]) -> None:
         "portfolio", "is_main", "trade_id", "experiment_group_id", "asset", "symbol", "side", "strategy",
         "timeframe_minutes", "opened_at", "entry_price", "mark_price", "stop_price", "liquidation_price", "target_price", "quantity",
         "notional_eur", "margin_eur", "leverage", "initial_risk_eur", "entry_fee_eur", "funding_pnl_eur",
+        "max_favorable_price", "max_adverse_price",
+        "mfe_gross_eur", "mae_gross_eur", "mfe_net_eur", "mae_net_eur",
         "signal_score", "confidence"
     ]
     prices = current_prices(bundle)

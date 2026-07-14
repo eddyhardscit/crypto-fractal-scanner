@@ -197,6 +197,38 @@ def portfolio_metrics(
                 else (math.inf if gross_profit > 0 else 0.0)
             )
 
+        mfe_mean = 0.0
+        mae_mean = 0.0
+        retention_mean = 0.0
+        retention_sample = 0
+        if not subset.empty and "mfe_net_eur" in subset.columns:
+            mfe_series = pd.to_numeric(
+                subset["mfe_net_eur"],
+                errors="coerce",
+            ).dropna()
+            mae_series = pd.to_numeric(
+                subset.get("mae_net_eur"),
+                errors="coerce",
+            ).dropna()
+            retention_series = pd.to_numeric(
+                subset.get("profit_retained_pct"),
+                errors="coerce",
+            ).dropna()
+            positive_mfe = pd.to_numeric(
+                subset.loc[retention_series.index, "mfe_net_eur"],
+                errors="coerce",
+            ) > 0
+            retention_series = retention_series[positive_mfe]
+
+            mfe_mean = float(mfe_series.mean()) if not mfe_series.empty else 0.0
+            mae_mean = float(mae_series.mean()) if not mae_series.empty else 0.0
+            retention_mean = (
+                float(retention_series.mean())
+                if not retention_series.empty
+                else 0.0
+            )
+            retention_sample = len(retention_series)
+
         exposure = aggregate_positions(positions)
         rows.append(
             {
@@ -234,6 +266,10 @@ def portfolio_metrics(
                 "profit_factor": profit_factor,
                 "expectancy_eur": expectancy,
                 "net_pnl_closed_eur": net,
+                "average_mfe_net_eur": mfe_mean,
+                "average_mae_net_eur": mae_mean,
+                "average_profit_retained_pct": retention_mean,
+                "profit_retention_sample": retention_sample,
                 "max_drawdown_pct": float(
                     portfolio.get("max_drawdown_pct", 0.0)
                 ),
@@ -251,6 +287,8 @@ def write_metrics(rows: list[dict[str, Any]]) -> None:
         "open_initial_risk_eur", "open_stop_risk_eur", "closed_trades",
         "unique_market_events", "winning_trades", "win_rate_pct",
         "profit_factor", "expectancy_eur", "net_pnl_closed_eur",
+        "average_mfe_net_eur", "average_mae_net_eur",
+        "average_profit_retained_pct", "profit_retention_sample",
         "max_drawdown_pct"
     ]
     METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
