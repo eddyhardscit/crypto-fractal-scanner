@@ -9,9 +9,12 @@ tests without fabricating trades.
 
 from __future__ import annotations
 
+import csv
+import json
 import math
 import os
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import Any
 
 import requests
@@ -103,6 +106,142 @@ def _parse_iso(value: Any) -> datetime | None:
 
 def _settings(config: dict[str, Any]) -> dict[str, Any]:
     return dict(config.get("notifications", {}))
+
+
+REPORTS_DIR = Path("reports")
+RESEARCH_STATE_PATH = REPORTS_DIR / "research_all_signals_state.json"
+RESEARCH_TRADES_PATH = REPORTS_DIR / "research_all_signals_trades.csv"
+DOGE_STATE_PATH = REPORTS_DIR / "doge_rejection_short_state.json"
+DOGE_TRADES_PATH = REPORTS_DIR / "doge_rejection_short_trades.csv"
+
+
+def _read_json(path: Path) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+        return value if isinstance(value, dict) else {}
+    except Exception:
+        return {}
+
+
+def _read_csv(path: Path) -> list[dict[str, str]]:
+    if not path.exists() or path.stat().st_size == 0:
+        return []
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            return list(csv.DictReader(handle))
+    except Exception:
+        return []
+
+
+def _safe_float(value: Any) -> float:
+    try:
+        number = float(value)
+        return number if math.isfinite(number) else 0.0
+    except Exception:
+        return 0.0
+
+
+def _official_lab_lines(metrics: list[dict[str, Any]], initial: float) -> list[str]:
+    rows = []
+    for row in metrics:
+        pnl = _safe_float(row.get("equity_eur")) - initial
+        rows.append({
+            "label": portfolio_label(str(row.get("portfolio", ""))),
+            "pnl": pnl,
+            "closed": int(_safe_float(row.get("closed_trades"))),
+            "open": int(_safe_float(row.get("open_positions"))),
+        })
+
+    profitable = sum(item["pnl"] > 0 for item in rows)
+    losing = sum(item["pnl"] < 0 for item in rows)
+    flat = len(rows) - profitable - losing
+    active = [item for item in rows if item["closed"] or item["open"]]
+    pool = active or rows
+    top = sorted(pool, key=lambda item: item["pnl"], reverse=True)[:5]
+    bottom = sorted(pool, key=lambda item: item["pnl"])[:5]
+
+    lines = [
+        "",
+        "🧪 LABORATORIO — 30 STRATEGIE UFFICIALI",
+        f"In profitto: {profitable} · in perdita: {losing} · ferme: {flat}",
+        f"P/L aggregato tecnico: {_fmt_eur(sum(item['pnl'] for item in rows), signed=True)}",
+        f"Strategie con attività: {len(active)}/{len(rows)}",
+        "",
+        "🏆 HALL OF FAME — TOP 5",
+    ]
+    for index, item in enumerate(top, 1):
+        lines.append(
+            f"{index}. {item['label']} · {_fmt_eur(item['pnl'], signed=True)} · "
+            f"{item['closed']} chiusi/{item['open']} aperti"
+        )
+
+    lines.extend(["", "📉 BOTTOM 5"])
+    for index, item in enumerate(bottom, 1):
+        lines.append(
+            f"{index}. {item['label']} · {_fmt_eur(item['pnl'], signed=True)} · "
+            f"{item['closed']} chiusi/{item['open']} aperti"
+        )
+    return lines
+
+
+def _auxiliary_lab_lines() -> list[str]:
+    research_state = _read_json(RESEARCH_STATE_PATH)
+    trades = _read_csv(RESEARCH_TRADES_PATH)
+
+    pnl_by_profile: dict[str, float] = {}
+    closed_by_profile: dict[str, int] = {}
+    for trade in trades:
+        profile = str(trade.get("profile", "UNKNOWN")) or "UNKNOWN"
+        pnl_by_profile[profile] = pnl_by_profile.get(profile, 0.0) + _safe_float(
+            trade.get("net_pnl_eur")
+        )
+        closed_by_profile[profile] = closed_by_profile.get(profile, 0) + 1
+
+    open_by_profile: dict[str, int] = {}
+    for position in research_state.get("open_positions", []):
+        if not isinstance(position, dict):
+            continue
+        profile = str(position.get("profile", "UNKNOWN")) or "UNKNOWN"
+        open_by_profile[profile] = open_by_profile.get(profile, 0) + 1
+
+    profiles = sorted(set(pnl_by_profile) | set(open_by_profile))
+    rows = [{
+        "label": profile,
+        "pnl": pnl_by_profile.get(profile, 0.0),
+        "closed": closed_by_profile.get(profile, 0),
+        "open": open_by_profile.get(profile, 0),
+    } for profile in profiles]
+
+    doge_state = _read_json(DOGE_STATE_PATH)
+    doge_trades = _read_csv(DOGE_TRADES_PATH)
+    rows.append({
+        "label": "DOGE rejection short 5x",
+        "pnl": sum(_safe_float(item.get("net_pnl_eur")) for item in doge_trades),
+        "closed": int(_safe_float(doge_state.get("closed_events"))),
+        "open": 1 if doge_state.get("position") else 0,
+    })
+
+    profitable = sum(item["pnl"] > 0 for item in rows)
+    losing = sum(item["pnl"] < 0 for item in rows)
+    flat = len(rows) - profitable - losing
+    active = sum(bool(item["closed"] or item["open"]) for item in rows)
+    total = sum(item["pnl"] for item in rows)
+
+    lines = [
+        "",
+        "🔬 BACKGROUND — PROFILI AUSILIARI",
+        "Profili previsti: 15 (14 ricerca normalizzata + 1 DOGE)",
+        f"Con dati/attività: {active}/{len(rows)} · profitto: {profitable} · "
+        f"perdita: {losing} · fermi: {flat}",
+        f"P/L chiuso normalizzato: {_fmt_eur(total, signed=True)}",
+    ]
+    if rows:
+        best = max(rows, key=lambda item: item["pnl"])
+        worst = min(rows, key=lambda item: item["pnl"])
+        lines.append(f"Migliore: {best['label']} · {_fmt_eur(best['pnl'], signed=True)}")
+        lines.append(f"Peggiore: {worst['label']} · {_fmt_eur(worst['pnl'], signed=True)}")
+    lines.append("Nota: il P/L background è sperimentale e non va sommato ai 30 conti.")
+    return lines
 
 
 def build_event_messages(summary: dict[str, Any]) -> list[str]:
@@ -508,6 +647,9 @@ def build_status_message(
                 ),
             ]
         )
+
+    lines.extend(_official_lab_lines(metrics, initial))
+    lines.extend(_auxiliary_lab_lines())
 
     return "\n".join(lines)
 
