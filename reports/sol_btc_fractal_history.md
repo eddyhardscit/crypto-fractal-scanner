@@ -1,7 +1,7 @@
 # Storico frattale SOL/BTC
 
-Generato: **2026-07-14 09:23:58 CEST**  
-UTC: **2026-07-14 07:23:58 UTC**
+Generato: **2026-07-14 10:23:54 CEST**  
+UTC: **2026-07-14 08:23:54 UTC**
 
 Questo file salva giorno per giorno la lettura del frattale **BTC novembre 2022 vs SOL giugno 2026**.
 
