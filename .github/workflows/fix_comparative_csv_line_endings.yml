@@ -1,0 +1,71 @@
+name: Manual fix comparative CSV line endings
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manual-fix-comparative-csv-line-endings
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fix CSV writer line endings
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64
+          from pathlib import Path
+
+          path = Path("paper_trading_comparative_report.py")
+          source = path.read_text(encoding="utf-8")
+
+          old = base64.b64decode("ICAgICAgICB3cml0ZXIgPSBjc3YuRGljdFdyaXRlcigKICAgICAgICAgICAgaGFuZGxlLAogICAgICAgICAgICBmaWVsZG5hbWVzPWZpZWxkcywKICAgICAgICAgICAgZXh0cmFzYWN0aW9uPSJpZ25vcmUiLAogICAgICAgICkK").decode("utf-8")
+          new = base64.b64decode("ICAgICAgICB3cml0ZXIgPSBjc3YuRGljdFdyaXRlcigKICAgICAgICAgICAgaGFuZGxlLAogICAgICAgICAgICBmaWVsZG5hbWVzPWZpZWxkcywKICAgICAgICAgICAgZXh0cmFzYWN0aW9uPSJpZ25vcmUiLAogICAgICAgICAgICBsaW5ldGVybWluYXRvcj0iXG4iLAogICAgICAgICkK").decode("utf-8")
+
+          if new in source:
+              print("CSV line-ending fix already installed.")
+          elif old in source:
+              source = source.replace(old, new, 1)
+              path.write_text(source, encoding="utf-8")
+              print("Installed Unix line endings for comparative CSV.")
+          else:
+              raise SystemExit(
+                  "Expected csv.DictWriter block not found."
+              )
+          PY
+
+      - name: Validate fix
+        shell: bash
+        run: |
+          python -m py_compile paper_trading_comparative_report.py
+          grep -F 'lineterminator="\n"'             paper_trading_comparative_report.py
+          git diff --check
+
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email             "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add paper_trading_comparative_report.py
+          git diff --cached --check
+
+          if git diff --cached --quiet; then
+            echo "Comparative CSV line-ending fix already committed."
+          else
+            git commit -m "Fix comparative CSV line endings"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
