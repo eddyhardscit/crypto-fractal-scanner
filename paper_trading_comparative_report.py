@@ -426,6 +426,7 @@ def write_outputs(rows: list[dict[str, Any]]) -> None:
             handle,
             fieldnames=fields,
             extrasaction="ignore",
+            lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)
