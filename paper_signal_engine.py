@@ -384,6 +384,234 @@ def benchmark_strategy_score(
     return False, 0.0, []
 
 
+def build_live_scanner_ranking(
+    features_by_asset: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Rank the live KuCoin paper universe without using future data."""
+    rows: list[dict[str, Any]] = []
+    for asset, features in features_by_asset.items():
+        if not features:
+            continue
+
+        price = float(features["price"])
+        ema20_value = float(features["ema20"])
+        ema50_value = float(features["ema50"])
+        ema200_value = float(features["ema200"])
+        rsi14_value = float(features["rsi14"])
+        adx14_value = float(features["adx14"])
+        volume_ratio = float(features["volume_ratio"])
+        ret_short = float(features["ret_short_pct"])
+        ret_medium = float(features["ret_medium_pct"])
+        ret_long = float(features["ret_long_pct"])
+        relative_medium = float(features["relative_medium_pct"])
+        relative_long = float(features["relative_long_pct"])
+        breakout_state = str(features["breakout_state"])
+
+        score = (
+            0.30 * ret_short
+            + 0.25 * ret_medium
+            + 0.10 * ret_long
+            + 0.20 * relative_medium
+            + 0.10 * relative_long
+        )
+
+        if price > ema20_value > ema50_value:
+            score += 2.0
+        elif price < ema20_value < ema50_value:
+            score -= 2.0
+
+        if price > ema200_value and ema50_value > ema200_value:
+            score += 1.0
+        elif price < ema200_value and ema50_value < ema200_value:
+            score -= 1.0
+
+        if breakout_state == "UP":
+            score += 1.25
+        elif breakout_state == "DOWN":
+            score -= 1.25
+
+        if adx14_value >= 20:
+            score += 0.75 if ret_short > 0 else -0.75 if ret_short < 0 else 0.0
+        if volume_ratio >= 1.5:
+            score += 0.5 if ret_short > 0 else -0.5 if ret_short < 0 else 0.0
+        if rsi14_value >= 75:
+            score -= 0.35
+        elif rsi14_value <= 25:
+            score += 0.35
+
+        rows.append(
+            {
+                "asset": asset,
+                "score": max(-20.0, min(20.0, score)),
+                "relative_medium_pct": relative_medium,
+                "relative_long_pct": relative_long,
+                "breakout_state": breakout_state,
+                "features": features,
+            }
+        )
+
+    rows.sort(key=lambda row: row["score"], reverse=True)
+    for rank, row in enumerate(rows, start=1):
+        row["rank"] = rank
+        row["reverse_rank"] = len(rows) - rank + 1
+    return rows
+
+
+def scanner_family_score(
+    strategy: str,
+    asset: str,
+    features: dict[str, Any],
+    ranking_by_asset: dict[str, dict[str, Any]],
+    global_rows: dict[str, dict[str, str]],
+    exchange_rows: dict[str, dict[str, str]],
+    portfolio: dict[str, Any],
+) -> tuple[bool, float, list[str]]:
+    row = ranking_by_asset.get(asset)
+    if not row:
+        return False, 0.0, []
+
+    rank = int(row["rank"])
+    universe_size = len(ranking_by_asset)
+    top_n = max(1, int(portfolio.get("scanner_top_n", 5)))
+    bottom_threshold = max(1, universe_size - top_n + 1)
+    rank_score = float(row["score"])
+    relative_medium = float(features["relative_medium_pct"])
+    relative_long = float(features["relative_long_pct"])
+    relative_blend = 0.65 * relative_medium + 0.35 * relative_long
+    price = float(features["price"])
+    ema20_value = float(features["ema20"])
+    ema50_value = float(features["ema50"])
+    adx14_value = float(features["adx14"])
+    breakout_state = str(features["breakout_state"])
+
+    long_confirmed = (
+        price > ema20_value
+        and (
+            ema20_value > ema50_value
+            or breakout_state == "UP"
+        )
+        and adx14_value >= 16
+    )
+    short_confirmed = (
+        price < ema20_value
+        and (
+            ema20_value < ema50_value
+            or breakout_state == "DOWN"
+        )
+        and adx14_value >= 16
+    )
+
+    if strategy == "scanner_top5_long":
+        minimum = float(portfolio.get("minimum_scanner_rank_score", 1.0))
+        accepted = rank <= top_n and rank_score >= minimum and long_confirmed
+        return accepted, max(5.0, min(9.5, 5.0 + rank_score / 4.0)), [
+            f"rank live {rank}/{universe_size}",
+            f"scanner score {rank_score:+.2f}",
+            "conferma tecnica long",
+        ]
+
+    if strategy == "scanner_bottom5_short":
+        maximum = float(portfolio.get("maximum_scanner_rank_score", -1.0))
+        accepted = (
+            rank >= bottom_threshold
+            and rank_score <= maximum
+            and short_confirmed
+        )
+        return accepted, -max(5.0, min(9.5, 5.0 + abs(rank_score) / 4.0)), [
+            f"rank live {rank}/{universe_size}",
+            f"scanner score {rank_score:+.2f}",
+            "conferma tecnica short",
+        ]
+
+    if strategy == "scanner_top5_btc_strength":
+        minimum_relative = float(
+            portfolio.get("minimum_relative_strength_pct", 0.5)
+        )
+        accepted = (
+            rank <= top_n
+            and rank_score >= float(
+                portfolio.get("minimum_scanner_rank_score", 1.0)
+            )
+            and relative_blend >= minimum_relative
+            and long_confirmed
+        )
+        return accepted, max(5.0, min(9.5, 5.0 + rank_score / 4.0)), [
+            f"rank live {rank}/{universe_size}",
+            f"scanner score {rank_score:+.2f}",
+            f"forza vs BTC {relative_blend:+.2f}%",
+            "conferma tecnica long",
+        ]
+
+    if strategy == "global_confluence_pure":
+        global_row = global_rows.get(asset, {})
+        exchange_row = exchange_rows.get(asset, {})
+        global_score = _safe_num(global_row.get("global_score"), 0.0)
+        action = str(
+            global_row.get(
+                "action",
+                global_row.get("direction", ""),
+            )
+        ).upper()
+        exchange_score = _safe_num(
+            exchange_row.get(
+                "candidate_global_score",
+                exchange_row.get("raw_score"),
+            ),
+            0.0,
+        )
+        minimum_global = float(
+            portfolio.get("minimum_global_score", 4.0)
+        )
+        minimum_exchange = float(
+            portfolio.get("minimum_exchange_alignment", 0.0)
+        )
+
+        long_action = any(
+            token in action
+            for token in ("LONG", "BUY", "RIALZ", "ACCUM")
+        )
+        short_action = any(
+            token in action
+            for token in ("SHORT", "SELL", "RIBASS", "DISTRIB")
+        )
+
+        if (
+            global_score >= minimum_global
+            and exchange_score >= minimum_exchange
+            and long_action
+            and long_confirmed
+        ):
+            score = min(
+                9.5,
+                max(5.0, 5.0 + global_score / 3.0),
+            )
+            return True, score, [
+                f"Global {global_score:+.1f} {action}",
+                f"Exchange {exchange_score:+.1f}",
+                "struttura tecnica long allineata",
+            ]
+
+        if (
+            global_score <= -minimum_global
+            and exchange_score <= -minimum_exchange
+            and short_action
+            and short_confirmed
+        ):
+            score = min(
+                9.5,
+                max(5.0, 5.0 + abs(global_score) / 3.0),
+            )
+            return True, -score, [
+                f"Global {global_score:+.1f} {action}",
+                f"Exchange {exchange_score:+.1f}",
+                "struttura tecnica short allineata",
+            ]
+
+        return False, 0.0, []
+
+    return False, 0.0, []
+
+
 def strategy_accepts(
     strategy: str,
     side: str,
@@ -424,6 +652,25 @@ def generate_signals(
     )
     btc_frames = frames.get("BTC", {})
     signals: list[Signal] = []
+
+    scanner_features_1h: dict[str, dict[str, Any]] = {}
+    for asset in bundle.get("assets", {}):
+        frame = frames.get(asset, {}).get(60)
+        btc_frame = btc_frames.get(60)
+        features = compute_features(
+            frame,
+            btc_frame if asset != "BTC" else frame,
+        )
+        if features:
+            scanner_features_1h[asset] = features
+
+    scanner_ranking = build_live_scanner_ranking(
+        scanner_features_1h
+    )
+    scanner_ranking_by_asset = {
+        str(row["asset"]): row
+        for row in scanner_ranking
+    }
 
     for portfolio in config.get("portfolios", []):
         if not portfolio.get("enabled", True):
@@ -636,12 +883,33 @@ def generate_signals(
                 )
                 continue
 
+            scanner_strategies = {
+                "scanner_top5_long",
+                "scanner_bottom5_short",
+                "scanner_top5_btc_strength",
+                "global_confluence_pure",
+            }
             benchmark_strategies = {
                 "donchian_breakout",
                 "bollinger_mean_reversion",
                 "ema_trend_following",
             }
-            if strategy in benchmark_strategies:
+            if strategy in scanner_strategies:
+                accepted, score, reasons = scanner_family_score(
+                    strategy,
+                    asset,
+                    features,
+                    scanner_ranking_by_asset,
+                    global_rows,
+                    exchange_rows,
+                    portfolio,
+                )
+                if not accepted or abs(score) < minimum_score:
+                    continue
+                reasons = reasons + [
+                    "ranking live KuCoin",
+                ]
+            elif strategy in benchmark_strategies:
                 accepted, score, reasons = benchmark_strategy_score(
                     strategy,
                     features,
@@ -739,6 +1007,10 @@ def generate_signals(
                 + 0.35 * features["relative_long_pct"]
             )
             if strategy in benchmark_strategies:
+                reason = "; ".join(reasons)
+                signal_global_overlay = 0.0
+                signal_exchange_overlay = 0.0
+            elif strategy in scanner_strategies:
                 reason = "; ".join(reasons)
                 signal_global_overlay = 0.0
                 signal_exchange_overlay = 0.0

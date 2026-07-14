@@ -23,6 +23,10 @@ PORTFOLIO_LABELS = {
     "SHADOW_DONCHIAN_1H": "Benchmark Donchian breakout 1H",
     "SHADOW_BOLLINGER_MR_1H": "Benchmark Bollinger mean reversion 1H",
     "SHADOW_EMA_TREND_1H": "Benchmark trend following EMA 1H",
+    "SHADOW_SCANNER_TOP5_LONG": "Scanner Top 5 Long 1H",
+    "SHADOW_SCANNER_BOTTOM5_SHORT": "Scanner Bottom 5 Short 1H",
+    "SHADOW_SCANNER_TOP5_BTC": "Scanner Top 5 + forza BTC 1H",
+    "SHADOW_GLOBAL_PURE": "Global Confluence puro 1H",
 }
 
 PORTFOLIO_DESCRIPTIONS = {
@@ -69,6 +73,18 @@ PORTFOLIO_DESCRIPTIONS = {
     "SHADOW_EMA_TREND_1H": (
         "Benchmark puro: trend following con prezzo, EMA20, EMA50 e filtro ADX."
     ),
+    "SHADOW_SCANNER_TOP5_LONG": (
+        "Opera long solo sulle cinque crypto più forti della classifica live KuCoin, con conferma tecnica."
+    ),
+    "SHADOW_SCANNER_BOTTOM5_SHORT": (
+        "Opera short solo sulle cinque crypto più deboli della classifica live KuCoin, con conferma tecnica."
+    ),
+    "SHADOW_SCANNER_TOP5_BTC": (
+        "Top 5 live KuCoin con conferma tecnica e forza relativa positiva contro Bitcoin."
+    ),
+    "SHADOW_GLOBAL_PURE": (
+        "Opera soltanto quando Global Confluence, dati exchange e struttura tecnica sono allineati."
+    ),
 }
 
 STRATEGY_LABELS = {
@@ -79,6 +95,10 @@ STRATEGY_LABELS = {
     "donchian_breakout": "Donchian breakout 20 barre",
     "bollinger_mean_reversion": "Bollinger mean reversion",
     "ema_trend_following": "Trend following EMA",
+    "scanner_top5_long": "Scanner Top 5 Long",
+    "scanner_bottom5_short": "Scanner Bottom 5 Short",
+    "scanner_top5_btc_strength": "Scanner Top 5 + forza BTC",
+    "global_confluence_pure": "Global Confluence puro",
 }
 
 
