@@ -1,6 +1,6 @@
 # Bitcoin Macro Cycle — Power Law e Four-Year Spiral
 
-Generato: 2026-07-14 11:45 UTC
+Generato: 2026-07-14 21:57 UTC
 
 Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche, non autorizza leva e pesa **0** nel Global Confluence.
 
@@ -8,10 +8,10 @@ Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche
 
 | Voce | Valore | Lettura |
 | --- | --- | --- |
-| Prezzo BTC | 62.784 $ | prezzo corrente |
-| Power Law centrale | 122.155 $ | deviazione -48,60% |
-| Banda p10-p90 | 76.203 $ / 306.781 $ | SOTTO LA BANDA P10 |
-| Percentile residuo | 0,72% | posizione storica nel corridoio |
+| Prezzo BTC | 64.627 $ | prezzo corrente |
+| Power Law centrale | 122.159 $ | deviazione -47,10% |
+| Banda p10-p90 | 76.205 $ / 306.785 $ | SOTTO LA BANDA P10 |
+| Percentile residuo | 2,27% | posizione storica nel corridoio |
 | Esponente β | 5,8455 | R² log-log 92,00% |
 | Stabilità β | BASSA | range 1,3054 cambiando finestra |
 | Ultimo halving | 2024-04-19 | 816 giorni fa |
@@ -23,10 +23,10 @@ La Power Law viene trattata come regressione empirica, non come legge fisica. Il
 ## Bitcoin Power Law
 
 - Campione: 2014-09-17 → 2026-07-14 (4319 osservazioni)
-- Formula stimata: prezzo ≈ exp(-39.3967) × giorni^5.8455
-- Prezzo centrale oggi: **122.155 $**
-- Posizione corrente: **SOTTO LA BANDA P10**, percentile 0,72%
-- Scarto dal centro: **-48,60%**
+- Formula stimata: prezzo ≈ exp(-39.3970) × giorni^5.8455
+- Prezzo centrale oggi: **122.159 $**
+- Posizione corrente: **SOTTO LA BANDA P10**, percentile 2,27%
+- Scarto dal centro: **-47,10%**
 
 ![Bitcoin Power Law](btc_power_law_chart.png)
 
@@ -37,10 +37,10 @@ La Power Law viene trattata come regressione empirica, non come legge fisica. Il
 | Inizio campione | β | R² log-log |
 | --- | --- | --- |
 | 2014 | 5,8455 | 92,00% |
-| 2015 | 5,9325 | 91,57% |
+| 2015 | 5,9326 | 91,57% |
 | 2016 | 5,6231 | 87,81% |
-| 2017 | 4,8925 | 82,89% |
-| 2018 | 4,6271 | 78,36% |
+| 2017 | 4,8926 | 82,89% |
+| 2018 | 4,6272 | 78,36% |
 
 ### Backtest walk-forward contro prezzo invariato
 
@@ -73,8 +73,8 @@ Campione molto piccolo: questi rendimenti sono contesto di ciclo, non probabilit
 
 | Asset | Coppia | Forza vs BTC | Score raw | Candidato | 30g | Peso Global |
 | --- | --- | --- | --- | --- | --- | --- |
-| SOL | SOL/BTC | RELATIVA MISTA / NON CONFERMATA | -1 | 0 | 10.747929220773011 | 0 |
-| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -8 | -1 | -14.883753889654116 | 0 |
+| SOL | SOL/BTC | RELATIVA MISTA / NON CONFERMATA | -1 | 0 | 10.304712541757155 | 0 |
+| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -8 | -1 | -14.895159284047244 | 0 |
 
 ## Tracker live Power Law
 

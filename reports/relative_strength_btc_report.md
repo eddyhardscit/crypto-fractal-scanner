@@ -1,6 +1,6 @@
 # Forza relativa SOL/BTC e DOGE/BTC
 
-Generato: 2026-07-14 11:45 UTC
+Generato: 2026-07-14 21:57 UTC
 
 Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salita in USD accompagnata da una coppia ALT/BTC ribassista è spesso soltanto trascinamento di BTC.
 
@@ -10,8 +10,8 @@ Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salit
 
 | Asset | Coppia | Prezzo | Score raw | Candidato | Peso Global | Forza vs BTC | Confidenza | 30g | Tecnico USD | Lettura combinata |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| SOL | SOL/BTC | 0.00119940 | -1 | 0 | 0 | RELATIVA MISTA / NON CONFERMATA | BASSA | +10,75% | RIBASSISTA | QUADRO MISTO / NESSUNA CONFERMA RELATIVA |
-| DOGE | DOGE/BTC | 0.00000115 | -8 | -1 | 0 | SOTTOPERFORMA BTC | MEDIA | -14,88% | RIBASSISTA | DEBOLEZZA COMPLETA: scende in USD e contro BTC |
+| SOL | SOL/BTC | 0.00119460 | -1 | 0 | 0 | RELATIVA MISTA / NON CONFERMATA | BASSA | +10,30% | MISTA | QUADRO MISTO / NESSUNA CONFERMA RELATIVA |
+| DOGE | DOGE/BTC | 0.00000115 | -8 | -1 | 0 | SOTTOPERFORMA BTC | MEDIA | -14,90% | MISTA | FORZA RELATIVA NEGATIVA, USD ANCORA MISTO |
 
 ## Matrice di lettura
 
@@ -28,12 +28,12 @@ Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salit
 - **Candidato futuro:** 0; **peso attuale Global: 0**
 - **Lettura combinata USD/BTC:** QUADRO MISTO / NESSUNA CONFERMA RELATIVA
 - **Struttura:** MASSIMI E MINIMI CRESCENTI
-- **Rendimenti relativi:** 7g -5,86%; 30g +10,75%; 90g +5,67%; 180g -19,45%
-- **Daily:** RSI 48.24; MA50 0.00115161; MA200 0.00122973
-- **Weekly:** MA30 0.00122918; RSI 47.26
-- **Livelli:** supporto 0.00119400; resistenza 0.00120000; breakout 60g 0.00134900; breakdown 60g 0.00100900
+- **Rendimenti relativi:** 7g -6,23%; 30g +10,30%; 90g +5,25%; 180g -19,77%
+- **Daily:** RSI 47.10; MA50 0.00115151; MA200 0.00122971
+- **Weekly:** MA30 0.00122902; RSI 46.93
+- **Livelli:** supporto 0.00119400; resistenza 0.00119800; breakout 60g 0.00134900; breakdown 60g 0.00100900
 - **Pattern:** DOPPIO MINIMO / TARGET RAGGIUNTO; neckline 0.00113200; target 0.00117200
-- **Fibonacci:** VICINO — 38.2% a 0.00121912
+- **Fibonacci:** VICINO — 50.0% a 0.00117900
 - **Fonte:** Yahoo Finance SOL-BTC (coppia diretta)
 - **Motivi score:** prezzo sopra MA50 daily; prezzo sotto MA200 daily; MA50 daily in salita; prezzo sotto MA30 weekly; MA30 weekly in discesa; struttura con massimi/minimi crescenti; MACD relativo negativo
 
@@ -43,11 +43,11 @@ Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salit
 
 - **Verdetto relativo:** SOTTOPERFORMA BTC (-8)
 - **Candidato futuro:** -1; **peso attuale Global: 0**
-- **Lettura combinata USD/BTC:** DEBOLEZZA COMPLETA: scende in USD e contro BTC
+- **Lettura combinata USD/BTC:** FORZA RELATIVA NEGATIVA, USD ANCORA MISTO
 - **Struttura:** MASSIMI E MINIMI DECRESCENTI
-- **Rendimenti relativi:** 7g -1,89%; 30g -14,88%; 90g -9,38%; 180g -21,52%
-- **Daily:** RSI 29.32; MA50 0.00000129; MA200 0.00000136
-- **Weekly:** MA30 0.00000135; RSI 33.11
+- **Rendimenti relativi:** 7g -1,91%; 30g -14,90%; 90g -9,40%; 180g -21,53%
+- **Daily:** RSI 29.29; MA50 0.00000129; MA200 0.00000136
+- **Weekly:** MA30 0.00000135; RSI 33.09
 - **Livelli:** supporto 0.00000112; resistenza 0.00000128; breakout 60g 0.00000153; breakdown 60g 0.00000112
 - **Pattern:** DOPPIO MASSIMO / TARGET RAGGIUNTO; neckline 0.00000131; target 0.00000113
 - **Fibonacci:** NON ATTIVO — 23.6% a 0.00000123
@@ -79,7 +79,7 @@ Il backtest usa soltanto indicatori disponibili alla data del segnale e campiona
 | SOL | 14g | 0 | n/a | n/a | LOCKED / RACCOLTA LIVE | 0 |
 | SOL | 30g | 0 | n/a | n/a | LOCKED / RACCOLTA LIVE | 0 |
 | DOGE | 1g | 3 | 66,67% | +0,43% | LOCKED / RACCOLTA LIVE | 0 |
-| DOGE | 3g | 1 | 100,00% | +1,54% | LOCKED / RACCOLTA LIVE | 0 |
+| DOGE | 3g | 1 | 100,00% | +1,56% | LOCKED / RACCOLTA LIVE | 0 |
 | DOGE | 7g | 0 | n/a | n/a | LOCKED / RACCOLTA LIVE | 0 |
 | DOGE | 14g | 0 | n/a | n/a | LOCKED / RACCOLTA LIVE | 0 |
 | DOGE | 30g | 0 | n/a | n/a | LOCKED / RACCOLTA LIVE | 0 |
