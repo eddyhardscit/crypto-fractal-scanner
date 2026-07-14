@@ -9,6 +9,7 @@ Usage:
 
 from __future__ import annotations
 
+import csv
 import io
 import json
 import os
@@ -22,7 +23,21 @@ import requests
 REPORTS_DIR = Path("reports")
 STATUS_PATH = REPORTS_DIR / "paper_trading_storage_status.json"
 ASSET_NAME = os.getenv("PAPER_TRADING_ASSET_NAME", "paper-trading-state.zip")
+TRADE_LEDGER_ASSET_NAME = os.getenv(
+    "PAPER_TRADING_TRADE_LEDGER_ASSET_NAME",
+    "paper-trading-permanent-trades.csv",
+)
+SIGNAL_LEDGER_ASSET_NAME = os.getenv(
+    "PAPER_TRADING_SIGNAL_LEDGER_ASSET_NAME",
+    "paper-trading-permanent-signals.csv",
+)
 RELEASE_TAG = os.getenv("PAPER_TRADING_RELEASE_TAG", "paper-trading-v1")
+
+TRADE_LOG_NAME = "paper_trading_trade_log.csv"
+SIGNAL_LOG_NAME = "paper_trading_signal_log.csv"
+TRADE_LOG_PATH = REPORTS_DIR / TRADE_LOG_NAME
+SIGNAL_LOG_PATH = REPORTS_DIR / SIGNAL_LOG_NAME
+
 FILES = (
     "paper_trading_state.json",
     "paper_trading_trade_log.csv",
@@ -114,11 +129,203 @@ def get_or_create_release(client: requests.Session) -> dict[str, Any]:
     )
 
 
-def find_asset(release: dict[str, Any]) -> dict[str, Any] | None:
+def find_named_asset(
+    release: dict[str, Any],
+    name: str,
+) -> dict[str, Any] | None:
     for asset in release.get("assets", []):
-        if asset.get("name") == ASSET_NAME:
+        if asset.get("name") == name:
             return asset
     return None
+
+
+def find_asset(release: dict[str, Any]) -> dict[str, Any] | None:
+    return find_named_asset(release, ASSET_NAME)
+
+
+def download_asset_bytes(
+    client: requests.Session,
+    asset: dict[str, Any],
+) -> bytes:
+    response = client.get(
+        asset["url"],
+        headers={"Accept": "application/octet-stream"},
+        timeout=60,
+    )
+    response.raise_for_status()
+    return response.content
+
+
+def read_csv_bytes(payload: bytes) -> list[dict[str, str]]:
+    text = payload.decode("utf-8-sig", errors="replace")
+    return list(csv.DictReader(io.StringIO(text)))
+
+
+def read_csv_path(path: Path) -> list[dict[str, str]]:
+    if not path.exists() or path.stat().st_size == 0:
+        return []
+    with path.open(
+        "r",
+        encoding="utf-8-sig",
+        newline="",
+    ) as handle:
+        return list(csv.DictReader(handle))
+
+
+def csv_bytes(rows: list[dict[str, str]]) -> bytes:
+    if not rows:
+        return b""
+    fields: list[str] = []
+    for row in rows:
+        for key in row:
+            if key not in fields:
+                fields.append(key)
+    buffer = io.StringIO()
+    writer = csv.DictWriter(
+        buffer,
+        fieldnames=fields,
+        extrasaction="ignore",
+        lineterminator="\n",
+    )
+    writer.writeheader()
+    writer.writerows(rows)
+    return buffer.getvalue().encode("utf-8")
+
+
+def write_csv_path(
+    path: Path,
+    rows: list[dict[str, str]],
+) -> None:
+    if not rows:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(csv_bytes(rows))
+
+
+def trade_key(row: dict[str, Any]) -> tuple[str, str, str]:
+    return (
+        str(row.get("trade_id", "")).strip(),
+        str(row.get("portfolio", "")).strip(),
+        str(row.get("closed_at", "")).strip(),
+    )
+
+
+def signal_key(row: dict[str, Any]) -> tuple[str, str, str, str]:
+    return (
+        str(row.get("signal_id", "")).strip(),
+        str(row.get("portfolio", "")).strip(),
+        str(row.get("processed_at", "")).strip(),
+        str(row.get("decision", "")).strip(),
+    )
+
+
+def merge_rows(
+    remote_rows: list[dict[str, str]],
+    local_rows: list[dict[str, str]],
+    key_function,
+) -> list[dict[str, str]]:
+    merged = {}
+    for row in remote_rows + local_rows:
+        key = key_function(row)
+        if any(key):
+            merged[key] = row
+    return sorted(
+        merged.values(),
+        key=lambda row: (
+            str(
+                row.get("closed_at")
+                or row.get("processed_at")
+                or row.get("opened_at")
+                or ""
+            ),
+            str(row.get("portfolio", "")),
+            str(row.get("trade_id") or row.get("signal_id") or ""),
+        ),
+    )
+
+
+def restore_permanent_csv(
+    client: requests.Session,
+    release: dict[str, Any],
+    asset_name: str,
+    local_path: Path,
+    key_function,
+) -> int:
+    asset = find_named_asset(release, asset_name)
+    remote_rows = (
+        read_csv_bytes(download_asset_bytes(client, asset))
+        if asset
+        else []
+    )
+    merged = merge_rows(
+        remote_rows,
+        read_csv_path(local_path),
+        key_function,
+    )
+    if merged:
+        write_csv_path(local_path, merged)
+    return len(merged)
+
+
+def upload_named_asset(
+    client: requests.Session,
+    release: dict[str, Any],
+    name: str,
+    payload: bytes,
+    content_type: str,
+) -> int | None:
+    existing = find_named_asset(release, name)
+    if existing:
+        request_json(
+            client,
+            "DELETE",
+            api_url(f"/releases/assets/{existing['id']}"),
+        )
+    upload_url = str(release["upload_url"]).split("{")[0]
+    response = client.post(
+        upload_url,
+        params={"name": name},
+        data=payload,
+        headers={"Content-Type": content_type},
+        timeout=90,
+    )
+    if response.status_code >= 400:
+        raise StorageError(
+            f"Upload {name}: "
+            f"{response.status_code} {response.text[:500]}"
+        )
+    return response.json().get("id")
+
+
+def merge_and_upload_permanent_csv(
+    client: requests.Session,
+    release: dict[str, Any],
+    asset_name: str,
+    local_path: Path,
+    key_function,
+) -> tuple[int, int | None]:
+    asset = find_named_asset(release, asset_name)
+    remote_rows = (
+        read_csv_bytes(download_asset_bytes(client, asset))
+        if asset
+        else []
+    )
+    merged = merge_rows(
+        remote_rows,
+        read_csv_path(local_path),
+        key_function,
+    )
+    if not merged:
+        return 0, None
+    write_csv_path(local_path, merged)
+    asset_id = upload_named_asset(
+        client,
+        release,
+        asset_name,
+        csv_bytes(merged),
+        "text/csv; charset=utf-8",
+    )
+    return len(merged), asset_id
 
 
 def build_archive() -> bytes:
@@ -169,33 +376,94 @@ def restore() -> None:
         write_status("restore", True, {"restored": [], "message": "asset non ancora esistente"})
         print("Nessun asset remoto: prima esecuzione.")
         return
-    download = client.get(asset["url"], headers={"Accept": "application/octet-stream"}, timeout=60)
-    download.raise_for_status()
-    restored = safe_extract(download.content)
-    write_status("restore", True, {"restored": restored, "asset_id": asset.get("id")})
-    print("Ripristinati:", ", ".join(restored) if restored else "nessun file")
+    restored = safe_extract(
+        download_asset_bytes(client, asset)
+    )
+
+    trade_rows = restore_permanent_csv(
+        client,
+        release,
+        TRADE_LEDGER_ASSET_NAME,
+        TRADE_LOG_PATH,
+        trade_key,
+    )
+    signal_rows = restore_permanent_csv(
+        client,
+        release,
+        SIGNAL_LEDGER_ASSET_NAME,
+        SIGNAL_LOG_PATH,
+        signal_key,
+    )
+
+    write_status(
+        "restore",
+        True,
+        {
+            "restored": restored,
+            "asset_id": asset.get("id"),
+            "permanent_trade_rows": trade_rows,
+            "permanent_signal_rows": signal_rows,
+        },
+    )
+    print(
+        "Ripristinati:",
+        ", ".join(restored) if restored else "nessun file",
+    )
+    print(
+        f"Ledger permanenti: trade={trade_rows}, "
+        f"segnali={signal_rows}"
+    )
 
 
 def upload() -> None:
     client = session()
     release = get_or_create_release(client)
-    existing = find_asset(release)
-    if existing:
-        request_json(client, "DELETE", api_url(f"/releases/assets/{existing['id']}"))
-    payload = build_archive()
-    upload_url = str(release["upload_url"]).split("{")[0]
-    response = client.post(
-        upload_url,
-        params={"name": ASSET_NAME},
-        data=payload,
-        headers={"Content-Type": "application/zip"},
-        timeout=90,
+
+    trade_rows, trade_asset_id = (
+        merge_and_upload_permanent_csv(
+            client,
+            release,
+            TRADE_LEDGER_ASSET_NAME,
+            TRADE_LOG_PATH,
+            trade_key,
+        )
     )
-    if response.status_code >= 400:
-        raise StorageError(f"Upload asset: {response.status_code} {response.text[:500]}")
-    asset = response.json()
-    write_status("upload", True, {"bytes": len(payload), "asset_id": asset.get("id")})
+    signal_rows, signal_asset_id = (
+        merge_and_upload_permanent_csv(
+            client,
+            release,
+            SIGNAL_LEDGER_ASSET_NAME,
+            SIGNAL_LOG_PATH,
+            signal_key,
+        )
+    )
+
+    payload = build_archive()
+    state_asset_id = upload_named_asset(
+        client,
+        release,
+        ASSET_NAME,
+        payload,
+        "application/zip",
+    )
+
+    write_status(
+        "upload",
+        True,
+        {
+            "bytes": len(payload),
+            "asset_id": state_asset_id,
+            "permanent_trade_rows": trade_rows,
+            "permanent_trade_asset_id": trade_asset_id,
+            "permanent_signal_rows": signal_rows,
+            "permanent_signal_asset_id": signal_asset_id,
+        },
+    )
     print(f"Stato caricato: {len(payload)} byte")
+    print(
+        f"Ledger permanenti caricati: trade={trade_rows}, "
+        f"segnali={signal_rows}"
+    )
 
 
 def audit() -> None:
