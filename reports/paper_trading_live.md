@@ -1,6 +1,6 @@
 # Paper trading automatico KuCoin
 
-Generato: 2026-07-14T08:23:24+00:00
+Generato: 2026-07-14T09:34:54+00:00
 
 ## Configurazione attiva
 
@@ -10,14 +10,14 @@ Generato: 2026-07-14T08:23:24+00:00
 - Compounding: **ATTIVO**
 - Reinvestimento dei profitti: **100,00%**
 - Politica target: **solo monitoraggio; il bot non aumenta il rischio per inseguirlo**
-- Snapshot prezzi usato: **2026-07-14T07:30:05+00:00**; stato dati: **UNKNOWN**; età: **n/a**; conversione EUR/USDT: **CONFIG_FALLBACK**
+- Snapshot prezzi usato: **2026-07-14T09:28:10+00:00**; stato dati: **UNKNOWN**; età: **n/a**; conversione EUR/USDT: **CONFIG_FALLBACK**
 - Dashboard intraday: [apri la pagina live](https://github.com/eddyhardscit/crypto-fractal-scanner/blob/paper-trading-live/reports/paper_trading_live.md)
 
 ## Freschezza dati di mercato
 
 | Stato | Fonte | Snapshot mercato | Controllato | Età | Limite | Nuove entrate |
 | --- | --- | --- | --- | --- | --- | --- |
-| UNKNOWN | n/a | 2026-07-14T07:30:05+00:00 | n/a | n/a | n/a | BLOCCATE |
+| UNKNOWN | n/a | 2026-07-14T09:28:10+00:00 | n/a | n/a | n/a | BLOCCATE |
 
 > ⚠️ I prezzi non vengono marcati come aggiornati artificialmente. Se KuCoin non risponde e viene usata la cache, il report mostra l'età reale e blocca le nuove entrate.
 
@@ -29,7 +29,7 @@ _Diagnostica non ancora disponibile: verrà creata alla prossima esecuzione del 
 
 | Equity | Rendimento | P&L mese | Target | Progresso | Aperte | Chiuse | Win rate | PF | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| €10.133,21 | +1,33% | €133,21 | €3.000,00 | 4,44% | 3 | 4 | 50,00% | 1,94 | 0,88% |
+| €10.132,45 | +1,32% | €132,45 | €3.000,00 | 4,41% | 3 | 4 | 50,00% | 1,94 | 0,88% |
 
 ## Stato del campione statistico
 
@@ -47,11 +47,11 @@ _Diagnostica non ancora disponibile: verrà creata alla prossima esecuzione del 
 
 | Tipo | Portafoglio | Posizioni | Equity | Margine impegnato | Esposizione con leva | Rischio agli stop | P&L aperto |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| PRINCIPALE | Principale 4H | 3 | €10.133,21 | €1.119,04 | €3.357,11 | €151,35 | €38,63 |
-| TEST | Forza relativa 1H | 4 | €10.146,81 | €2.940,20 | €5.880,40 | €150,62 | €5,95 |
-| TEST | Ampia 4H | 3 | €10.138,11 | €1.190,22 | €2.380,44 | €99,99 | €51,42 |
-| TEST | Bilanciata 1H | 4 | €10.127,72 | €2.183,15 | €6.549,44 | €150,55 | €4,82 |
-| TEST | Rapida 1H | 2 | €10.101,05 | €2.395,35 | €7.186,05 | €100,65 | €-32,34 |
+| PRINCIPALE | Principale 4H | 3 | €10.132,45 | €1.119,04 | €3.357,11 | €151,35 | €37,68 |
+| TEST | Ampia 4H | 3 | €10.131,11 | €1.190,22 | €2.380,44 | €99,99 | €44,36 |
+| TEST | Forza relativa 1H | 4 | €10.123,16 | €2.940,20 | €5.880,40 | €150,62 | €-17,70 |
+| TEST | Rapida 1H | 2 | €10.107,03 | €2.395,35 | €7.186,05 | €100,65 | €-26,36 |
+| TEST | Bilanciata 1H | 4 | €10.102,41 | €2.183,15 | €6.549,44 | €150,55 | €-20,49 |
 | TEST | Scalp RSI Long 15 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scalp RSI Long 20 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scalp RSI Long 25 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
@@ -121,11 +121,11 @@ _Diagnostica non ancora disponibile: verrà creata alla prossima esecuzione del 
 
 | Tipo | Portafoglio | Strategia | Equity | P&L chiuso | Trade | Eventi indip. | Win rate | PF | Expectancy | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| PRINCIPALE | Principale 4H | Confluenza trend | €10.133,21 | €96,20 | 4 | 4 | 50,00% | 1,94 | €24,05 | 0,88% |
-| TEST | Forza relativa 1H | Forza relativa vs BTC | €10.146,81 | €142,33 | 5 | 5 | 60,00% | 2,37 | €28,47 | 0,86% |
-| TEST | Ampia 4H | Confluenza trend | €10.138,11 | €88,07 | 2 | 2 | 50,00% | 2,71 | €44,04 | 0,76% |
-| TEST | Bilanciata 1H | Confluenza trend | €10.127,72 | €125,00 | 6 | 6 | 50,00% | 2,20 | €20,83 | 0,86% |
-| TEST | Rapida 1H | Momentum / breakout | €10.101,05 | €137,88 | 11 | 11 | 54,55% | 1,88 | €12,53 | 1,32% |
+| PRINCIPALE | Principale 4H | Confluenza trend | €10.132,45 | €96,20 | 4 | 4 | 50,00% | 1,94 | €24,05 | 0,88% |
+| TEST | Ampia 4H | Confluenza trend | €10.131,11 | €88,07 | 2 | 2 | 50,00% | 2,71 | €44,04 | 0,76% |
+| TEST | Forza relativa 1H | Forza relativa vs BTC | €10.123,16 | €142,33 | 5 | 5 | 60,00% | 2,37 | €28,47 | 0,98% |
+| TEST | Rapida 1H | Momentum / breakout | €10.107,03 | €137,88 | 11 | 11 | 54,55% | 1,88 | €12,53 | 1,32% |
+| TEST | Bilanciata 1H | Confluenza trend | €10.102,41 | €125,00 | 6 | 6 | 50,00% | 2,20 | €20,83 | 0,86% |
 | TEST | Scalp RSI Long 15 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Scalp RSI Long 20 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Scalp RSI Long 25 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
@@ -158,22 +158,22 @@ _Diagnostica non ancora disponibile: verrà creata alla prossima esecuzione del 
 
 | Portafoglio | Asset | Lato | Metodo | TF | Leva | Entry | Mark | Stop | Liquidazione | Target | Margine | Esposizione | Rischio stop | P&L |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Principale 4H | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07237 | 0,07231 | 0,07451 | 0,09613 | 0,06808 | €562,89 | €1.688,66 | €50,00 | €1,32 |
-| Principale 4H | HYPE | SHORT | Confluenza trend | 240m | 3,0x | 63,85923 | 63,83000 | 66,45178 | 84,82634 | 58,67412 | €415,02 | €1.245,07 | €50,55 | €0,57 |
-| Principale 4H | EVAA | SHORT | Confluenza trend | 240m | 3,0x | 0,84263 | 0,76950 | 0,94375 | 1,11930 | 0,64040 | €141,12 | €423,37 | €50,80 | €36,74 |
+| Principale 4H | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07237 | 0,07218 | 0,07451 | 0,09613 | 0,06808 | €562,89 | €1.688,66 | €50,00 | €4,35 |
+| Principale 4H | HYPE | SHORT | Confluenza trend | 240m | 3,0x | 63,85923 | 63,74600 | 66,45178 | 84,82634 | 58,67412 | €415,02 | €1.245,07 | €50,55 | €2,21 |
+| Principale 4H | EVAA | SHORT | Confluenza trend | 240m | 3,0x | 0,84263 | 0,78070 | 0,94375 | 1,11930 | 0,64040 | €141,12 | €423,37 | €50,80 | €31,12 |
 | Bilanciata 1H | AAVE | LONG | Confluenza trend | 60m | 3,0x | 98,87929 | 98,87929 | 96,58018 | n/a | 103,47752 | €716,68 | €2.150,03 | €49,99 | €0,00 |
 | Bilanciata 1H | T | LONG | Confluenza trend | 60m | 3,0x | 0,00540 | 0,00540 | 0,00479 | n/a | 0,00663 | €146,15 | €438,46 | €49,94 | €0,00 |
-| Bilanciata 1H | VELVET | LONG | Confluenza trend | 60m | 3,0x | 0,59035 | 0,62412 | 0,59702 | 0,39652 | 0,70445 | €174,63 | €523,89 | €0,00 | €29,96 |
-| Bilanciata 1H | SOL | SHORT | Confluenza trend | 60m | 3,0x | 74,63707 | 75,18300 | 75,73639 | 99,14291 | 72,43843 | €1.145,69 | €3.437,06 | €50,62 | €-25,14 |
+| Bilanciata 1H | VELVET | LONG | Confluenza trend | 60m | 3,0x | 0,59035 | 0,59035 | 0,59702 | 0,39652 | 0,70445 | €174,63 | €523,89 | €0,00 | €0,00 |
+| Bilanciata 1H | SOL | SHORT | Confluenza trend | 60m | 3,0x | 74,63707 | 75,08200 | 75,73639 | 99,14291 | 72,43843 | €1.145,69 | €3.437,06 | €50,62 | €-20,49 |
 | Rapida 1H | AAVE | LONG | Momentum / breakout | 60m | 3,0x | 98,87929 | 98,87929 | 97,09109 | n/a | 101,56159 | €921,40 | €2.764,20 | €49,99 | €0,00 |
-| Rapida 1H | SOL | SHORT | Momentum / breakout | 60m | 3,0x | 74,63707 | 75,18300 | 75,49210 | 99,14291 | 73,35453 | €1.473,95 | €4.421,85 | €50,66 | €-32,34 |
-| Ampia 4H | DOGE | SHORT | Confluenza trend | 240m | 2,0x | 0,07237 | 0,07231 | 0,07515 | 0,10819 | 0,06457 | €649,49 | €1.298,97 | €50,00 | €1,02 |
-| Ampia 4H | ZEC | LONG | Confluenza trend | 240m | 2,0x | 522,36445 | 507,00000 | 483,09844 | 263,79405 | 632,30930 | €332,53 | €665,06 | €49,99 | €-19,56 |
-| Ampia 4H | EVAA | SHORT | Confluenza trend | 240m | 2,0x | 0,92491 | 0,76950 | 0,92491 | 1,38275 | 0,61414 | €208,21 | €416,41 | €0,00 | €69,97 |
+| Rapida 1H | SOL | SHORT | Momentum / breakout | 60m | 3,0x | 74,63707 | 75,08200 | 75,49210 | 99,14291 | 73,35453 | €1.473,95 | €4.421,85 | €50,66 | €-26,36 |
+| Ampia 4H | DOGE | SHORT | Confluenza trend | 240m | 2,0x | 0,07237 | 0,07218 | 0,07515 | 0,10819 | 0,06457 | €649,49 | €1.298,97 | €50,00 | €3,35 |
+| Ampia 4H | ZEC | LONG | Confluenza trend | 240m | 2,0x | 522,36445 | 503,58000 | 483,09844 | 263,79405 | 632,30930 | €332,53 | €665,06 | €49,99 | €-23,92 |
+| Ampia 4H | EVAA | SHORT | Confluenza trend | 240m | 2,0x | 0,92491 | 0,78070 | 0,92491 | 1,38275 | 0,61414 | €208,21 | €416,41 | €0,00 | €64,93 |
 | Forza relativa 1H | AAVE | LONG | Forza relativa vs BTC | 60m | 2,0x | 98,87929 | 98,87929 | 96,58018 | n/a | 103,93735 | €1.075,02 | €2.150,03 | €49,99 | €0,00 |
 | Forza relativa 1H | T | LONG | Forza relativa vs BTC | 60m | 2,0x | 0,00540 | 0,00540 | 0,00479 | n/a | 0,00676 | €219,23 | €438,46 | €49,94 | €0,00 |
-| Forza relativa 1H | VELVET | LONG | Forza relativa vs BTC | 60m | 2,0x | 0,59490 | 0,62412 | 0,59646 | 0,30042 | 0,71431 | €277,68 | €555,36 | €0,00 | €27,28 |
-| Forza relativa 1H | HYPE | SHORT | Forza relativa vs BTC | 60m | 2,0x | 63,33633 | 63,83000 | 64,50951 | 94,68781 | 60,75532 | €1.368,27 | €2.736,55 | €50,69 | €-21,33 |
+| Forza relativa 1H | VELVET | LONG | Forza relativa vs BTC | 60m | 2,0x | 0,59490 | 0,59490 | 0,59646 | 0,30042 | 0,71431 | €277,68 | €555,36 | €0,00 | €0,00 |
+| Forza relativa 1H | HYPE | SHORT | Forza relativa vs BTC | 60m | 2,0x | 63,33633 | 63,74600 | 64,50951 | 94,68781 | 60,75532 | €1.368,27 | €2.736,55 | €50,69 | €-17,70 |
 
 ## Ultime operazioni chiuse
 

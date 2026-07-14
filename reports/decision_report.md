@@ -1,6 +1,6 @@
 # Decisione operativa sintetica
 
-Generato: 2026-07-14 08:23 UTC
+Generato: 2026-07-14 09:34 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 
@@ -10,13 +10,13 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | BTC | +3 | BULLISH | ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE | NO LONG A LEVA / ATTENDI SOPRA 67.248 $ | NO SHORT | nessuna | nessuna | MEDIO |
 | SOL | -1 | LEGGERMENTE BEARISH | TAKE PROFIT SU SPIKE / NON INSEGUIRE | NO LONG A LEVA | NO SHORT | nessuna | nessuna | MOLTO ALTO |
-| DOGE | -7 | BEARISH | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | NO LONG A LEVA | SHORT SOLO DOPO SPIKE | nessuna | max 1x-2x isolated | MOLTO ALTO |
+| DOGE | -5 | BEARISH | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | NO LONG A LEVA | SHORT SOLO DOPO SPIKE | nessuna | max 1x-2x isolated | MOLTO ALTO |
 
 ## Lettura immediata
 
 - **BTC**: Global = **+3**, spot = **ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE**, long = **NO LONG A LEVA / ATTENDI SOPRA 67.248 $**, short = **NO SHORT**, rischio = **MEDIO**.
 - **SOL**: Global = **-1**, spot = **TAKE PROFIT SU SPIKE / NON INSEGUIRE**, long = **NO LONG A LEVA**, short = **NO SHORT**, rischio = **MOLTO ALTO**.
-- **DOGE**: Global = **-7**, spot = **STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE**, long = **NO LONG A LEVA**, short = **SHORT SOLO DOPO SPIKE**, rischio = **MOLTO ALTO**.
+- **DOGE**: Global = **-5**, spot = **STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE**, long = **NO LONG A LEVA**, short = **SHORT SOLO DOPO SPIKE**, rischio = **MOLTO ALTO**.
 
 ## Dettaglio logica
 
@@ -30,7 +30,7 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - Long leva: **NO LONG A LEVA / ATTENDI SOPRA 67.248 $**
 - Short leva: **NO SHORT**
 - Rischio: **MEDIO**
-- Conferme: Prima resistenza sopra 65.544; conferma del doppio minimo sopra 67.248.
+- Conferme: Prima resistenza sopra 64.659; conferma del doppio minimo sopra 67.248.
 - Invalidazioni: Sotto 57.748 il quadro tecnico peggiora.
 
 ### SOL
@@ -43,12 +43,12 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - Long leva: **NO LONG A LEVA**
 - Short leva: **NO SHORT**
 - Rischio: **MOLTO ALTO**
-- Conferme: conferma del doppio minimo sopra 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 81,11 / 112,29, valide soltanto se rientra anche il gap frattale.
-- Invalidazioni: Allarmi sotto 71,12 / 64,42 / 62,19.
+- Conferme: conferma del doppio minimo sopra 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 85,11 / 111,98, valide soltanto se rientra anche il gap frattale.
+- Invalidazioni: Allarmi sotto 71,31 / 64,42 / 62,19.
 
 ### DOGE
 
-- Global Confluence: **-7**
+- Global Confluence: **-5**
 - Confluenza: **NEGATIVA**
 - Bias Global: **Ribassista**
 - Direzione decisionale: **BEARISH**
@@ -65,6 +65,6 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.
 - **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.
 - **BTC leva** = nessun long a leva finché il prezzo snapshot non supera **67.248 $**; sotto quella soglia resta solo l'azione spot indicata dal Global.
-- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 4; EMA200 circa 113,14 $; upside verso EMA200 +47,33%. Non autorizza leva e non aggiunge punti automatici.
+- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 4; EMA200 circa 113,12 $; upside verso EMA200 +50,96%. Non autorizza leva e non aggiunge punti automatici.
 - **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.
 - Per SOL, se il Global è da **+3 in su**, la decisione non deve diventare bearish solo perché lo scanner grezzo a 30 giorni è incerto.
