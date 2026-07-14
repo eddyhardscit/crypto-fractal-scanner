@@ -18,13 +18,13 @@
     "upper1": 79.907106,
     "upper2": 82.06884413333334
   },
-  "updated_utc": "2026-07-14T10:00:10+00:00",
+  "updated_utc": "2026-07-14T11:46:31+00:00",
   "last_reason": "Prezzo dentro la fascia neutrale",
   "last_price": 74.928,
   "equity_eur": 40000.0,
   "return_pct": 0.0,
   "notifications": {
     "telegram_last_sol_digest": "1c38071291bedbf41dac8ad499aaed32ea3f2311ac7bfc84fff45b03389e3139",
-    "telegram_last_sol_sent_utc": "2026-07-14T10:00:10+00:00"
+    "telegram_last_sol_sent_utc": "2026-07-14T11:46:31+00:00"
   }
 }

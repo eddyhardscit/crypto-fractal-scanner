@@ -1,6 +1,6 @@
 # SOL Spot Adaptive Range — paper trading separato
 
-Generato: 2026-07-14T10:00:10+00:00
+Generato: 2026-07-14T11:46:31+00:00
 
 - Modalità: **SOLO PAPER TRADING**
 - Asset: **SOL spot**
