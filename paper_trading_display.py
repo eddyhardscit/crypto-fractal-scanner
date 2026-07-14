@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from typing import Any
 
@@ -75,6 +76,26 @@ def _number(value: Any) -> float:
 
 def portfolio_label(name: Any) -> str:
     raw = str(name or "")
+
+    match = re.fullmatch(
+        r"SHADOW_RSI_(LONG|SHORT)_(15X_10|15X_50|5X)_RSI(15|20|25|75|80|85)",
+        raw,
+    )
+    if match:
+        side, profile, trigger = match.groups()
+
+        if profile == "15X_10":
+            profile_label = "€10 · 15x"
+        elif profile == "15X_50":
+            profile_label = "€50 · 15x"
+        else:
+            profile_label = "prudente · 5x"
+
+        return (
+            f"Scalp RSI {side.title()} {trigger} · "
+            f"{profile_label}"
+        )
+
     return PORTFOLIO_LABELS.get(
         raw,
         raw.replace("SHADOW_", "").replace("_", " ").title(),
@@ -83,6 +104,44 @@ def portfolio_label(name: Any) -> str:
 
 def portfolio_description(name: Any) -> str:
     raw = str(name or "")
+
+    match = re.fullmatch(
+        r"SHADOW_RSI_(LONG|SHORT)_(15X_10|15X_50|5X)_RSI(15|20|25|75|80|85)",
+        raw,
+    )
+    if match:
+        side, profile, trigger = match.groups()
+
+        if side == "LONG":
+            recovery = {
+                "15": "20",
+                "20": "25",
+                "25": "30",
+            }[trigger]
+            setup = (
+                f"Scalp long 15m: RSI scende fino a {trigger} "
+                f"e conferma il recupero verso {recovery}."
+            )
+        else:
+            recovery = {
+                "85": "80",
+                "80": "75",
+                "75": "70",
+            }[trigger]
+            setup = (
+                f"Scalp short 15m: RSI sale fino a {trigger} "
+                f"e conferma il rientro verso {recovery}."
+            )
+
+        if profile == "15X_10":
+            risk_text = "Margine fisso €10, leva paper 15x."
+        elif profile == "15X_50":
+            risk_text = "Margine fisso €50, leva paper 15x."
+        else:
+            risk_text = "Versione prudente, leva 5x e rischio ridotto."
+
+        return f"{setup} {risk_text}"
+
     return PORTFOLIO_DESCRIPTIONS.get(
         raw,
         "Portafoglio sperimentale separato.",
