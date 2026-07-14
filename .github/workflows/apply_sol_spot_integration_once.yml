@@ -1,0 +1,90 @@
+name: Apply SOL spot report integration once
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate installed files
+        run: |
+          test -f sol_spot_adaptive.py
+          test -f sol_spot_adaptive_integration.py
+          test -f .github/workflows/run_sol_spot_adaptive.yml
+          python -m py_compile sol_spot_adaptive.py sol_spot_adaptive_integration.py
+
+      - name: Patch run_paper_trading integration
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("run_paper_trading.py")
+          text = path.read_text(encoding="utf-8")
+
+          import_line = "from sol_spot_adaptive import run_sol_spot_adaptive_cycle\n"
+          if import_line not in text:
+              anchor = "from telegram_scanner_notify import send_if_changed as send_scanner_if_changed\n"
+              if anchor not in text:
+                  raise SystemExit("Import anchor non trovato in run_paper_trading.py")
+              text = text.replace(anchor, anchor + import_line, 1)
+
+          start = "    # SOL_SPOT_ADAPTIVE_CYCLE_START\n"
+          end = "    # SOL_SPOT_ADAPTIVE_CYCLE_END\n"
+          if start not in text:
+              anchor = "    current = datetime.now(timezone.utc)\n    report = render_report(state, config)\n"
+              if anchor not in text:
+                  raise SystemExit("Report anchor non trovato in run_paper_trading.py")
+              block = (
+                  "    # SOL_SPOT_ADAPTIVE_CYCLE_START\n"
+                  "    try:\n"
+                  "        sol_spot_result = run_sol_spot_adaptive_cycle(bundle)\n"
+                  "    except Exception as exc:\n"
+                  "        sol_spot_result = {\"report_markdown\": \"\", \"error\": str(exc)}\n"
+                  "        print(f\"SOL Spot Adaptive non eseguito: {exc}\")\n"
+                  "    # SOL_SPOT_ADAPTIVE_CYCLE_END\n\n"
+              )
+              text = text.replace(anchor, block + anchor, 1)
+
+          append_anchor = "    research_markdown = str(research_result.get(\"report_markdown\", \"\")).strip()\n"
+          if "SOL_SPOT_ADAPTIVE_REPORT_APPEND_V1" not in text:
+              if append_anchor not in text:
+                  raise SystemExit("Append anchor non trovato in run_paper_trading.py")
+              block = (
+                  "    # SOL_SPOT_ADAPTIVE_REPORT_APPEND_V1\n"
+                  "    sol_spot_markdown = str(sol_spot_result.get(\"report_markdown\", \"\")).strip()\n"
+                  "    if sol_spot_markdown:\n"
+                  "        report = report.rstrip() + \"\\n\\n<!-- SOL_SPOT_ADAPTIVE_START -->\\n\" + sol_spot_markdown + \"\\n<!-- SOL_SPOT_ADAPTIVE_END -->\\n\"\n"
+              )
+              text = text.replace(append_anchor, block + append_anchor, 1)
+
+          path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Validate patch
+        run: |
+          python -m py_compile run_paper_trading.py sol_spot_adaptive.py sol_spot_adaptive_integration.py
+          grep -q "SOL_SPOT_ADAPTIVE_CYCLE_START" run_paper_trading.py
+          grep -q "SOL_SPOT_ADAPTIVE_REPORT_APPEND_V1" run_paper_trading.py
+
+      - name: Commit integration
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add run_paper_trading.py sol_spot_adaptive.py sol_spot_adaptive_integration.py .github/workflows/run_sol_spot_adaptive.yml
+          git diff --cached --quiet || (git commit -m "Integrate SOL spot adaptive paper report" && git push)
