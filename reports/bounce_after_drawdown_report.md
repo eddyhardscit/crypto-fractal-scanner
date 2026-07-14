@@ -1,7 +1,7 @@
 # Sequenze pratiche: rimbalzo dopo discesa / dump dopo spike
 
-Generato: **2026-07-14 09:21:54 CEST**  
-UTC: **2026-07-14 07:21:54 UTC**
+Generato: **2026-07-14 10:21:53 CEST**  
+UTC: **2026-07-14 08:21:53 UTC**
 
 Questo report guarda l'ordine degli eventi nei 40 casi storici più simili.
 

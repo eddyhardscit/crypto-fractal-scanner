@@ -1,7 +1,7 @@
 # RSI top-cycle warning - SOL
 
-Generato: **2026-07-14 09:22:33 CEST**  
-UTC: **2026-07-14 07:22:33 UTC**
+Generato: **2026-07-14 10:22:30 CEST**  
+UTC: **2026-07-14 08:22:30 UTC**
 
 Questo report usa l'RSI soltanto come filtro di possibile esaurimento ciclo.
 La vicinanza matematica a una retta non basta: la linea deve essere costruita su almeno tre picchi, superare i controlli di qualità e trovarsi in una vera zona RSI da top.

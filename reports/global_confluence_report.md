@@ -1,6 +1,6 @@
 # Sintesi finale di confluenza
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.
 

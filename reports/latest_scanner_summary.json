@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-07-14 07:19:55",
-  "snapshot_generated_at_utc": "2026-07-14T07:19:54Z",
+  "generated_at_utc": "2026-07-14 08:19:10",
+  "snapshot_generated_at_utc": "2026-07-14T08:19:09Z",
   "assets": {
     "BTC": {
-      "generated_at_utc": "2026-07-14 07:19:55",
-      "snapshot_generated_at_utc": "2026-07-14T07:19:54Z",
+      "generated_at_utc": "2026-07-14 08:19:10",
+      "snapshot_generated_at_utc": "2026-07-14T08:19:09Z",
       "snapshot_candle_date_utc": "2026-07-13",
       "asset": "BTC",
       "ticker": "BTC-USD",
@@ -58,8 +58,8 @@
       "max_gain_p90_price": 95557.62061889129
     },
     "SOL": {
-      "generated_at_utc": "2026-07-14 07:19:55",
-      "snapshot_generated_at_utc": "2026-07-14T07:19:54Z",
+      "generated_at_utc": "2026-07-14 08:19:10",
+      "snapshot_generated_at_utc": "2026-07-14T08:19:09Z",
       "snapshot_candle_date_utc": "2026-07-13",
       "asset": "SOL",
       "ticker": "SOL-USD",
@@ -112,8 +112,8 @@
       "max_gain_p90_price": 108.52884184954078
     },
     "DOGE": {
-      "generated_at_utc": "2026-07-14 07:19:55",
-      "snapshot_generated_at_utc": "2026-07-14T07:19:54Z",
+      "generated_at_utc": "2026-07-14 08:19:10",
+      "snapshot_generated_at_utc": "2026-07-14T08:19:09Z",
       "snapshot_candle_date_utc": "2026-07-13",
       "asset": "DOGE",
       "ticker": "DOGE-USD",
@@ -125,7 +125,7 @@
       "positive_cases_30d": 17.5,
       "negative_cases_30d": 82.5,
       "similarity_avg": 86.13907308479031,
-      "similarity_median": 85.77397053034684,
+      "similarity_median": 85.77397053034682,
       "return_30d_avg": -14.075967908867387,
       "return_30d_median": -18.996000544517326,
       "drawdown_30d_avg": -25.000954666725164,

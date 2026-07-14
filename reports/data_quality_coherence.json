@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-07-14 07:23 UTC",
+  "generated_at_utc": "2026-07-14 08:23 UTC",
   "overall_status": "WARN",
   "critical_issues": [],
   "warnings": [
@@ -13,7 +13,7 @@
   "exchange_missing_files": [],
   "snapshot_metadata": {
     "schema_version": 1,
-    "generated_at_utc": "2026-07-14T07:19:54Z",
+    "generated_at_utc": "2026-07-14T08:19:09Z",
     "source": "Yahoo Finance daily shared snapshot",
     "assets": {
       "BTC": {
@@ -26,7 +26,7 @@
         "low": 61769.0,
         "close": 62239.12109375,
         "volume": 37650044790.0,
-        "generated_at_utc": "2026-07-14T07:19:54Z",
+        "generated_at_utc": "2026-07-14T08:19:09Z",
         "source": "Yahoo Finance daily shared snapshot"
       },
       "SOL": {
@@ -39,7 +39,7 @@
         "low": 74.16178131103516,
         "close": 74.86138916015625,
         "volume": 1940829057.0,
-        "generated_at_utc": "2026-07-14T07:19:54Z",
+        "generated_at_utc": "2026-07-14T08:19:09Z",
         "source": "Yahoo Finance daily shared snapshot"
       },
       "DOGE": {
@@ -52,7 +52,7 @@
         "low": 0.07097399979829788,
         "close": 0.07185100018978119,
         "volume": 482776650.0,
-        "generated_at_utc": "2026-07-14T07:19:54Z",
+        "generated_at_utc": "2026-07-14T08:19:09Z",
         "source": "Yahoo Finance daily shared snapshot"
       }
     }

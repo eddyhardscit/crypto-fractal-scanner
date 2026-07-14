@@ -9,9 +9,9 @@ Registro parallelo senza limite globale di quattro posizioni. Considera soltanto
 - Confidenza: **80,40%**
 - Volatilità: **NORMAL**
 - Rotazione strategie: **SOLO OSSERVAZIONE — nessun peso operativo viene ancora modificato**
-- Motivo: Direzione poco definita: score BTC +1.0, breadth EMA50 25%, ADX 25.5.
-- BTC trend score: **1,00**; ADX: **25,52**; breadth sopra EMA50: **25,00%**
-- Mediana alt vs BTC: **-0,32%**; dispersione: **9,92%**
+- Motivo: Direzione poco definita: score BTC +1.0, breadth EMA50 17%, ADX 25.5.
+- BTC trend score: **1,00**; ADX: **25,52**; breadth sopra EMA50: **16,67%**
+- Mediana alt vs BTC: **-0,48%**; dispersione: **8,66%**
 
 - Aperti in questo ciclo: **0**
 - Chiusi in questo ciclo: **0**

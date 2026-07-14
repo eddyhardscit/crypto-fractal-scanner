@@ -42,5 +42,5 @@ Nota importante: **questo modulo ora NON pesa più nel Global Confluence**. Rest
 
 Nota: se EMA50/EMA200 sono dentro ±2%, il modulo parla di medie sovrapposte / incrocio in corso, perché exchange diversi possono mostrare il cross leggermente prima o dopo.
 
-<!-- Generato: 2026-07-14 07:22 UTC -->
+<!-- Generato: 2026-07-14 08:22 UTC -->
 <!-- MAJOR_ALT_LIFECYCLE_SQUEEZE_END -->

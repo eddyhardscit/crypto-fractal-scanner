@@ -1,6 +1,6 @@
 # Market Regime Match Report
 
-Generated: 2026-07-14 07:22 UTC
+Generated: 2026-07-14 08:22 UTC
 
 This report adds market regime context to the raw fractal matches.
 

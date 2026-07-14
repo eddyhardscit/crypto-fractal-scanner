@@ -1,6 +1,6 @@
 # Data quality / coherence check
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo controllo non modifica punteggi o decisioni. Verifica che tutti i moduli usino lo stesso prezzo corrente e che le nuove regole Technical/Classic Visual siano integre.
 

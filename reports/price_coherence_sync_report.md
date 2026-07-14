@@ -1,6 +1,6 @@
 # Sincronizzazione prezzo condiviso
 
-Generato: 2026-07-14T07:23:07+00:00
+Generato: 2026-07-14T08:23:00+00:00
 
 Riferimento unico: `reports/latest_market_snapshot.json`.
 

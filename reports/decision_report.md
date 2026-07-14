@@ -1,6 +1,6 @@
 # Decisione operativa sintetica
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 

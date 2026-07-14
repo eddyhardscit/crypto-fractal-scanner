@@ -1,6 +1,6 @@
 # Report struttura tecnica
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:22 UTC
 
 Questo report aggiunge al tuo scanner una lettura classica di analisi tecnica.
 

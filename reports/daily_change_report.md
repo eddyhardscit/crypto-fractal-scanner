@@ -1,7 +1,7 @@
 # Mini report cambiamenti giornalieri
 
-Generato: **2026-07-14 09:21:47 CEST**  
-UTC: **2026-07-14 07:21:47 UTC**
+Generato: **2026-07-14 10:21:45 CEST**  
+UTC: **2026-07-14 08:21:45 UTC**
 
 Questo report confronta l'ultima previsione salvata con quella precedente, asset per asset.
 

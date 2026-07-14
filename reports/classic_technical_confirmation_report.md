@@ -1,6 +1,6 @@
 # Classic technical confirmation report
 
-Generato: 2026-07-14 07:22 UTC
+Generato: 2026-07-14 08:22 UTC
 
 Questo modulo controlla se il setup è confermato secondo analisi tecnica classica. Non sostituisce lo scanner frattale: serve come filtro di conferma.
 

@@ -1,6 +1,6 @@
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno quali orizzonti sono maturati.
 

@@ -11,7 +11,7 @@
 
 # Decisione operativa sintetica
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 
@@ -85,7 +85,7 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 <!-- PAPER_TRADING_START -->
 # Paper trading automatico KuCoin
 
-Generato: 2026-07-14T07:23:29+00:00
+Generato: 2026-07-14T08:23:24+00:00
 
 ## Configurazione attiva
 
@@ -95,14 +95,14 @@ Generato: 2026-07-14T07:23:29+00:00
 - Compounding: **ATTIVO**
 - Reinvestimento dei profitti: **100,00%**
 - Politica target: **solo monitoraggio; il bot non aumenta il rischio per inseguirlo**
-- Snapshot prezzi usato: **2026-07-14T06:44:29+00:00**; stato dati: **UNKNOWN**; età: **n/a**; conversione EUR/USDT: **CONFIG_FALLBACK**
+- Snapshot prezzi usato: **2026-07-14T07:30:05+00:00**; stato dati: **UNKNOWN**; età: **n/a**; conversione EUR/USDT: **CONFIG_FALLBACK**
 - Dashboard intraday: [apri la pagina live](https://github.com/eddyhardscit/crypto-fractal-scanner/blob/paper-trading-live/reports/paper_trading_live.md)
 
 ## Freschezza dati di mercato
 
 | Stato | Fonte | Snapshot mercato | Controllato | Età | Limite | Nuove entrate |
 | --- | --- | --- | --- | --- | --- | --- |
-| UNKNOWN | n/a | 2026-07-14T06:44:29+00:00 | n/a | n/a | n/a | BLOCCATE |
+| UNKNOWN | n/a | 2026-07-14T07:30:05+00:00 | n/a | n/a | n/a | BLOCCATE |
 
 > ⚠️ I prezzi non vengono marcati come aggiornati artificialmente. Se KuCoin non risponde e viene usata la cache, il report mostra l'età reale e blocca le nuove entrate.
 
@@ -114,7 +114,7 @@ _Diagnostica non ancora disponibile: verrà creata alla prossima esecuzione del 
 
 | Equity | Rendimento | P&L mese | Target | Progresso | Aperte | Chiuse | Win rate | PF | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| €10.126,63 | +1,27% | €126,63 | €3.000,00 | 4,22% | 3 | 4 | 50,00% | 1,94 | 0,88% |
+| €10.133,21 | +1,33% | €133,21 | €3.000,00 | 4,44% | 3 | 4 | 50,00% | 1,94 | 0,88% |
 
 ## Stato del campione statistico
 
@@ -132,11 +132,11 @@ _Diagnostica non ancora disponibile: verrà creata alla prossima esecuzione del 
 
 | Tipo | Portafoglio | Posizioni | Equity | Margine impegnato | Esposizione con leva | Rischio agli stop | P&L aperto |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| PRINCIPALE | Principale 4H | 3 | €10.126,63 | €1.119,04 | €3.357,11 | €151,35 | €32,05 |
-| TEST | Forza relativa 1H | 4 | €10.153,44 | €2.940,20 | €5.880,40 | €150,62 | €12,58 |
-| TEST | Bilanciata 1H | 4 | €10.133,72 | €2.183,15 | €6.549,44 | €150,55 | €10,83 |
-| TEST | Ampia 4H | 3 | €10.132,12 | €1.190,22 | €2.380,44 | €99,99 | €45,43 |
-| TEST | Rapida 1H | 2 | €10.098,97 | €2.395,35 | €7.186,05 | €100,65 | €-34,42 |
+| PRINCIPALE | Principale 4H | 3 | €10.133,21 | €1.119,04 | €3.357,11 | €151,35 | €38,63 |
+| TEST | Forza relativa 1H | 4 | €10.146,81 | €2.940,20 | €5.880,40 | €150,62 | €5,95 |
+| TEST | Ampia 4H | 3 | €10.138,11 | €1.190,22 | €2.380,44 | €99,99 | €51,42 |
+| TEST | Bilanciata 1H | 4 | €10.127,72 | €2.183,15 | €6.549,44 | €150,55 | €4,82 |
+| TEST | Rapida 1H | 2 | €10.101,05 | €2.395,35 | €7.186,05 | €100,65 | €-32,34 |
 | TEST | Scalp RSI Long 15 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scalp RSI Long 20 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scalp RSI Long 25 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
@@ -206,11 +206,11 @@ _Diagnostica non ancora disponibile: verrà creata alla prossima esecuzione del 
 
 | Tipo | Portafoglio | Strategia | Equity | P&L chiuso | Trade | Eventi indip. | Win rate | PF | Expectancy | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| PRINCIPALE | Principale 4H | Confluenza trend | €10.126,63 | €96,20 | 4 | 4 | 50,00% | 1,94 | €24,05 | 0,88% |
-| TEST | Forza relativa 1H | Forza relativa vs BTC | €10.153,44 | €142,33 | 5 | 5 | 60,00% | 2,37 | €28,47 | 0,86% |
-| TEST | Bilanciata 1H | Confluenza trend | €10.133,72 | €125,00 | 6 | 6 | 50,00% | 2,20 | €20,83 | 0,86% |
-| TEST | Ampia 4H | Confluenza trend | €10.132,12 | €88,07 | 2 | 2 | 50,00% | 2,71 | €44,04 | 0,76% |
-| TEST | Rapida 1H | Momentum / breakout | €10.098,97 | €137,88 | 11 | 11 | 54,55% | 1,88 | €12,53 | 1,32% |
+| PRINCIPALE | Principale 4H | Confluenza trend | €10.133,21 | €96,20 | 4 | 4 | 50,00% | 1,94 | €24,05 | 0,88% |
+| TEST | Forza relativa 1H | Forza relativa vs BTC | €10.146,81 | €142,33 | 5 | 5 | 60,00% | 2,37 | €28,47 | 0,86% |
+| TEST | Ampia 4H | Confluenza trend | €10.138,11 | €88,07 | 2 | 2 | 50,00% | 2,71 | €44,04 | 0,76% |
+| TEST | Bilanciata 1H | Confluenza trend | €10.127,72 | €125,00 | 6 | 6 | 50,00% | 2,20 | €20,83 | 0,86% |
+| TEST | Rapida 1H | Momentum / breakout | €10.101,05 | €137,88 | 11 | 11 | 54,55% | 1,88 | €12,53 | 1,32% |
 | TEST | Scalp RSI Long 15 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Scalp RSI Long 20 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Scalp RSI Long 25 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
@@ -243,22 +243,22 @@ _Diagnostica non ancora disponibile: verrà creata alla prossima esecuzione del 
 
 | Portafoglio | Asset | Lato | Metodo | TF | Leva | Entry | Mark | Stop | Liquidazione | Target | Margine | Esposizione | Rischio stop | P&L |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Principale 4H | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07237 | 0,07229 | 0,07451 | 0,09613 | 0,06808 | €562,89 | €1.688,66 | €50,00 | €1,79 |
-| Principale 4H | HYPE | SHORT | Confluenza trend | 240m | 3,0x | 63,85923 | 63,86200 | 66,45178 | 84,82634 | 58,67412 | €415,02 | €1.245,07 | €50,55 | €-0,05 |
-| Principale 4H | EVAA | SHORT | Confluenza trend | 240m | 3,0x | 0,84263 | 0,78230 | 0,94375 | 1,11930 | 0,64040 | €141,12 | €423,37 | €50,80 | €30,31 |
+| Principale 4H | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07237 | 0,07231 | 0,07451 | 0,09613 | 0,06808 | €562,89 | €1.688,66 | €50,00 | €1,32 |
+| Principale 4H | HYPE | SHORT | Confluenza trend | 240m | 3,0x | 63,85923 | 63,83000 | 66,45178 | 84,82634 | 58,67412 | €415,02 | €1.245,07 | €50,55 | €0,57 |
+| Principale 4H | EVAA | SHORT | Confluenza trend | 240m | 3,0x | 0,84263 | 0,76950 | 0,94375 | 1,11930 | 0,64040 | €141,12 | €423,37 | €50,80 | €36,74 |
 | Bilanciata 1H | AAVE | LONG | Confluenza trend | 60m | 3,0x | 98,87929 | 98,87929 | 96,58018 | n/a | 103,47752 | €716,68 | €2.150,03 | €49,99 | €0,00 |
 | Bilanciata 1H | T | LONG | Confluenza trend | 60m | 3,0x | 0,00540 | 0,00540 | 0,00479 | n/a | 0,00663 | €146,15 | €438,46 | €49,94 | €0,00 |
-| Bilanciata 1H | VELVET | LONG | Confluenza trend | 60m | 3,0x | 0,59035 | 0,63270 | 0,59702 | 0,39652 | 0,70445 | €174,63 | €523,89 | €0,00 | €37,58 |
-| Bilanciata 1H | SOL | SHORT | Confluenza trend | 60m | 3,0x | 74,63707 | 75,21800 | 75,73639 | 99,14291 | 72,43843 | €1.145,69 | €3.437,06 | €50,62 | €-26,75 |
+| Bilanciata 1H | VELVET | LONG | Confluenza trend | 60m | 3,0x | 0,59035 | 0,62412 | 0,59702 | 0,39652 | 0,70445 | €174,63 | €523,89 | €0,00 | €29,96 |
+| Bilanciata 1H | SOL | SHORT | Confluenza trend | 60m | 3,0x | 74,63707 | 75,18300 | 75,73639 | 99,14291 | 72,43843 | €1.145,69 | €3.437,06 | €50,62 | €-25,14 |
 | Rapida 1H | AAVE | LONG | Momentum / breakout | 60m | 3,0x | 98,87929 | 98,87929 | 97,09109 | n/a | 101,56159 | €921,40 | €2.764,20 | €49,99 | €0,00 |
-| Rapida 1H | SOL | SHORT | Momentum / breakout | 60m | 3,0x | 74,63707 | 75,21800 | 75,49210 | 99,14291 | 73,35453 | €1.473,95 | €4.421,85 | €50,66 | €-34,42 |
-| Ampia 4H | DOGE | SHORT | Confluenza trend | 240m | 2,0x | 0,07237 | 0,07229 | 0,07515 | 0,10819 | 0,06457 | €649,49 | €1.298,97 | €50,00 | €1,37 |
-| Ampia 4H | ZEC | LONG | Confluenza trend | 240m | 2,0x | 522,36445 | 506,54000 | 483,09844 | 263,79405 | 632,30930 | €332,53 | €665,06 | €49,99 | €-20,15 |
-| Ampia 4H | EVAA | SHORT | Confluenza trend | 240m | 2,0x | 0,92491 | 0,78230 | 0,92491 | 1,38275 | 0,61414 | €208,21 | €416,41 | €0,00 | €64,21 |
+| Rapida 1H | SOL | SHORT | Momentum / breakout | 60m | 3,0x | 74,63707 | 75,18300 | 75,49210 | 99,14291 | 73,35453 | €1.473,95 | €4.421,85 | €50,66 | €-32,34 |
+| Ampia 4H | DOGE | SHORT | Confluenza trend | 240m | 2,0x | 0,07237 | 0,07231 | 0,07515 | 0,10819 | 0,06457 | €649,49 | €1.298,97 | €50,00 | €1,02 |
+| Ampia 4H | ZEC | LONG | Confluenza trend | 240m | 2,0x | 522,36445 | 507,00000 | 483,09844 | 263,79405 | 632,30930 | €332,53 | €665,06 | €49,99 | €-19,56 |
+| Ampia 4H | EVAA | SHORT | Confluenza trend | 240m | 2,0x | 0,92491 | 0,76950 | 0,92491 | 1,38275 | 0,61414 | €208,21 | €416,41 | €0,00 | €69,97 |
 | Forza relativa 1H | AAVE | LONG | Forza relativa vs BTC | 60m | 2,0x | 98,87929 | 98,87929 | 96,58018 | n/a | 103,93735 | €1.075,02 | €2.150,03 | €49,99 | €0,00 |
 | Forza relativa 1H | T | LONG | Forza relativa vs BTC | 60m | 2,0x | 0,00540 | 0,00540 | 0,00479 | n/a | 0,00676 | €219,23 | €438,46 | €49,94 | €0,00 |
-| Forza relativa 1H | VELVET | LONG | Forza relativa vs BTC | 60m | 2,0x | 0,59490 | 0,63270 | 0,59646 | 0,30042 | 0,71431 | €277,68 | €555,36 | €0,00 | €35,29 |
-| Forza relativa 1H | HYPE | SHORT | Forza relativa vs BTC | 60m | 2,0x | 63,33633 | 63,86200 | 64,50951 | 94,68781 | 60,75532 | €1.368,27 | €2.736,55 | €50,69 | €-22,71 |
+| Forza relativa 1H | VELVET | LONG | Forza relativa vs BTC | 60m | 2,0x | 0,59490 | 0,62412 | 0,59646 | 0,30042 | 0,71431 | €277,68 | €555,36 | €0,00 | €27,28 |
+| Forza relativa 1H | HYPE | SHORT | Forza relativa vs BTC | 60m | 2,0x | 63,33633 | 63,83000 | 64,50951 | 94,68781 | 60,75532 | €1.368,27 | €2.736,55 | €50,69 | €-21,33 |
 
 ## Ultime operazioni chiuse
 
@@ -296,7 +296,7 @@ _Diagnostica non ancora disponibile: verrà creata alla prossima esecuzione del 
 <!-- MODULE_ACCURACY_START -->
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno quali orizzonti sono maturati.
 
@@ -489,7 +489,7 @@ Nota tecnica: le colonne data sono forzate come testo, quindi non deve più appa
 <!-- GLOBAL_WEIGHT_CALIBRATION_START -->
 # Calibrazione pesi Global Confluence
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Report completo: [global_weight_calibration_report.md](global_weight_calibration_report.md)
 
@@ -638,7 +638,7 @@ Regola: sotto 60 controlli osserva soltanto; da 100+ controlli può diventare ut
 <!-- GLOBAL_CONFLUENCE_START -->
 # Sintesi finale di confluenza
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.
 
@@ -803,7 +803,7 @@ Nota exchange: il modulo salva OI, funding, taker flow, order book e liquidazion
 <!-- BTC_MACRO_CYCLE_START -->
 # Bitcoin Macro Cycle — Power Law e Four-Year Spiral
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche, non autorizza leva e pesa **0** nel Global Confluence.
 
@@ -908,7 +908,7 @@ Il modulo resta a peso 0 anche con un buon backtest. Prima si osserva la verific
 <!-- RELATIVE_STRENGTH_BTC_START -->
 # Forza relativa SOL/BTC e DOGE/BTC
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salita in USD accompagnata da una coppia ALT/BTC ribassista è spesso soltanto trascinamento di BTC.
 
@@ -1257,7 +1257,7 @@ Nota importante: **questo modulo ora NON pesa più nel Global Confluence**. Rest
 
 Nota: se EMA50/EMA200 sono dentro ±2%, il modulo parla di medie sovrapposte / incrocio in corso, perché exchange diversi possono mostrare il cross leggermente prima o dopo.
 
-<!-- Generato: 2026-07-14 07:22 UTC -->
+<!-- Generato: 2026-07-14 08:22 UTC -->
 <!-- MAJOR_ALT_LIFECYCLE_SQUEEZE_END -->
 
 </details>
@@ -1265,7 +1265,7 @@ Nota: se EMA50/EMA200 sono dentro ±2%, il modulo parla di medie sovrapposte / i
 
 # Report giornaliero BTC / SOL / DOGE
 
-Aggiornato il: **2026-07-14 07:19:55 UTC**
+Aggiornato il: **2026-07-14 08:19:10 UTC**
 
 Questo report confronta il grafico attuale di Bitcoin, Solana e Dogecoin con tanti grafici storici di altre crypto.
 
@@ -1371,7 +1371,7 @@ Nel report principale vedi solo la sintesi. Nel report separato ci sono anche so
 <!-- SCANNER_FORECAST_TRACKER_START -->
 # Scanner forecast path / cono probabilistico
 
-Generato: 2026-07-14 07:21:56 UTC
+Generato: 2026-07-14 08:21:55 UTC
 
 Questo report trasforma i 40 casi simili dello scanner in un cono previsionale leggibile.
 
@@ -1437,26 +1437,6 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 Nota: servono almeno 5 controlli prima di dare un peso minimo al cono. Sotto 5 controlli resta solo osservazione.
 <!-- SCANNER_FORECAST_TRACKER_END -->
 
-<!-- FORECAST_30D_HISTORY_START -->
-
----
-
-# Storico previsioni 30 giorni
-
-Report separato completo: [forecast_30d_history.md](forecast_30d_history.md)
-
-Righe salvate nello storico: **6**.
-
-Questa sezione tiene un diario delle previsioni giornaliere a 30 giorni, senza appesantire il report principale.
-
-| Data | Asset | Prezzo | Direzione | Casi positivi | Return p50 | Drawdown p50 | Max gain p50 | Controllo 30g |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-07-14 | BTC | 62.239 $ | SALITA | 67,50% | 67.252 $ | 58.795 $ | 70.394 $ | 2026-08-13 |
-| 2026-07-14 | DOGE | 0,07000 $ | DISCESA | 17,50% | 0,06000 $ | 0,05000 $ | 0,08000 $ | 2026-08-13 |
-| 2026-07-14 | SOL | 74,86 $ | INCERTO | 45,00% | 74,22 $ | 67,42 $ | 80,71 $ | 2026-08-13 |
-
-<!-- FORECAST_30D_HISTORY_END -->
-
 </details>
 <!-- COMPACT_SECTION_END:scanner_forecast -->
 
@@ -1467,7 +1447,7 @@ Questa sezione tiene un diario delle previsioni giornaliere a 30 giorni, senza a
 <!-- EXTREME_CASES_PATH_START -->
 # Extreme cases path report
 
-Generato: 2026-07-14 07:22 UTC
+Generato: 2026-07-14 08:21 UTC
 
 Questo report si attiva quando i casi positivi o negativi sono almeno **80%**.
 
@@ -2227,7 +2207,7 @@ Questa tabella serve solo per vedere quali vecchi pattern sono stati trovati. No
 <!-- MARKET_REGIME_MATCH_START -->
 # Market Regime Match Report
 
-Generated: 2026-07-14 07:22 UTC
+Generated: 2026-07-14 08:22 UTC
 
 This report adds market regime context to the raw fractal matches.
 
@@ -2364,7 +2344,7 @@ The table below shows the top matches separately for each target, so BTC does no
 <!-- CLASSIC_TECHNICAL_CONFIRMATION_START -->
 # Classic technical confirmation report
 
-Generato: 2026-07-14 07:22 UTC
+Generato: 2026-07-14 08:22 UTC
 
 Questo modulo controlla se il setup è confermato secondo analisi tecnica classica. Non sostituisce lo scanner frattale: serve come filtro di conferma.
 
@@ -2536,7 +2516,7 @@ Nota: questo modulo deve pesare poco nel Global finché non viene verificato dal
 <!-- CLASSIC_TECHNICAL_VISUAL_START -->
 # Classic technical visual report
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo report crea grafici visivi dei pattern tecnici principali. Serve per vedere il grafico e il ciclo di vita dei pattern; non aggiunge automaticamente punteggio al Global.
 
@@ -2720,7 +2700,7 @@ Nota: questi pattern sono riconosciuti con regole algoritmiche semplici. Sono ut
 <!-- FRACTAL_PATH_TRACKER_START -->
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-14 07:22 UTC
+Generato: 2026-07-14 08:22 UTC
 
 Questo modulo separa due percorsi che prima potevano essere confusi:
 
@@ -2857,22 +2837,6 @@ La colonna **Percorso ancorato** continua la scala dal bottom. La colonna **Scen
 - Prima di pesare il modulo servono milestone maturate e un errore ancorato accettabile.
 <!-- FRACTAL_PATH_TRACKER_END -->
 
-<!-- SOL_BTC_FRACTAL_HISTORY_START -->
-
----
-
-# Storico frattale SOL/BTC
-
-Per vedere la tabella giorno per giorno devi aprire/cliccare questo file:
-
-**[sol_btc_fractal_history.md](sol_btc_fractal_history.md)**
-
-Ultima lettura salvata: **2026-07-14** — SOL 74,86 $, gap +14,81%, somiglianza +65,25%.
-
-Nel report principale lascio solo il link, così non diventa troppo lungo.
-
-<!-- SOL_BTC_FRACTAL_HISTORY_END -->
-
 </details>
 <!-- COMPACT_SECTION_END:fractal_path -->
 
@@ -2883,7 +2847,7 @@ Nel report principale lascio solo il link, così non diventa troppo lungo.
 <!-- EXCHANGE_MICROSTRUCTURE_START -->
 # Dati exchange, liquidità e leva
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo modulo legge Kraken Futures, Bitget Futures e KuCoin Futures come nucleo derivati. OKX e Coinbase vengono raccolti come fonti ausiliarie non pesate.
 Non modifica la formula matematica di RSI, Fibonacci o Wyckoff: controlla se quei segnali sono sostenuti da acquisti, vendite, OI, funding e liquidità.
@@ -3022,7 +2986,7 @@ Storage persistente: **OK** — ultimo asset: exchange_state_B.tar.gz.
 <!-- EXCHANGE_SIGNAL_TRACKER_START -->
 # Accuratezza dati exchange e microstruttura
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo tracker verifica se il segnale candidato exchange ±1 anticipa correttamente la direzione del prezzo a 1/3/7/14/30 giorni.
 Il peso Global resta 0 finché l'orizzonte 7g non ha almeno 30 controlli, accuratezza almeno 55% e return corretto direzione positivo. L'overlay a 30g ha un gate separato.
@@ -3096,9 +3060,9 @@ Report separato completo: [liquidation_report.md](liquidation_report.md)
 
 | Asset | Prezzo | Funding | OI 24h | Long/Short | Lettura futures | Forza |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 62.239 $ | +0.0021% | +5.97% | 1.35 | Leva alta, direzione mista | 3/5 |
-| SOL | 74,86 $ | +0.0042% | -20.93% | 2.31 | Misto | 1/5 |
-| DOGE | 0.07185 $ | +0.0049% | +16.15% | 3.86 | Leva alta, direzione mista | 3/5 |
+| BTC | 62.239 $ | +0.0016% | +7.03% | 1.35 | Leva alta, direzione mista | 3/5 |
+| SOL | 74,86 $ | +0.0041% | -21.11% | 2.32 | Misto | 1/5 |
+| DOGE | 0.07185 $ | +0.0049% | +17.08% | 3.88 | Leva alta, direzione mista | 3/5 |
 
 ## Come usarla insieme al frattale
 
@@ -3115,7 +3079,7 @@ Report separato completo: [liquidation_report.md](liquidation_report.md)
 <!-- RSI_MULTI_TIMEFRAME_DIVERGENCE_START -->
 # Divergenze RSI multi-timeframe — diagnostica
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:22 UTC
 
 Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Riconosce divergenze regolari e nascoste, segnali in formazione, invalidazioni e semplice conferma del momentum.
 
@@ -3181,7 +3145,7 @@ _Nessun controllo maturato: il tracker ha appena iniziato a raccogliere dati._
 <!-- TECHNICAL_STRUCTURE_START -->
 # Report struttura tecnica
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:22 UTC
 
 Questo report aggiunge al tuo scanner una lettura classica di analisi tecnica.
 
@@ -3427,7 +3391,7 @@ Report dettagliati:
 <!-- DATA_QUALITY_COHERENCE_START -->
 # Data quality / coherence check
 
-Generato: 2026-07-14 07:23 UTC
+Generato: 2026-07-14 08:23 UTC
 
 Questo controllo non modifica punteggi o decisioni. Verifica che tutti i moduli usino lo stesso prezzo corrente e che le nuove regole Technical/Classic Visual siano integre.
 

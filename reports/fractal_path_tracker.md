@@ -1,7 +1,7 @@
 <!-- FRACTAL_PATH_TRACKER_START -->
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-14 07:22 UTC
+Generato: 2026-07-14 08:22 UTC
 
 Questo modulo separa due percorsi che prima potevano essere confusi:
 
