@@ -1,0 +1,140 @@
+name: Paper Trading Comparative Daily Report
+
+on:
+  schedule:
+    - cron: "30 8 * * *"
+      timezone: "Europe/Rome"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-trading-comparative-daily
+  cancel-in-progress: false
+
+jobs:
+  comparative-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+      GITHUB_TOKEN: ${{ github.token }}
+      PAPER_TRADING_RELEASE_TAG: paper-trading-v1
+      PAPER_TRADING_ASSET_NAME: paper-trading-state.zip
+      PAPER_TRADING_CONFIG: paper_trading_config.json
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pandas requests
+
+      - name: Validate reports and allocator
+        run: |
+          python -m py_compile \
+            paper_trading_comparative_report.py \
+            paper_trading_capital_allocator.py \
+            paper_trading_report.py \
+            paper_trading_engine.py \
+            paper_trading_trade_log_repair.py
+
+      - name: Restore persistent paper state
+        run: python paper_trading_storage.py restore
+
+      - name: Build comparative report and notify Telegram
+        run: python paper_trading_comparative_report.py
+
+      - name: Build shadow capital allocator
+        run: python paper_trading_capital_allocator.py
+
+      - name: Validate allocator safety
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path(
+              "reports/paper_trading_capital_allocator_latest.json"
+          )
+          payload = json.loads(path.read_text(encoding="utf-8"))
+          assert payload["paper_only"] is True
+          assert payload["orders_enabled"] is False
+          assert payload["source_portfolios_modified"] is False
+          assert payload["cash_weight_pct"] >= 20.0
+          assert all(
+              row["weight_pct"] <= 30.000001
+              for row in payload["allocations"]
+          )
+          if payload["mode"] == "OBSERVATION":
+              assert payload["cash_weight_pct"] == 100.0
+              assert not payload["allocations"]
+          print("PASS: allocator is shadow-only and risk-capped")
+          PY
+
+      - name: Commit comparative and allocator reports
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            reports/paper_trading_comparative_report.md \
+            reports/paper_trading_comparative_ranking.csv \
+            reports/paper_trading_comparative_latest.json \
+            reports/paper_trading_capital_allocator_report.md \
+            reports/paper_trading_capital_allocator_latest.json \
+            reports/paper_trading_capital_allocator_weights.csv \
+            reports/paper_trading_capital_allocator_history.csv \
+            reports/paper_trading_capital_allocator_state.json
+
+          if git diff --cached --quiet; then
+            echo "Comparative and allocator reports unchanged."
+            exit 0
+          fi
+
+          git commit -m "Update paper ranking and shadow allocator"
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            [ "${attempt}" -lt 3 ] && sleep 5
+          done
+
+          exit 1
+
+      - name: Upload diagnostic artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-comparative-allocator-${{ github.run_id }}
+          path: |
+            reports/paper_trading_comparative_report.md
+            reports/paper_trading_comparative_ranking.csv
+            reports/paper_trading_comparative_latest.json
+            reports/paper_trading_capital_allocator_report.md
+            reports/paper_trading_capital_allocator_latest.json
+            reports/paper_trading_capital_allocator_weights.csv
+            reports/paper_trading_capital_allocator_history.csv
+          if-no-files-found: error
+          retention-days: 30
