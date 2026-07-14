@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-07-13T07:47:54+00:00",
+  "updated_utc": "2026-07-14T06:44:35+00:00",
+  "initial_capital_eur": 3600.0,
+  "balance_eur": 3600.0,
+  "peak_equity_eur": 3600.0,
+  "max_drawdown_pct": 0.0,
+  "phase": "WAITING",
+  "approach_id": 0,
+  "last_candle_time": "",
+  "last_prealert_approach": -1,
+  "last_armed_approach": -1,
+  "last_invalidated_approach": -1,
+  "cooldown_until": "",
+  "position": null,
+  "closed_events": 0,
+  "winning_events": 0,
+  "gross_profit_eur": 0.0,
+  "gross_loss_eur": 0.0,
+  "notifications": {
+    "pending": []
+  },
+  "last_checks": {
+    "generated_utc": "2026-07-14T06:44:35+00:00",
+    "static": {
+      "checks": {
+        "fresh_market": true,
+        "doge_price_available": true,
+        "btc_price_available": true,
+        "global_bearish": true,
+        "classic_bearish": true,
+        "relative_weak": true,
+        "bearish_pattern_valid": true,
+        "btc_not_breaking_out": true,
+        "candle_15m_fresh": true
+      },
+      "freshness_status": "FRESH",
+      "doge_mark": 0.07229,
+      "btc_mark": 62677.5,
+      "global_score": -7.0,
+      "classic_raw_score": -9.0,
+      "relative_raw_score": -8.0,
+      "bearish_pattern_status": "MATURO",
+      "candle_age_minutes": 29.59096585
+    },
+    "rejection": {
+      "accepted": false,
+      "conditions": {
+        "trigger_touched": false,
+        "closed_back_below_trigger": true,
+        "close_below_invalidation": true,
+        "entry_not_chased": false,
+        "upper_wick": true,
+        "bearish_confirmation": true,
+        "volume_valid": true,
+        "stop_within_limit": true
+      },
+      "candle_time": "2026-07-14 06:15:00+00:00",
+      "open": 0.07227,
+      "high": 0.07237,
+      "low": 0.07227,
+      "close": 0.07228,
+      "previous_close": 0.0723,
+      "volume_ratio": 0.295044549235885,
+      "upper_wick_ratio": 0.9000000000000417,
+      "close_location": 0.09999999999995837,
+      "stop_price": 0.0806,
+      "reason": "trigger_touched, entry_not_chased"
+    }
+  }
+}

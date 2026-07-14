@@ -1,6 +1,6 @@
 # Bitcoin Macro Cycle — Power Law e Four-Year Spiral
 
-Generato: 2026-07-13 06:28 UTC
+Generato: 2026-07-14 07:23 UTC
 
 Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche, non autorizza leva e pesa **0** nel Global Confluence.
 
@@ -8,10 +8,10 @@ Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche
 
 | Voce | Valore | Lettura |
 | --- | --- | --- |
-| Prezzo BTC | 62.759 $ | prezzo corrente |
-| Power Law centrale | 122.133 $ | deviazione -48,61% |
-| Banda p10-p90 | 76.182 $ / 306.630 $ | SOTTO LA BANDA P10 |
-| Percentile residuo | 0,67% | posizione storica nel corridoio |
+| Prezzo BTC | 62.239 $ | prezzo corrente |
+| Power Law centrale | 122.133 $ | deviazione -49,04% |
+| Banda p10-p90 | 76.181 $ / 306.629 $ | SOTTO LA BANDA P10 |
+| Percentile residuo | 0,49% | posizione storica nel corridoio |
 | Esponente β | 5,8463 | R² log-log 92,00% |
 | Stabilità β | BASSA | range 1,3051 cambiando finestra |
 | Ultimo halving | 2024-04-19 | 815 giorni fa |
@@ -23,10 +23,10 @@ La Power Law viene trattata come regressione empirica, non come legge fisica. Il
 ## Bitcoin Power Law
 
 - Campione: 2014-09-17 → 2026-07-13 (4318 osservazioni)
-- Formula stimata: prezzo ≈ exp(-39.4036) × giorni^5.8463
+- Formula stimata: prezzo ≈ exp(-39.4035) × giorni^5.8463
 - Prezzo centrale oggi: **122.133 $**
-- Posizione corrente: **SOTTO LA BANDA P10**, percentile 0,67%
-- Scarto dal centro: **-48,61%**
+- Posizione corrente: **SOTTO LA BANDA P10**, percentile 0,49%
+- Scarto dal centro: **-49,04%**
 
 ![Bitcoin Power Law](btc_power_law_chart.png)
 
@@ -73,8 +73,8 @@ Campione molto piccolo: questi rendimenti sono contesto di ciclo, non probabilit
 
 | Asset | Coppia | Forza vs BTC | Score raw | Candidato | 30g | Peso Global |
 | --- | --- | --- | --- | --- | --- | --- |
-| SOL | SOL/BTC | RELATIVA MISTA / NON CONFERMATA | -1 | 0 | 14.003739665281433 | 0 |
-| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -8 | -1 | -15.657078270557435 | 0 |
+| SOL | SOL/BTC | RELATIVA MISTA / NON CONFERMATA | -1 | 0 | 12.441530975841374 | 0 |
+| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -8 | -1 | -15.36432836345032 | 0 |
 
 ## Tracker live Power Law
 

@@ -1,6 +1,6 @@
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-13 06:28 UTC
+Generato: 2026-07-14 07:23 UTC
 
 Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno quali orizzonti sono maturati.
 
@@ -61,9 +61,9 @@ Politica snapshot giornaliero: **la prima fotografia per data e asset resta cong
 
 | Asset | Segnale | Orizzonte | Data target | Quando |
 | --- | --- | --- | --- | --- |
-| BTC | 2026-07-09 | 5g | 2026-07-14 | domani |
-| SOL | 2026-07-09 | 5g | 2026-07-14 | domani |
-| DOGE | 2026-07-09 | 5g | 2026-07-14 | domani |
+| BTC | 2026-07-09 | 5g | 2026-07-14 | oggi / appena dati disponibili |
+| SOL | 2026-07-09 | 5g | 2026-07-14 | oggi / appena dati disponibili |
+| DOGE | 2026-07-09 | 5g | 2026-07-14 | oggi / appena dati disponibili |
 
 ## Lettura rapida Global Confluence
 
