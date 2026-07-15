@@ -1,6 +1,6 @@
 # Calibrazione pesi Global Confluence
 
-Generato: 2026-07-14 21:57 UTC
+Generato: 2026-07-15 07:27 UTC
 
 Report completo: [global_weight_calibration_report.md](global_weight_calibration_report.md)
 
@@ -21,75 +21,75 @@ Il file continua a produrre solo raccomandazioni: **non modifica automaticamente
 
 | Asset | Segnali salvati | Stato | Controlli max | Righe 30+ | Righe 60+ | Righe 100+ | Miglior modulo calibrabile | Orizzonte | Accuratezza | Return corretto direzione | Lettura |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 6 | FEEDBACK RAPIDO | 5 | 0 | 0 | 0 | Famiglia statistica | 1g | 20,00% | -0,48% | feedback rapido: utile da osservare, non da pesare |
-| SOL | 6 | FEEDBACK RAPIDO | 5 | 0 | 0 | 0 | Tecnico | 1g | 40,00% | +0,01% | feedback rapido: utile da osservare, non da pesare |
-| DOGE | 6 | FEEDBACK RAPIDO | 5 | 0 | 0 | 0 | Famiglia statistica | 1g | 80,00% | +0,52% | feedback rapido: utile da osservare, non da pesare |
+| BTC | 7 | FEEDBACK RAPIDO | 6 | 0 | 0 | 0 | Famiglia statistica | 1g | 33,33% | +0,13% | feedback rapido: utile da osservare, non da pesare |
+| SOL | 7 | FEEDBACK RAPIDO | 6 | 0 | 0 | 0 | Tecnico | 1g | 33,33% | -0,57% | feedback rapido: utile da osservare, non da pesare |
+| DOGE | 7 | FEEDBACK RAPIDO | 6 | 0 | 0 | 0 | Famiglia statistica | 1g | 66,67% | -0,00% | feedback rapido: utile da osservare, non da pesare |
 
 ## Raccomandazioni per moduli calibrabili
 
 | Asset | Orizzonte | Famiglia | Modulo | Controlli | Accuratezza | Return corretto direzione | Return medio | Drawdown medio | Max gain medio | Raccomandazione | Δ peso suggerito | Confidenza |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 1g | BREVE | Famiglia statistica | 5 | 20,00% | -0,48% | -0,48% | -0,70% | +0,25% | OSSERVA | 0,0 | BASSA |
-| BTC | 1g | BREVE | Tecnico | 4 | 50,00% | -0,34% | -0,67% | -0,93% | +0,21% | OSSERVA | 0,0 | BASSA |
-| BTC | 2g | BREVE | Famiglia statistica | 4 | 25,00% | -0,70% | -0,70% | -1,15% | +0,87% | OSSERVA | 0,0 | BASSA |
-| BTC | 2g | BREVE | Tecnico | 3 | 33,33% | -0,42% | -0,91% | -1,42% | +0,85% | OSSERVA | 0,0 | BASSA |
-| BTC | 3g | BREVE | Famiglia statistica | 3 | 33,33% | -1,05% | -1,05% | -2,02% | +1,21% | OSSERVA | 0,0 | BASSA |
-| BTC | 3g | BREVE | Tecnico | 2 | 50,00% | +0,71% | -0,71% | -2,04% | +1,36% | OSSERVA | 0,0 | BASSA |
-| BTC | 5g | SETTIMANALE | Famiglia statistica | 1 | 0,00% | -1,09% | -1,09% | -2,32% | +2,25% | OSSERVA | 0,0 | BASSA |
+| BTC | 1g | BREVE | Famiglia statistica | 6 | 33,33% | +0,13% | +0,13% | -0,08% | +0,91% | OSSERVA | 0,0 | BASSA |
+| BTC | 1g | BREVE | Tecnico | 5 | 40,00% | -0,90% | +0,10% | -0,14% | +1,01% | OSSERVA | 0,0 | BASSA |
+| BTC | 2g | BREVE | Famiglia statistica | 5 | 40,00% | +0,01% | +0,01% | -1,10% | +1,47% | OSSERVA | 0,0 | BASSA |
+| BTC | 2g | BREVE | Tecnico | 4 | 50,00% | +0,39% | +0,02% | -1,28% | +1,60% | OSSERVA | 0,0 | BASSA |
+| BTC | 3g | BREVE | Famiglia statistica | 4 | 50,00% | -0,51% | -0,51% | -2,32% | +1,44% | OSSERVA | 0,0 | BASSA |
+| BTC | 3g | BREVE | Tecnico | 3 | 66,67% | +0,84% | -0,10% | -2,43% | +1,62% | OSSERVA | 0,0 | BASSA |
+| BTC | 5g | SETTIMANALE | Famiglia statistica | 2 | 50,00% | -0,02% | -0,02% | -2,80% | +2,16% | OSSERVA | 0,0 | BASSA |
 | BTC | 5g | SETTIMANALE | Tecnico | 1 | 100,00% | +1,09% | -1,09% | -2,32% | +2,25% | OSSERVA | 0,0 | BASSA |
-| DOGE | 1g | BREVE | Classic technical | 5 | 80,00% | +0,52% | -0,52% | -0,91% | +0,20% | OSSERVA | 0,0 | BASSA |
-| DOGE | 1g | BREVE | Famiglia statistica | 5 | 80,00% | +0,52% | -0,52% | -0,91% | +0,20% | OSSERVA | 0,0 | BASSA |
-| DOGE | 1g | BREVE | Tecnico | 5 | 80,00% | +0,52% | -0,52% | -0,91% | +0,20% | OSSERVA | 0,0 | BASSA |
-| DOGE | 2g | BREVE | Classic technical | 4 | 75,00% | +0,84% | -0,84% | -1,49% | +1,27% | OSSERVA | 0,0 | BASSA |
-| DOGE | 2g | BREVE | Famiglia statistica | 4 | 75,00% | +0,84% | -0,84% | -1,49% | +1,27% | OSSERVA | 0,0 | BASSA |
-| DOGE | 2g | BREVE | Tecnico | 4 | 75,00% | +0,84% | -0,84% | -1,49% | +1,27% | OSSERVA | 0,0 | BASSA |
-| DOGE | 3g | BREVE | Classic technical | 3 | 100,00% | +1,65% | -1,65% | -2,48% | +1,88% | OSSERVA | 0,0 | BASSA |
-| DOGE | 3g | BREVE | Famiglia statistica | 3 | 100,00% | +1,65% | -1,65% | -2,48% | +1,88% | OSSERVA | 0,0 | BASSA |
-| DOGE | 3g | BREVE | Tecnico | 3 | 100,00% | +1,65% | -1,65% | -2,48% | +1,88% | OSSERVA | 0,0 | BASSA |
-| DOGE | 5g | SETTIMANALE | Classic technical | 1 | 100,00% | +1,10% | -1,10% | -2,58% | +3,59% | OSSERVA | 0,0 | BASSA |
-| DOGE | 5g | SETTIMANALE | Famiglia statistica | 1 | 100,00% | +1,10% | -1,10% | -2,58% | +3,59% | OSSERVA | 0,0 | BASSA |
-| DOGE | 5g | SETTIMANALE | Tecnico | 1 | 100,00% | +1,10% | -1,10% | -2,58% | +3,59% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Classic technical | 6 | 66,67% | -0,00% | +0,00% | -0,38% | +0,78% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Famiglia statistica | 6 | 66,67% | -0,00% | +0,00% | -0,38% | +0,78% | OSSERVA | 0,0 | BASSA |
+| DOGE | 1g | BREVE | Tecnico | 6 | 66,67% | -0,00% | +0,00% | -0,38% | +0,78% | OSSERVA | 0,0 | BASSA |
+| DOGE | 2g | BREVE | Classic technical | 5 | 60,00% | +0,19% | -0,19% | -1,41% | +1,86% | OSSERVA | 0,0 | BASSA |
+| DOGE | 2g | BREVE | Famiglia statistica | 5 | 60,00% | +0,19% | -0,19% | -1,41% | +1,86% | OSSERVA | 0,0 | BASSA |
+| DOGE | 2g | BREVE | Tecnico | 5 | 60,00% | +0,19% | -0,19% | -1,41% | +1,86% | OSSERVA | 0,0 | BASSA |
+| DOGE | 3g | BREVE | Classic technical | 4 | 75,00% | +0,86% | -0,86% | -2,50% | +2,24% | OSSERVA | 0,0 | BASSA |
+| DOGE | 3g | BREVE | Famiglia statistica | 4 | 75,00% | +0,86% | -0,86% | -2,50% | +2,24% | OSSERVA | 0,0 | BASSA |
+| DOGE | 3g | BREVE | Tecnico | 4 | 75,00% | +0,86% | -0,86% | -2,50% | +2,24% | OSSERVA | 0,0 | BASSA |
+| DOGE | 5g | SETTIMANALE | Classic technical | 2 | 50,00% | +0,51% | -0,51% | -3,25% | +2,87% | OSSERVA | 0,0 | BASSA |
+| DOGE | 5g | SETTIMANALE | Famiglia statistica | 2 | 50,00% | +0,51% | -0,51% | -3,25% | +2,87% | OSSERVA | 0,0 | BASSA |
+| DOGE | 5g | SETTIMANALE | Tecnico | 2 | 50,00% | +0,51% | -0,51% | -3,25% | +2,87% | OSSERVA | 0,0 | BASSA |
 | SOL | 1g | BREVE | Famiglia statistica | 4 | 75,00% | +0,50% | -0,50% | -0,88% | +0,27% | OSSERVA | 0,0 | BASSA |
 | SOL | 1g | BREVE | Frattale SOL | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | OSSERVA | 0,0 | BASSA |
-| SOL | 1g | BREVE | Tecnico | 5 | 40,00% | +0,01% | -0,74% | -1,20% | +0,01% | OSSERVA | 0,0 | BASSA |
-| SOL | 2g | BREVE | Famiglia statistica | 3 | 100,00% | +1,29% | -1,29% | -1,89% | +1,13% | OSSERVA | 0,0 | BASSA |
+| SOL | 1g | BREVE | Tecnico | 6 | 33,33% | -0,57% | -0,03% | -0,52% | +0,79% | OSSERVA | 0,0 | BASSA |
+| SOL | 2g | BREVE | Famiglia statistica | 4 | 75,00% | +0,58% | -0,58% | -2,02% | +1,53% | OSSERVA | 0,0 | BASSA |
 | SOL | 2g | BREVE | Frattale SOL | 1 | 0,00% | -0,28% | -0,28% | -0,31% | +0,05% | OSSERVA | 0,0 | BASSA |
-| SOL | 2g | BREVE | Tecnico | 4 | 0,00% | -1,43% | -1,43% | -2,11% | +0,89% | OSSERVA | 0,0 | BASSA |
-| SOL | 3g | BREVE | Famiglia statistica | 2 | 100,00% | +1,84% | -1,84% | -2,69% | +1,64% | OSSERVA | 0,0 | BASSA |
+| SOL | 2g | BREVE | Tecnico | 5 | 0,00% | -1,46% | -0,83% | -2,17% | +1,26% | OSSERVA | 0,0 | BASSA |
+| SOL | 3g | BREVE | Famiglia statistica | 3 | 66,67% | +0,76% | -0,76% | -2,81% | +1,96% | OSSERVA | 0,0 | BASSA |
 | SOL | 3g | BREVE | Frattale SOL | 1 | 0,00% | -1,97% | -1,97% | -2,74% | +1,96% | OSSERVA | 0,0 | BASSA |
-| SOL | 3g | BREVE | Tecnico | 3 | 0,00% | -2,46% | -2,46% | -3,35% | +1,19% | OSSERVA | 0,0 | BASSA |
-| SOL | 5g | SETTIMANALE | Famiglia statistica | 1 | 100,00% | +3,96% | -3,96% | -4,95% | +1,96% | OSSERVA | 0,0 | BASSA |
+| SOL | 3g | BREVE | Tecnico | 4 | 25,00% | -1,49% | -1,49% | -3,27% | +1,54% | OSSERVA | 0,0 | BASSA |
+| SOL | 5g | SETTIMANALE | Famiglia statistica | 2 | 100,00% | +2,07% | -2,07% | -4,75% | +1,64% | OSSERVA | 0,0 | BASSA |
 | SOL | 5g | SETTIMANALE | Frattale SOL | 1 | 0,00% | -3,96% | -3,96% | -4,95% | +1,96% | OSSERVA | 0,0 | BASSA |
-| SOL | 5g | SETTIMANALE | Tecnico | 1 | 0,00% | -3,96% | -3,96% | -4,95% | +1,96% | OSSERVA | 0,0 | BASSA |
+| SOL | 5g | SETTIMANALE | Tecnico | 2 | 0,00% | -2,07% | -2,07% | -4,75% | +1,64% | OSSERVA | 0,0 | BASSA |
 
 ## Moduli esclusi dalle proposte di peso
 
 | Modulo | Ruolo | Famiglia madre | Controlli max | Motivo esclusione |
 | --- | --- | --- | --- | --- |
-| Global confluence | BENCHMARK | nessuna | 5 | Risultato finale del Global: benchmark, non peso interno. |
-| Market regime grezzo | DIAGNOSTICO | statistical_family | 5 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
-| Scanner grezzo | DIAGNOSTICO | statistical_family | 5 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
+| Global confluence | BENCHMARK | nessuna | 6 | Risultato finale del Global: benchmark, non peso interno. |
+| Market regime grezzo | DIAGNOSTICO | statistical_family | 6 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
+| Scanner grezzo | DIAGNOSTICO | statistical_family | 6 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
 
 ## Sintesi per famiglia temporale
 
 | Asset | Famiglia | Modulo calibrabile | Controlli totali | Accuratezza media ponderata | Return corretto direzione |
 | --- | --- | --- | --- | --- | --- |
-| BTC | BREVE | Famiglia statistica | 12 | 25,00% | -0,69% |
-| BTC | BREVE | Tecnico | 9 | 44,44% | -0,13% |
-| BTC | SETTIMANALE | Famiglia statistica | 1 | 0,00% | -1,09% |
+| BTC | BREVE | Famiglia statistica | 15 | 40,00% | -0,08% |
+| BTC | BREVE | Tecnico | 12 | 50,00% | -0,04% |
+| BTC | SETTIMANALE | Famiglia statistica | 2 | 50,00% | -0,02% |
 | BTC | SETTIMANALE | Tecnico | 1 | 100,00% | +1,09% |
-| DOGE | BREVE | Classic technical | 12 | 83,33% | +0,91% |
-| DOGE | BREVE | Famiglia statistica | 12 | 83,33% | +0,91% |
-| DOGE | BREVE | Tecnico | 12 | 83,33% | +0,91% |
-| DOGE | SETTIMANALE | Classic technical | 1 | 100,00% | +1,10% |
-| DOGE | SETTIMANALE | Famiglia statistica | 1 | 100,00% | +1,10% |
-| DOGE | SETTIMANALE | Tecnico | 1 | 100,00% | +1,10% |
-| SOL | BREVE | Famiglia statistica | 9 | 88,89% | +1,06% |
+| DOGE | BREVE | Classic technical | 15 | 66,67% | +0,29% |
+| DOGE | BREVE | Famiglia statistica | 15 | 66,67% | +0,29% |
+| DOGE | BREVE | Tecnico | 15 | 66,67% | +0,29% |
+| DOGE | SETTIMANALE | Classic technical | 2 | 50,00% | +0,51% |
+| DOGE | SETTIMANALE | Famiglia statistica | 2 | 50,00% | +0,51% |
+| DOGE | SETTIMANALE | Tecnico | 2 | 50,00% | +0,51% |
+| SOL | BREVE | Famiglia statistica | 11 | 72,73% | +0,60% |
 | SOL | BREVE | Frattale SOL | 3 | 0,00% | -0,79% |
-| SOL | BREVE | Tecnico | 12 | 16,67% | -1,09% |
-| SOL | SETTIMANALE | Famiglia statistica | 1 | 100,00% | +3,96% |
+| SOL | BREVE | Tecnico | 15 | 20,00% | -1,11% |
+| SOL | SETTIMANALE | Famiglia statistica | 2 | 100,00% | +2,07% |
 | SOL | SETTIMANALE | Frattale SOL | 1 | 0,00% | -3,96% |
-| SOL | SETTIMANALE | Tecnico | 1 | 0,00% | -3,96% |
+| SOL | SETTIMANALE | Tecnico | 2 | 0,00% | -2,07% |
 
 ## Aree ancora in attesa
 
