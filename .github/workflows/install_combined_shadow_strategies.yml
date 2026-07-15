@@ -1,0 +1,162 @@
+name: Manual install combined shadow strategies
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manual-install-combined-shadow-strategies
+  cancel-in-progress: false
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install combined strategy logic
+        shell: bash
+        run: |
+          python - <<'PY'
+          import ast
+          import base64
+          import json
+          from pathlib import Path
+
+          patch_sets = {
+              "paper_signal_engine.py": [('ZGVmIHN0cmF0ZWd5X2FjY2VwdHMoCiAgICBzdHJhdGVneTogc3RyLAogICAgc2lkZTogc3RyLAogICAgZmVhdHVyZXM6IGRpY3Rbc3RyLCBBbnldLAogICAgc2NvcmU6IGZsb2F0LAopIC0+IGJvb2w6Cg==', 'ZGVmIGNvbWJpbmVkX3N0cmF0ZWd5X3Njb3JlKAogICAgc3RyYXRlZ3k6IHN0ciwKICAgIGFzc2V0OiBzdHIsCiAgICBmZWF0dXJlczogZGljdFtzdHIsIEFueV0sCiAgICByYW5raW5nX2J5X2Fzc2V0OiBkaWN0W3N0ciwgZGljdFtzdHIsIEFueV1dLAogICAgZ2xvYmFsX3Jvd3M6IGRpY3Rbc3RyLCBkaWN0W3N0ciwgc3RyXV0sCiAgICBleGNoYW5nZV9yb3dzOiBkaWN0W3N0ciwgZGljdFtzdHIsIHN0cl1dLAogICAgcG9ydGZvbGlvOiBkaWN0W3N0ciwgQW55XSwKKSAtPiB0dXBsZVtib29sLCBmbG9hdCwgbGlzdFtzdHJdXToKICAgICIiIkNvbnNlbnN1cyBzdHJhdGVnaWVzIGJ1aWx0IGZyb20gZXhpc3RpbmcgaW5kZXBlbmRlbnQgbW9kdWxlcy4iIiIKICAgIGNvbXBvbmVudF92b3RlczogbGlzdFt0dXBsZVtzdHIsIGZsb2F0LCBsaXN0W3N0cl1dXSA9IFtdCgogICAgZGVmIGFkZF92b3RlKAogICAgICAgIGxhYmVsOiBzdHIsCiAgICAgICAgYWNjZXB0ZWQ6IGJvb2wsCiAgICAgICAgc2NvcmU6IGZsb2F0LAogICAgICAgIHJlYXNvbnM6IGxpc3Rbc3RyXSwKICAgICkgLT4gTm9uZToKICAgICAgICBpZiBhY2NlcHRlZCBhbmQgYWJzKHNjb3JlKSA+IDA6CiAgICAgICAgICAgIGNvbXBvbmVudF92b3Rlcy5hcHBlbmQoCiAgICAgICAgICAgICAgICAobGFiZWwsIHNjb3JlLCByZWFzb25zKQogICAgICAgICAgICApCgogICAgZGVmIGNvbnNlbnN1cygKICAgICAgICBtaW5pbXVtX3ZvdGVzOiBpbnQsCiAgICAgICAgZXh0cmFfcmVhc29uczogbGlzdFtzdHJdIHwgTm9uZSA9IE5vbmUsCiAgICApIC0+IHR1cGxlW2Jvb2wsIGZsb2F0LCBsaXN0W3N0cl1dOgogICAgICAgIGxvbmdfdm90ZXMgPSBbCiAgICAgICAgICAgIGl0ZW0gZm9yIGl0ZW0gaW4gY29tcG9uZW50X3ZvdGVzIGlmIGl0ZW1bMV0gPiAwCiAgICAgICAgXQogICAgICAgIHNob3J0X3ZvdGVzID0gWwogICAgICAgICAgICBpdGVtIGZvciBpdGVtIGluIGNvbXBvbmVudF92b3RlcyBpZiBpdGVtWzFdIDwgMAogICAgICAgIF0KICAgICAgICBzZWxlY3RlZCA9ICgKICAgICAgICAgICAgbG9uZ192b3RlcwogICAgICAgICAgICBpZiBsZW4obG9uZ192b3RlcykgPiBsZW4oc2hvcnRfdm90ZXMpCiAgICAgICAgICAgIGVsc2Ugc2hvcnRfdm90ZXMKICAgICAgICApCiAgICAgICAgaWYgbGVuKHNlbGVjdGVkKSA8IG1pbmltdW1fdm90ZXM6CiAgICAgICAgICAgIHJldHVybiBGYWxzZSwgMC4wLCBbXQoKICAgICAgICBkaXJlY3Rpb24gPSAxLjAgaWYgc2VsZWN0ZWRbMF1bMV0gPiAwIGVsc2UgLTEuMAogICAgICAgIG1hZ25pdHVkZSA9IHN1bShhYnMoaXRlbVsxXSkgZm9yIGl0ZW0gaW4gc2VsZWN0ZWQpIC8gbGVuKHNlbGVjdGVkKQogICAgICAgIG1hZ25pdHVkZSA9IG1heCg1LjAsIG1pbig5LjUsIG1hZ25pdHVkZSkpCiAgICAgICAgcmVhc29ucyA9IFsKICAgICAgICAgICAgZiJ7bGFiZWx9OiB7JywgJy5qb2luKGRldGFpbHNbOjJdKX0iCiAgICAgICAgICAgIGZvciBsYWJlbCwgXywgZGV0YWlscyBpbiBzZWxlY3RlZAogICAgICAgIF0KICAgICAgICByZWFzb25zLmFwcGVuZCgKICAgICAgICAgICAgZiJjb25zZW5zbyB7bGVuKHNlbGVjdGVkKX0ve2xlbihjb21wb25lbnRfdm90ZXMpfSBtb2R1bGkiCiAgICAgICAgKQogICAgICAgIHJlYXNvbnMuZXh0ZW5kKGV4dHJhX3JlYXNvbnMgb3IgW10pCiAgICAgICAgcmV0dXJuIFRydWUsIGRpcmVjdGlvbiAqIG1hZ25pdHVkZSwgcmVhc29ucwoKICAgIHJlbGF0aXZlX2JsZW5kID0gKAogICAgICAgIDAuNjUgKiBmbG9hdChmZWF0dXJlc1sicmVsYXRpdmVfbWVkaXVtX3BjdCJdKQogICAgICAgICsgMC4zNSAqIGZsb2F0KGZlYXR1cmVzWyJyZWxhdGl2ZV9sb25nX3BjdCJdKQogICAgKQogICAgZ2xvYmFsX3JvdyA9IGdsb2JhbF9yb3dzLmdldChhc3NldCwge30pCiAgICBnbG9iYWxfc2NvcmUgPSBfc2FmZV9udW0oCiAgICAgICAgZ2xvYmFsX3Jvdy5nZXQoImdsb2JhbF9zY29yZSIpLAogICAgICAgIDAuMCwKICAgICkKICAgIGdsb2JhbF9hY3Rpb24gPSBzdHIoCiAgICAgICAgZ2xvYmFsX3Jvdy5nZXQoCiAgICAgICAgICAgICJhY3Rpb24iLAogICAgICAgICAgICBnbG9iYWxfcm93LmdldCgiZGlyZWN0aW9uIiwgIiIpLAogICAgICAgICkKICAgICkudXBwZXIoKQoKICAgIGlmIHN0cmF0ZWd5IGluIHsiY29tYm9fdHJlbmQiLCAiY29tYm9fYWRhcHRpdmUifToKICAgICAgICBlbWFfb2ssIGVtYV9zY29yZSwgZW1hX3JlYXNvbnMgPSBiZW5jaG1hcmtfc3RyYXRlZ3lfc2NvcmUoCiAgICAgICAgICAgICJlbWFfdHJlbmRfZm9sbG93aW5nIiwKICAgICAgICAgICAgZmVhdHVyZXMsCiAgICAgICAgKQogICAgICAgIGFkZF92b3RlKCJFTUEiLCBlbWFfb2ssIGVtYV9zY29yZSwgZW1hX3JlYXNvbnMpCgogICAgICAgIGRvbl9vaywgZG9uX3Njb3JlLCBkb25fcmVhc29ucyA9IGJlbmNobWFya19zdHJhdGVneV9zY29yZSgKICAgICAgICAgICAgImRvbmNoaWFuX2JyZWFrb3V0IiwKICAgICAgICAgICAgZmVhdHVyZXMsCiAgICAgICAgKQogICAgICAgIGFkZF92b3RlKAogICAgICAgICAgICAiRG9uY2hpYW4iLAogICAgICAgICAgICBkb25fb2ssCiAgICAgICAgICAgIGRvbl9zY29yZSwKICAgICAgICAgICAgZG9uX3JlYXNvbnMsCiAgICAgICAgKQoKICAgICAgICBpZiBhYnMocmVsYXRpdmVfYmxlbmQpID49IDEuMDoKICAgICAgICAgICAgYWRkX3ZvdGUoCiAgICAgICAgICAgICAgICAiRm9yemEgQlRDIiwKICAgICAgICAgICAgICAgIFRydWUsCiAgICAgICAgICAgICAgICAoCiAgICAgICAgICAgICAgICAgICAgbWF4KDUuMCwgbWluKDguMCwgNS4wICsgYWJzKHJlbGF0aXZlX2JsZW5kKSAvIDIuMCkpCiAgICAgICAgICAgICAgICAgICAgKiAoMS4wIGlmIHJlbGF0aXZlX2JsZW5kID4gMCBlbHNlIC0xLjApCiAgICAgICAgICAgICAgICApLAogICAgICAgICAgICAgICAgW2YiZm9yemEgcmVsYXRpdmEge3JlbGF0aXZlX2JsZW5kOisuMmZ9JSJdLAogICAgICAgICAgICApCgogICAgICAgIGxvbmdfZ2xvYmFsID0gKAogICAgICAgICAgICBnbG9iYWxfc2NvcmUgPj0gMy4wCiAgICAgICAgICAgIGFuZCBhbnkoCiAgICAgICAgICAgICAgICB0b2tlbiBpbiBnbG9iYWxfYWN0aW9uCiAgICAgICAgICAgICAgICBmb3IgdG9rZW4gaW4gKCJMT05HIiwgIkJVWSIsICJSSUFMWiIsICJBQ0NVTSIpCiAgICAgICAgICAgICkKICAgICAgICApCiAgICAgICAgc2hvcnRfZ2xvYmFsID0gKAogICAgICAgICAgICBnbG9iYWxfc2NvcmUgPD0gLTMuMAogICAgICAgICAgICBhbmQgYW55KAogICAgICAgICAgICAgICAgdG9rZW4gaW4gZ2xvYmFsX2FjdGlvbgogICAgICAgICAgICAgICAgZm9yIHRva2VuIGluICgiU0hPUlQiLCAiU0VMTCIsICJSSUJBU1MiLCAiRElTVFJJQiIpCiAgICAgICAgICAgICkKICAgICAgICApCiAgICAgICAgaWYgbG9uZ19nbG9iYWwgb3Igc2hvcnRfZ2xvYmFsOgogICAgICAgICAgICBhZGRfdm90ZSgKICAgICAgICAgICAgICAgICJHbG9iYWwiLAogICAgICAgICAgICAgICAgVHJ1ZSwKICAgICAgICAgICAgICAgICgKICAgICAgICAgICAgICAgICAgICBtYXgoNS4wLCBtaW4oOS4wLCA1LjAgKyBhYnMoZ2xvYmFsX3Njb3JlKSAvIDMuMCkpCiAgICAgICAgICAgICAgICAgICAgKiAoMS4wIGlmIGxvbmdfZ2xvYmFsIGVsc2UgLTEuMCkKICAgICAgICAgICAgICAgICksCiAgICAgICAgICAgICAgICBbZiJHbG9iYWwge2dsb2JhbF9zY29yZTorLjFmfSB7Z2xvYmFsX2FjdGlvbn0iXSwKICAgICAgICAgICAgKQoKICAgICAgICBpZiBzdHJhdGVneSA9PSAiY29tYm9fdHJlbmQiOgogICAgICAgICAgICBpZiBmbG9hdChmZWF0dXJlc1siYWR4MTQiXSkgPCAxOC4wOgogICAgICAgICAgICAgICAgcmV0dXJuIEZhbHNlLCAwLjAsIFtdCiAgICAgICAgICAgIHJldHVybiBjb25zZW5zdXMoCiAgICAgICAgICAgICAgICBpbnQocG9ydGZvbGlvLmdldCgibWluaW11bV9jb21ib192b3RlcyIsIDIpKSwKICAgICAgICAgICAgICAgIFtmIkFEWCB0cmVuZCB7ZmxvYXQoZmVhdHVyZXNbJ2FkeDE0J10pOi4xZn0iXSwKICAgICAgICAgICAgKQoKICAgIGlmIHN0cmF0ZWd5IGluIHsiY29tYm9fbWVhbl9yZXZlcnNpb24iLCAiY29tYm9fYWRhcHRpdmUifToKICAgICAgICBpZiBzdHJhdGVneSA9PSAiY29tYm9fYWRhcHRpdmUiOgogICAgICAgICAgICBjb21wb25lbnRfdm90ZXMuY2xlYXIoKQoKICAgICAgICBib2xsX29rLCBib2xsX3Njb3JlLCBib2xsX3JlYXNvbnMgPSBiZW5jaG1hcmtfc3RyYXRlZ3lfc2NvcmUoCiAgICAgICAgICAgICJib2xsaW5nZXJfbWVhbl9yZXZlcnNpb24iLAogICAgICAgICAgICBmZWF0dXJlcywKICAgICAgICApCiAgICAgICAgYWRkX3ZvdGUoCiAgICAgICAgICAgICJCb2xsaW5nZXIiLAogICAgICAgICAgICBib2xsX29rLAogICAgICAgICAgICBib2xsX3Njb3JlLAogICAgICAgICAgICBib2xsX3JlYXNvbnMsCiAgICAgICAgKQoKICAgICAgICByc2lfdmFsdWUgPSBmbG9hdChmZWF0dXJlc1sicnNpMTQiXSkKICAgICAgICBpZiByc2lfdmFsdWUgPD0gMzIuMDoKICAgICAgICAgICAgYWRkX3ZvdGUoCiAgICAgICAgICAgICAgICAiUlNJIiwKICAgICAgICAgICAgICAgIFRydWUsCiAgICAgICAgICAgICAgICA1LjAgKyBtaW4oMi41LCAoMzIuMCAtIHJzaV92YWx1ZSkgLyA1LjApLAogICAgICAgICAgICAgICAgW2YiUlNJIHNjYXJpY28ge3JzaV92YWx1ZTouMWZ9Il0sCiAgICAgICAgICAgICkKICAgICAgICBlbGlmIHJzaV92YWx1ZSA+PSA2OC4wOgogICAgICAgICAgICBhZGRfdm90ZSgKICAgICAgICAgICAgICAgICJSU0kiLAogICAgICAgICAgICAgICAgVHJ1ZSwKICAgICAgICAgICAgICAgIC0oNS4wICsgbWluKDIuNSwgKHJzaV92YWx1ZSAtIDY4LjApIC8gNS4wKSksCiAgICAgICAgICAgICAgICBbZiJSU0kgdGlyYXRvIHtyc2lfdmFsdWU6LjFmfSJdLAogICAgICAgICAgICApCgogICAgICAgIHpzY29yZSA9IGZsb2F0KGZlYXR1cmVzWyJib2xsaW5nZXJfenNjb3JlIl0pCiAgICAgICAgaWYgYWJzKHpzY29yZSkgPj0gMS42OgogICAgICAgICAgICBhZGRfdm90ZSgKICAgICAgICAgICAgICAgICJaLXNjb3JlIiwKICAgICAgICAgICAgICAgIFRydWUsCiAgICAgICAgICAgICAgICAoCiAgICAgICAgICAgICAgICAgICAgLSg1LjAgKyBtaW4oMi4wLCBhYnMoenNjb3JlKSAtIDEuMCkpCiAgICAgICAgICAgICAgICAgICAgaWYgenNjb3JlID4gMAogICAgICAgICAgICAgICAgICAgIGVsc2UgNS4wICsgbWluKDIuMCwgYWJzKHpzY29yZSkgLSAxLjApCiAgICAgICAgICAgICAgICApLAogICAgICAgICAgICAgICAgW2Yiei1zY29yZSB7enNjb3JlOisuMmZ9Il0sCiAgICAgICAgICAgICkKCiAgICAgICAgaWYgc3RyYXRlZ3kgPT0gImNvbWJvX21lYW5fcmV2ZXJzaW9uIjoKICAgICAgICAgICAgaWYgZmxvYXQoZmVhdHVyZXNbImFkeDE0Il0pID4gMjUuMDoKICAgICAgICAgICAgICAgIHJldHVybiBGYWxzZSwgMC4wLCBbXQogICAgICAgICAgICByZXR1cm4gY29uc2Vuc3VzKAogICAgICAgICAgICAgICAgaW50KHBvcnRmb2xpby5nZXQoIm1pbmltdW1fY29tYm9fdm90ZXMiLCAyKSksCiAgICAgICAgICAgICAgICBbZiJBRFggbGF0ZXJhbGUge2Zsb2F0KGZlYXR1cmVzWydhZHgxNCddKTouMWZ9Il0sCiAgICAgICAgICAgICkKCiAgICBpZiBzdHJhdGVneSBpbiB7ImNvbWJvX3NjYW5uZXIiLCAiY29tYm9fYWRhcHRpdmUifToKICAgICAgICBpZiBzdHJhdGVneSA9PSAiY29tYm9fYWRhcHRpdmUiOgogICAgICAgICAgICBjb21wb25lbnRfdm90ZXMuY2xlYXIoKQoKICAgICAgICBmb3Igc291cmNlX3N0cmF0ZWd5LCBsYWJlbCBpbiAoCiAgICAgICAgICAgICgic2Nhbm5lcl90b3A1X2xvbmciLCAiVG9wIDUiKSwKICAgICAgICAgICAgKCJzY2FubmVyX2JvdHRvbTVfc2hvcnQiLCAiQm90dG9tIDUiKSwKICAgICAgICAgICAgKCJzY2FubmVyX3RvcDVfYnRjX3N0cmVuZ3RoIiwgIkZvcnphIEJUQyIpLAogICAgICAgICAgICAoImdsb2JhbF9jb25mbHVlbmNlX3B1cmUiLCAiR2xvYmFsIiksCiAgICAgICAgKToKICAgICAgICAgICAgYWNjZXB0ZWQsIHNvdXJjZV9zY29yZSwgc291cmNlX3JlYXNvbnMgPSAoCiAgICAgICAgICAgICAgICBzY2FubmVyX2ZhbWlseV9zY29yZSgKICAgICAgICAgICAgICAgICAgICBzb3VyY2Vfc3RyYXRlZ3ksCiAgICAgICAgICAgICAgICAgICAgYXNzZXQsCiAgICAgICAgICAgICAgICAgICAgZmVhdHVyZXMsCiAgICAgICAgICAgICAgICAgICAgcmFua2luZ19ieV9hc3NldCwKICAgICAgICAgICAgICAgICAgICBnbG9iYWxfcm93cywKICAgICAgICAgICAgICAgICAgICBleGNoYW5nZV9yb3dzLAogICAgICAgICAgICAgICAgICAgIHBvcnRmb2xpbywKICAgICAgICAgICAgICAgICkKICAgICAgICAgICAgKQogICAgICAgICAgICBhZGRfdm90ZSgKICAgICAgICAgICAgICAgIGxhYmVsLAogICAgICAgICAgICAgICAgYWNjZXB0ZWQsCiAgICAgICAgICAgICAgICBzb3VyY2Vfc2NvcmUsCiAgICAgICAgICAgICAgICBzb3VyY2VfcmVhc29ucywKICAgICAgICAgICAgKQoKICAgICAgICBpZiBzdHJhdGVneSA9PSAiY29tYm9fc2Nhbm5lciI6CiAgICAgICAgICAgIHJldHVybiBjb25zZW5zdXMoCiAgICAgICAgICAgICAgICBpbnQocG9ydGZvbGlvLmdldCgibWluaW11bV9jb21ib192b3RlcyIsIDIpKSwKICAgICAgICAgICAgICAgIFsiY29uc2Vuc28gc2Nhbm5lciBsaXZlIl0sCiAgICAgICAgICAgICkKCiAgICBpZiBzdHJhdGVneSA9PSAiY29tYm9fYWRhcHRpdmUiOgogICAgICAgIGFkeF92YWx1ZSA9IGZsb2F0KGZlYXR1cmVzWyJhZHgxNCJdKQoKICAgICAgICAjIFJlYnVpbGQgYW5kIGRlbGVnYXRlIHRvIHRoZSBmYW1pbHkgc3VpdGVkIHRvIHRoZSByZWdpbWUuCiAgICAgICAgZGVsZWdhdGVkID0gZGljdChwb3J0Zm9saW8pCiAgICAgICAgaWYgYWR4X3ZhbHVlID49IDIyLjA6CiAgICAgICAgICAgIGRlbGVnYXRlZFsibWluaW11bV9jb21ib192b3RlcyJdID0gbWF4KAogICAgICAgICAgICAgICAgMiwKICAgICAgICAgICAgICAgIGludChwb3J0Zm9saW8uZ2V0KCJtaW5pbXVtX2NvbWJvX3ZvdGVzIiwgMikpLAogICAgICAgICAgICApCiAgICAgICAgICAgIGFjY2VwdGVkLCB2YWx1ZSwgcmVhc29ucyA9IGNvbWJpbmVkX3N0cmF0ZWd5X3Njb3JlKAogICAgICAgICAgICAgICAgImNvbWJvX3RyZW5kIiwKICAgICAgICAgICAgICAgIGFzc2V0LAogICAgICAgICAgICAgICAgZmVhdHVyZXMsCiAgICAgICAgICAgICAgICByYW5raW5nX2J5X2Fzc2V0LAogICAgICAgICAgICAgICAgZ2xvYmFsX3Jvd3MsCiAgICAgICAgICAgICAgICBleGNoYW5nZV9yb3dzLAogICAgICAgICAgICAgICAgZGVsZWdhdGVkLAogICAgICAgICAgICApCiAgICAgICAgICAgIGlmIGFjY2VwdGVkOgogICAgICAgICAgICAgICAgcmV0dXJuIFRydWUsIHZhbHVlLCBbCiAgICAgICAgICAgICAgICAgICAgInJlZ2ltZSBhZGF0dGl2bzogVFJFTkQiLAogICAgICAgICAgICAgICAgICAgICpyZWFzb25zLAogICAgICAgICAgICAgICAgXQogICAgICAgIGVsaWYgYWR4X3ZhbHVlIDw9IDE4LjA6CiAgICAgICAgICAgIGFjY2VwdGVkLCB2YWx1ZSwgcmVhc29ucyA9IGNvbWJpbmVkX3N0cmF0ZWd5X3Njb3JlKAogICAgICAgICAgICAgICAgImNvbWJvX21lYW5fcmV2ZXJzaW9uIiwKICAgICAgICAgICAgICAgIGFzc2V0LAogICAgICAgICAgICAgICAgZmVhdHVyZXMsCiAgICAgICAgICAgICAgICByYW5raW5nX2J5X2Fzc2V0LAogICAgICAgICAgICAgICAgZ2xvYmFsX3Jvd3MsCiAgICAgICAgICAgICAgICBleGNoYW5nZV9yb3dzLAogICAgICAgICAgICAgICAgZGVsZWdhdGVkLAogICAgICAgICAgICApCiAgICAgICAgICAgIGlmIGFjY2VwdGVkOgogICAgICAgICAgICAgICAgcmV0dXJuIFRydWUsIHZhbHVlLCBbCiAgICAgICAgICAgICAgICAgICAgInJlZ2ltZSBhZGF0dGl2bzogUkFOR0UiLAogICAgICAgICAgICAgICAgICAgICpyZWFzb25zLAogICAgICAgICAgICAgICAgXQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIGFjY2VwdGVkLCB2YWx1ZSwgcmVhc29ucyA9IGNvbWJpbmVkX3N0cmF0ZWd5X3Njb3JlKAogICAgICAgICAgICAgICAgImNvbWJvX3NjYW5uZXIiLAogICAgICAgICAgICAgICAgYXNzZXQsCiAgICAgICAgICAgICAgICBmZWF0dXJlcywKICAgICAgICAgICAgICAgIHJhbmtpbmdfYnlfYXNzZXQsCiAgICAgICAgICAgICAgICBnbG9iYWxfcm93cywKICAgICAgICAgICAgICAgIGV4Y2hhbmdlX3Jvd3MsCiAgICAgICAgICAgICAgICBkZWxlZ2F0ZWQsCiAgICAgICAgICAgICkKICAgICAgICAgICAgaWYgYWNjZXB0ZWQ6CiAgICAgICAgICAgICAgICByZXR1cm4gVHJ1ZSwgdmFsdWUsIFsKICAgICAgICAgICAgICAgICAgICAicmVnaW1lIGFkYXR0aXZvOiBUUkFOU0laSU9ORSIsCiAgICAgICAgICAgICAgICAgICAgKnJlYXNvbnMsCiAgICAgICAgICAgICAgICBdCgogICAgcmV0dXJuIEZhbHNlLCAwLjAsIFtdCgoKZGVmIHN0cmF0ZWd5X2FjY2VwdHMoCiAgICBzdHJhdGVneTogc3RyLAogICAgc2lkZTogc3RyLAogICAgZmVhdHVyZXM6IGRpY3Rbc3RyLCBBbnldLAogICAgc2NvcmU6IGZsb2F0LAopIC0+IGJvb2w6Cg=='), ('ICAgICAgICAgICAgYmVuY2htYXJrX3N0cmF0ZWdpZXMgPSB7CiAgICAgICAgICAgICAgICAiZG9uY2hpYW5fYnJlYWtvdXQiLAogICAgICAgICAgICAgICAgImJvbGxpbmdlcl9tZWFuX3JldmVyc2lvbiIsCiAgICAgICAgICAgICAgICAiZW1hX3RyZW5kX2ZvbGxvd2luZyIsCiAgICAgICAgICAgIH0KICAgICAgICAgICAgaWYgc3RyYXRlZ3kgaW4gc2Nhbm5lcl9zdHJhdGVnaWVzOgo=', 'ICAgICAgICAgICAgYmVuY2htYXJrX3N0cmF0ZWdpZXMgPSB7CiAgICAgICAgICAgICAgICAiZG9uY2hpYW5fYnJlYWtvdXQiLAogICAgICAgICAgICAgICAgImJvbGxpbmdlcl9tZWFuX3JldmVyc2lvbiIsCiAgICAgICAgICAgICAgICAiZW1hX3RyZW5kX2ZvbGxvd2luZyIsCiAgICAgICAgICAgIH0KICAgICAgICAgICAgY29tYm9fc3RyYXRlZ2llcyA9IHsKICAgICAgICAgICAgICAgICJjb21ib190cmVuZCIsCiAgICAgICAgICAgICAgICAiY29tYm9fbWVhbl9yZXZlcnNpb24iLAogICAgICAgICAgICAgICAgImNvbWJvX3NjYW5uZXIiLAogICAgICAgICAgICAgICAgImNvbWJvX2FkYXB0aXZlIiwKICAgICAgICAgICAgfQogICAgICAgICAgICBpZiBzdHJhdGVneSBpbiBjb21ib19zdHJhdGVnaWVzOgogICAgICAgICAgICAgICAgYWNjZXB0ZWQsIHNjb3JlLCByZWFzb25zID0gY29tYmluZWRfc3RyYXRlZ3lfc2NvcmUoCiAgICAgICAgICAgICAgICAgICAgc3RyYXRlZ3ksCiAgICAgICAgICAgICAgICAgICAgYXNzZXQsCiAgICAgICAgICAgICAgICAgICAgZmVhdHVyZXMsCiAgICAgICAgICAgICAgICAgICAgc2Nhbm5lcl9yYW5raW5nX2J5X2Fzc2V0LAogICAgICAgICAgICAgICAgICAgIGdsb2JhbF9yb3dzLAogICAgICAgICAgICAgICAgICAgIGV4Y2hhbmdlX3Jvd3MsCiAgICAgICAgICAgICAgICAgICAgcG9ydGZvbGlvLAogICAgICAgICAgICAgICAgKQogICAgICAgICAgICAgICAgaWYgbm90IGFjY2VwdGVkIG9yIGFicyhzY29yZSkgPCBtaW5pbXVtX3Njb3JlOgogICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlCiAgICAgICAgICAgICAgICByZWFzb25zID0gcmVhc29ucyArIFsKICAgICAgICAgICAgICAgICAgICAiY29udG8gc2hhZG93IGNvbWJpbmF0byIsCiAgICAgICAgICAgICAgICBdCiAgICAgICAgICAgIGVsaWYgc3RyYXRlZ3kgaW4gc2Nhbm5lcl9zdHJhdGVnaWVzOgo='), ('ICAgICAgICAgICAgaWYgc3RyYXRlZ3kgaW4gYmVuY2htYXJrX3N0cmF0ZWdpZXM6CiAgICAgICAgICAgICAgICByZWFzb24gPSAiOyAiLmpvaW4ocmVhc29ucykKICAgICAgICAgICAgICAgIHNpZ25hbF9nbG9iYWxfb3ZlcmxheSA9IDAuMAogICAgICAgICAgICAgICAgc2lnbmFsX2V4Y2hhbmdlX292ZXJsYXkgPSAwLjAKICAgICAgICAgICAgZWxpZiBzdHJhdGVneSBpbiBzY2FubmVyX3N0cmF0ZWdpZXM6Cg==', 'ICAgICAgICAgICAgaWYgc3RyYXRlZ3kgaW4gYmVuY2htYXJrX3N0cmF0ZWdpZXM6CiAgICAgICAgICAgICAgICByZWFzb24gPSAiOyAiLmpvaW4ocmVhc29ucykKICAgICAgICAgICAgICAgIHNpZ25hbF9nbG9iYWxfb3ZlcmxheSA9IDAuMAogICAgICAgICAgICAgICAgc2lnbmFsX2V4Y2hhbmdlX292ZXJsYXkgPSAwLjAKICAgICAgICAgICAgZWxpZiBzdHJhdGVneSBpbiBjb21ib19zdHJhdGVnaWVzOgogICAgICAgICAgICAgICAgcmVhc29uID0gIjsgIi5qb2luKHJlYXNvbnMpCiAgICAgICAgICAgICAgICBzaWduYWxfZ2xvYmFsX292ZXJsYXkgPSAwLjAKICAgICAgICAgICAgICAgIHNpZ25hbF9leGNoYW5nZV9vdmVybGF5ID0gMC4wCiAgICAgICAgICAgIGVsaWYgc3RyYXRlZ3kgaW4gc2Nhbm5lcl9zdHJhdGVnaWVzOgo=')],
+              "paper_trading_notify.py": [('ZGVmIGJ1aWxkX2V2ZW50X21lc3NhZ2VzKHN1bW1hcnk6IGRpY3Rbc3RyLCBBbnldKSAtPiBsaXN0W3N0cl06Cg==', 'Q09NQk9fUFJFRklYID0gIlNIQURPV19DT01CT18iCkNPTUJPX0xBQkVMUyA9IHsKICAgICJTSEFET1dfQ09NQk9fVFJFTkQiOiAiQ29tYm8gVHJlbmQiLAogICAgIlNIQURPV19DT01CT19NRUFOX1JFVkVSU0lPTiI6ICJDb21ibyBNZWFuIFJldmVyc2lvbiIsCiAgICAiU0hBRE9XX0NPTUJPX1NDQU5ORVIiOiAiQ29tYm8gU2Nhbm5lciIsCiAgICAiU0hBRE9XX0NPTUJPX0FEQVBUSVZFIjogIkNvbWJvIEFkYXB0aXZlIiwKfQoKCmRlZiBfaXNfY29tYm8obmFtZTogQW55KSAtPiBib29sOgogICAgcmV0dXJuIHN0cihuYW1lKS5zdGFydHN3aXRoKENPTUJPX1BSRUZJWCkKCgpkZWYgX2NvbWJvX2xpbmVzKAogICAgbWV0cmljczogbGlzdFtkaWN0W3N0ciwgQW55XV0sCiAgICBpbml0aWFsOiBmbG9hdCwKKSAtPiBsaXN0W3N0cl06CiAgICByb3dzID0gW10KICAgIGZvciByb3cgaW4gbWV0cmljczoKICAgICAgICBuYW1lID0gc3RyKHJvdy5nZXQoInBvcnRmb2xpbyIsICIiKSkKICAgICAgICBlcXVpdHkgPSBfc2FmZV9mbG9hdChyb3cuZ2V0KCJlcXVpdHlfZXVyIikpCiAgICAgICAgcm93cy5hcHBlbmQoewogICAgICAgICAgICAibmFtZSI6IG5hbWUsCiAgICAgICAgICAgICJsYWJlbCI6IENPTUJPX0xBQkVMUy5nZXQobmFtZSwgbmFtZSksCiAgICAgICAgICAgICJwbmwiOiBlcXVpdHkgLSBpbml0aWFsLAogICAgICAgICAgICAiY2xvc2VkIjogaW50KF9zYWZlX2Zsb2F0KHJvdy5nZXQoImNsb3NlZF90cmFkZXMiKSkpLAogICAgICAgICAgICAib3BlbiI6IGludChfc2FmZV9mbG9hdChyb3cuZ2V0KCJvcGVuX3Bvc2l0aW9ucyIpKSksCiAgICAgICAgICAgICJwZiI6IF9zYWZlX2Zsb2F0KHJvdy5nZXQoInByb2ZpdF9mYWN0b3IiKSksCiAgICAgICAgfSkKCiAgICBsaW5lcyA9IFsiIiwgIvCfp6wgU1RSQVRFR0lFIENPTUJJTkFURSDigJQgU0hBRE9XIl0KICAgIGZvciBpdGVtIGluIHJvd3M6CiAgICAgICAgbGluZXMuYXBwZW5kKAogICAgICAgICAgICBmIntpdGVtWydsYWJlbCddfTogIgogICAgICAgICAgICBmIntfZm10X2V1cihpdGVtWydwbmwnXSwgc2lnbmVkPVRydWUpfSDCtyAiCiAgICAgICAgICAgIGYie2l0ZW1bJ2Nsb3NlZCddfSB0cmFkZSDCtyAiCiAgICAgICAgICAgIGYiUEYge19mbXRfbnVtKGl0ZW1bJ3BmJ10pfSDCtyAiCiAgICAgICAgICAgIGYie2l0ZW1bJ29wZW4nXX0gYXBlcnRpIgogICAgICAgICkKCiAgICBhY3RpdmUgPSBbCiAgICAgICAgaXRlbSBmb3IgaXRlbSBpbiByb3dzCiAgICAgICAgaWYgaXRlbVsiY2xvc2VkIl0gPiAwIG9yIGl0ZW1bIm9wZW4iXSA+IDAKICAgIF0KICAgIGlmIGFjdGl2ZToKICAgICAgICBiZXN0ID0gbWF4KGFjdGl2ZSwga2V5PWxhbWJkYSBpdGVtOiBpdGVtWyJwbmwiXSkKICAgICAgICBsaW5lcy5hcHBlbmQoCiAgICAgICAgICAgIGYiTWlnbGlvcmU6IHtiZXN0WydsYWJlbCddfSDCtyAiCiAgICAgICAgICAgIGYie19mbXRfZXVyKGJlc3RbJ3BubCddLCBzaWduZWQ9VHJ1ZSl9IgogICAgICAgICkKICAgIGVsc2U6CiAgICAgICAgbGluZXMuYXBwZW5kKCJBbmNvcmEgbmVzc3VuYSBvcGVyYXppb25lIGNvbWJpbmF0YS4iKQogICAgbGluZXMuYXBwZW5kKAogICAgICAgICJTb2xvIHBhcGVyIHNoYWRvdzsgbW92aW1lbnRpIGRldHRhZ2xpYXRpIG5hc2Nvc3RpLCAiCiAgICAgICAgInN0b3JpY28gY29tcGxldG8gY29uc2VydmF0by4iCiAgICApCiAgICByZXR1cm4gbGluZXMKCgpkZWYgYnVpbGRfZXZlbnRfbWVzc2FnZXMoc3VtbWFyeTogZGljdFtzdHIsIEFueV0pIC0+IGxpc3Rbc3RyXToK'), ('ICAgIG9wZW5lZCA9IGxpc3Qoc3VtbWFyeS5nZXQoIm9wZW5lZCIsIFtdKSkKICAgIGNsb3NlZCA9IGxpc3Qoc3VtbWFyeS5nZXQoImNsb3NlZCIsIFtdKSkKICAgIHRyYWlsaW5nID0gbGlzdChzdW1tYXJ5LmdldCgidHJhaWxpbmdfdXBkYXRlcyIsIFtdKSkKICAgIHJpc2tfYWxlcnRzID0gbGlzdChzdW1tYXJ5LmdldCgicmlza19hbGVydHMiLCBbXSkpCiAgICByaXNrX3JlY292ZXJpZXMgPSBsaXN0KHN1bW1hcnkuZ2V0KCJyaXNrX3JlY292ZXJpZXMiLCBbXSkpCg==', 'ICAgIG9wZW5lZCA9IFsKICAgICAgICByb3cgZm9yIHJvdyBpbiBzdW1tYXJ5LmdldCgib3BlbmVkIiwgW10pCiAgICAgICAgaWYgbm90IF9pc19jb21ibyhyb3cuZ2V0KCJwb3J0Zm9saW8iKSkKICAgIF0KICAgIGNsb3NlZCA9IFsKICAgICAgICByb3cgZm9yIHJvdyBpbiBzdW1tYXJ5LmdldCgiY2xvc2VkIiwgW10pCiAgICAgICAgaWYgbm90IF9pc19jb21ibyhyb3cuZ2V0KCJwb3J0Zm9saW8iKSkKICAgIF0KICAgIHRyYWlsaW5nID0gWwogICAgICAgIHJvdyBmb3Igcm93IGluIHN1bW1hcnkuZ2V0KCJ0cmFpbGluZ191cGRhdGVzIiwgW10pCiAgICAgICAgaWYgbm90IF9pc19jb21ibyhyb3cuZ2V0KCJwb3J0Zm9saW8iKSkKICAgIF0KICAgIHJpc2tfYWxlcnRzID0gWwogICAgICAgIHJvdyBmb3Igcm93IGluIHN1bW1hcnkuZ2V0KCJyaXNrX2FsZXJ0cyIsIFtdKQogICAgICAgIGlmIG5vdCBfaXNfY29tYm8ocm93LmdldCgicG9ydGZvbGlvIikpCiAgICBdCiAgICByaXNrX3JlY292ZXJpZXMgPSBbCiAgICAgICAgcm93IGZvciByb3cgaW4gc3VtbWFyeS5nZXQoInJpc2tfcmVjb3ZlcmllcyIsIFtdKQogICAgICAgIGlmIG5vdCBfaXNfY29tYm8ocm93LmdldCgicG9ydGZvbGlvIikpCiAgICBdCg=='), ('ICAgIG1ldHJpY3MgPSBwb3J0Zm9saW9fbWV0cmljcyhzdGF0ZSwgY29uZmlnKQogICAgaWYgbm90IG1ldHJpY3M6CiAgICAgICAgcmV0dXJuICLwn5K8IFJJRVBJTE9HTyBDT05USSDigJQgc3RhdG8gbm9uIGRpc3BvbmliaWxlIgoKICAgIGluaXRpYWwgPSBmbG9hdCgK', 'ICAgIGFsbF9tZXRyaWNzID0gcG9ydGZvbGlvX21ldHJpY3Moc3RhdGUsIGNvbmZpZykKICAgIGlmIG5vdCBhbGxfbWV0cmljczoKICAgICAgICByZXR1cm4gIvCfkrwgUklFUElMT0dPIENPTlRJIOKAlCBzdGF0byBub24gZGlzcG9uaWJpbGUiCgogICAgY29tYm9fbWV0cmljcyA9IFsKICAgICAgICByb3cgZm9yIHJvdyBpbiBhbGxfbWV0cmljcwogICAgICAgIGlmIF9pc19jb21ibyhyb3cuZ2V0KCJwb3J0Zm9saW8iKSkKICAgIF0KICAgIG1ldHJpY3MgPSBbCiAgICAgICAgcm93IGZvciByb3cgaW4gYWxsX21ldHJpY3MKICAgICAgICBpZiBub3QgX2lzX2NvbWJvKHJvdy5nZXQoInBvcnRmb2xpbyIpKQogICAgXQoKICAgIGluaXRpYWwgPSBmbG9hdCgK'), ('ICAgIGxpbmVzLmV4dGVuZChfb2ZmaWNpYWxfbGFiX2xpbmVzKG1ldHJpY3MsIGluaXRpYWwpKQogICAgbGluZXMuZXh0ZW5kKF9hdXhpbGlhcnlfbGFiX2xpbmVzKCkpCgogICAgcmV0dXJuICJcbiIuam9pbihsaW5lcykK', 'ICAgIGxpbmVzLmV4dGVuZChfb2ZmaWNpYWxfbGFiX2xpbmVzKG1ldHJpY3MsIGluaXRpYWwpKQogICAgbGluZXMuZXh0ZW5kKF9hdXhpbGlhcnlfbGFiX2xpbmVzKCkpCiAgICBsaW5lcy5leHRlbmQoX2NvbWJvX2xpbmVzKGNvbWJvX21ldHJpY3MsIGluaXRpYWwpKQoKICAgIHJldHVybiAiXG4iLmpvaW4obGluZXMpCg==')],
+          }
+
+          for filename, patches in patch_sets.items():
+              path = Path(filename)
+              source = path.read_text(encoding="utf-8")
+              for old64, new64 in patches:
+                  old = base64.b64decode(old64).decode("utf-8")
+                  new = base64.b64decode(new64).decode("utf-8")
+                  if new in source:
+                      continue
+                  if old not in source:
+                      raise SystemExit(
+                          f"{filename}: expected patch block not found"
+                      )
+                  source = source.replace(old, new, 1)
+              ast.parse(source, filename=filename)
+              path.write_text(source, encoding="utf-8")
+
+          config_path = Path("paper_trading_config.json")
+          config = json.loads(
+              config_path.read_text(encoding="utf-8")
+          )
+          additions = [{'name': 'SHADOW_COMBO_TREND', 'enabled': True, 'is_main': False, 'strategy': 'combo_trend', 'timeframe_minutes': 60, 'minimum_abs_score': 5.0, 'minimum_combo_votes': 2, 'scanner_top_n': 5, 'minimum_scanner_rank_score': 1.0, 'minimum_relative_strength_pct': 0.5, 'minimum_global_score': 4.0, 'minimum_exchange_alignment': 0.0, 'atr_stop_multiple': 2.0, 'reward_risk': 2.2, 'leverage': 2.0, 'max_holding_hours': 168, 'allow_long': True, 'allow_short': True, 'trailing_at_r': 1.1, 'trailing_atr_multiple': 1.5, 'max_open_positions': 3, 'max_same_direction_positions': 2, 'compact_shadow': True}, {'name': 'SHADOW_COMBO_MEAN_REVERSION', 'enabled': True, 'is_main': False, 'strategy': 'combo_mean_reversion', 'timeframe_minutes': 60, 'minimum_abs_score': 5.0, 'minimum_combo_votes': 2, 'atr_stop_multiple': 1.5, 'reward_risk': 1.6, 'leverage': 2.0, 'max_holding_hours': 72, 'allow_long': True, 'allow_short': True, 'trailing_at_r': 0.9, 'trailing_atr_multiple': 1.1, 'max_open_positions': 3, 'max_same_direction_positions': 2, 'compact_shadow': True}, {'name': 'SHADOW_COMBO_SCANNER', 'enabled': True, 'is_main': False, 'strategy': 'combo_scanner', 'timeframe_minutes': 60, 'minimum_abs_score': 5.0, 'minimum_combo_votes': 2, 'scanner_top_n': 5, 'minimum_scanner_rank_score': 1.0, 'maximum_scanner_rank_score': -1.0, 'minimum_relative_strength_pct': 0.5, 'minimum_global_score': 4.0, 'minimum_exchange_alignment': 0.0, 'atr_stop_multiple': 1.8, 'reward_risk': 2.2, 'leverage': 2.0, 'max_holding_hours': 144, 'allow_long': True, 'allow_short': True, 'trailing_at_r': 1.1, 'trailing_atr_multiple': 1.4, 'max_open_positions': 3, 'max_same_direction_positions': 2, 'compact_shadow': True}, {'name': 'SHADOW_COMBO_ADAPTIVE', 'enabled': True, 'is_main': False, 'strategy': 'combo_adaptive', 'timeframe_minutes': 60, 'minimum_abs_score': 5.0, 'minimum_combo_votes': 2, 'scanner_top_n': 5, 'minimum_scanner_rank_score': 1.0, 'maximum_scanner_rank_score': -1.0, 'minimum_relative_strength_pct': 0.5, 'minimum_global_score': 4.0, 'minimum_exchange_alignment': 0.0, 'atr_stop_multiple': 1.8, 'reward_risk': 2.0, 'leverage': 2.0, 'max_holding_hours': 144, 'allow_long': True, 'allow_short': True, 'trailing_at_r': 1.0, 'trailing_atr_multiple': 1.3, 'max_open_positions': 3, 'max_same_direction_positions': 2, 'compact_shadow': True}]
+          existing = {
+              str(item.get("name"))
+              for item in config.get("portfolios", [])
+          }
+          for item in additions:
+              if item["name"] not in existing:
+                  config.setdefault("portfolios", []).append(item)
+
+          config_path.write_text(
+              json.dumps(
+                  config,
+                  ensure_ascii=False,
+                  indent=2,
+              ) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Validate combined strategies
+        shell: bash
+        run: |
+          python -m pip install numpy pandas requests
+          python -m py_compile             paper_signal_engine.py             paper_trading_notify.py
+
+          python - <<'PY'
+          import json
+
+          import paper_signal_engine as signals
+          import paper_trading_notify as notify
+
+          config = json.loads(
+              open(
+                  "paper_trading_config.json",
+                  encoding="utf-8",
+              ).read()
+          )
+          names = {
+              item["name"]
+              for item in config["portfolios"]
+          }
+          required = {
+              "SHADOW_COMBO_TREND",
+              "SHADOW_COMBO_MEAN_REVERSION",
+              "SHADOW_COMBO_SCANNER",
+              "SHADOW_COMBO_ADAPTIVE",
+          }
+          assert required <= names
+          assert callable(signals.combined_strategy_score)
+          assert notify._is_combo("SHADOW_COMBO_TREND")
+          assert not notify._is_combo("MAIN")
+
+          sample = [
+              {
+                  "portfolio": "SHADOW_COMBO_TREND",
+                  "equity_eur": 10084,
+                  "closed_trades": 6,
+                  "open_positions": 1,
+                  "profit_factor": 1.42,
+              },
+              {
+                  "portfolio": "SHADOW_COMBO_ADAPTIVE",
+                  "equity_eur": 9990,
+                  "closed_trades": 2,
+                  "open_positions": 0,
+                  "profit_factor": 0.85,
+              },
+          ]
+          text = "\n".join(
+              notify._combo_lines(sample, 10000.0)
+          )
+          assert "Combo Trend" in text
+          assert "PF 1,42" in text
+          assert "Migliore" in text
+          print("PASS: 4 combined shadow strategies installed")
+          PY
+
+          git diff --check
+
+      - name: Commit combined strategies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email             "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add             paper_signal_engine.py             paper_trading_notify.py             paper_trading_config.json
+
+          git diff --cached --check
+
+          if git diff --cached --quiet; then
+            echo "Combined shadow strategies already installed."
+            exit 0
+          fi
+
+          git commit -m "Add combined shadow strategy family"
+          git pull --rebase origin main
+          git push origin HEAD:main
