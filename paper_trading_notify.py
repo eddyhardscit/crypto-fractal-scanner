@@ -535,7 +535,7 @@ def build_status_message(
     summary: dict[str, Any] | None = None,
 ) -> str:
     # Separate compact account summary for Telegram.
-    from paper_trading_report import portfolio_metrics
+    from paper_trading_report import load_trades, portfolio_metrics
 
     all_metrics = portfolio_metrics(state, config)
     if not all_metrics:
@@ -612,6 +612,73 @@ def build_status_message(
     total_closed_pnl = sum(
         float(row.get("net_pnl_closed_eur", 0.0))
         for row in metrics
+    )
+
+    total_closed_trades = sum(
+        int(_safe_float(row.get("closed_trades")))
+        for row in metrics
+    )
+    total_winning_trades = sum(
+        int(_safe_float(row.get("winning_trades")))
+        for row in metrics
+    )
+
+    # Quando il registro contiene tutte le chiusure, ricava da lì
+    # la distinzione esatta fra positive, negative e pareggi.
+    trade_log = load_trades()
+    pnl_values: list[float] = []
+
+    if not trade_log.empty and "net_pnl_eur" in trade_log.columns:
+        for value in trade_log["net_pnl_eur"].tolist():
+            try:
+                number = float(value)
+            except Exception:
+                continue
+            if math.isfinite(number):
+                pnl_values.append(number)
+
+    exact_breakdown = len(pnl_values) == total_closed_trades
+    epsilon = 1e-9
+
+    if exact_breakdown:
+        total_winning_trades = sum(
+            value > epsilon for value in pnl_values
+        )
+        total_losing_trades = sum(
+            value < -epsilon for value in pnl_values
+        )
+        total_breakeven_trades = sum(
+            abs(value) <= epsilon for value in pnl_values
+        )
+
+        gross_profit = sum(
+            value for value in pnl_values if value > epsilon
+        )
+        gross_loss = abs(sum(
+            value for value in pnl_values if value < -epsilon
+        ))
+        global_profit_factor = (
+            gross_profit / gross_loss
+            if gross_loss > 0
+            else (math.inf if gross_profit > 0 else 0.0)
+        )
+        stats_note = ""
+    else:
+        total_losing_trades = max(
+            0,
+            total_closed_trades - total_winning_trades,
+        )
+        total_breakeven_trades = 0
+        global_profit_factor = None
+        stats_note = (
+            "Nota: dettaglio positivo/negativo ricostruito dallo stato; "
+            "il registro storico non contiene ancora tutte le righe."
+        )
+
+    global_win_rate = (
+        total_winning_trades / total_closed_trades * 100.0
+        if total_closed_trades
+        else 0.0
     )
 
     lines = [
@@ -695,6 +762,28 @@ def build_status_message(
         ]
     )
 
+
+    lines.extend(
+        [
+            "",
+            "🎯 STORICO OPERAZIONI CHIUSE",
+            (
+                f"Totali {total_closed_trades} · "
+                f"positive {total_winning_trades} · "
+                f"negative {total_losing_trades} · "
+                f"pareggi {total_breakeven_trades}"
+            ),
+            (
+                f"Win rate {_fmt_pct(global_win_rate)} · "
+                f"Profit factor "
+                f"{_fmt_num(global_profit_factor) if global_profit_factor is not None else 'n/a'} · "
+                f"P/L netto {_fmt_eur(total_closed_pnl, signed=True)}"
+            ),
+        ]
+    )
+    if stats_note:
+        lines.append(stats_note)
+
     for name in ordered_names:
         row = by_name[name]
         number = account_number[name]
@@ -718,7 +807,8 @@ def build_status_message(
                     f"Impiegato "
                     f"{_fmt_eur(row.get('open_margin_eur'))} · "
                     f"Equity {_fmt_eur(equity)} · "
-                    f"aperte {row.get('open_positions', 0)}"
+                    f"aperte {row.get('open_positions', 0)} · "
+                    f"chiuse {int(_safe_float(row.get('closed_trades')))}"
                 ),
                 (
                     f"P/L aperto "
@@ -726,7 +816,9 @@ def build_status_message(
                     f"chiuso "
                     f"{_fmt_eur(row.get('net_pnl_closed_eur'), signed=True)} · "
                     f"totale "
-                    f"{_fmt_eur(total_pnl, signed=True)}"
+                    f"{_fmt_eur(total_pnl, signed=True)} · "
+                    f"WR {_fmt_pct(row.get('win_rate_pct', 0.0))} · "
+                    f"PF {_fmt_num(row.get('profit_factor', 0.0))}"
                 ),
             ]
         )
