@@ -54,5 +54,8 @@ jobs:
             reports/paper_trading_report.md
             reports/paper_trading_open_positions.csv
             reports/paper_trading_storage_status.json
+            reports/paper_trading_trade_path.csv
+            reports/paper_trading_exit_analysis.csv
+            reports/paper_trading_exit_analysis.md
           if-no-files-found: warn
           retention-days: 3
