@@ -244,12 +244,86 @@ def _auxiliary_lab_lines() -> list[str]:
     return lines
 
 
+COMBO_PREFIX = "SHADOW_COMBO_"
+COMBO_LABELS = {
+    "SHADOW_COMBO_TREND": "Combo Trend",
+    "SHADOW_COMBO_MEAN_REVERSION": "Combo Mean Reversion",
+    "SHADOW_COMBO_SCANNER": "Combo Scanner",
+    "SHADOW_COMBO_ADAPTIVE": "Combo Adaptive",
+}
+
+
+def _is_combo(name: Any) -> bool:
+    return str(name).startswith(COMBO_PREFIX)
+
+
+def _combo_lines(
+    metrics: list[dict[str, Any]],
+    initial: float,
+) -> list[str]:
+    rows = []
+    for row in metrics:
+        name = str(row.get("portfolio", ""))
+        equity = _safe_float(row.get("equity_eur"))
+        rows.append({
+            "name": name,
+            "label": COMBO_LABELS.get(name, name),
+            "pnl": equity - initial,
+            "closed": int(_safe_float(row.get("closed_trades"))),
+            "open": int(_safe_float(row.get("open_positions"))),
+            "pf": _safe_float(row.get("profit_factor")),
+        })
+
+    lines = ["", "🧬 STRATEGIE COMBINATE — SHADOW"]
+    for item in rows:
+        lines.append(
+            f"{item['label']}: "
+            f"{_fmt_eur(item['pnl'], signed=True)} · "
+            f"{item['closed']} trade · "
+            f"PF {_fmt_num(item['pf'])} · "
+            f"{item['open']} aperti"
+        )
+
+    active = [
+        item for item in rows
+        if item["closed"] > 0 or item["open"] > 0
+    ]
+    if active:
+        best = max(active, key=lambda item: item["pnl"])
+        lines.append(
+            f"Migliore: {best['label']} · "
+            f"{_fmt_eur(best['pnl'], signed=True)}"
+        )
+    else:
+        lines.append("Ancora nessuna operazione combinata.")
+    lines.append(
+        "Solo paper shadow; movimenti dettagliati nascosti, "
+        "storico completo conservato."
+    )
+    return lines
+
+
 def build_event_messages(summary: dict[str, Any]) -> list[str]:
-    opened = list(summary.get("opened", []))
-    closed = list(summary.get("closed", []))
-    trailing = list(summary.get("trailing_updates", []))
-    risk_alerts = list(summary.get("risk_alerts", []))
-    risk_recoveries = list(summary.get("risk_recoveries", []))
+    opened = [
+        row for row in summary.get("opened", [])
+        if not _is_combo(row.get("portfolio"))
+    ]
+    closed = [
+        row for row in summary.get("closed", [])
+        if not _is_combo(row.get("portfolio"))
+    ]
+    trailing = [
+        row for row in summary.get("trailing_updates", [])
+        if not _is_combo(row.get("portfolio"))
+    ]
+    risk_alerts = [
+        row for row in summary.get("risk_alerts", [])
+        if not _is_combo(row.get("portfolio"))
+    ]
+    risk_recoveries = [
+        row for row in summary.get("risk_recoveries", [])
+        if not _is_combo(row.get("portfolio"))
+    ]
     if (
         not opened
         and not closed
@@ -463,9 +537,18 @@ def build_status_message(
     # Separate compact account summary for Telegram.
     from paper_trading_report import portfolio_metrics
 
-    metrics = portfolio_metrics(state, config)
-    if not metrics:
+    all_metrics = portfolio_metrics(state, config)
+    if not all_metrics:
         return "💼 RIEPILOGO CONTI — stato non disponibile"
+
+    combo_metrics = [
+        row for row in all_metrics
+        if _is_combo(row.get("portfolio"))
+    ]
+    metrics = [
+        row for row in all_metrics
+        if not _is_combo(row.get("portfolio"))
+    ]
 
     initial = float(
         state.get(
@@ -650,6 +733,7 @@ def build_status_message(
 
     lines.extend(_official_lab_lines(metrics, initial))
     lines.extend(_auxiliary_lab_lines())
+    lines.extend(_combo_lines(combo_metrics, initial))
 
     return "\n".join(lines)
 

@@ -612,6 +612,282 @@ def scanner_family_score(
     return False, 0.0, []
 
 
+def combined_strategy_score(
+    strategy: str,
+    asset: str,
+    features: dict[str, Any],
+    ranking_by_asset: dict[str, dict[str, Any]],
+    global_rows: dict[str, dict[str, str]],
+    exchange_rows: dict[str, dict[str, str]],
+    portfolio: dict[str, Any],
+) -> tuple[bool, float, list[str]]:
+    """Consensus strategies built from existing independent modules."""
+    component_votes: list[tuple[str, float, list[str]]] = []
+
+    def add_vote(
+        label: str,
+        accepted: bool,
+        score: float,
+        reasons: list[str],
+    ) -> None:
+        if accepted and abs(score) > 0:
+            component_votes.append(
+                (label, score, reasons)
+            )
+
+    def consensus(
+        minimum_votes: int,
+        extra_reasons: list[str] | None = None,
+    ) -> tuple[bool, float, list[str]]:
+        long_votes = [
+            item for item in component_votes if item[1] > 0
+        ]
+        short_votes = [
+            item for item in component_votes if item[1] < 0
+        ]
+        selected = (
+            long_votes
+            if len(long_votes) > len(short_votes)
+            else short_votes
+        )
+        if len(selected) < minimum_votes:
+            return False, 0.0, []
+
+        direction = 1.0 if selected[0][1] > 0 else -1.0
+        magnitude = sum(abs(item[1]) for item in selected) / len(selected)
+        magnitude = max(5.0, min(9.5, magnitude))
+        reasons = [
+            f"{label}: {', '.join(details[:2])}"
+            for label, _, details in selected
+        ]
+        reasons.append(
+            f"consenso {len(selected)}/{len(component_votes)} moduli"
+        )
+        reasons.extend(extra_reasons or [])
+        return True, direction * magnitude, reasons
+
+    relative_blend = (
+        0.65 * float(features["relative_medium_pct"])
+        + 0.35 * float(features["relative_long_pct"])
+    )
+    global_row = global_rows.get(asset, {})
+    global_score = _safe_num(
+        global_row.get("global_score"),
+        0.0,
+    )
+    global_action = str(
+        global_row.get(
+            "action",
+            global_row.get("direction", ""),
+        )
+    ).upper()
+
+    if strategy in {"combo_trend", "combo_adaptive"}:
+        ema_ok, ema_score, ema_reasons = benchmark_strategy_score(
+            "ema_trend_following",
+            features,
+        )
+        add_vote("EMA", ema_ok, ema_score, ema_reasons)
+
+        don_ok, don_score, don_reasons = benchmark_strategy_score(
+            "donchian_breakout",
+            features,
+        )
+        add_vote(
+            "Donchian",
+            don_ok,
+            don_score,
+            don_reasons,
+        )
+
+        if abs(relative_blend) >= 1.0:
+            add_vote(
+                "Forza BTC",
+                True,
+                (
+                    max(5.0, min(8.0, 5.0 + abs(relative_blend) / 2.0))
+                    * (1.0 if relative_blend > 0 else -1.0)
+                ),
+                [f"forza relativa {relative_blend:+.2f}%"],
+            )
+
+        long_global = (
+            global_score >= 3.0
+            and any(
+                token in global_action
+                for token in ("LONG", "BUY", "RIALZ", "ACCUM")
+            )
+        )
+        short_global = (
+            global_score <= -3.0
+            and any(
+                token in global_action
+                for token in ("SHORT", "SELL", "RIBASS", "DISTRIB")
+            )
+        )
+        if long_global or short_global:
+            add_vote(
+                "Global",
+                True,
+                (
+                    max(5.0, min(9.0, 5.0 + abs(global_score) / 3.0))
+                    * (1.0 if long_global else -1.0)
+                ),
+                [f"Global {global_score:+.1f} {global_action}"],
+            )
+
+        if strategy == "combo_trend":
+            if float(features["adx14"]) < 18.0:
+                return False, 0.0, []
+            return consensus(
+                int(portfolio.get("minimum_combo_votes", 2)),
+                [f"ADX trend {float(features['adx14']):.1f}"],
+            )
+
+    if strategy in {"combo_mean_reversion", "combo_adaptive"}:
+        if strategy == "combo_adaptive":
+            component_votes.clear()
+
+        boll_ok, boll_score, boll_reasons = benchmark_strategy_score(
+            "bollinger_mean_reversion",
+            features,
+        )
+        add_vote(
+            "Bollinger",
+            boll_ok,
+            boll_score,
+            boll_reasons,
+        )
+
+        rsi_value = float(features["rsi14"])
+        if rsi_value <= 32.0:
+            add_vote(
+                "RSI",
+                True,
+                5.0 + min(2.5, (32.0 - rsi_value) / 5.0),
+                [f"RSI scarico {rsi_value:.1f}"],
+            )
+        elif rsi_value >= 68.0:
+            add_vote(
+                "RSI",
+                True,
+                -(5.0 + min(2.5, (rsi_value - 68.0) / 5.0)),
+                [f"RSI tirato {rsi_value:.1f}"],
+            )
+
+        zscore = float(features["bollinger_zscore"])
+        if abs(zscore) >= 1.6:
+            add_vote(
+                "Z-score",
+                True,
+                (
+                    -(5.0 + min(2.0, abs(zscore) - 1.0))
+                    if zscore > 0
+                    else 5.0 + min(2.0, abs(zscore) - 1.0)
+                ),
+                [f"z-score {zscore:+.2f}"],
+            )
+
+        if strategy == "combo_mean_reversion":
+            if float(features["adx14"]) > 25.0:
+                return False, 0.0, []
+            return consensus(
+                int(portfolio.get("minimum_combo_votes", 2)),
+                [f"ADX laterale {float(features['adx14']):.1f}"],
+            )
+
+    if strategy in {"combo_scanner", "combo_adaptive"}:
+        if strategy == "combo_adaptive":
+            component_votes.clear()
+
+        for source_strategy, label in (
+            ("scanner_top5_long", "Top 5"),
+            ("scanner_bottom5_short", "Bottom 5"),
+            ("scanner_top5_btc_strength", "Forza BTC"),
+            ("global_confluence_pure", "Global"),
+        ):
+            accepted, source_score, source_reasons = (
+                scanner_family_score(
+                    source_strategy,
+                    asset,
+                    features,
+                    ranking_by_asset,
+                    global_rows,
+                    exchange_rows,
+                    portfolio,
+                )
+            )
+            add_vote(
+                label,
+                accepted,
+                source_score,
+                source_reasons,
+            )
+
+        if strategy == "combo_scanner":
+            return consensus(
+                int(portfolio.get("minimum_combo_votes", 2)),
+                ["consenso scanner live"],
+            )
+
+    if strategy == "combo_adaptive":
+        adx_value = float(features["adx14"])
+
+        # Rebuild and delegate to the family suited to the regime.
+        delegated = dict(portfolio)
+        if adx_value >= 22.0:
+            delegated["minimum_combo_votes"] = max(
+                2,
+                int(portfolio.get("minimum_combo_votes", 2)),
+            )
+            accepted, value, reasons = combined_strategy_score(
+                "combo_trend",
+                asset,
+                features,
+                ranking_by_asset,
+                global_rows,
+                exchange_rows,
+                delegated,
+            )
+            if accepted:
+                return True, value, [
+                    "regime adattivo: TREND",
+                    *reasons,
+                ]
+        elif adx_value <= 18.0:
+            accepted, value, reasons = combined_strategy_score(
+                "combo_mean_reversion",
+                asset,
+                features,
+                ranking_by_asset,
+                global_rows,
+                exchange_rows,
+                delegated,
+            )
+            if accepted:
+                return True, value, [
+                    "regime adattivo: RANGE",
+                    *reasons,
+                ]
+        else:
+            accepted, value, reasons = combined_strategy_score(
+                "combo_scanner",
+                asset,
+                features,
+                ranking_by_asset,
+                global_rows,
+                exchange_rows,
+                delegated,
+            )
+            if accepted:
+                return True, value, [
+                    "regime adattivo: TRANSIZIONE",
+                    *reasons,
+                ]
+
+    return False, 0.0, []
+
+
 def strategy_accepts(
     strategy: str,
     side: str,
@@ -894,7 +1170,28 @@ def generate_signals(
                 "bollinger_mean_reversion",
                 "ema_trend_following",
             }
-            if strategy in scanner_strategies:
+            combo_strategies = {
+                "combo_trend",
+                "combo_mean_reversion",
+                "combo_scanner",
+                "combo_adaptive",
+            }
+            if strategy in combo_strategies:
+                accepted, score, reasons = combined_strategy_score(
+                    strategy,
+                    asset,
+                    features,
+                    scanner_ranking_by_asset,
+                    global_rows,
+                    exchange_rows,
+                    portfolio,
+                )
+                if not accepted or abs(score) < minimum_score:
+                    continue
+                reasons = reasons + [
+                    "conto shadow combinato",
+                ]
+            elif strategy in scanner_strategies:
                 accepted, score, reasons = scanner_family_score(
                     strategy,
                     asset,
@@ -1007,6 +1304,10 @@ def generate_signals(
                 + 0.35 * features["relative_long_pct"]
             )
             if strategy in benchmark_strategies:
+                reason = "; ".join(reasons)
+                signal_global_overlay = 0.0
+                signal_exchange_overlay = 0.0
+            elif strategy in combo_strategies:
                 reason = "; ".join(reasons)
                 signal_global_overlay = 0.0
                 signal_exchange_overlay = 0.0
