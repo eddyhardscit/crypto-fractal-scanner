@@ -1,0 +1,120 @@
+name: Test KuCoin Live Connection
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  kucoin-read-only-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      KUCOIN_LIVE_API_KEY: ${{ secrets.KUCOIN_LIVE_API_KEY }}
+      KUCOIN_LIVE_API_SECRET: ${{ secrets.KUCOIN_LIVE_API_SECRET }}
+      KUCOIN_LIVE_API_PASSPHRASE: ${{ secrets.KUCOIN_LIVE_API_PASSPHRASE }}
+
+    steps:
+      - name: Verify required secrets exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$KUCOIN_LIVE_API_KEY" || { echo "Missing KUCOIN_LIVE_API_KEY"; exit 1; }
+          test -n "$KUCOIN_LIVE_API_SECRET" || { echo "Missing KUCOIN_LIVE_API_SECRET"; exit 1; }
+          test -n "$KUCOIN_LIVE_API_PASSPHRASE" || { echo "Missing KUCOIN_LIVE_API_PASSPHRASE"; exit 1; }
+          echo "All three KuCoin secrets are available."
+
+      - name: Read KuCoin sub-account balances only
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64
+          import hashlib
+          import hmac
+          import json
+          import os
+          import time
+          import urllib.error
+          import urllib.request
+
+          api_key = os.environ["KUCOIN_LIVE_API_KEY"].strip()
+          api_secret = os.environ["KUCOIN_LIVE_API_SECRET"].strip()
+          api_passphrase = os.environ["KUCOIN_LIVE_API_PASSPHRASE"].strip()
+
+          method = "GET"
+          endpoint = "/api/v1/accounts"
+          timestamp = str(int(time.time() * 1000))
+
+          prehash = f"{timestamp}{method}{endpoint}"
+          signature = base64.b64encode(
+              hmac.new(
+                  api_secret.encode("utf-8"),
+                  prehash.encode("utf-8"),
+                  hashlib.sha256,
+              ).digest()
+          ).decode("utf-8")
+
+          encrypted_passphrase = base64.b64encode(
+              hmac.new(
+                  api_secret.encode("utf-8"),
+                  api_passphrase.encode("utf-8"),
+                  hashlib.sha256,
+              ).digest()
+          ).decode("utf-8")
+
+          request = urllib.request.Request(
+              "https://api.kucoin.com" + endpoint,
+              method=method,
+              headers={
+                  "KC-API-KEY": api_key,
+                  "KC-API-SIGN": signature,
+                  "KC-API-TIMESTAMP": timestamp,
+                  "KC-API-PASSPHRASE": encrypted_passphrase,
+                  "KC-API-KEY-VERSION": "2",
+                  "Content-Type": "application/json",
+                  "User-Agent": "crypto-fractal-scanner-read-only-test/1.0",
+              },
+          )
+
+          try:
+              with urllib.request.urlopen(request, timeout=20) as response:
+                  payload = json.loads(response.read().decode("utf-8"))
+          except urllib.error.HTTPError as exc:
+              body = exc.read().decode("utf-8", errors="replace")
+              print(f"KuCoin HTTP error: {exc.code}")
+              print(body[:1000])
+              raise SystemExit(1)
+          except Exception as exc:
+              print(f"Connection error: {type(exc).__name__}: {exc}")
+              raise SystemExit(1)
+
+          if payload.get("code") != "200000":
+              print("KuCoin rejected the authenticated request.")
+              print(json.dumps(payload, indent=2)[:1500])
+              raise SystemExit(1)
+
+          accounts = payload.get("data", [])
+          visible = []
+          for account in accounts:
+              currency = account.get("currency", "")
+              account_type = account.get("type", "")
+              balance = float(account.get("balance", 0) or 0)
+              available = float(account.get("available", 0) or 0)
+              holds = float(account.get("holds", 0) or 0)
+
+              if balance > 0 or currency in {"USDT", "SOL"}:
+                  visible.append({
+                      "currency": currency,
+                      "type": account_type,
+                      "balance": balance,
+                      "available": available,
+                      "holds": holds,
+                  })
+
+          print("Authenticated KuCoin connection successful.")
+          print("READ-ONLY endpoint used: GET /api/v1/accounts")
+          print("No order or transfer endpoint exists in this workflow.")
+          print(json.dumps(visible, indent=2))
+          PY
