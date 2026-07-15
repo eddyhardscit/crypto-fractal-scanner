@@ -41,6 +41,9 @@ SIGNAL_LOG_PATH = REPORTS_DIR / SIGNAL_LOG_NAME
 FILES = (
     "paper_trading_state.json",
     "paper_trading_trade_log.csv",
+    "paper_trading_trade_path.csv",
+    "paper_trading_exit_analysis.csv",
+    "paper_trading_exit_analysis.md",
     "paper_trading_trade_log_repair_status.json",
     "paper_trading_trade_log_quarantine.csv",
     "paper_trading_trade_log_before_repair.csv",
