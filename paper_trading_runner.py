@@ -38,10 +38,17 @@ from paper_trading_event_enrichment import enrich_opened_positions
 from paper_trading_notify import notify
 from paper_trading_open_positions_notify import send_open_positions_report
 from research_all_signals import run_research_cycle
+from strategy_dual_validation import build_dual_validation_report
 # DOGE_REJECTION_SHORT_IMPORT
 from doge_rejection_short import run_doge_rejection_cycle
 from doge_short_status_notify import send_doge_short_status
-from paper_trading_report import LATEST_REPORT_PATH, REPORT_PATH, render_report, replace_block
+from paper_trading_report import (
+    LATEST_REPORT_PATH,
+    REPORT_PATH,
+    portfolio_metrics,
+    render_report,
+    replace_block,
+)
 from telegram_scanner_notify import send_if_changed as send_scanner_if_changed
 
 LIVE_REPORT_PATH = Path("reports/paper_trading_live.md")
@@ -271,6 +278,20 @@ def main() -> None:
 
     current = datetime.now(timezone.utc)
     report = render_report(state, config)
+    dual_validation_result = build_dual_validation_report(
+        portfolio_metrics(state, config),
+        list(research_result.get("metrics", [])),
+    )
+    dual_validation_markdown = str(
+        dual_validation_result.get("report_markdown", "")
+    ).strip()
+    if dual_validation_markdown:
+        report = (
+            report.rstrip()
+            + "\n\n"
+            + dual_validation_markdown
+            + "\n"
+        )
     # DOGE_REJECTION_SHORT_REPORT_START
     doge_rejection_markdown = str(
         doge_rejection_result.get("report_markdown", "")
@@ -369,6 +390,17 @@ def main() -> None:
             "closed_this_cycle": research_result.get("closed_this_cycle", 0),
             "open_positions": research_result.get("open_positions", 0),
             "closed_trades": research_result.get("closed_trades", 0),
+        },
+        "strategy_dual_validation": {
+            "ready_for_live_review": dual_validation_result.get(
+                "ready_for_live_review", 0
+            ),
+            "status_counts": dual_validation_result.get(
+                "status_counts", {}
+            ),
+            "thresholds": dual_validation_result.get(
+                "thresholds", {}
+            ),
         },
         # DOGE_REJECTION_SHORT_PAYLOAD
         "doge_rejection_short": {
