@@ -1,2 +1,1 @@
-asset,direction,trigger_pct,cases_used,median_spike_before_low_pct,mean_spike_before_low_pct,p75_spike_before_low_pct,median_spike_day,median_low_day,median_dump_from_peak_pct,spike_5_rate,spike_10_rate,spike_15_rate,immediate_drop_rate
-DOGE,NEGATIVO / RIBASSISTA,80.0,32,0.5421139405707875,4.017436496153689,7.407143340996902,1.0,13.0,-32.76735658172832,28.125,15.625,6.25,3.125
+

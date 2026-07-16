@@ -1,6 +1,6 @@
 # Decisione operativa sintetica
 
-Generato: 2026-07-15 07:27 UTC
+Generato: 2026-07-16 10:02 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 
@@ -8,47 +8,47 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 
 | Asset | Global | Direzione | Spot | Long leva | Short leva | Max long | Max short | Rischio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | +5 | BULLISH | ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE | NO LONG A LEVA / ATTENDI SOPRA 67.248 $ | NO SHORT | nessuna | nessuna | MEDIO |
-| SOL | +2 | NEUTRALE / INCERTO | HOLD LEGGERO / ATTESA CONFERME | NO LONG A LEVA | NO SHORT | nessuna | nessuna | MOLTO ALTO |
-| DOGE | -5 | BEARISH | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | NO LONG A LEVA | SHORT SOLO DOPO SPIKE | nessuna | max 1x-2x isolated | MOLTO ALTO |
+| BTC | -1 | LEGGERMENTE BEARISH | NON INSEGUIRE / RIDUCI RISCHIO | NO LONG A LEVA / ATTENDI SOPRA 67.248 $ | NO SHORT | nessuna | nessuna | ALTO |
+| SOL | -6 | BEARISH | STAI FUORI / VENDI PARZIALE | NO LONG A LEVA | SHORT SOLO DOPO ROTTURA | nessuna | max 1x-2x isolated | MOLTO ALTO |
+| DOGE | -6 | BEARISH | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | NO LONG A LEVA | SHORT SOLO DOPO SPIKE | nessuna | max 1x-2x isolated | MOLTO ALTO |
 
 ## Lettura immediata
 
-- **BTC**: Global = **+5**, spot = **ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE**, long = **NO LONG A LEVA / ATTENDI SOPRA 67.248 $**, short = **NO SHORT**, rischio = **MEDIO**.
-- **SOL**: Global = **+2**, spot = **HOLD LEGGERO / ATTESA CONFERME**, long = **NO LONG A LEVA**, short = **NO SHORT**, rischio = **MOLTO ALTO**.
-- **DOGE**: Global = **-5**, spot = **STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE**, long = **NO LONG A LEVA**, short = **SHORT SOLO DOPO SPIKE**, rischio = **MOLTO ALTO**.
+- **BTC**: Global = **-1**, spot = **NON INSEGUIRE / RIDUCI RISCHIO**, long = **NO LONG A LEVA / ATTENDI SOPRA 67.248 $**, short = **NO SHORT**, rischio = **ALTO**.
+- **SOL**: Global = **-6**, spot = **STAI FUORI / VENDI PARZIALE**, long = **NO LONG A LEVA**, short = **SHORT SOLO DOPO ROTTURA**, rischio = **MOLTO ALTO**.
+- **DOGE**: Global = **-6**, spot = **STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE**, long = **NO LONG A LEVA**, short = **SHORT SOLO DOPO SPIKE**, rischio = **MOLTO ALTO**.
 
 ## Dettaglio logica
 
 ### BTC
 
-- Global Confluence: **+5**
-- Confluenza: **MODERATAMENTE POSITIVA**
-- Bias Global: **Costruttivo prudente**
-- Direzione decisionale: **BULLISH**
-- Azione spot dal Global: **ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE**
+- Global Confluence: **-1**
+- Confluenza: **DEBOLE / FRAGILE**
+- Bias Global: **Fragile**
+- Direzione decisionale: **LEGGERMENTE BEARISH**
+- Azione spot dal Global: **NON INSEGUIRE / RIDUCI RISCHIO**
 - Long leva: **NO LONG A LEVA / ATTENDI SOPRA 67.248 $**
 - Short leva: **NO SHORT**
-- Rischio: **MEDIO**
+- Rischio: **ALTO**
 - Conferme: Prima resistenza sopra 65.544; conferma del doppio minimo sopra 67.248.
 - Invalidazioni: Sotto 57.748 il quadro tecnico peggiora.
 
 ### SOL
 
-- Global Confluence: **+2**
-- Confluenza: **MISTA / PARZIALE**
-- Bias Global: **Neutrale / misto**
-- Direzione decisionale: **NEUTRALE / INCERTO**
-- Azione spot dal Global: **HOLD LEGGERO / ATTESA CONFERME**
+- Global Confluence: **-6**
+- Confluenza: **NEGATIVA**
+- Bias Global: **Ribassista**
+- Direzione decisionale: **BEARISH**
+- Azione spot dal Global: **STAI FUORI / VENDI PARZIALE**
 - Long leva: **NO LONG A LEVA**
-- Short leva: **NO SHORT**
+- Short leva: **SHORT SOLO DOPO ROTTURA**
 - Rischio: **MOLTO ALTO**
-- Conferme: Doppio minimo confermato recente finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 93,15 / 116,17, valide soltanto se rientra anche il gap frattale.
-- Invalidazioni: Allarmi sotto 73,80 / 64,42 / 62,19.
+- Conferme: Doppio minimo maturo finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 96,28 / 113,96, valide soltanto se rientra anche il gap frattale.
+- Invalidazioni: Allarmi sotto 72,15 / 64,42 / 62,19.
 
 ### DOGE
 
-- Global Confluence: **-5**
+- Global Confluence: **-6**
 - Confluenza: **NEGATIVA**
 - Bias Global: **Ribassista**
 - Direzione decisionale: **BEARISH**
@@ -65,6 +65,6 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.
 - **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.
 - **BTC leva** = nessun long a leva finché il prezzo snapshot non supera **67.248 $**; sotto quella soglia resta solo l'azione spot indicata dal Global.
-- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 4; EMA200 circa 113,14 $; upside verso EMA200 +45,65%. Non autorizza leva e non aggiunge punti automatici.
+- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 4; EMA200 circa 113,13 $; upside verso EMA200 +48,93%. Non autorizza leva e non aggiunge punti automatici.
 - **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.
 - Per SOL, se il Global è da **+3 in su**, la decisione non deve diventare bearish solo perché lo scanner grezzo a 30 giorni è incerto.
