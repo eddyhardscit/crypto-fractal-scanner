@@ -1,0 +1,113 @@
+name: Apply Fractal Boolean Fix Once
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Patch fractal tracker
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("fractal_path_tracker.py")
+          text = path.read_text(encoding="utf-8")
+
+          marker = "FRACTAL_BOOLEAN_DTYPE_FIX_V1"
+          if marker in text:
+              print("Fractal boolean fix already installed.")
+              raise SystemExit(0)
+
+          anchor = (
+              "    log = pd.concat([log, new_rows], "
+              "ignore_index=True, sort=False)\n"
+          )
+          if anchor not in text:
+              raise SystemExit("Projection-log anchor not found.")
+
+          fix_lines = [
+              "",
+              "    # FRACTAL_BOOLEAN_DTYPE_FIX_V1",
+              "    # Old CSV files may make these columns float64 when they",
+              "    # contain only NaN. Cast them explicitly before assigning",
+              "    # Python booleans with recent pandas versions.",
+              "    boolean_columns = (",
+              '        "checked",',
+              '        "inside_band",',
+              '        "inside_reanchored_band",',
+              '        "inside_anchored_band",',
+              "    )",
+              "",
+              "    def _nullable_bool(value):",
+              "        if pd.isna(value):",
+              "            return pd.NA",
+              "        text = str(value).strip().lower()",
+              '        if text in {"true", "1", "yes", "si", "sì"}:',
+              "            return True",
+              '        if text in {"false", "0", "no"}:',
+              "            return False",
+              "        return pd.NA",
+              "",
+              "    for column in boolean_columns:",
+              "        if column not in log.columns:",
+              "            log[column] = pd.Series(",
+              "                pd.NA,",
+              "                index=log.index,",
+              '                dtype="boolean",',
+              "            )",
+              "        else:",
+              "            log[column] = pd.array(",
+              "                [_nullable_bool(value) for value in log[column]],",
+              '                dtype="boolean",',
+              "            )",
+              "",
+          ]
+
+          text = text.replace(
+              anchor,
+              anchor + "\n".join(fix_lines),
+              1,
+          )
+          path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Validate fix
+        run: |
+          set -euxo pipefail
+          python -m pip install pandas
+          python -m py_compile fractal_path_tracker.py
+          grep -q "FRACTAL_BOOLEAN_DTYPE_FIX_V1"             fractal_path_tracker.py
+
+      - name: Commit fractal fix
+        run: |
+          set -euxo pipefail
+          git config user.name github-actions[bot]
+          git config user.email             41898282+github-actions[bot]@users.noreply.github.com
+
+          git add fractal_path_tracker.py
+
+          if git diff --cached --quiet; then
+            echo "Fractal fix already committed."
+          else
+            git commit -m "Fix fractal tracker boolean columns"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
