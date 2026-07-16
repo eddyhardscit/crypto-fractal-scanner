@@ -25,6 +25,10 @@ from paper_trading_sample_watch import (
     mark_milestones_sent,
     pending_milestone_notification,
 )
+from portfolio_sample_watch import (
+    mark_portfolio_notifications_sent,
+    pending_portfolio_notifications,
+)
 
 from research_sample_watch import (
     mark_research_notifications_sent,
@@ -855,6 +859,8 @@ def notify(
         "digest_sent": False,
         "sample_milestone_sent": False,
         "sample_milestones": [],
+        "portfolio_milestone_messages": 0,
+        "portfolio_milestones_sent": False,
         "research_milestone_messages": 0,
         "research_milestones_sent": False,
         "research_meta_ready_sent": False,
@@ -890,6 +896,22 @@ def notify(
             result["sample_milestones"] = (
                 reached_milestones
             )
+
+    portfolio_marks: dict[str, list[int]] = {}
+    if state is not None and config is not None:
+        (
+            portfolio_messages,
+            portfolio_marks,
+            portfolio_snapshot,
+        ) = pending_portfolio_notifications(
+            state,
+            config,
+        )
+        messages.extend(portfolio_messages)
+        result["portfolio_milestone_messages"] = len(
+            portfolio_messages
+        )
+        result["portfolio_snapshot"] = portfolio_snapshot
 
     research_marks: dict[str, Any] = {}
     if state is not None and config is not None:
@@ -957,6 +979,13 @@ def notify(
             reached_milestones,
         )
         result["sample_milestone_sent"] = True
+
+    if portfolio_marks and state is not None:
+        mark_portfolio_notifications_sent(
+            state,
+            portfolio_marks,
+        )
+        result["portfolio_milestones_sent"] = True
 
     if research_marks and state is not None:
         mark_research_notifications_sent(
