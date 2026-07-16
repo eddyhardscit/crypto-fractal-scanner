@@ -1,6 +1,6 @@
 # Sintesi finale di confluenza
 
-Generato: 2026-07-16 10:54 UTC
+Generato: 2026-07-16 11:23 UTC
 
 Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.
 
@@ -31,7 +31,7 @@ Nota exchange: **candidato massimo ±1, peso iniziale 0** e più conferme indipe
 | Asset | Punteggio | Confluenza | Bias | Affidabilità | Azione coerente | Conferme | Invalidazioni |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | BTC | +1 | MISTA / PARZIALE | Neutrale / misto | BASSA / RACCOLTA DATI | HOLD / ATTESA CONFERME | Prima resistenza sopra 65.544; conferma del doppio minimo sopra 67.248. | Sotto 57.748 il quadro tecnico peggiora. |
-| SOL | -6 | NEGATIVA | Ribassista | MEDIA | STAI FUORI / VENDI PARZIALE | Doppio minimo maturo finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 96,47 / 114,19, valide soltanto se rientra anche il gap frattale. | Allarmi sotto 72,29 / 64,42 / 62,19. |
+| SOL | -6 | NEGATIVA | Ribassista | MEDIA | STAI FUORI / VENDI PARZIALE | Doppio minimo maturo finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 96,38 / 114,08, valide soltanto se rientra anche il gap frattale. | Allarmi sotto 72,23 / 64,42 / 62,19. |
 | DOGE | -6 | NEGATIVA | Ribassista | MEDIA | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | Sopra 0.07923 migliora; sopra 0.07966 viene invalidato il pattern ribassista dominante. | Sotto 0.07107 il rischio ribassista aumenta. |
 
 ## Punteggi per modulo
@@ -68,7 +68,7 @@ Dettaglio moduli:
 - Fractal path: **0** — Non applicabile a questo asset.
 - RSI top-cycle: **0** — Non applicabile a questo asset.
 - Lifecycle EMA: **0** — Non applicabile a questo asset.
-- Exchange flow: **0** — Flow +1.00, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +0.75; exchange 3/3, copertura 100%, consenso bull 1, bear 0, divergenze 1, campioni 4h 2 su 2.30h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza BASSA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
+- Exchange flow: **0** — Flow +1.00, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +0.75; exchange 3/3, copertura 100%, consenso bull 2, bear 0, divergenze 0, campioni 4h 2 su 1.94h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza BASSA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
 - Futures: **0** — Lettura futures Leva alta, direzione mista, forza 3/5.
 - Daily change: **-1** — BTC: cambiamento forte in peggioramento rispetto a ieri.
 
@@ -94,17 +94,17 @@ Dettaglio moduli:
 - Scanner path: **0** — Controlli disponibili 6. Il cono previsionale inizia a essere valutabile, ma resta secondario.
 - Tecnico: **-3** — Score tecnico -7/12, verdetto ribassista tecnico, trend ribassista, struttura volatilità in espansione, divergenza nessuna, Wyckoff markdown / fase ribassista, pattern score +1 (rialzista Doppio minimo / MATURO; ribassista Doppio massimo / CANDIDATO). Fonte: technical_structure_metrics.csv.
 - Classic technical: **-1** — Score classico -7/12, verdetto RIBASSISTA / FRAGILE, stage STAGE 4 / MARKDOWN, struttura VOLATILITÀ IN ESPANSIONE, Wyckoff ACCUMULO POSSIBILE / RANGE BASSO, volatilità locale BASSO. Peso Global limitato a ±1 perché è un filtro di conferma.
-- Frattale SOL: **0** — Verdetto ANALOGIA DEBOLE / SCENARIO SECONDARIO, somiglianza strutturale +64,26%, aderenza live +61,23%, errore live +19,39%, gap corrente +16,75%, peso operativo 0, tracking STRUTTURA STABILE, fase FRATTALE SOLO DI CONTESTO, rischio ALTO.
-- Fractal path: **0** — Raccolta dati. Controlli disponibili 2, gap corrente +16,75%, errore live +19,39%. Servono almeno 5 controlli prima di pesare il percorso frattale.
+- Frattale SOL: **0** — Verdetto ANALOGIA DEBOLE / SCENARIO SECONDARIO, somiglianza strutturale +64,27%, aderenza live +61,24%, errore live +19,38%, gap corrente +16,64%, peso operativo 0, tracking STRUTTURA STABILE, fase FRATTALE SOLO DI CONTESTO, rischio ALTO.
+- Fractal path: **0** — Raccolta dati. Controlli disponibili 2, gap corrente +16,64%, errore live +19,38%. Servono almeno 5 controlli prima di pesare il percorso frattale.
 - RSI top-cycle: **0** — Rischio top-cycle RSI: BASSO.
-- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 4, bias SQUEEZE SETUP MODERATO, EMA200 113,13 $, upside EMA200 +48,62%, gap EMA50/EMA200 -2,17%, hit EMA200 12w +20,00%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
-- Exchange flow: **0** — Flow +1.00, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +1.50; exchange 3/3, copertura 100%, consenso bull 1, bear 0, divergenze 1, campioni 4h 2 su 2.30h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza BASSA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
+- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 4, bias SQUEEZE SETUP MODERATO, EMA200 113,13 $, upside EMA200 +48,64%, gap EMA50/EMA200 -2,17%, hit EMA200 12w +20,00%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
+- Exchange flow: **0** — Flow +1.00, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +1.50; exchange 3/3, copertura 100%, consenso bull 1, bear 1, divergenze 0, campioni 4h 2 su 1.94h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza BASSA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
 - Futures: **0** — Lettura futures Misto, forza 1/5.
 - Daily change: **-1** — SOL: cambiamento forte in peggioramento rispetto a ieri.
 
-Conferme: Doppio minimo maturo finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 96,47 / 114,19, valide soltanto se rientra anche il gap frattale.
+Conferme: Doppio minimo maturo finché mantiene 75,94; nuova conferma tecnica sopra 83,81; milestone analogiche 96,38 / 114,08, valide soltanto se rientra anche il gap frattale.
 
-Invalidazioni: Allarmi sotto 72,29 / 64,42 / 62,19.
+Invalidazioni: Allarmi sotto 72,23 / 64,42 / 62,19.
 
 ### DOGE
 
@@ -128,7 +128,7 @@ Dettaglio moduli:
 - Fractal path: **0** — Non applicabile a questo asset.
 - RSI top-cycle: **0** — Non applicabile a questo asset.
 - Lifecycle EMA: **0** — Non applicabile a questo asset.
-- Exchange flow: **0** — Flow +1.00, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +0.75; exchange 3/3, copertura 100%, consenso bull 2, bear 1, divergenze 0, campioni 4h 2 su 2.30h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza BASSA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
+- Exchange flow: **0** — Flow -2.00, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche -1.00; exchange 3/3, copertura 100%, consenso bull 0, bear 3, divergenze 0, campioni 4h 2 su 1.94h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE NEGATIVA / NON PESATA; confidenza BASSA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
 - Futures: **0** — Lettura futures Rischio sotto, forza 4/5.
 - Daily change: **0** — DOGE: nessun cambiamento forte in miglioramento rispetto a ieri.
 

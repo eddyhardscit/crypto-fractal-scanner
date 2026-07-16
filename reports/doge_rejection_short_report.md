@@ -3,7 +3,7 @@
 Simulazione separata **paper only**: capitale/margine iniziale **€3.600**, leva **5x**, esposizione iniziale **€18.000**. Non modifica i conti paper da €10.000 e non invia ordini reali.
 
 - Stato: **WAITING**
-- Prezzo DOGE: **0.07308**
+- Prezzo DOGE: **0.07303**
 - Pre-allarme: **0.0765**; zona armata: **0.0775**; trigger rejection: **0.078**
 - Invalidazione prima dell’entrata: chiusura 15m sopra **0.07966**
 
@@ -16,17 +16,17 @@ Simulazione separata **paper only**: capitale/margine iniziale **€3.600**, lev
 | Filtro | Valore | Stato |
 | --- | --- | --- |
 | Dati mercato | FRESH | OK |
-| Candela 15m | 23.0 min | OK |
-| Global DOGE | -5.0 | OK |
-| Classic raw | -1.0 | NO |
-| DOGE/BTC raw | -8.0 | OK |
+| Candela 15m | 19.4 min | OK |
+| Global DOGE | -6.0 | OK |
+| Classic raw | -6.0 | OK |
+| DOGE/BTC raw | -6.0 | OK |
 | Pattern ribassista | MATURO | OK |
-| BTC sotto filtro | 64096.3 | OK |
+| BTC sotto filtro | 64112.28 | OK |
 
 ### Ultima candela 15m valutata
 
-- Rejection accettata: **NO**; motivo: **trigger_touched, entry_not_chased, bearish_confirmation**
-- High **0.07321**; close **0.07313**; wick alta **66.7%**; volume **x0.40**
+- Rejection accettata: **NO**; motivo: **trigger_touched, entry_not_chased, upper_wick**
+- High **0.07327**; close **0.07312**; wick alta **0.0%**; volume **x0.20**
 
 ### Gestione
 
