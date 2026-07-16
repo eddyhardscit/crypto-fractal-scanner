@@ -13,6 +13,18 @@ import yfinance as yf
 
 
 from shared_market_snapshot import snapshot_price
+from scanner_forecast_shadow_calibration import (
+    SHADOW_LATEST_PATH,
+    SHADOW_METRICS_PATH,
+    build_shadow_cone,
+    build_shadow_snapshot_rows,
+    current_shadow_status_table,
+    evaluate_shadow_history,
+    plot_frozen_cone_review,
+    plot_shadow_cone,
+    shadow_metrics_table,
+    update_shadow_history,
+)
 REPORTS_DIR = "reports"
 MAIN_REPORT_PATH = os.path.join(REPORTS_DIR, "latest_report.md")
 
@@ -677,7 +689,7 @@ def format_accuracy_table(metrics):
     return pd.DataFrame(rows)
 
 
-def build_report(generated_at, latest_rows, metrics):
+def build_report(generated_at, latest_rows, metrics, shadow_metrics):
     lines = []
 
     lines.append(START_MARKER)
@@ -728,6 +740,66 @@ def build_report(generated_at, latest_rows, metrics):
         else:
             lines.append("Grafico non disponibile: dati insufficienti.")
 
+        historical_img = row.get("historical_chart_filename")
+        historical = row.get("historical_review") or {}
+        if historical_img:
+            lines.append("")
+            lines.append("#### Verifica storica e discrepanza")
+            lines.append("")
+            lines.append(
+                f"![Verifica storica cono {asset}]({historical_img})"
+            )
+            state = (
+                "COMPLETO 30/30g"
+                if historical.get("complete")
+                else (
+                    f"PARZIALE {historical.get('elapsed_days', 0)}/"
+                    f"{FORECAST_DAYS}g"
+                )
+            )
+            wide_state = (
+                "DENTRO p10-p90"
+                if historical.get("inside_p10_p90")
+                else "FUORI p10-p90"
+            )
+            central_state = (
+                "DENTRO p25-p75"
+                if historical.get("inside_p25_p75")
+                else "FUORI p25-p75"
+            )
+            lines.append("")
+            lines.append(
+                f"- Cono congelato il "
+                f"**{historical.get('snapshot_date', 'n/a')}**; "
+                f"verificato fino al "
+                f"**{historical.get('through_date', 'n/a')}**; "
+                f"stato **{state}**."
+            )
+            lines.append(
+                f"- Reale "
+                f"**{fmt_price(historical.get('latest_actual_price'), row.get('target_ticker'))}**; "
+                f"p50 previsto "
+                f"**{fmt_price(historical.get('latest_p50_price'), row.get('target_ticker'))}**; "
+                f"scarto "
+                f"**{fmt_pct(historical.get('latest_discrepancy_pct'))}**."
+            )
+            lines.append(
+                f"- Errore medio assoluto "
+                f"**{fmt_pct(historical.get('mean_abs_discrepancy_pct'))}**; "
+                f"massimo "
+                f"**{fmt_pct(historical.get('max_abs_discrepancy_pct'))}**; "
+                f"{wide_state}; {central_state}."
+            )
+
+        shadow_img = row.get("shadow_chart_filename")
+        if shadow_img:
+            lines.append("")
+            lines.append("#### Cono calibrato shadow")
+            lines.append("")
+            lines.append(
+                f"![Cono calibrato shadow {asset}]({shadow_img})"
+            )
+
         lines.append("")
 
     lines.append("## Accuratezza percorso scanner")
@@ -735,6 +807,34 @@ def build_report(generated_at, latest_rows, metrics):
 
     accuracy_table = format_accuracy_table(metrics)
     lines.append(accuracy_table.to_markdown(index=False))
+    lines.append("")
+
+    lines.append("## Calibratore shadow")
+    lines.append("")
+    lines.append(
+        "Il cono ufficiale resta grezzo e invariato. Il calibratore usa "
+        "soltanto previsioni passate già mature, campionate una volta a "
+        "settimana per ridurre la falsa indipendenza. Ogni orizzonte si "
+        "attiva a 30 controlli indipendenti: parte al 25% della correzione "
+        "stimata e cresce gradualmente fino al 100% a 100 controlli."
+    )
+    lines.append("")
+    shadow_status_table = current_shadow_status_table(latest_rows)
+    if shadow_status_table.empty:
+        lines.append("Nessuno stato shadow disponibile.")
+    else:
+        lines.append(shadow_status_table.to_markdown(index=False))
+    lines.append("")
+    lines.append("### Confronto fuori campione: grezzo vs shadow")
+    lines.append("")
+    shadow_table = shadow_metrics_table(shadow_metrics)
+    if shadow_table.empty:
+        lines.append(
+            "Nessun controllo fuori campione con calibratore attivo: "
+            "la raccolta è ancora in corso."
+        )
+    else:
+        lines.append(shadow_table.to_markdown(index=False))
     lines.append("")
 
     lines.append("## Come leggerlo")
@@ -819,9 +919,14 @@ def main():
             all_tickers.update(matches["similar_asset"].dropna().astype(str).tolist())
 
     data = download_price_data(all_tickers)
+    # SHADOW_CALIBRATION_NO_LEAKAGE_V1
+    # Only forecasts already saved before today's run can calibrate today's
+    # shadow cone. The official raw cone remains untouched.
+    prior_history = safe_read_csv(HISTORY_PATH)
 
     latest_rows = []
     snapshot_rows = []
+    shadow_snapshot_rows = []
 
     for target, matches in matches_by_target.items():
         short = asset_short(target)
@@ -848,6 +953,23 @@ def main():
 
         quant_price = add_price_levels(quant, current_price)
 
+        shadow_quant, shadow_status = build_shadow_cone(
+            target=target,
+            raw_quantiles=quant_price,
+            raw_history=prior_history,
+            data=data,
+        )
+        shadow_chart_path = plot_shadow_cone(
+            target=target,
+            shadow_quantiles=shadow_quant,
+            generated_date=generated_date,
+        )
+        shadow_chart_filename = (
+            os.path.basename(shadow_chart_path)
+            if shadow_chart_path
+            else None
+        )
+
         chart_path = plot_forecast_cone(
             target=target,
             quantiles_price=quant_price,
@@ -870,6 +992,8 @@ def main():
             "positive_cases": positive_cases,
             "q30": q30,
             "chart_filename": chart_filename,
+            "shadow_chart_filename": shadow_chart_filename,
+            "shadow_status": shadow_status,
         })
 
         asset_snapshot_rows = build_snapshot_rows(
@@ -879,6 +1003,14 @@ def main():
             generated_at=generated_at,
         )
         snapshot_rows.extend(asset_snapshot_rows)
+        shadow_snapshot_rows.extend(
+            build_shadow_snapshot_rows(
+                target=target,
+                shadow_quantiles=shadow_quant,
+                current_price=current_price,
+                generated_at=generated_at,
+            )
+        )
 
     latest_df = pd.DataFrame([
         {
@@ -906,11 +1038,41 @@ def main():
     ])
     latest_df.to_csv(LATEST_PATH, index=False)
 
+    shadow_latest = current_shadow_status_table(latest_rows)
+    shadow_latest.to_csv(SHADOW_LATEST_PATH, index=False)
+
     history = update_forecast_history(snapshot_rows)
+
+    for row in latest_rows:
+        historical_path, historical_review = plot_frozen_cone_review(
+            target=row["target_ticker"],
+            raw_history=history,
+            data=data,
+            forecast_days=FORECAST_DAYS,
+        )
+        row["historical_chart_filename"] = (
+            os.path.basename(historical_path)
+            if historical_path
+            else None
+        )
+        row["historical_review"] = historical_review
+
     metrics = evaluate_forecast_history(history, data)
     metrics.to_csv(METRICS_PATH, index=False)
 
-    report = build_report(generated_at, latest_rows, metrics)
+    shadow_history = update_shadow_history(shadow_snapshot_rows)
+    shadow_metrics = evaluate_shadow_history(
+        shadow_history,
+        data,
+    )
+    shadow_metrics.to_csv(SHADOW_METRICS_PATH, index=False)
+
+    report = build_report(
+        generated_at,
+        latest_rows,
+        metrics,
+        shadow_metrics,
+    )
 
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
         f.write(report)
