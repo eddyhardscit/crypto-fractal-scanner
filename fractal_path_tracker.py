@@ -636,6 +636,40 @@ def update_projection_log(
 
     log = pd.concat([log, new_rows], ignore_index=True, sort=False)
 
+    # FRACTAL_BOOLEAN_DTYPE_FIX_V1
+    # Old CSV files may make these columns float64 when they
+    # contain only NaN. Cast them explicitly before assigning
+    # Python booleans with recent pandas versions.
+    boolean_columns = (
+        "checked",
+        "inside_band",
+        "inside_reanchored_band",
+        "inside_anchored_band",
+    )
+
+    def _nullable_bool(value):
+        if pd.isna(value):
+            return pd.NA
+        text = str(value).strip().lower()
+        if text in {"true", "1", "yes", "si", "sì"}:
+            return True
+        if text in {"false", "0", "no"}:
+            return False
+        return pd.NA
+
+    for column in boolean_columns:
+        if column not in log.columns:
+            log[column] = pd.Series(
+                pd.NA,
+                index=log.index,
+                dtype="boolean",
+            )
+        else:
+            log[column] = pd.array(
+                [_nullable_bool(value) for value in log[column]],
+                dtype="boolean",
+            )
+
     for idx, row in log.iterrows():
         target_date = parse_date_any(row.get("target_date"))
         if target_date is None or latest_sol_date is None or target_date > latest_sol_date:
