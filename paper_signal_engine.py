@@ -962,11 +962,21 @@ def generate_signals(
                 "confluence_trend",
             )
         )
+        allowed_assets = {
+            str(value).upper().strip()
+            for value in portfolio.get("assets", [])
+            if str(value).strip()
+        }
 
         for asset, payload in bundle.get(
             "assets",
             {},
         ).items():
+            if (
+                allowed_assets
+                and str(asset).upper() not in allowed_assets
+            ):
+                continue
             frame = frames.get(asset, {}).get(timeframe)
             btc_frame = btc_frames.get(timeframe)
             features = compute_features(

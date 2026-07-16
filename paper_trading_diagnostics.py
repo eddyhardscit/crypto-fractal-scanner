@@ -378,7 +378,17 @@ def build_signal_diagnostics(
                 "confluence_trend",
             )
         )
+        allowed_assets = {
+            str(value).upper().strip()
+            for value in definition.get("assets", [])
+            if str(value).strip()
+        }
         for asset in sorted(bundle.get("assets", {})):
+            if (
+                allowed_assets
+                and str(asset).upper() not in allowed_assets
+            ):
+                continue
             frame = frames.get(asset, {}).get(timeframe)
             base = {
                 "portfolio": portfolio_name,
