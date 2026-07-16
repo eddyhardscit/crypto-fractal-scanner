@@ -1,7 +1,7 @@
 <!-- FRACTAL_PATH_TRACKER_START -->
 # Tracking percorso frattale SOL/BTC
 
-Generato: 2026-07-16 11:22 UTC
+Generato: 2026-07-16 15:05 UTC
 
 Questo modulo separa due percorsi che prima potevano essere confusi:
 
@@ -16,11 +16,11 @@ Questo modulo separa due percorsi che prima potevano essere confusi:
 - Bottom BTC equivalente: **2022-11-21**
 - Giorno BTC equivalente: **2022-12-31**
 - Inizio programma/scanner: **2026-07-03**
-- Prezzo SOL corrente: **76,03 $**
+- Prezzo SOL corrente: **76,30 $**
 - Verdetto principale: **ANALOGIA DEBOLE / SCENARIO SECONDARIO**
-- Somiglianza strutturale: **+64,27%**
-- Aderenza live principale: **+61,24%**
-- Errore medio live principale: **19,38%**
+- Somiglianza strutturale: **+64,24%**
+- Aderenza live principale: **+61,18%**
+- Errore medio live principale: **19,41%**
 - Peso operativo suggerito: **0**
 - Fase: **FRATTALE SOLO DI CONTESTO**
 - Rischio fase: **ALTO**
@@ -30,11 +30,11 @@ Questo modulo separa due percorsi che prima potevano essere confusi:
 - Giorno corrente dal bottom: **40**
 - Osservazioni inclusive dal bottom: **41**
 - Osservazioni da inizio programma/scanner: **14**
-- Errore assoluto medio dal bottom: **10,58%**
-- Errore assoluto medio da inizio programma: **19,38%**
-- Gap firmato medio ultimi 7 giorni: **+16,84%**
-- Errore assoluto medio ultimi 7 giorni: **16,84%**
-- Gap ultimo giorno: **+16,64%**
+- Errore assoluto medio dal bottom: **10,59%**
+- Errore assoluto medio da inizio programma: **19,41%**
+- Gap firmato medio ultimi 7 giorni: **+16,90%**
+- Errore assoluto medio ultimi 7 giorni: **16,90%**
+- Gap ultimo giorno: **+17,05%**
 - Stato aderenza: **STACCATO / MOLTO IN ANTICIPO**
 
 ## Grafico completo: due percorsi distinti
@@ -53,10 +53,10 @@ La linea **ancorata al bottom** serve a verificare il frattale originale. La lin
 
 ### Lettura rapida gap
 
-- Ultimo gap firmato: **+16,64%**
-- Gap firmato medio 7g: **+16,84%**
-- Errore assoluto medio 7g: **16,84%**
-- Variazione recente gap: **+1,83%**
+- Ultimo gap firmato: **+17,05%**
+- Gap firmato medio 7g: **+16,90%**
+- Errore assoluto medio 7g: **16,90%**
+- Variazione recente gap: **+2,24%**
 - Stato gap: **IN DEVIAZIONE SOPRA IL FRATTALE**
 - Trend gap: **SOL sta aumentando il distacco sopra il percorso ancorato**
 
@@ -80,30 +80,30 @@ Soglie operative del grafico:
 | 37 | 2026-07-13 | 2022-12-28 | 74,86 $ | 65,20 $ | +14,81% | da inizio programma |
 | 38 | 2026-07-14 | 2022-12-29 | 77,76 $ | 65,56 $ | +18,62% | da inizio programma |
 | 39 | 2026-07-15 | 2022-12-30 | 77,26 $ | 65,40 $ | +18,14% | da inizio programma |
-| 40 | 2026-07-16 | 2022-12-31 | 76,03 $ | 65,18 $ | +16,64% | da inizio programma |
+| 40 | 2026-07-16 | 2022-12-31 | 76,30 $ | 65,18 $ | +17,05% | da inizio programma |
 
 ## Proiezione futura salvata
 
 | Orizzonte   | Data target   | Percorso ancorato   | Scenario riancorato oggi   | Min/max riancorato   | Controllato   | Prezzo reale   | Errore riancorato   | Errore ancorato   |
 |:------------|:--------------|:--------------------|:---------------------------|:---------------------|:--------------|:---------------|:--------------------|:------------------|
-| 7g | 2026-07-23 | 66,79 $ | 77,90 $ | 76,03 $ / 77,90 $ | no | n/a | n/a | n/a |
-| 14g | 2026-07-30 | 82,63 $ | 96,38 $ | 76,03 $ / 96,38 $ | no | n/a | n/a | n/a |
-| 21g | 2026-08-06 | 89,73 $ | 104,66 $ | 76,03 $ / 104,66 $ | no | n/a | n/a | n/a |
-| 28g | 2026-08-13 | 90,72 $ | 105,82 $ | 76,03 $ / 106,22 $ | no | n/a | n/a | n/a |
-| 35g | 2026-08-20 | 91,91 $ | 107,20 $ | 76,03 $ / 109,24 $ | no | n/a | n/a | n/a |
-| 42g | 2026-08-27 | 86,15 $ | 100,49 $ | 76,03 $ / 109,24 $ | no | n/a | n/a | n/a |
-| 49g | 2026-09-03 | 97,07 $ | 113,22 $ | 76,03 $ / 113,22 $ | no | n/a | n/a | n/a |
-| 56g | 2026-09-10 | 91,29 $ | 106,48 $ | 76,03 $ / 114,08 $ | no | n/a | n/a | n/a |
-| 63g | 2026-09-17 | 88,06 $ | 102,71 $ | 76,03 $ / 114,08 $ | no | n/a | n/a | n/a |
-| 70g | 2026-09-24 | 81,28 $ | 94,80 $ | 76,03 $ / 114,08 $ | no | n/a | n/a | n/a |
-| 77g | 2026-10-01 | 106,22 $ | 123,90 $ | 76,03 $ / 126,00 $ | no | n/a | n/a | n/a |
-| 84g | 2026-10-08 | 108,31 $ | 126,33 $ | 76,03 $ / 130,18 $ | no | n/a | n/a | n/a |
-| 91g | 2026-10-15 | 111,92 $ | 130,54 $ | 76,03 $ / 130,85 $ | no | n/a | n/a | n/a |
-| 98g | 2026-10-22 | 110,09 $ | 128,41 $ | 76,03 $ / 130,85 $ | no | n/a | n/a | n/a |
-| 105g | 2026-10-29 | 119,43 $ | 139,30 $ | 76,03 $ / 140,07 $ | no | n/a | n/a | n/a |
-| 112g | 2026-11-05 | 109,58 $ | 127,81 $ | 76,03 $ / 140,07 $ | no | n/a | n/a | n/a |
-| 119g | 2026-11-12 | 115,22 $ | 134,39 $ | 76,03 $ / 140,07 $ | no | n/a | n/a | n/a |
-| 126g | 2026-11-19 | 113,86 $ | 132,81 $ | 76,03 $ / 140,07 $ | no | n/a | n/a | n/a |
+| 7g | 2026-07-23 | 66,79 $ | 78,18 $ | 76,30 $ / 78,18 $ | no | n/a | n/a | n/a |
+| 14g | 2026-07-30 | 82,63 $ | 96,72 $ | 76,30 $ / 96,72 $ | no | n/a | n/a | n/a |
+| 21g | 2026-08-06 | 89,73 $ | 105,03 $ | 76,30 $ / 105,03 $ | no | n/a | n/a | n/a |
+| 28g | 2026-08-13 | 90,72 $ | 106,20 $ | 76,30 $ / 106,60 $ | no | n/a | n/a | n/a |
+| 35g | 2026-08-20 | 91,91 $ | 107,58 $ | 76,30 $ / 109,62 $ | no | n/a | n/a | n/a |
+| 42g | 2026-08-27 | 86,15 $ | 100,85 $ | 76,30 $ / 109,62 $ | no | n/a | n/a | n/a |
+| 49g | 2026-09-03 | 97,07 $ | 113,62 $ | 76,30 $ / 113,62 $ | no | n/a | n/a | n/a |
+| 56g | 2026-09-10 | 91,29 $ | 106,86 $ | 76,30 $ / 114,49 $ | no | n/a | n/a | n/a |
+| 63g | 2026-09-17 | 88,06 $ | 103,07 $ | 76,30 $ / 114,49 $ | no | n/a | n/a | n/a |
+| 70g | 2026-09-24 | 81,28 $ | 95,14 $ | 76,30 $ / 114,49 $ | no | n/a | n/a | n/a |
+| 77g | 2026-10-01 | 106,22 $ | 124,34 $ | 76,30 $ / 126,45 $ | no | n/a | n/a | n/a |
+| 84g | 2026-10-08 | 108,31 $ | 126,78 $ | 76,30 $ / 130,65 $ | no | n/a | n/a | n/a |
+| 91g | 2026-10-15 | 111,92 $ | 131,00 $ | 76,30 $ / 131,31 $ | no | n/a | n/a | n/a |
+| 98g | 2026-10-22 | 110,09 $ | 128,87 $ | 76,30 $ / 131,31 $ | no | n/a | n/a | n/a |
+| 105g | 2026-10-29 | 119,43 $ | 139,80 $ | 76,30 $ / 140,57 $ | no | n/a | n/a | n/a |
+| 112g | 2026-11-05 | 109,58 $ | 128,27 $ | 76,30 $ / 140,57 $ | no | n/a | n/a | n/a |
+| 119g | 2026-11-12 | 115,22 $ | 134,86 $ | 76,30 $ / 140,57 $ | no | n/a | n/a | n/a |
+| 126g | 2026-11-19 | 113,86 $ | 133,28 $ | 76,30 $ / 140,57 $ | no | n/a | n/a | n/a |
 
 La colonna **Percorso ancorato** continua la scala dal bottom. La colonna **Scenario riancorato oggi** riparte dal prezzo corrente e non cancella, nei controlli, il gap gia accumulato.
 
@@ -111,7 +111,7 @@ La colonna **Percorso ancorato** continua la scala dal bottom. La colonna **Scen
 
 | Orizzonte   |   Controlli | Dentro banda riancorata   | Errore ass. riancorato   | Errore ass. ancorato   |
 |:------------|------------:|:--------------------------|:-------------------------|:-----------------------|
-| 7g | 2 | 0,00% | 0,70% | n/a |
+| 7g | 2 | 0,00% | 0,35% | n/a |
 | 14g | 0 | n/a | n/a | n/a |
 | 21g | 0 | n/a | n/a | n/a |
 | 28g | 0 | n/a | n/a | n/a |
