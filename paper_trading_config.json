@@ -65,15 +65,15 @@
   "profit_protection": [
     {
       "target_progress": 0.5,
-      "risk_multiplier": 0.8
+      "risk_multiplier": 1.0
     },
     {
       "target_progress": 0.83,
-      "risk_multiplier": 0.6
+      "risk_multiplier": 1.0
     },
     {
       "target_progress": 1.0,
-      "risk_multiplier": 0.4
+      "risk_multiplier": 1.0
     }
   ],
   "portfolios": [
