@@ -158,6 +158,37 @@
       "trailing_atr_multiple": 1.5
     },
     {
+      "name": "SHADOW_RELATIVE_STRENGTH_V2",
+      "enabled": true,
+      "is_main": false,
+      "strategy": "relative_strength_v2",
+      "timeframe_minutes": 60,
+      "minimum_abs_score": 5.5,
+      "atr_stop_multiple": 1.8,
+      "reward_risk": 2.2,
+      "leverage": 2.0,
+      "max_holding_hours": 168,
+      "allow_long": true,
+      "allow_short": true,
+      "trailing_at_r": 1.1,
+      "trailing_atr_multiple": 1.5,
+      "minimum_relative_strength_pct": 3.0,
+      "minimum_adx": 18.0,
+      "long_rsi_min": 52.0,
+      "long_rsi_max": 72.0,
+      "short_rsi_min": 28.0,
+      "short_rsi_max": 48.0,
+      "excluded_regimes": [
+        "RANGE_HIGH_VOL"
+      ],
+      "block_short_in_broad_bullish_market": true,
+      "broad_bullish_btc_trend_score": 2.0,
+      "broad_bullish_breadth_above_ema50_pct": 55.0,
+      "broad_bullish_alt_relative_median_pct": 0.0,
+      "max_signals_per_candle_side": 2,
+      "research_version": 2
+    },
+    {
       "enabled": true,
       "is_main": false,
       "strategy": "rsi_extreme_reversal",

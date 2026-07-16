@@ -89,6 +89,15 @@ def profile_name(portfolio: str) -> str:
     return raw
 
 
+# RESEARCH_PROFILE_LABELS_V2
+def research_profile_label(profile: Any) -> str:
+    labels = {
+        "SHADOW_RELATIVE_STRENGTH": "Forza relativa 1H V1",
+        "SHADOW_RELATIVE_STRENGTH_V2": "Forza relativa 1H V2",
+    }
+    return labels.get(str(profile), str(profile))
+
+
 def _empty_state() -> dict[str, Any]:
     current = now_utc().isoformat(
         timespec="seconds"
@@ -1032,7 +1041,7 @@ def render_report(
     for row in metrics:
         lines.append(
             (
-                f"| {row['profile']} | {row['open']} | "
+                f"| {research_profile_label(row['profile'])} | {row['open']} | "
                 f"{row['closed']} | "
                 f"{row['independent_events']} | "
                 f"{fmt(row['win_rate_pct'])}% | "
@@ -1069,7 +1078,7 @@ def render_report(
     for row in regime_matrix:
         lines.append(
             (
-                f"| {row['profile']} | {row['regime']} | "
+                f"| {research_profile_label(row['profile'])} | {row['regime']} | "
                 f"{row['open']} | {row['closed']} | "
                 f"{row['independent_events']} | "
                 f"{fmt(row['win_rate_pct'])}% | "

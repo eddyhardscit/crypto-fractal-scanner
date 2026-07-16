@@ -15,6 +15,7 @@ import pandas as pd
 
 from kucoin_public_data import bundle_frames, safe_float
 from paper_rsi_extreme_scalping import extreme_reversal_setup
+from market_regime_tagger import classify_market_regime
 
 REPORTS_DIR = Path("reports")
 GLOBAL_METRICS_PATH = REPORTS_DIR / "global_confluence_metrics.csv"
@@ -888,6 +889,133 @@ def combined_strategy_score(
     return False, 0.0, []
 
 
+
+# RELATIVE_STRENGTH_V2_RULES_V2
+def relative_strength_v2_accepts(
+    side: str,
+    features: dict[str, Any],
+    portfolio: dict[str, Any],
+    market_context: dict[str, Any],
+) -> bool:
+    relative = (
+        0.65 * float(features["relative_medium_pct"])
+        + 0.35 * float(features["relative_long_pct"])
+    )
+    minimum_relative = float(
+        portfolio.get("minimum_relative_strength_pct", 3.0)
+    )
+    if float(features["adx14"]) < float(
+        portfolio.get("minimum_adx", 18.0)
+    ):
+        return False
+
+    regime = str(market_context.get("regime", "UNKNOWN")).upper()
+    excluded = {
+        str(value).upper()
+        for value in portfolio.get("excluded_regimes", ["RANGE_HIGH_VOL"])
+    }
+    if regime in excluded:
+        return False
+
+    price = float(features["price"])
+    ema20_value = float(features["ema20"])
+    ema50_value = float(features["ema50"])
+    rsi_value = float(features["rsi14"])
+    ret_short = float(features["ret_short_pct"])
+    ret_medium = float(features["ret_medium_pct"])
+
+    if side == "LONG":
+        return (
+            relative >= minimum_relative
+            and price > ema20_value > ema50_value
+            and ret_short > 0.0
+            and ret_medium > 0.0
+            and float(portfolio.get("long_rsi_min", 52.0))
+            <= rsi_value
+            <= float(portfolio.get("long_rsi_max", 72.0))
+        )
+
+    context_features = dict(market_context.get("features", {}))
+    broad_bullish = (
+        float(context_features.get("btc_trend_score", 0.0))
+        >= float(portfolio.get("broad_bullish_btc_trend_score", 2.0))
+        and float(context_features.get("breadth_above_ema50_pct", 0.0))
+        >= float(
+            portfolio.get(
+                "broad_bullish_breadth_above_ema50_pct",
+                55.0,
+            )
+        )
+        and float(context_features.get("alt_relative_median_pct", 0.0))
+        >= float(
+            portfolio.get(
+                "broad_bullish_alt_relative_median_pct",
+                0.0,
+            )
+        )
+    )
+    if portfolio.get("block_short_in_broad_bullish_market", True) and broad_bullish:
+        return False
+
+    return (
+        relative <= -minimum_relative
+        and price < ema20_value < ema50_value
+        and ret_short < 0.0
+        and ret_medium < 0.0
+        and float(portfolio.get("short_rsi_min", 28.0))
+        <= rsi_value
+        <= float(portfolio.get("short_rsi_max", 48.0))
+    )
+
+
+def apply_signal_caps(
+    signals: list[Signal],
+    config: dict[str, Any],
+) -> list[Signal]:
+    definitions = {
+        str(row.get("name")): row
+        for row in config.get("portfolios", [])
+    }
+    keep: set[int] = set()
+    grouped: dict[
+        tuple[str, str, str],
+        list[tuple[int, Signal]],
+    ] = {}
+
+    for index, signal in enumerate(signals):
+        definition = definitions.get(str(signal.portfolio), {})
+        limit = int(definition.get("max_signals_per_candle_side", 0) or 0)
+        if limit <= 0:
+            keep.add(index)
+            continue
+        key = (
+            str(signal.portfolio),
+            str(signal.candle_time),
+            str(signal.side),
+        )
+        grouped.setdefault(key, []).append((index, signal))
+
+    for rows in grouped.values():
+        definition = definitions.get(str(rows[0][1].portfolio), {})
+        limit = int(definition.get("max_signals_per_candle_side", 0) or 0)
+        ranked = sorted(
+            rows,
+            key=lambda item: (
+                abs(float(item[1].relative_strength_score)),
+                abs(float(item[1].score)),
+                str(item[1].asset),
+            ),
+            reverse=True,
+        )
+        keep.update(index for index, _ in ranked[:limit])
+
+    return [
+        signal
+        for index, signal in enumerate(signals)
+        if index in keep
+    ]
+
+
 def strategy_accepts(
     strategy: str,
     side: str,
@@ -928,6 +1056,7 @@ def generate_signals(
     )
     btc_frames = frames.get("BTC", {})
     signals: list[Signal] = []
+    market_context = classify_market_regime(bundle)
 
     scanner_features_1h: dict[str, dict[str, Any]] = {}
     for asset in bundle.get("assets", {}):
@@ -1247,7 +1376,15 @@ def generate_signals(
                 and not portfolio.get("allow_short", True)
             ):
                 continue
-            if not strategy_accepts(
+            if strategy == "relative_strength_v2":
+                if not relative_strength_v2_accepts(
+                    side,
+                    features,
+                    portfolio,
+                    market_context,
+                ):
+                    continue
+            elif not strategy_accepts(
                 strategy,
                 side,
                 features,
@@ -1297,18 +1434,32 @@ def generate_signals(
                 portfolio.get("reward_risk", 2.0)
             )
             candle_time = features["candle_time"]
-            experiment_group = deterministic_id(
-                asset,
-                timeframe,
-                candle_time,
-                side,
-                "market_event",
-            )
-            signal_id = deterministic_id(
-                portfolio["name"],
-                strategy,
-                experiment_group,
-            )
+            if strategy == "relative_strength_v2":
+                experiment_group = deterministic_id(
+                    timeframe,
+                    candle_time,
+                    side,
+                    "relative_strength_v2_market_episode",
+                )
+                signal_id = deterministic_id(
+                    portfolio["name"],
+                    strategy,
+                    asset,
+                    experiment_group,
+                )
+            else:
+                experiment_group = deterministic_id(
+                    asset,
+                    timeframe,
+                    candle_time,
+                    side,
+                    "market_event",
+                )
+                signal_id = deterministic_id(
+                    portfolio["name"],
+                    strategy,
+                    experiment_group,
+                )
             relative_blend = (
                 0.65 * features["relative_medium_pct"]
                 + 0.35 * features["relative_long_pct"]
@@ -1414,5 +1565,4 @@ def generate_signals(
                     ),
                 )
             )
-    return signals
-
+    return apply_signal_caps(signals, config)

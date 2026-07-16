@@ -167,6 +167,19 @@ def load_state(config: dict[str, Any], when: datetime | None = None) -> dict[str
         state.setdefault("portfolios", {})
         if portfolio["name"] not in state["portfolios"]:
             state["portfolios"][portfolio["name"]] = new_portfolio_state(portfolio, capital, current)
+    # CONFIG_PORTFOLIO_ORDER_V2
+    existing_portfolios = dict(state.setdefault("portfolios", {}))
+    ordered_portfolios: dict[str, Any] = {}
+    for definition in config.get("portfolios", []):
+        if not definition.get("enabled", True):
+            continue
+        name = str(definition.get("name", ""))
+        if name in existing_portfolios:
+            ordered_portfolios[name] = existing_portfolios[name]
+    for name, value in existing_portfolios.items():
+        if name not in ordered_portfolios:
+            ordered_portfolios[name] = value
+    state["portfolios"] = ordered_portfolios
     state["config_snapshot"] = public_config_snapshot(config)
     return state
 

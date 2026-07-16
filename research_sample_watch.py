@@ -19,6 +19,7 @@ CORE_PROFILES = [
     "SHADOW_1H_FAST",
     "SHADOW_4H_WIDE",
     "SHADOW_RELATIVE_STRENGTH",
+    "SHADOW_RELATIVE_STRENGTH_V2",
 ]
 
 PROFILE_LABELS = {
@@ -26,7 +27,8 @@ PROFILE_LABELS = {
     "SHADOW_1H_BALANCED": "Bilanciata 1H",
     "SHADOW_1H_FAST": "Rapida 1H",
     "SHADOW_4H_WIDE": "Ampia 4H",
-    "SHADOW_RELATIVE_STRENGTH": "Forza relativa 1H",
+    "SHADOW_RELATIVE_STRENGTH": "Forza relativa 1H V1",
+    "SHADOW_RELATIVE_STRENGTH_V2": "Forza relativa 1H V2",
     "RSI_EXTREME_LONG_15M": "Scalp RSI Long 15m",
     "RSI_EXTREME_SHORT_15M": "Scalp RSI Short 15m",
 }

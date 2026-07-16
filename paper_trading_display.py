@@ -13,7 +13,8 @@ PORTFOLIO_LABELS = {
     "SHADOW_1H_BALANCED": "Bilanciata 1H",
     "SHADOW_1H_FAST": "Rapida 1H",
     "SHADOW_4H_WIDE": "Ampia 4H",
-    "SHADOW_RELATIVE_STRENGTH": "Forza relativa 1H",
+    "SHADOW_RELATIVE_STRENGTH": "Forza relativa 1H V1",
+    "SHADOW_RELATIVE_STRENGTH_V2": "Forza relativa 1H V2",
     "SHADOW_RSI_LONG_15X_10": "Scalp RSI Long €10 · 15x",
     "SHADOW_RSI_LONG_15X_50": "Scalp RSI Long €50 · 15x",
     "SHADOW_RSI_LONG_5X": "Scalp RSI Long prudente 5x",
@@ -44,7 +45,10 @@ PORTFOLIO_DESCRIPTIONS = {
         "Test a 4 ore con stop più ampio, leva inferiore e durata maggiore."
     ),
     "SHADOW_RELATIVE_STRENGTH": (
-        "Test a 1 ora che seleziona forza o debolezza rispetto a Bitcoin."
+        "Versione originale V1 a 1 ora basata sulla forza o debolezza rispetto a Bitcoin."
+    ),
+    "SHADOW_RELATIVE_STRENGTH_V2": (
+        "Versione V2 più selettiva: forza vs BTC, trend USDT, RSI, ADX, regime e massimo due segnali per direzione nella stessa candela."
     ),
     "SHADOW_RSI_LONG_15X_10": (
         "Scalp long 15m dopo capitolazione RSI confermata; margine fisso €10 e leva paper 15x."
@@ -90,7 +94,8 @@ PORTFOLIO_DESCRIPTIONS = {
 STRATEGY_LABELS = {
     "confluence_trend": "Confluenza trend",
     "momentum_breakout": "Momentum / breakout",
-    "relative_strength": "Forza relativa vs BTC",
+    "relative_strength": "Forza relativa vs BTC V1",
+    "relative_strength_v2": "Forza relativa vs BTC V2",
     "rsi_extreme_reversal": "Inversione RSI estrema 15m",
     "donchian_breakout": "Donchian breakout 20 barre",
     "bollinger_mean_reversion": "Bollinger mean reversion",
