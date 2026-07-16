@@ -469,12 +469,12 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
                 ),
                 fmt_minutes(
                     item.get(
-                        "max_candle_age_minutes"
+                        "max_close_delay_minutes"
                     )
                 ),
                 fmt_minutes(
                     item.get(
-                        "allowed_age_minutes"
+                        "grace_minutes"
                     )
                 ),
                 item.get("status", "UNKNOWN"),
@@ -489,8 +489,8 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
                         "Asset con dati",
                         "Candela più recente",
                         "Candela più vecchia",
-                        "Età massima",
-                        "Limite",
+                        "Ritardo dopo chiusura",
+                        "Tolleranza",
                         "Stato",
                     ],
                     timeframe_rows,
@@ -534,7 +534,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
                 row.get("status", ""),
                 fmt_minutes(
                     row.get(
-                        "candle_age_minutes"
+                        "close_delay_minutes"
                     )
                 ),
                 row.get(
@@ -557,7 +557,7 @@ def render_report(state: dict[str, Any], config: dict[str, Any]) -> str:
                         "Soglia",
                         "Manca",
                         "Stato",
-                        "Età candela",
+                        "Ritardo chiusura",
                         "RSI D/W (peso 0)",
                         "Motivo",
                     ],

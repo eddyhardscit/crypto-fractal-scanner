@@ -39,7 +39,12 @@
     "illiquid_slippage_bps": 6.0,
     "funding_interval_hours": 8,
     "same_candle_stop_target_policy": "STOP_FIRST",
-    "stale_data_minutes": 25
+    "stale_data_minutes": 25,
+    "candle_grace_minutes_by_timeframe": {
+      "15": 25,
+      "60": 45,
+      "240": 60
+    }
   },
   "risk": {
     "risk_per_trade": 0.005,

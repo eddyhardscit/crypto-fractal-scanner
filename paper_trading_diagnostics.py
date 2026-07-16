@@ -105,6 +105,29 @@ def _age_minutes(
     )
 
 
+# CANDLE_GRACE_BY_TIMEFRAME_V1
+def _candle_grace_minutes(
+    config: dict[str, Any],
+    timeframe: int,
+) -> float:
+    execution = dict(config.get("execution", {}))
+    mapping = execution.get(
+        "candle_grace_minutes_by_timeframe",
+        {},
+    )
+    value = None
+    if isinstance(mapping, dict):
+        value = mapping.get(str(timeframe))
+        if value is None:
+            value = mapping.get(timeframe)
+    if value is None:
+        value = execution.get("stale_data_minutes", 25)
+    try:
+        return max(0.0, float(value))
+    except Exception:
+        return 25.0
+
+
 def annotate_market_freshness(
     bundle: dict[str, Any],
     config: dict[str, Any],
@@ -210,12 +233,6 @@ def _timeframe_summary(
     current: datetime,
     config: dict[str, Any],
 ) -> dict[str, Any]:
-    grace = float(
-        config.get("execution", {}).get(
-            "stale_data_minutes",
-            25,
-        )
-    )
     requested = sorted(
         {
             int(value)
@@ -230,6 +247,10 @@ def _timeframe_summary(
     )
     output: dict[str, Any] = {}
     for timeframe in requested:
+        grace = _candle_grace_minutes(
+            config,
+            timeframe,
+        )
         latest_values: list[datetime] = []
         for asset_frames in frames.values():
             frame = asset_frames.get(timeframe)
@@ -245,7 +266,9 @@ def _timeframe_summary(
                 "latest_closed_candle_utc": "n/a",
                 "oldest_closed_candle_utc": "n/a",
                 "max_candle_age_minutes": None,
+                "max_close_delay_minutes": None,
                 "allowed_age_minutes": timeframe + grace,
+                "grace_minutes": grace,
                 "status": "NO_DATA",
             }
             continue
@@ -255,6 +278,10 @@ def _timeframe_summary(
             0.0,
             (current - oldest).total_seconds()
             / 60.0,
+        )
+        close_delay = max(
+            0.0,
+            max_age - timeframe,
         )
         allowed_age = timeframe + grace
         output[str(timeframe)] = {
@@ -267,7 +294,9 @@ def _timeframe_summary(
                 timespec="seconds"
             ),
             "max_candle_age_minutes": max_age,
+            "max_close_delay_minutes": close_delay,
             "allowed_age_minutes": allowed_age,
+            "grace_minutes": grace,
             "status": (
                 "OK"
                 if max_age <= allowed_age
@@ -523,14 +552,15 @@ def build_signal_diagnostics(
                 candle_time,
                 checked,
             )
-            allowed_candle_age = (
-                timeframe
-                + float(
-                    config.get("execution", {}).get(
-                        "stale_data_minutes",
-                        25,
-                    )
-                )
+            candle_grace = _candle_grace_minutes(
+                config,
+                timeframe,
+            )
+            allowed_candle_age = timeframe + candle_grace
+            close_delay = (
+                max(0.0, candle_age - timeframe)
+                if candle_age is not None
+                else None
             )
             relative = (
                 0.65
@@ -580,15 +610,15 @@ def build_signal_diagnostics(
                 or candle_age > allowed_candle_age
             ):
                 status = "STALE_CANDLE"
-                age_text = (
-                    f"{candle_age:.1f}"
-                    if candle_age is not None
+                delay_text = (
+                    f"{close_delay:.1f}"
+                    if close_delay is not None
                     else "n/a"
                 )
                 reason = (
-                    "Ultima candela chiusa troppo vecchia: "
-                    f"{age_text} minuti; limite "
-                    f"{allowed_candle_age:.0f}."
+                    "Segnale arrivato troppo tardi: candela "
+                    f"chiusa da {delay_text} minuti; tolleranza "
+                    f"{candle_grace:.0f} minuti."
                 )
             elif abs(score) < threshold:
                 status = "BELOW_SCORE"
@@ -698,6 +728,12 @@ def build_signal_diagnostics(
                         if candle_age is not None
                         else None
                     ),
+                    "close_delay_minutes": (
+                        round(close_delay, 2)
+                        if close_delay is not None
+                        else None
+                    ),
+                    "candle_grace_minutes": candle_grace,
                     "allowed_candle_age_minutes": (
                         allowed_candle_age
                     ),
