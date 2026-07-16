@@ -17,6 +17,7 @@ import pandas as pd
 from paper_trading_config import load_config
 from paper_trading_engine import STATE_PATH, TRADE_FIELDS, TRADE_LOG_PATH
 from paper_trading_sample_watch import sample_snapshot
+from report_direct_links import update_latest_report_links
 from paper_trading_trade_log_repair import (
     fallback_metrics_from_portfolio,
     load_trade_frame_resilient,
@@ -877,6 +878,12 @@ def main() -> None:
     LIVE_REPORT_PATH.write_text(report, encoding="utf-8")
     latest = LATEST_REPORT_PATH.read_text(encoding="utf-8") if LATEST_REPORT_PATH.exists() else ""
     LATEST_REPORT_PATH.write_text(replace_block(latest, report), encoding="utf-8")
+    link_audit = update_latest_report_links()
+    print(
+        "Link diretti report: "
+        f"{link_audit.get('added', 0)} aggiunti; "
+        f"{link_audit.get('already_linked', 0)} già presenti."
+    )
     print(f"Paper trading report aggiornato: {REPORT_PATH}")
 
 
