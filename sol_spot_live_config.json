@@ -1,0 +1,106 @@
+{
+  "schema_version": 2,
+  "mode": "LIVE",
+  "live_orders_enabled": true,
+  "strategy_name": "SOL Adaptive Range Guarded v1",
+  "symbol": "SOL-USDT",
+  "base_asset": "SOL",
+  "quote_asset": "USDT",
+  "strategy_config_path": "sol_spot_adaptive_config.json",
+  "managed_capital_usdt": 112.9633,
+  "minimum_cash_reserve_usdt": 20.0,
+  "maximum_order_usdt": 10.0,
+  "minimum_order_usdt": 5.0,
+  "maximum_emergency_sell_usdt": 50.0,
+  "rebalance_band_fraction": 0.05,
+  "maximum_sol_value_usdt": 40.0,
+  "maximum_daily_turnover_usdt": 20.0,
+  "minimum_minutes_between_orders": 120,
+  "regime_target_bands": {
+    "STRONG_UPTREND": [
+      0.3,
+      0.4
+    ],
+    "UPTREND": [
+      0.2,
+      0.4
+    ],
+    "RANGE": [
+      0.1,
+      0.4
+    ],
+    "DOWNTREND": [
+      0.0,
+      0.4
+    ],
+    "STRONG_DOWNTREND": [
+      0.0,
+      0.0
+    ]
+  },
+  "profit_protection": {
+    "take_profit_1_pct": 0.04,
+    "take_profit_1_sell_fraction": 0.25,
+    "take_profit_2_pct": 0.08,
+    "take_profit_2_sell_fraction": 0.25,
+    "trailing_activation_pct": 0.04,
+    "trailing_drawdown_pct": 0.025,
+    "trailing_sell_fraction": 0.25
+  },
+  "loss_protection": {
+    "trend_stop_pct": 0.05,
+    "trend_stop_sell_fraction": 0.5,
+    "hard_stop_pct": 0.08,
+    "stop_cooldown_hours": 24,
+    "maximum_daily_loss_usdt": 3.0,
+    "maximum_total_drawdown_usdt": 10.0,
+    "auto_kill_switch_on_total_drawdown": true
+  },
+  "allowed_trade_account_currencies": [
+    "USDT",
+    "SOL"
+  ],
+  "require_zero_holds_before_order": false,
+  "real_order_confirmation": "REAL_SOL_SPOT",
+  "state_path": "reports/sol_spot_live_state.json",
+  "status_path": "reports/sol_spot_live_status.json",
+  "orders_log_path": "reports/sol_spot_live_orders.csv",
+  "kill_switch_path": "STOP_SOL_LIVE",
+  "foreign_asset_abort_balance": 1e-08,
+  "balance_sync_tolerance_sol": 1e-05,
+  "telegram_notifications": {
+    "enabled": true,
+    "send_order_events": true,
+    "send_periodic_status": true,
+    "send_error_alerts": true,
+    "status_interval_hours": 4
+  },
+  "telegram_state_path": "reports/sol_spot_live_telegram_state.json",
+  "entry_signals": {
+    "rsi_period": 14,
+    "mean_reversion_rsi_max": 38,
+    "downtrend_recovery_rsi_max": 32,
+    "bull_pullback_rsi_min": 45,
+    "bull_pullback_rsi_max": 65
+  },
+  "maximum_sol_fraction": 0.4,
+  "external_transfer_tolerance_usdt": 0.01,
+  "range_module": {
+    "enabled": true,
+    "mode": "observe",
+    "lookback_bars": 24,
+    "minimum_confirmed_bars": 12,
+    "minimum_touch_count": 2,
+    "touch_tolerance_fraction": 0.15,
+    "maximum_center_drift_half_widths": 0.75,
+    "minimum_width_pct": 1.2,
+    "lower_zone_fraction": 0.2,
+    "upper_zone_fraction": 0.2,
+    "buy_rsi_max": 45,
+    "history_path": "reports/sol_range_observation_events.jsonl",
+    "readiness_min_completed_ranges": 3,
+    "readiness_min_signals": 15,
+    "readiness_max_anomalies": 0,
+    "notify_significant_events": true
+  }
+}
