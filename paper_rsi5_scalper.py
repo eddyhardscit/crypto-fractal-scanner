@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Standalone 5-minute RSI paper scalper for KuCoin perpetual futures.
+"""Standalone 5-minute RSI long/short paper scalper for KuCoin futures.
 
-Paper trading only. It never authenticates to KuCoin and never sends orders.
-The strategy runs four independent simulated accounts:
-- RSI 20, 10x
-- RSI 20, 20x
-- RSI 25, 10x
-- RSI 25, 20x
+Paper trading only: no private KuCoin keys and no real orders.
 
-Entry: first fully closed 5m candle crossing from above to at/below the RSI
-threshold. Exit: fixed +0.50% target or -0.25% stop. After a stop, the same
-asset is blocked for 24 bars (2 hours) and must later print RSI >= 35 before it
-can be traded again. One open position at a time per account.
+Operational accounts:
+- LONG RSI 20 and 25, leverage 10x and 20x
+- SHORT RSI 70 and 75, leverage 10x and 20x
+
+Each operational account can hold one position at a time and sends Telegram
+notifications. A separate silent statistical layer opens every valid signal
+with unlimited simulated capital, allowing concurrent positions across assets.
+Those shadow trades are written only to reports.
 """
 
 from __future__ import annotations
@@ -37,6 +36,9 @@ TRADES_PATH = REPORTS_DIR / "paper_rsi5_scalper_trades.csv"
 SIGNALS_PATH = REPORTS_DIR / "paper_rsi5_scalper_signals.csv"
 LATEST_MD_PATH = REPORTS_DIR / "paper_rsi5_scalper_latest.md"
 LATEST_JSON_PATH = REPORTS_DIR / "paper_rsi5_scalper_latest.json"
+SHADOW_TRADES_PATH = REPORTS_DIR / "paper_rsi5_scalper_shadow_trades.csv"
+SHADOW_REPORT_PATH = REPORTS_DIR / "paper_rsi5_scalper_shadow_report.md"
+SHADOW_JSON_PATH = REPORTS_DIR / "paper_rsi5_scalper_shadow_latest.json"
 
 FUTURES_BASE = os.getenv("KUCOIN_FUTURES_BASE_URL", "https://api-futures.kucoin.com")
 
@@ -44,6 +46,8 @@ TRADE_FIELDS = [
     "trade_id",
     "account",
     "account_label",
+    "book",
+    "direction",
     "asset",
     "symbol",
     "rsi_trigger",
@@ -74,6 +78,7 @@ SIGNAL_FIELDS = [
     "candle_time",
     "account",
     "account_label",
+    "direction",
     "asset",
     "symbol",
     "rsi_trigger",
@@ -333,6 +338,7 @@ def new_account_state(definition: dict[str, Any], current: datetime) -> dict[str
     return {
         "name": str(definition["name"]),
         "label": str(definition.get("label", definition["name"])),
+        "direction": str(definition.get("direction", "LONG")).upper(),
         "created_utc": iso_utc(current),
         "balance_usdt": capital,
         "peak_equity_usdt": capital,
@@ -342,6 +348,22 @@ def new_account_state(definition: dict[str, Any], current: datetime) -> dict[str
         "winning_trades": 0,
         "gross_profit_usdt": 0.0,
         "gross_loss_usdt": 0.0,
+        "asset_guards": {},
+    }
+
+
+def new_shadow_state(definition: dict[str, Any], current: datetime) -> dict[str, Any]:
+    return {
+        "name": str(definition["name"]),
+        "label": str(definition.get("label", definition["name"])),
+        "direction": str(definition.get("direction", "LONG")).upper(),
+        "created_utc": iso_utc(current),
+        "open_positions": [],
+        "closed_trades": 0,
+        "winning_trades": 0,
+        "gross_profit_usdt": 0.0,
+        "gross_loss_usdt": 0.0,
+        "net_pnl_usdt": 0.0,
         "asset_guards": {},
     }
 
@@ -359,6 +381,10 @@ def initial_state(config: dict[str, Any], current: datetime) -> dict[str, Any]:
             str(item["name"]): new_account_state(item, current)
             for item in config["accounts"]
         },
+        "shadow_accounts": {
+            str(item["name"]): new_shadow_state(item, current)
+            for item in config["accounts"]
+        },
     }
 
 
@@ -372,10 +398,13 @@ def load_state(config: dict[str, Any], current: datetime) -> dict[str, Any]:
         STATE_PATH.replace(broken)
         return initial_state(config, current)
     state.setdefault("accounts", {})
+    state.setdefault("shadow_accounts", {})
     for definition in config["accounts"]:
         name = str(definition["name"])
         if name not in state["accounts"]:
             state["accounts"][name] = new_account_state(definition, current)
+        if name not in state["shadow_accounts"]:
+            state["shadow_accounts"][name] = new_shadow_state(definition, current)
     state.setdefault("last_processed_candle", None)
     state.setdefault("last_daily_status_date", None)
     state.setdefault("telegram_started_sent", False)
@@ -408,8 +437,19 @@ def account_definition(config: dict[str, Any], name: str) -> dict[str, Any]:
     raise KeyError(name)
 
 
-def adverse_price(raw_price: float, opening: bool, slippage_bps: float) -> float:
-    multiplier = 1.0 + slippage_bps / 10_000.0 if opening else 1.0 - slippage_bps / 10_000.0
+def execution_price(
+    raw_price: float,
+    direction: str,
+    opening: bool,
+    slippage_bps: float,
+) -> float:
+    direction = direction.upper()
+    # LONG: buy to open (+slippage), sell to close (-slippage).
+    # SHORT: sell to open (-slippage), buy to close (+slippage).
+    adverse_up = (direction == "LONG" and opening) or (
+        direction == "SHORT" and not opening
+    )
+    multiplier = 1.0 + slippage_bps / 10_000.0 if adverse_up else 1.0 - slippage_bps / 10_000.0
     return raw_price * multiplier
 
 
@@ -436,8 +476,10 @@ def update_rearms(
     account: dict[str, Any],
     rows_at_time: dict[str, pd.Series],
     candle_time: datetime,
-    rearm_rsi: float,
+    direction: str,
+    config: dict[str, Any],
 ) -> None:
+    direction = direction.upper()
     for asset, row in rows_at_time.items():
         guard = guard_for(account, asset)
         if not guard.get("needs_rearm", False):
@@ -446,13 +488,24 @@ def update_rearms(
         if cooldown_raw and candle_time < parse_time(cooldown_raw):
             continue
         current_rsi = float(row["rsi"])
-        if current_rsi >= rearm_rsi:
+        reset_ok = (
+            current_rsi >= float(config.get("long_rearm_rsi", 35.0))
+            if direction == "LONG"
+            else current_rsi <= float(config.get("short_rearm_rsi", 65.0))
+        )
+        if reset_ok:
             guard["needs_rearm"] = False
             guard["cooldown_until"] = None
 
 
 def position_unrealized(position: dict[str, Any], price: float) -> float:
-    return (price - float(position["entry_price"])) * float(position["quantity"])
+    entry = float(position["entry_price"])
+    quantity = float(position["quantity"])
+    return (
+        (price - entry) * quantity
+        if str(position.get("direction", "LONG")).upper() == "LONG"
+        else (entry - price) * quantity
+    )
 
 
 def account_equity(account: dict[str, Any], latest_prices: dict[str, float]) -> float:
@@ -508,7 +561,8 @@ def open_position(
 
     slippage_bps = float(config["slippage_bps"])
     fee_rate = float(config["taker_fee_bps"]) / 10_000.0
-    entry_price = adverse_price(float(row["close"]), True, slippage_bps)
+    direction = str(definition.get("direction", "LONG")).upper()
+    entry_price = execution_price(float(row["close"]), direction, True, slippage_bps)
     quantity = notional / entry_price
     entry_fee = notional * fee_rate
     if entry_fee >= balance:
@@ -516,14 +570,25 @@ def open_position(
 
     stop_pct = float(config["stop_loss_pct"])
     target_pct = float(config["take_profit_pct"])
-    stop_price = entry_price * (1.0 - stop_pct)
-    target_price = entry_price * (1.0 + target_pct)
+    if direction == "LONG":
+        stop_price = entry_price * (1.0 - stop_pct)
+        target_price = entry_price * (1.0 + target_pct)
+    else:
+        stop_price = entry_price * (1.0 + stop_pct)
+        target_price = entry_price * (1.0 - target_pct)
     liquidation_distance = max(
         0.001,
         1.0 / leverage - float(config.get("liquidation_buffer_fraction", 0.005)),
     )
-    liquidation_price = entry_price * (1.0 - liquidation_distance)
-    if stop_price <= liquidation_price:
+    liquidation_price = (
+        entry_price * (1.0 - liquidation_distance)
+        if direction == "LONG"
+        else entry_price * (1.0 + liquidation_distance)
+    )
+    if (
+        (direction == "LONG" and stop_price <= liquidation_price)
+        or (direction == "SHORT" and stop_price >= liquidation_price)
+    ):
         return None, "stop oltre la liquidazione stimata"
 
     trade_id = (
@@ -533,6 +598,8 @@ def open_position(
         "trade_id": trade_id,
         "account": str(definition["name"]),
         "account_label": str(definition.get("label", definition["name"])),
+        "book": "OPERATIONAL",
+        "direction": direction,
         "asset": asset,
         "symbol": str(metadata["symbol"]),
         "rsi_trigger": float(definition["rsi_trigger"]),
@@ -573,16 +640,27 @@ def choose_exit(
     stop = float(position["stop_price"])
     target = float(position["target_price"])
     liquidation = float(position["liquidation_price"])
+    direction = str(position.get("direction", "LONG")).upper()
 
-    if candle_open <= liquidation:
-        return liquidation, "LIQUIDATION_GAP"
-    if candle_open <= stop:
-        return candle_open, "STOP_GAP"
-    if candle_open >= target:
-        return candle_open, "TARGET_GAP"
+    if direction == "LONG":
+        if candle_open <= liquidation:
+            return liquidation, "LIQUIDATION_GAP"
+        if candle_open <= stop:
+            return candle_open, "STOP_GAP"
+        if candle_open >= target:
+            return candle_open, "TARGET_GAP"
+        stop_hit = candle_low <= stop
+        target_hit = candle_high >= target
+    else:
+        if candle_open >= liquidation:
+            return liquidation, "LIQUIDATION_GAP"
+        if candle_open >= stop:
+            return candle_open, "STOP_GAP"
+        if candle_open <= target:
+            return candle_open, "TARGET_GAP"
+        stop_hit = candle_high >= stop
+        target_hit = candle_low <= target
 
-    stop_hit = candle_low <= stop
-    target_hit = candle_high >= target
     if stop_hit and target_hit:
         if str(config.get("same_candle_policy", "STOP_FIRST")).upper() == "TARGET_FIRST":
             return target, "TARGET_SAME_CANDLE"
@@ -607,9 +685,17 @@ def close_position(
     config: dict[str, Any],
 ) -> dict[str, Any]:
     fee_rate = float(config["taker_fee_bps"]) / 10_000.0
-    exit_price = adverse_price(raw_exit_price, False, float(config["slippage_bps"]))
+    direction = str(position.get("direction", "LONG")).upper()
+    exit_price = execution_price(
+        raw_exit_price, direction, False, float(config["slippage_bps"])
+    )
     quantity = float(position["quantity"])
-    gross = (exit_price - float(position["entry_price"])) * quantity
+    entry_price = float(position["entry_price"])
+    gross = (
+        (exit_price - entry_price) * quantity
+        if direction == "LONG"
+        else (entry_price - exit_price) * quantity
+    )
     exit_notional = abs(exit_price * quantity)
     exit_fee = exit_notional * fee_rate
     entry_fee = float(position["entry_fee_usdt"])
@@ -658,6 +744,7 @@ def log_signal(
             "candle_time": iso_utc(candle_time),
             "account": definition["name"],
             "account_label": definition.get("label", definition["name"]),
+            "direction": str(definition.get("direction", "LONG")).upper(),
             "asset": asset,
             "symbol": metadata["symbol"],
             "rsi_trigger": float(definition["rsi_trigger"]),
@@ -668,6 +755,138 @@ def log_signal(
             "reason": reason,
         },
     )
+
+
+def open_shadow_position(
+    shadow: dict[str, Any],
+    definition: dict[str, Any],
+    asset: str,
+    metadata: dict[str, Any],
+    row: pd.Series,
+    candle_time: datetime,
+    config: dict[str, Any],
+) -> dict[str, Any] | None:
+    # Every signal receives an independent fixed 3,800 USDT simulation.
+    fake_account = {
+        "balance_usdt": float(definition["initial_capital_usdt"]),
+        "open_position": None,
+    }
+    position, _ = open_position(
+        fake_account, definition, asset, metadata, row, candle_time, config
+    )
+    if not position:
+        return None
+    position = dict(position)
+    position["book"] = "SHADOW"
+    position["trade_id"] = position["trade_id"] + ":SHADOW"
+    shadow.setdefault("open_positions", []).append(position)
+    return position
+
+
+def close_shadow_position(
+    shadow: dict[str, Any],
+    position: dict[str, Any],
+    raw_exit_price: float,
+    reason: str,
+    candle_time: datetime,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    direction = str(position.get("direction", "LONG")).upper()
+    exit_price = execution_price(
+        raw_exit_price, direction, False, float(config["slippage_bps"])
+    )
+    quantity = float(position["quantity"])
+    entry_price = float(position["entry_price"])
+    gross = (
+        (exit_price - entry_price) * quantity
+        if direction == "LONG"
+        else (entry_price - exit_price) * quantity
+    )
+    exit_fee = abs(exit_price * quantity) * float(config["taker_fee_bps"]) / 10_000.0
+    entry_fee = float(position["entry_fee_usdt"])
+    net = gross - entry_fee - exit_fee
+    opened = parse_time(position["opened_at"])
+    shadow["closed_trades"] = int(shadow.get("closed_trades", 0)) + 1
+    if net > 0:
+        shadow["winning_trades"] = int(shadow.get("winning_trades", 0)) + 1
+        shadow["gross_profit_usdt"] = float(shadow.get("gross_profit_usdt", 0.0)) + net
+    else:
+        shadow["gross_loss_usdt"] = float(shadow.get("gross_loss_usdt", 0.0)) + abs(net)
+    shadow["net_pnl_usdt"] = float(shadow.get("net_pnl_usdt", 0.0)) + net
+    record = {
+        **position,
+        "closed_at": iso_utc(candle_time),
+        "holding_minutes": round((candle_time - opened).total_seconds() / 60.0, 2),
+        "exit_price": exit_price,
+        "gross_pnl_usdt": gross,
+        "exit_fee_usdt": exit_fee,
+        "net_pnl_usdt": net,
+        "return_on_margin_pct": net / max(float(position["margin_usdt"]), 1e-12) * 100.0,
+        "close_reason": reason,
+        "balance_after_usdt": "",
+    }
+    append_csv(SHADOW_TRADES_PATH, TRADE_FIELDS, record)
+    return record
+
+
+def process_shadow_account(
+    shadow: dict[str, Any],
+    definition: dict[str, Any],
+    rows_at_time: dict[str, pd.Series],
+    metadata: dict[str, dict[str, Any]],
+    candle_time: datetime,
+    config: dict[str, Any],
+    cooldown_minutes: int,
+) -> None:
+    direction = str(definition.get("direction", "LONG")).upper()
+    update_rearms(shadow, rows_at_time, candle_time, direction, config)
+
+    remaining: list[dict[str, Any]] = []
+    for position in list(shadow.get("open_positions", [])):
+        row = rows_at_time.get(position["asset"])
+        if row is None:
+            remaining.append(position)
+            continue
+        raw_exit, reason = choose_exit(position, row, candle_time, config)
+        if raw_exit is None:
+            remaining.append(position)
+            continue
+        close_shadow_position(
+            shadow, position, raw_exit, reason, candle_time, config
+        )
+        guard = guard_for(shadow, position["asset"])
+        guard["needs_rearm"] = True
+        guard["last_close_reason"] = reason
+        guard["cooldown_until"] = (
+            iso_utc(candle_time + timedelta(minutes=cooldown_minutes))
+            if reason.startswith("STOP") or reason.startswith("LIQUIDATION")
+            else None
+        )
+    shadow["open_positions"] = remaining
+
+    trigger = float(definition["rsi_trigger"])
+    assets_already_open = {
+        str(position["asset"]) for position in shadow.get("open_positions", [])
+    }
+    for asset, row in rows_at_time.items():
+        previous_rsi = float(row["previous_rsi"])
+        current_rsi = float(row["rsi"])
+        crossed = (
+            previous_rsi > trigger and current_rsi <= trigger
+            if direction == "LONG"
+            else previous_rsi < trigger and current_rsi >= trigger
+        )
+        if not crossed or asset in assets_already_open:
+            continue
+        guard = guard_for(shadow, asset)
+        ready, _ = guard_status(guard, candle_time)
+        if not ready:
+            continue
+        opened = open_shadow_position(
+            shadow, definition, asset, metadata[asset], row, candle_time, config
+        )
+        if opened:
+            assets_already_open.add(asset)
 
 
 def format_money(value: float, signed: bool = False) -> str:
@@ -746,6 +965,7 @@ def write_reports(
             {
                 "account": definition["name"],
                 "label": definition.get("label", definition["name"]),
+                "direction": str(definition.get("direction", "LONG")).upper(),
                 "rsi_trigger": float(definition["rsi_trigger"]),
                 "leverage": float(definition["leverage"]),
                 "balance_usdt": float(account["balance_usdt"]),
@@ -773,6 +993,31 @@ def write_reports(
             }
         )
 
+    shadow_rows: list[dict[str, Any]] = []
+    for definition in config["accounts"]:
+        shadow = state["shadow_accounts"][str(definition["name"])]
+        closed = int(shadow.get("closed_trades", 0))
+        wins = int(shadow.get("winning_trades", 0))
+        gross_profit = float(shadow.get("gross_profit_usdt", 0.0))
+        gross_loss = float(shadow.get("gross_loss_usdt", 0.0))
+        shadow_rows.append(
+            {
+                "account": definition["name"],
+                "label": definition.get("label", definition["name"]),
+                "direction": str(definition.get("direction", "LONG")).upper(),
+                "rsi_trigger": float(definition["rsi_trigger"]),
+                "leverage": float(definition["leverage"]),
+                "closed_trades": closed,
+                "winning_trades": wins,
+                "win_rate_pct": wins / closed * 100.0 if closed else 0.0,
+                "net_pnl_usdt": float(shadow.get("net_pnl_usdt", 0.0)),
+                "profit_factor": gross_profit / gross_loss if gross_loss > 0 else (
+                    math.inf if gross_profit > 0 else 0.0
+                ),
+                "open_positions": len(shadow.get("open_positions", [])),
+            }
+        )
+
     payload = {
         "generated_utc": iso_utc(current),
         "strategy": config["strategy_name"],
@@ -785,6 +1030,7 @@ def write_reports(
         ),
         "last_processed_candle": state.get("last_processed_candle"),
         "accounts": account_rows,
+        "shadow_accounts": shadow_rows,
         "assets": asset_rows,
         "warnings": warnings,
     }
@@ -806,8 +1052,8 @@ def write_reports(
         "",
         "## Conti",
         "",
-        "| Conto | Trigger | Leva | Saldo | Equity | Trade | WR | Max DD | Posizione |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| Conto | Lato | Trigger | Leva | Saldo | Equity | Trade | WR | Max DD | Posizione |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for row in account_rows:
         position = row["open_position"]
@@ -818,7 +1064,7 @@ def write_reports(
         )
         pf = row["profit_factor"]
         lines.append(
-            f"| {row['label']} | {row['rsi_trigger']:.0f} | {row['leverage']:.0f}× | "
+            f"| {row['label']} | {row['direction']} | {row['rsi_trigger']:.0f} | {row['leverage']:.0f}× | "
             f"{row['balance_usdt']:.2f} | {row['equity_usdt']:.2f} | "
             f"{row['closed_trades']} | {row['win_rate_pct']:.1f}% | "
             f"{row['max_drawdown_pct']:.2f}% | {position_text} |"
@@ -841,6 +1087,40 @@ def write_reports(
         lines.extend(["", "## Avvisi", ""])
         lines.extend(f"- {warning}" for warning in warnings)
     LATEST_MD_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    shadow_payload = {
+        "generated_utc": iso_utc(current),
+        "description": "Tutti i segnali validi, capitale illimitato, nessun Telegram",
+        "accounts": shadow_rows,
+    }
+    SHADOW_JSON_PATH.write_text(
+        json.dumps(shadow_payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    shadow_lines = [
+        "# RSI 5m — registro statistico silenzioso",
+        "",
+        f"Generato: {iso_utc(current)}",
+        "",
+        "> Apre virtualmente ogni segnale valido anche quando il conto operativo è occupato.",
+        "> Nessuna notifica Telegram. Ogni trade usa una simulazione indipendente da 3.800 USDT.",
+        "",
+        "| Conto teorico | Lato | Trigger | Leva | Chiuse | WR | P/L netto cumulato | Profit factor | Aperte |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in shadow_rows:
+        pf = row["profit_factor"]
+        pf_text = "∞" if math.isinf(pf) else f"{pf:.2f}"
+        shadow_lines.append(
+            f"| {row['label']} | {row['direction']} | {row['rsi_trigger']:.0f} | "
+            f"{row['leverage']:.0f}× | {row['closed_trades']} | "
+            f"{row['win_rate_pct']:.1f}% | {row['net_pnl_usdt']:+.2f} | "
+            f"{pf_text} | {row['open_positions']} |"
+        )
+    SHADOW_REPORT_PATH.write_text(
+        "\n".join(shadow_lines) + "\n",
+        encoding="utf-8",
+    )
 
 
 def run_cycle() -> None:
@@ -867,7 +1147,6 @@ def run_cycle() -> None:
     latest_prices = {
         asset: float(frame["close"].iloc[-1]) for asset, frame in frames.items() if not frame.empty
     }
-    rearm_rsi = float(config["rearm_rsi"])
     cooldown_minutes = int(config["cooldown_after_stop_bars"]) * int(config["timeframe_minutes"])
 
     for timestamp in process_times:
@@ -883,7 +1162,8 @@ def run_cycle() -> None:
         for definition in config["accounts"]:
             account_name = str(definition["name"])
             account = state["accounts"][account_name]
-            update_rearms(account, rows_at_time, candle_time, rearm_rsi)
+            direction = str(definition.get("direction", "LONG")).upper()
+            update_rearms(account, rows_at_time, candle_time, direction, config)
 
             position = account.get("open_position")
             if position and position["asset"] in rows_at_time:
@@ -925,7 +1205,12 @@ def run_cycle() -> None:
             for asset, row in rows_at_time.items():
                 previous_rsi = float(row["previous_rsi"])
                 current_rsi = float(row["rsi"])
-                if not (previous_rsi > trigger and current_rsi <= trigger):
+                crossed = (
+                    previous_rsi > trigger and current_rsi <= trigger
+                    if direction == "LONG"
+                    else previous_rsi < trigger and current_rsi >= trigger
+                )
+                if not crossed:
                     continue
                 if account.get("open_position"):
                     log_signal(
@@ -959,7 +1244,7 @@ def run_cycle() -> None:
             if not account.get("open_position") and crossings:
                 crossings.sort(
                     key=lambda item: (
-                        float(item[1]["rsi"]),
+                        float(item[1]["rsi"]) if direction == "LONG" else -float(item[1]["rsi"]),
                         -float(metadata[item[0]]["turnover_24h"]),
                         item[0],
                     )
@@ -998,7 +1283,7 @@ def run_cycle() -> None:
                     )
                     events.append(
                         f"🟢 APERTURA · {position['account_label']}\n"
-                        f"LONG {position['asset']} · RSI {float(position['signal_rsi']):.2f} "
+                        f"{position['direction']} {position['asset']} · RSI {float(position['signal_rsi']):.2f} "
                         f"(soglia {float(position['rsi_trigger']):.0f})\n"
                         f"Entrata {float(position['entry_price']):.8g} · "
                         f"TP {float(position['target_price']):.8g} · "
@@ -1024,14 +1309,28 @@ def run_cycle() -> None:
             equity = account_equity(account, {**latest_prices, **prices_at_time})
             update_account_drawdown(account, equity)
 
+        # Silent statistical books: every valid signal, unlimited concurrent capital.
+        for definition in config["accounts"]:
+            shadow = state["shadow_accounts"][str(definition["name"])]
+            process_shadow_account(
+                shadow,
+                definition,
+                rows_at_time,
+                metadata,
+                candle_time,
+                config,
+                cooldown_minutes,
+            )
+
         state["last_processed_candle"] = iso_utc(timestamp)
 
     if not state.get("telegram_started_sent", False):
         events.insert(
             0,
             "🚀 RSI 5M SCALPER PAPER ATTIVATO\n"
-            "4 conti indipendenti da 3.800 USDT · RSI 20/25 · leve 10×/20× · "
-            "TP +0,50% · SL -0,25% · cooldown 2 ore dopo stop.",
+            "8 conti indipendenti da 3.800 USDT · LONG RSI 20/25 · "
+            "SHORT RSI 70/75 · leve 10×/20× · TP 0,50% · SL 0,25%.\n"
+            "Registro statistico parallelo attivo senza notifiche Telegram.",
         )
         state["telegram_started_sent"] = True
 

@@ -30,6 +30,9 @@ FILES = (
     "paper_rsi5_scalper_signals.csv",
     "paper_rsi5_scalper_latest.md",
     "paper_rsi5_scalper_latest.json",
+    "paper_rsi5_scalper_shadow_trades.csv",
+    "paper_rsi5_scalper_shadow_report.md",
+    "paper_rsi5_scalper_shadow_latest.json",
     "paper_rsi5_scalper_storage_status.json",
 )
 
