@@ -1569,8 +1569,22 @@ def make_plan(
     regime = str(strategy["regime"]).upper()
 
     # Nel ribasso più forte non vengono aperti nuovi ingressi.
+    # L'eventuale posizione esistente non viene venduta per inseguire
+    # il target zero: resta affidata alle protezioni già configurate.
     if regime == "STRONG_DOWNTREND":
         plan["reason"] = "BUY_BLOCKED_STRONG_DOWNTREND"
+        plan["entry_target_sol_weight"] = Decimal("0")
+        plan["effective_position_target_sol_weight"] = (
+            managed["current_sol_weight"]
+            if has_position
+            else Decimal("0")
+        )
+        plan["existing_position_policy"] = (
+            "MANAGED_BY_STOPS"
+            if has_position
+            else "NO_POSITION"
+        )
+        plan["target_sol_weight_semantics"] = "NEW_ENTRIES_ONLY"
         return plan
 
     # Il tetto SOL cresce o diminuisce insieme al capitale gestito.
@@ -1951,11 +1965,29 @@ def print_summary(
     print("Equity gestita:", f"{decimal_text(managed['managed_equity'])} USDT")
     print("Eccedenza protetta:", f"{decimal_text(managed['protected_excess'])} USDT")
     print("Liquidità gestita disponibile:", f"{decimal_text(managed['managed_cash_available'])} USDT")
-    print(
-        "Peso SOL:",
-        f"{float(managed['current_sol_weight']) * 100:.2f}% ->",
-        f"{float(plan['target_sol_weight']) * 100:.2f}%",
-    )
+    if plan.get("reason") == "BUY_BLOCKED_STRONG_DOWNTREND":
+        print(
+            "Peso SOL attuale:",
+            f"{float(managed['current_sol_weight']) * 100:.2f}%",
+        )
+        print(
+            "Nuovi ingressi SOL:",
+            f"{float(plan.get('entry_target_sol_weight', 0)) * 100:.2f}%",
+        )
+        if plan.get("existing_position_policy") == "MANAGED_BY_STOPS":
+            print(
+                "Posizione esistente:",
+                "mantenuta e gestita da trend stop, hard stop, "
+                "take profit e trailing.",
+            )
+        else:
+            print("Posizione esistente: nessuna.")
+    else:
+        print(
+            "Peso SOL:",
+            f"{float(managed['current_sol_weight']) * 100:.2f}% ->",
+            f"{float(plan['target_sol_weight']) * 100:.2f}%",
+        )
     print(
         "Regime:", strategy["regime"],
         f"| banda {float(strategy['target_band_min']) * 100:.0f}-{float(strategy['target_band_max']) * 100:.0f}%",
