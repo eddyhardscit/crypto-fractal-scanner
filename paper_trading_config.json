@@ -110,6 +110,34 @@
       "trailing_atr_multiple": 1.4
     },
     {
+      "name": "SHADOW_1H_BALANCED_V2",
+      "enabled": true,
+      "is_main": false,
+      "strategy": "confluence_trend_v2",
+      "timeframe_minutes": 60,
+      "minimum_abs_score": 5.5,
+      "atr_stop_multiple": 1.8,
+      "reward_risk": 2.0,
+      "leverage": 3.0,
+      "max_holding_hours": 120,
+      "allow_long": true,
+      "allow_short": true,
+      "trailing_at_r": 1.0,
+      "trailing_atr_multiple": 1.4,
+      "allowed_regimes": [
+        "ALT_ROTATION_UP",
+        "RANGE",
+        "TRANSITION"
+      ],
+      "long_rsi_min": 50.0,
+      "long_rsi_max": 72.0,
+      "short_rsi_min": 28.0,
+      "short_rsi_max": 50.0,
+      "require_medium_return_alignment": true,
+      "max_signals_per_candle_side": 2,
+      "research_version": 2
+    },
+    {
       "name": "SHADOW_1H_FAST",
       "enabled": true,
       "is_main": false,
@@ -124,6 +152,36 @@
       "allow_short": true,
       "trailing_at_r": 0.9,
       "trailing_atr_multiple": 1.2
+    },
+    {
+      "name": "SHADOW_1H_FAST_V2",
+      "enabled": true,
+      "is_main": false,
+      "strategy": "momentum_breakout_v2",
+      "timeframe_minutes": 60,
+      "minimum_abs_score": 5.0,
+      "atr_stop_multiple": 1.4,
+      "reward_risk": 1.5,
+      "leverage": 3.0,
+      "max_holding_hours": 72,
+      "allow_long": true,
+      "allow_short": true,
+      "trailing_at_r": 0.9,
+      "trailing_atr_multiple": 1.2,
+      "allowed_regimes": [
+        "ALT_ROTATION_UP",
+        "RANGE",
+        "TRANSITION"
+      ],
+      "minimum_adx": 18.0,
+      "minimum_volume_ratio": 1.2,
+      "long_rsi_min": 50.0,
+      "long_rsi_max": 72.0,
+      "short_rsi_min": 28.0,
+      "short_rsi_max": 50.0,
+      "require_true_breakout": true,
+      "max_signals_per_candle_side": 2,
+      "research_version": 2
     },
     {
       "name": "SHADOW_4H_WIDE",

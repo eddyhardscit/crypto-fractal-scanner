@@ -890,6 +890,130 @@ def combined_strategy_score(
 
 
 
+
+# BALANCED_FAST_V2_RULES_V1
+def core_strategy_v2_accepts(
+    strategy: str,
+    side: str,
+    features: dict[str, Any],
+    portfolio: dict[str, Any],
+    market_context: dict[str, Any],
+) -> bool:
+    allowed_regimes = {
+        str(value).upper()
+        for value in portfolio.get(
+            "allowed_regimes",
+            [],
+        )
+    }
+    regime = str(
+        market_context.get(
+            "regime",
+            "UNKNOWN",
+        )
+    ).upper()
+    if (
+        allowed_regimes
+        and regime not in allowed_regimes
+    ):
+        return False
+
+    price = float(features["price"])
+    ema20_value = float(features["ema20"])
+    ema50_value = float(features["ema50"])
+    rsi_value = float(features["rsi14"])
+    ret_short = float(
+        features["ret_short_pct"]
+    )
+    ret_medium = float(
+        features["ret_medium_pct"]
+    )
+
+    if side == "LONG":
+        aligned = (
+            price > ema20_value > ema50_value
+            and ret_short > 0.0
+            and float(
+                portfolio.get(
+                    "long_rsi_min",
+                    50.0,
+                )
+            )
+            <= rsi_value
+            <= float(
+                portfolio.get(
+                    "long_rsi_max",
+                    72.0,
+                )
+            )
+        )
+        medium_aligned = ret_medium > 0.0
+        expected_breakout = "UP"
+    else:
+        aligned = (
+            price < ema20_value < ema50_value
+            and ret_short < 0.0
+            and float(
+                portfolio.get(
+                    "short_rsi_min",
+                    28.0,
+                )
+            )
+            <= rsi_value
+            <= float(
+                portfolio.get(
+                    "short_rsi_max",
+                    50.0,
+                )
+            )
+        )
+        medium_aligned = ret_medium < 0.0
+        expected_breakout = "DOWN"
+
+    if not aligned:
+        return False
+
+    if strategy == "confluence_trend_v2":
+        if portfolio.get(
+            "require_medium_return_alignment",
+            True,
+        ):
+            return medium_aligned
+        return True
+
+    if strategy == "momentum_breakout_v2":
+        if (
+            portfolio.get(
+                "require_true_breakout",
+                True,
+            )
+            and str(
+                features["breakout_state"]
+            )
+            != expected_breakout
+        ):
+            return False
+        if float(features["adx14"]) < float(
+            portfolio.get(
+                "minimum_adx",
+                18.0,
+            )
+        ):
+            return False
+        if float(
+            features["volume_ratio"]
+        ) < float(
+            portfolio.get(
+                "minimum_volume_ratio",
+                1.2,
+            )
+        ):
+            return False
+        return True
+
+    return False
+
+
 # RELATIVE_STRENGTH_V2_RULES_V2
 def relative_strength_v2_accepts(
     side: str,
@@ -1376,7 +1500,16 @@ def generate_signals(
                 and not portfolio.get("allow_short", True)
             ):
                 continue
-            if strategy == "relative_strength_v2":
+            if strategy in {"confluence_trend_v2", "momentum_breakout_v2"}:
+                if not core_strategy_v2_accepts(
+                    strategy,
+                    side,
+                    features,
+                    portfolio,
+                    market_context,
+                ):
+                    continue
+            elif strategy == "relative_strength_v2":
                 if not relative_strength_v2_accepts(
                     side,
                     features,
@@ -1440,6 +1573,20 @@ def generate_signals(
                     candle_time,
                     side,
                     "relative_strength_v2_market_episode",
+                )
+                signal_id = deterministic_id(
+                    portfolio["name"],
+                    strategy,
+                    asset,
+                    experiment_group,
+                )
+            elif strategy in {"confluence_trend_v2", "momentum_breakout_v2"}:
+                experiment_group = deterministic_id(
+                    timeframe,
+                    candle_time,
+                    side,
+                    strategy,
+                    "core_strategy_v2_market_episode",
                 )
                 signal_id = deterministic_id(
                     portfolio["name"],

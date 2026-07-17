@@ -10,8 +10,10 @@ from typing import Any
 
 PORTFOLIO_LABELS = {
     "MAIN": "Principale 4H",
-    "SHADOW_1H_BALANCED": "Bilanciata 1H",
-    "SHADOW_1H_FAST": "Rapida 1H",
+    "SHADOW_1H_BALANCED": "Bilanciata 1H V1",
+    "SHADOW_1H_BALANCED_V2": "Bilanciata 1H V2",
+    "SHADOW_1H_FAST": "Rapida 1H V1",
+    "SHADOW_1H_FAST_V2": "Rapida 1H V2",
     "SHADOW_4H_WIDE": "Ampia 4H",
     "SHADOW_RELATIVE_STRENGTH": "Forza relativa 1H V1",
     "SHADOW_RELATIVE_STRENGTH_V2": "Forza relativa 1H V2",
@@ -36,10 +38,18 @@ PORTFOLIO_DESCRIPTIONS = {
         "soglia più selettiva."
     ),
     "SHADOW_1H_BALANCED": (
-        "Test bilanciato a 1 ora basato sulla confluenza di trend."
+        "Versione originale V1 a 1 ora basata sulla confluenza di trend."
+    ),
+    "SHADOW_1H_BALANCED_V2": (
+        "Versione V2 selettiva: esclude i regimi storicamente peggiori, "
+        "richiede trend e ritorni coerenti e limita i segnali correlati."
     ),
     "SHADOW_1H_FAST": (
-        "Test rapido a 1 ora che cerca momentum e breakout."
+        "Versione originale V1 a 1 ora che cerca momentum e breakout."
+    ),
+    "SHADOW_1H_FAST_V2": (
+        "Versione V2 selettiva: richiede vero breakout, volume, ADX, "
+        "trend tecnico coerente e limita i segnali correlati."
     ),
     "SHADOW_4H_WIDE": (
         "Test a 4 ore con stop più ampio, leva inferiore e durata maggiore."
@@ -93,7 +103,9 @@ PORTFOLIO_DESCRIPTIONS = {
 
 STRATEGY_LABELS = {
     "confluence_trend": "Confluenza trend",
+    "confluence_trend_v2": "Confluenza trend V2",
     "momentum_breakout": "Momentum / breakout",
+    "momentum_breakout_v2": "Momentum / breakout V2",
     "relative_strength": "Forza relativa vs BTC V1",
     "relative_strength_v2": "Forza relativa vs BTC V2",
     "rsi_extreme_reversal": "Inversione RSI estrema 15m",

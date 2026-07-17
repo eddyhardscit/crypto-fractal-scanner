@@ -16,7 +16,9 @@ RESEARCH_TRADES_PATH = Path(
 CORE_PROFILES = [
     "MAIN",
     "SHADOW_1H_BALANCED",
+    "SHADOW_1H_BALANCED_V2",
     "SHADOW_1H_FAST",
+    "SHADOW_1H_FAST_V2",
     "SHADOW_4H_WIDE",
     "SHADOW_RELATIVE_STRENGTH",
     "SHADOW_RELATIVE_STRENGTH_V2",
@@ -24,8 +26,10 @@ CORE_PROFILES = [
 
 PROFILE_LABELS = {
     "MAIN": "Principale 4H",
-    "SHADOW_1H_BALANCED": "Bilanciata 1H",
-    "SHADOW_1H_FAST": "Rapida 1H",
+    "SHADOW_1H_BALANCED": "Bilanciata 1H V1",
+    "SHADOW_1H_BALANCED_V2": "Bilanciata 1H V2",
+    "SHADOW_1H_FAST": "Rapida 1H V1",
+    "SHADOW_1H_FAST_V2": "Rapida 1H V2",
     "SHADOW_4H_WIDE": "Ampia 4H",
     "SHADOW_RELATIVE_STRENGTH": "Forza relativa 1H V1",
     "SHADOW_RELATIVE_STRENGTH_V2": "Forza relativa 1H V2",

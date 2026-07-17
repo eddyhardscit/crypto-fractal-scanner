@@ -15,6 +15,7 @@ from paper_signal_engine import (
     Signal,
     _read_latest_by_asset,
     compute_features,
+    core_strategy_v2_accepts,
     exchange_overlay_for_asset,
     global_overlay_for_asset,
     score_features,
@@ -23,6 +24,7 @@ from paper_signal_engine import (
     GLOBAL_METRICS_PATH,
 )
 from paper_rsi_extreme_scalping import extreme_reversal_setup
+from market_regime_tagger import classify_market_regime
 from paper_trading_engine import (
     can_open,
     current_prices,
@@ -322,6 +324,7 @@ def build_signal_diagnostics(
         )
     freshness = dict(bundle["_paper_freshness"])
     frames = bundle_frames(bundle)
+    market_context = classify_market_regime(bundle)
     freshness["timeframes"] = _timeframe_summary(
         frames,
         checked,
@@ -658,6 +661,21 @@ def build_signal_diagnostics(
                 status = "SIDE_DISABLED"
                 reason = (
                     "Short disabilitati nel portafoglio."
+                )
+            elif (
+                strategy in {"confluence_trend_v2", "momentum_breakout_v2"}
+                and not core_strategy_v2_accepts(
+                    strategy,
+                    side,
+                    features,
+                    definition,
+                    market_context,
+                )
+            ):
+                status = "STRATEGY_FILTER"
+                reason = (
+                    "Filtro V2 non superato: regime, EMA, ritorni e RSI; "
+                    "per Rapida V2 servono anche breakout reale, volume e ADX."
                 )
             elif not strategy_accepts(
                 strategy,

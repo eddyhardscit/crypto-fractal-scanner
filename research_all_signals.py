@@ -92,6 +92,10 @@ def profile_name(portfolio: str) -> str:
 # RESEARCH_PROFILE_LABELS_V2
 def research_profile_label(profile: Any) -> str:
     labels = {
+        "SHADOW_1H_BALANCED": "Bilanciata 1H V1",
+        "SHADOW_1H_BALANCED_V2": "Bilanciata 1H V2",
+        "SHADOW_1H_FAST": "Rapida 1H V1",
+        "SHADOW_1H_FAST_V2": "Rapida 1H V2",
         "SHADOW_RELATIVE_STRENGTH": "Forza relativa 1H V1",
         "SHADOW_RELATIVE_STRENGTH_V2": "Forza relativa 1H V2",
     }
