@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "strategy_name": "RSI 5m Fixed TP Scalper",
+  "paper_only": true,
+  "timeframe_minutes": 5,
+  "rsi_period": 14,
+  "take_profit_pct": 0.005,
+  "stop_loss_pct": 0.0025,
+  "cooldown_after_stop_bars": 24,
+  "rearm_rsi": 35.0,
+  "max_holding_hours": 6,
+  "taker_fee_bps": 6.0,
+  "slippage_bps": 2.0,
+  "liquidation_buffer_fraction": 0.005,
+  "same_candle_policy": "STOP_FIRST",
+  "minimum_turnover_24h_usdt": 10000000.0,
+  "assets": [
+    "DOGE",
+    "SOL",
+    "XRP",
+    "ADA",
+    "AVAX",
+    "LINK",
+    "SUI",
+    "HYPE",
+    "ETH",
+    "BTC"
+  ],
+  "accounts": [
+    {
+      "name": "RSI5_RSI20_10X",
+      "label": "RSI 20 · leva 10×",
+      "initial_capital_usdt": 3800.0,
+      "rsi_trigger": 20.0,
+      "leverage": 10.0,
+      "margin_fraction": 1.0
+    },
+    {
+      "name": "RSI5_RSI20_20X",
+      "label": "RSI 20 · leva 20×",
+      "initial_capital_usdt": 3800.0,
+      "rsi_trigger": 20.0,
+      "leverage": 20.0,
+      "margin_fraction": 1.0
+    },
+    {
+      "name": "RSI5_RSI25_10X",
+      "label": "RSI 25 · leva 10×",
+      "initial_capital_usdt": 3800.0,
+      "rsi_trigger": 25.0,
+      "leverage": 10.0,
+      "margin_fraction": 1.0
+    },
+    {
+      "name": "RSI5_RSI25_20X",
+      "label": "RSI 25 · leva 20×",
+      "initial_capital_usdt": 3800.0,
+      "rsi_trigger": 25.0,
+      "leverage": 20.0,
+      "margin_fraction": 1.0
+    }
+  ],
+  "telegram_daily_status_utc_hour": 18
+}
