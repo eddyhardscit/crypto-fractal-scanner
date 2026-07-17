@@ -2,6 +2,7 @@
   "schema_version": 1,
   "strategy_name": "RSI 5m Fixed TP Scalper",
   "paper_only": true,
+  "reinvest_profits": false,
   "timeframe_minutes": 5,
   "rsi_period": 14,
   "take_profit_pct": 0.005,

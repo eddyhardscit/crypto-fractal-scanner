@@ -354,6 +354,7 @@ def initial_state(config: dict[str, Any], current: datetime) -> dict[str, Any]:
         "last_processed_candle": None,
         "last_daily_status_date": None,
         "telegram_started_sent": False,
+        "fixed_sizing_notice_sent": False,
         "accounts": {
             str(item["name"]): new_account_state(item, current)
             for item in config["accounts"]
@@ -378,6 +379,7 @@ def load_state(config: dict[str, Any], current: datetime) -> dict[str, Any]:
     state.setdefault("last_processed_candle", None)
     state.setdefault("last_daily_status_date", None)
     state.setdefault("telegram_started_sent", False)
+    state.setdefault("fixed_sizing_notice_sent", False)
     return state
 
 
@@ -481,7 +483,25 @@ def open_position(
     balance = float(account["balance_usdt"])
     leverage = float(definition["leverage"])
     margin_fraction = float(definition.get("margin_fraction", 1.0))
-    margin = max(0.0, balance * margin_fraction)
+
+    # FIXED_SIZING_V1
+    # Durante la fase di confronto i profitti aumentano il saldo, ma non la
+    # dimensione delle operazioni. Le perdite, invece, riducono la size quando
+    # il saldo scende sotto il capitale iniziale: non si simula capitale che il
+    # conto non possiede più.
+    reinvest_profits = bool(
+        definition.get(
+            "reinvest_profits",
+            config.get("reinvest_profits", False),
+        )
+    )
+    initial_capital = float(definition["initial_capital_usdt"])
+    sizing_capital = (
+        balance
+        if reinvest_profits
+        else min(balance, initial_capital)
+    )
+    margin = max(0.0, sizing_capital * margin_fraction)
     notional = margin * leverage
     if margin <= 0 or notional < 25:
         return None, "capitale insufficiente"
@@ -757,6 +777,12 @@ def write_reports(
         "generated_utc": iso_utc(current),
         "strategy": config["strategy_name"],
         "paper_only": True,
+        "reinvest_profits": bool(config.get("reinvest_profits", False)),
+        "sizing_mode": (
+            "COMPOUNDING"
+            if config.get("reinvest_profits", False)
+            else "INITIAL_CAPITAL_CAPPED"
+        ),
         "last_processed_candle": state.get("last_processed_candle"),
         "accounts": account_rows,
         "assets": asset_rows,
@@ -771,6 +797,12 @@ def write_reports(
         f"Generato: {iso_utc(current)}",
         "",
         "> Solo simulazione: nessun ordine reale e nessuna chiave KuCoin privata.",
+        "",
+        (
+            "> Sizing: compounding attivo."
+            if config.get("reinvest_profits", False)
+            else "> Sizing fisso: i profitti non aumentano la size; tetto 3.800 USDT per conto."
+        ),
         "",
         "## Conti",
         "",
@@ -1002,6 +1034,19 @@ def run_cycle() -> None:
             "TP +0,50% · SL -0,25% · cooldown 2 ore dopo stop.",
         )
         state["telegram_started_sent"] = True
+
+    if (
+        not config.get("reinvest_profits", False)
+        and not state.get("fixed_sizing_notice_sent", False)
+    ):
+        events.insert(
+            0,
+            "🔒 RSI 5M — SIZING FISSO ATTIVATO\n"
+            "I profitti restano nel saldo ma non aumentano la size. "
+            "Margine massimo 3.800 USDT per conto; dopo una perdita la size "
+            "si riduce se il saldo scende sotto 3.800 USDT.",
+        )
+        state["fixed_sizing_notice_sent"] = True
 
     daily_hour = int(config.get("telegram_daily_status_utc_hour", 18))
     today = current.date().isoformat()
