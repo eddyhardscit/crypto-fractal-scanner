@@ -1,9 +1,7 @@
 name: Paper Trading Monthly Snapshot
 
 on:
-  schedule:
-    - cron: "15 6 1 * *"
-      timezone: "Europe/Rome"
+  # Esecuzione automatica trasferita ai timer systemd Hetzner.
   workflow_dispatch:
 
 permissions:

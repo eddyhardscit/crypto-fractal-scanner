@@ -1,8 +1,7 @@
 name: BTC Spot Adaptive Shadow
 on:
+  # Esecuzione automatica trasferita ai timer systemd Hetzner.
   workflow_dispatch:
-  schedule:
-    - cron: "37 */4 * * *"
 permissions:
   contents: write
 concurrency:

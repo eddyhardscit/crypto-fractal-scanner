@@ -1,6 +1,7 @@
 name: SOL Spot Adaptive Final
 
 on:
+  # Esecuzione automatica trasferita ai timer systemd Hetzner.
   workflow_dispatch:
     inputs:
       force_telegram:
@@ -8,9 +9,6 @@ on:
         required: false
         type: boolean
         default: true
-  schedule:
-    - cron: "17 */4 * * *"
-
 permissions:
   contents: write
 
