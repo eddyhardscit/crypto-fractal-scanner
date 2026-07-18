@@ -1,9 +1,7 @@
 name: Paper Trading Comparative Daily Report
 
 on:
-  schedule:
-    - cron: "30 8 * * *"
-      timezone: "Europe/Rome"
+  # Esecuzione automatica trasferita ai timer systemd Hetzner.
   workflow_dispatch:
 
 permissions:

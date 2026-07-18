@@ -1,11 +1,7 @@
 name: Report History and Health Watch
 
 on:
-  workflow_run:
-    workflows:
-      - Daily crypto scanner
-    types:
-      - completed
+  # Esecuzione automatica trasferita ai timer systemd Hetzner.
   workflow_dispatch:
 
 permissions:

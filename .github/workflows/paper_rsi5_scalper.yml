@@ -1,8 +1,7 @@
 name: RSI 5m Paper Scalper
 
 on:
-  schedule:
-    - cron: "*/5 * * * *"
+  # Esecuzione automatica trasferita ai timer systemd Hetzner.
   workflow_dispatch:
 
 permissions:

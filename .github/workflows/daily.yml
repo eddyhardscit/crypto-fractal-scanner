@@ -1,9 +1,7 @@
 name: Daily crypto scanner
 
 on:
-  schedule:
-    - cron: "12 7 * * *"
-      timezone: "Europe/Rome"
+  # Esecuzione automatica trasferita ai timer systemd Hetzner.
   workflow_dispatch:
 
 permissions:

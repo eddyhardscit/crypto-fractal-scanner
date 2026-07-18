@@ -1,8 +1,7 @@
 name: Automatic KuCoin Paper Trading
 
 on:
-  schedule:
-    - cron: "7,22,37,52 * * * *"
+  # Esecuzione automatica trasferita ai timer systemd Hetzner.
   workflow_dispatch:
 
 permissions:
