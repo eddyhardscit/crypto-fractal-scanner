@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "strategy_name": "RSI 5m Long Short Fixed TP Scalper",
   "paper_only": true,
   "reinvest_profits": false,
@@ -46,6 +46,17 @@
       "direction": "LONG"
     },
     {
+      "name": "RSI5_RSI20_5X_WIDE",
+      "label": "RSI 20 · leva 5× · Wide",
+      "initial_capital_usdt": 3800.0,
+      "rsi_trigger": 20.0,
+      "leverage": 5.0,
+      "margin_fraction": 1.0,
+      "direction": "LONG",
+      "stop_loss_pct": 0.005,
+      "take_profit_pct": 0.01
+    },
+    {
       "name": "RSI5_RSI25_10X",
       "label": "RSI 25 · leva 10×",
       "initial_capital_usdt": 3800.0,
@@ -62,6 +73,17 @@
       "leverage": 20.0,
       "margin_fraction": 1.0,
       "direction": "LONG"
+    },
+    {
+      "name": "RSI5_RSI25_5X_WIDE",
+      "label": "RSI 25 · leva 5× · Wide",
+      "initial_capital_usdt": 3800.0,
+      "rsi_trigger": 25.0,
+      "leverage": 5.0,
+      "margin_fraction": 1.0,
+      "direction": "LONG",
+      "stop_loss_pct": 0.005,
+      "take_profit_pct": 0.01
     },
     {
       "name": "RSI5_SHORT_RSI70_10X",
@@ -82,6 +104,17 @@
       "margin_fraction": 1.0
     },
     {
+      "name": "RSI5_SHORT_RSI70_5X_WIDE",
+      "label": "SHORT RSI 70 · leva 5× · Wide",
+      "initial_capital_usdt": 3800.0,
+      "rsi_trigger": 70.0,
+      "leverage": 5.0,
+      "margin_fraction": 1.0,
+      "direction": "SHORT",
+      "stop_loss_pct": 0.005,
+      "take_profit_pct": 0.01
+    },
+    {
       "name": "RSI5_SHORT_RSI75_10X",
       "label": "SHORT RSI 75 · leva 10×",
       "direction": "SHORT",
@@ -98,6 +131,17 @@
       "rsi_trigger": 75.0,
       "leverage": 20.0,
       "margin_fraction": 1.0
+    },
+    {
+      "name": "RSI5_SHORT_RSI75_5X_WIDE",
+      "label": "SHORT RSI 75 · leva 5× · Wide",
+      "initial_capital_usdt": 3800.0,
+      "rsi_trigger": 75.0,
+      "leverage": 5.0,
+      "margin_fraction": 1.0,
+      "direction": "SHORT",
+      "stop_loss_pct": 0.005,
+      "take_profit_pct": 0.01
     }
   ],
   "telegram_daily_status_utc_hour": 18,

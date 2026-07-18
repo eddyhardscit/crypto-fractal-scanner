@@ -218,8 +218,12 @@ def strategy_text(definition: dict[str, Any], config: dict[str, Any]) -> str:
     trigger = as_float(definition.get("rsi_trigger"))
     leverage = as_float(definition.get("leverage"))
     capital = as_float(definition.get("initial_capital_usdt"))
-    tp = as_float(config.get("take_profit_pct")) * 100
-    sl = as_float(config.get("stop_loss_pct")) * 100
+    tp = as_float(
+        definition.get("take_profit_pct", config.get("take_profit_pct"))
+    ) * 100
+    sl = as_float(
+        definition.get("stop_loss_pct", config.get("stop_loss_pct"))
+    ) * 100
     cooldown = as_int(config.get("cooldown_after_stop_bars")) * as_int(
         config.get("timeframe_minutes")
     )

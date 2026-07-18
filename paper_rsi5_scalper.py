@@ -568,8 +568,12 @@ def open_position(
     if entry_fee >= balance:
         return None, "commissione d'ingresso superiore al saldo"
 
-    stop_pct = float(config["stop_loss_pct"])
-    target_pct = float(config["take_profit_pct"])
+    stop_pct = float(
+        definition.get("stop_loss_pct", config["stop_loss_pct"])
+    )
+    target_pct = float(
+        definition.get("take_profit_pct", config["take_profit_pct"])
+    )
     if direction == "LONG":
         stop_price = entry_price * (1.0 - stop_pct)
         target_price = entry_price * (1.0 + target_pct)
