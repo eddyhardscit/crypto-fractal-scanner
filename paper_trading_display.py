@@ -12,8 +12,10 @@ PORTFOLIO_LABELS = {
     "MAIN": "Principale 4H",
     "SHADOW_1H_BALANCED": "Bilanciata 1H V1",
     "SHADOW_1H_BALANCED_V2": "Bilanciata 1H V2",
+    "SHADOW_1H_BALANCED_V3": "Bilanciata 1H V3 Filtered",
     "SHADOW_1H_FAST": "Rapida 1H V1",
     "SHADOW_1H_FAST_V2": "Rapida 1H V2",
+    "SHADOW_1H_FAST_V3": "Rapida 1H V3 Filtered",
     "SHADOW_4H_WIDE": "Ampia 4H",
     "SHADOW_RELATIVE_STRENGTH": "Forza relativa 1H V1",
     "SHADOW_RELATIVE_STRENGTH_V2": "Forza relativa 1H V2",
@@ -44,12 +46,24 @@ PORTFOLIO_DESCRIPTIONS = {
         "Versione V2 selettiva: esclude i regimi storicamente peggiori, "
         "richiede trend e ritorni coerenti e limita i segnali correlati."
     ),
+    "SHADOW_1H_BALANCED_V3": (
+        "Versione V3 derivata dalla V1: accetta soltanto "
+        "score assoluti da 6,0 a meno di 7,5, cioè la "
+        "fascia BUONA risultata migliore nel confronto "
+        "Paper vs Shadow."
+    ),
     "SHADOW_1H_FAST": (
         "Versione originale V1 a 1 ora che cerca momentum e breakout."
     ),
     "SHADOW_1H_FAST_V2": (
         "Versione V2 selettiva: richiede vero breakout, volume, ADX, "
         "trend tecnico coerente e limita i segnali correlati."
+    ),
+    "SHADOW_1H_FAST_V3": (
+        "Versione V3 derivata dalla V1: mantiene la logica "
+        "momentum originale ma esclude i segnali con score "
+        "assoluto da 5,0 a meno di 6,0, fascia risultata "
+        "negativa nel confronto Paper vs Shadow."
     ),
     "SHADOW_4H_WIDE": (
         "Test a 4 ore con stop più ampio, leva inferiore e durata maggiore."
@@ -104,8 +118,10 @@ PORTFOLIO_DESCRIPTIONS = {
 STRATEGY_LABELS = {
     "confluence_trend": "Confluenza trend",
     "confluence_trend_v2": "Confluenza trend V2",
+    "confluence_trend_v3_filtered": "Confluenza trend V3 Filtered",
     "momentum_breakout": "Momentum / breakout",
     "momentum_breakout_v2": "Momentum / breakout V2",
+    "momentum_breakout_v3_filtered": "Momentum / breakout V3 Filtered",
     "relative_strength": "Forza relativa vs BTC V1",
     "relative_strength_v2": "Forza relativa vs BTC V2",
     "rsi_extreme_reversal": "Inversione RSI estrema 15m",

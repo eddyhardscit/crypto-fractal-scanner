@@ -138,6 +138,26 @@
       "research_version": 2
     },
     {
+      "name": "SHADOW_1H_BALANCED_V3",
+      "enabled": true,
+      "is_main": false,
+      "strategy": "confluence_trend_v3_filtered",
+      "timeframe_minutes": 60,
+      "minimum_abs_score": 6.0,
+      "atr_stop_multiple": 1.8,
+      "reward_risk": 2.0,
+      "leverage": 3.0,
+      "max_holding_hours": 120,
+      "allow_long": true,
+      "allow_short": true,
+      "trailing_at_r": 1.0,
+      "trailing_atr_multiple": 1.4,
+      "score_abs_min": 6.0,
+      "score_abs_max_exclusive": 7.5,
+      "research_version": 3,
+      "filter_origin": "paper_shadow_edge"
+    },
+    {
       "name": "SHADOW_1H_FAST",
       "enabled": true,
       "is_main": false,
@@ -182,6 +202,26 @@
       "require_true_breakout": true,
       "max_signals_per_candle_side": 2,
       "research_version": 2
+    },
+    {
+      "name": "SHADOW_1H_FAST_V3",
+      "enabled": true,
+      "is_main": false,
+      "strategy": "momentum_breakout_v3_filtered",
+      "timeframe_minutes": 60,
+      "minimum_abs_score": 4.5,
+      "atr_stop_multiple": 1.4,
+      "reward_risk": 1.5,
+      "leverage": 3.0,
+      "max_holding_hours": 72,
+      "allow_long": true,
+      "allow_short": true,
+      "trailing_at_r": 0.9,
+      "trailing_atr_multiple": 1.2,
+      "excluded_score_abs_min": 5.0,
+      "excluded_score_abs_max_exclusive": 6.0,
+      "research_version": 3,
+      "filter_origin": "paper_shadow_edge"
     },
     {
       "name": "SHADOW_4H_WIDE",

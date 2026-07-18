@@ -1014,6 +1014,60 @@ def core_strategy_v2_accepts(
     return False
 
 
+
+# BALANCED_FAST_V3_FILTERED_RULES_V1
+def core_strategy_v3_accepts(
+    strategy: str,
+    side: str,
+    features: dict[str, Any],
+    score: float,
+    portfolio: dict[str, Any],
+) -> bool:
+    magnitude = abs(float(score))
+
+    if strategy == "confluence_trend_v3_filtered":
+        minimum = float(
+            portfolio.get("score_abs_min", 6.0)
+        )
+        maximum = float(
+            portfolio.get(
+                "score_abs_max_exclusive",
+                7.5,
+            )
+        )
+        return minimum <= magnitude < maximum
+
+    if strategy == "momentum_breakout_v3_filtered":
+        excluded_minimum = float(
+            portfolio.get(
+                "excluded_score_abs_min",
+                5.0,
+            )
+        )
+        excluded_maximum = float(
+            portfolio.get(
+                "excluded_score_abs_max_exclusive",
+                6.0,
+            )
+        )
+
+        if (
+            excluded_minimum
+            <= magnitude
+            < excluded_maximum
+        ):
+            return False
+
+        return strategy_accepts(
+            "momentum_breakout",
+            side,
+            features,
+            score,
+        )
+
+    return False
+
+
 # RELATIVE_STRENGTH_V2_RULES_V2
 def relative_strength_v2_accepts(
     side: str,
@@ -1500,7 +1554,19 @@ def generate_signals(
                 and not portfolio.get("allow_short", True)
             ):
                 continue
-            if strategy in {"confluence_trend_v2", "momentum_breakout_v2"}:
+            if strategy in {
+                "confluence_trend_v3_filtered",
+                "momentum_breakout_v3_filtered",
+            }:
+                if not core_strategy_v3_accepts(
+                    strategy,
+                    side,
+                    features,
+                    score,
+                    portfolio,
+                ):
+                    continue
+            elif strategy in {"confluence_trend_v2", "momentum_breakout_v2"}:
                 if not core_strategy_v2_accepts(
                     strategy,
                     side,

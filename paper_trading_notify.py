@@ -166,7 +166,7 @@ def _official_lab_lines(metrics: list[dict[str, Any]], initial: float) -> list[s
 
     lines = [
         "",
-        "🧪 LABORATORIO — 30 STRATEGIE UFFICIALI",
+        f"🧪 LABORATORIO — {len(rows)} STRATEGIE UFFICIALI",
         f"In profitto: {profitable} · in perdita: {losing} · ferme: {flat}",
         f"P/L aggregato tecnico: {_fmt_eur(sum(item['pnl'] for item in rows), signed=True)}",
         f"Strategie con attività: {len(active)}/{len(rows)}",
