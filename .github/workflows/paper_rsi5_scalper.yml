@@ -46,6 +46,9 @@ jobs:
       - name: Upload dedicated RSI5 state
         run: python paper_rsi5_scalper_storage.py upload
 
+      - name: Process RSI5 Telegram commands
+        run: python paper_rsi5_telegram_commands.py
+
       - name: Upload RSI5 reports
         if: always()
         uses: actions/upload-artifact@v4
