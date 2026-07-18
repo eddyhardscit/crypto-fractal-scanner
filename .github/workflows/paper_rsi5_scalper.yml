@@ -1,0 +1,64 @@
+name: RSI 5m Paper Scalper
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-rsi5-scalper-persistent-state
+  cancel-in-progress: false
+
+jobs:
+  rsi5-paper-scalper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+      GITHUB_TOKEN: ${{ github.token }}
+      RSI5_PAPER_RELEASE_TAG: paper-rsi5-scalper-v1
+      RSI5_SCALPER_CONFIG: paper_rsi5_scalper_config.json
+      RSI5_TELEGRAM_BOT_TOKEN: ${{ secrets.RSI5_TELEGRAM_BOT_TOKEN || secrets.TELEGRAM_BOT_TOKEN }}
+      RSI5_TELEGRAM_CHAT_ID: ${{ secrets.RSI5_TELEGRAM_CHAT_ID || secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-rsi5-scalper.txt
+
+      - name: Restore dedicated RSI5 state
+        run: python paper_rsi5_scalper_storage.py restore
+
+      - name: Run RSI5 paper cycle
+        run: python paper_rsi5_scalper.py
+
+      - name: Upload dedicated RSI5 state
+        run: python paper_rsi5_scalper_storage.py upload
+
+      - name: Upload RSI5 reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-rsi5-scalper-${{ github.run_id }}
+          path: |
+            reports/paper_rsi5_scalper_latest.md
+            reports/paper_rsi5_scalper_latest.json
+            reports/paper_rsi5_scalper_trades.csv
+            reports/paper_rsi5_scalper_signals.csv
+            reports/paper_rsi5_scalper_shadow_trades.csv
+            reports/paper_rsi5_scalper_shadow_report.md
+            reports/paper_rsi5_scalper_shadow_latest.json
+            reports/paper_rsi5_scalper_storage_status.json
+          if-no-files-found: warn
+          retention-days: 7
