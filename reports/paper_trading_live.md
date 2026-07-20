@@ -1,6 +1,6 @@
 # Paper trading automatico KuCoin
 
-Generato: 2026-07-20T01:23:43+00:00
+Generato: 2026-07-20T01:38:37+00:00
 
 ## Configurazione attiva
 
@@ -10,45 +10,45 @@ Generato: 2026-07-20T01:23:43+00:00
 - Compounding: **ATTIVO**
 - Reinvestimento dei profitti: **100,00%**
 - Politica target: **solo monitoraggio; il bot non aumenta il rischio per inseguirlo**
-- Snapshot prezzi usato: **2026-07-20T01:23:33+00:00**; stato dati: **FRESH**; età: **0,0 min**; conversione EUR/USDT: **CONFIG_FALLBACK**
+- Snapshot prezzi usato: **2026-07-20T01:38:27+00:00**; stato dati: **FRESH**; età: **0,0 min**; conversione EUR/USDT: **CONFIG_FALLBACK**
 - Dashboard intraday: [apri la pagina live](https://github.com/eddyhardscit/crypto-fractal-scanner/blob/paper-trading-live/reports/paper_trading_live.md)
 
 ## Freschezza dati di mercato
 
 | Stato | Fonte | Snapshot mercato | Controllato | Età | Limite | Nuove entrate |
 | --- | --- | --- | --- | --- | --- | --- |
-| FRESH | KUCOIN_PUBLIC_API | 2026-07-20T01:23:33+00:00 | 2026-07-20T01:23:33+00:00 | 0,0 min | 25,0 min | ABILITATE |
+| FRESH | KUCOIN_PUBLIC_API | 2026-07-20T01:38:27+00:00 | 2026-07-20T01:38:27+00:00 | 0,0 min | 25,0 min | ABILITATE |
 
 | TF | Asset con dati | Candela più recente | Candela più vecchia | Ritardo dopo chiusura | Tolleranza | Stato |
 | --- | --- | --- | --- | --- | --- | --- |
-| 15m | 12 | 2026-07-20T01:00:00+00:00 | 2026-07-20T01:00:00+00:00 | 8,6 min | 25,0 min | OK |
-| 60m | 12 | 2026-07-20T00:00:00+00:00 | 2026-07-20T00:00:00+00:00 | 23,6 min | 45,0 min | OK |
-| 240m | 12 | 2026-07-19T20:00:00+00:00 | 2026-07-19T20:00:00+00:00 | 1,39 h | 1,00 h | STALE_CANDLE |
+| 15m | 12 | 2026-07-20T01:15:00+00:00 | 2026-07-20T01:15:00+00:00 | 8,5 min | 25,0 min | OK |
+| 60m | 12 | 2026-07-20T00:00:00+00:00 | 2026-07-20T00:00:00+00:00 | 38,5 min | 45,0 min | OK |
+| 240m | 12 | 2026-07-19T20:00:00+00:00 | 2026-07-19T20:00:00+00:00 | 1,64 h | 1,00 h | STALE_CANDLE |
 
 ## Segnali quasi entrati / motivi di esclusione
 
 | Portafoglio | Asset | TF | Lato | Score | Soglia | Manca | Stato | Ritardo chiusura | RSI D/W (peso 0) | Motivo |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Principale 4H | BANK | 240m | LONG | 6,25 | 6,00 | 0,00 | STALE_CANDLE | 1,39 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | DOGE | 240m | SHORT | -6,09 | 6,00 | 0,00 | STALE_CANDLE | 1,39 h | D: Hidden bearish [CONFERMATA] | W: Hidden bullish [IN_FORMAZIONE] | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | PEPE | 240m | LONG | 5,55 | 6,00 | 0,45 | STALE_CANDLE | 1,39 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | ETH | 240m | LONG | 4,95 | 6,00 | 1,05 | STALE_CANDLE | 1,39 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | AKE | 240m | LONG | 4,75 | 6,00 | 1,25 | STALE_CANDLE | 1,39 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | HYPE | 240m | SHORT | -4,75 | 6,00 | 1,25 | STALE_CANDLE | 1,39 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | BTC | 240m | LONG | 3,25 | 6,00 | 2,75 | STALE_CANDLE | 1,39 h | D: Bullish regolare [CONFERMATA] | W: Bullish regolare [CONFERMATA] | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | XRP | 240m | SHORT | -1,91 | 6,00 | 4,09 | STALE_CANDLE | 1,39 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | ZEC | 240m | LONG | 1,78 | 6,00 | 4,22 | STALE_CANDLE | 1,39 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | ADA | 240m | LONG | 1,62 | 6,00 | 4,38 | STALE_CANDLE | 1,39 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | SOL | 240m | LONG | 1,36 | 6,00 | 4,64 | STALE_CANDLE | 1,39 h | D: Conferma ribassista [CONTESTO] | W: Hidden bearish [CONFERMATA] | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Principale 4H | ESPORTS | 240m | SHORT | -0,25 | 6,00 | 5,75 | STALE_CANDLE | 1,39 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 83.6 minuti; tolleranza 60 minuti. |
-| Rapida 1H V3 Filtered | AKE | 60m | LONG | 7,50 | 4,50 | 0,00 | OPENED | 23,6 min | D: n/a | W: n/a | peso 0 | Posizione virtuale aperta in questa esecuzione. |
-| Bilanciata 1H V2 | AKE | 60m | LONG | 7,50 | 5,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Rapida 1H V2 | AKE | 60m | LONG | 7,50 | 5,00 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Bilanciata 1H V2 | PEPE | 60m | LONG | 7,00 | 5,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Rapida 1H V1 | PEPE | 60m | LONG | 7,00 | 4,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+1.08%. |
-| Rapida 1H V2 | PEPE | 60m | LONG | 7,00 | 5,00 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Bilanciata 1H V2 | ETH | 60m | LONG | 6,33 | 5,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Rapida 1H V1 | ETH | 60m | LONG | 6,33 | 4,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.62%. |
+| Principale 4H | BANK | 240m | LONG | 6,25 | 6,00 | 0,00 | STALE_CANDLE | 1,64 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | DOGE | 240m | SHORT | -6,09 | 6,00 | 0,00 | STALE_CANDLE | 1,64 h | D: Hidden bearish [CONFERMATA] | W: Hidden bullish [IN_FORMAZIONE] | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | PEPE | 240m | LONG | 5,55 | 6,00 | 0,45 | STALE_CANDLE | 1,64 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | ETH | 240m | LONG | 4,95 | 6,00 | 1,05 | STALE_CANDLE | 1,64 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | AKE | 240m | LONG | 4,75 | 6,00 | 1,25 | STALE_CANDLE | 1,64 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | HYPE | 240m | SHORT | -4,75 | 6,00 | 1,25 | STALE_CANDLE | 1,64 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | BTC | 240m | LONG | 3,25 | 6,00 | 2,75 | STALE_CANDLE | 1,64 h | D: Bullish regolare [CONFERMATA] | W: Bullish regolare [CONFERMATA] | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | XRP | 240m | SHORT | -1,91 | 6,00 | 4,09 | STALE_CANDLE | 1,64 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | ZEC | 240m | LONG | 1,78 | 6,00 | 4,22 | STALE_CANDLE | 1,64 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | ADA | 240m | LONG | 1,62 | 6,00 | 4,38 | STALE_CANDLE | 1,64 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | SOL | 240m | LONG | 1,36 | 6,00 | 4,64 | STALE_CANDLE | 1,64 h | D: Conferma ribassista [CONTESTO] | W: Hidden bearish [CONFERMATA] | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Principale 4H | ESPORTS | 240m | SHORT | -0,25 | 6,00 | 5,75 | STALE_CANDLE | 1,64 h | D: n/a | W: n/a | peso 0 | Segnale arrivato troppo tardi: candela chiusa da 98.5 minuti; tolleranza 60 minuti. |
+| Combo Trend | PEPE | 60m | LONG | 7,00 | 5,00 | 0,00 | READY | 38,5 min | D: n/a | W: n/a | peso 0 | Tutti i filtri del generatore sono stati superati. |
+| Combo Trend | BANK | 60m | LONG | 6,25 | 5,00 | 0,00 | OPENED | 38,5 min | D: n/a | W: n/a | peso 0 | Posizione virtuale aperta in questa esecuzione. |
+| Bilanciata 1H V2 | AKE | 60m | LONG | 7,50 | 5,50 | 0,00 | STRATEGY_FILTER | 38,5 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Rapida 1H V2 | AKE | 60m | LONG | 7,50 | 5,00 | 0,00 | STRATEGY_FILTER | 38,5 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Bilanciata 1H V2 | PEPE | 60m | LONG | 7,00 | 5,50 | 0,00 | STRATEGY_FILTER | 38,5 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Rapida 1H V1 | PEPE | 60m | LONG | 7,00 | 4,50 | 0,00 | STRATEGY_FILTER | 38,5 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+1.08%. |
+| Rapida 1H V2 | PEPE | 60m | LONG | 7,00 | 5,00 | 0,00 | STRATEGY_FILTER | 38,5 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Bilanciata 1H V2 | ETH | 60m | LONG | 6,33 | 5,50 | 0,00 | STRATEGY_FILTER | 38,5 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
 
 **Manca** indica quanti punti servivano per raggiungere la soglia. `STRATEGY_FILTER` significa che lo score bastava, ma mancava breakout, momentum o forza relativa. `ALREADY_PROCESSED` significa che la stessa candela era già stata esaminata.
 
@@ -56,13 +56,13 @@ Generato: 2026-07-20T01:23:43+00:00
 
 | Equity | Rendimento | P&L mese | Target | Progresso | Aperte | Chiuse | Win rate | PF | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| €9.919,49 | -0,81% | €-80,51 | €3.000,00 | -2,68% | 4 | 15 | 33,33% | 0,89 | 4,26% |
+| €9.916,99 | -0,83% | €-83,01 | €3.000,00 | -2,77% | 4 | 15 | 33,33% | 0,89 | 4,26% |
 
 ## Stato del campione statistico
 
 | Principale 4H — eventi indip. | Sistema eventi indip. | Stato | Prossima soglia |
 | --- | --- | --- | --- |
-| 15 | 170 | CAMPIONE INSUFFICIENTE | 30 (mancano 15) |
+| 15 | 171 | CAMPIONE INSUFFICIENTE | 30 (mancano 15) |
 
 - Trade del Principale 4H chiusi: **15**; win rate **33,33%**; profit factor **0,89**.
 - Expectancy: **€-3,37** per trade; P&L netto: **€-50,49**; max drawdown: **4,26%**.
@@ -74,26 +74,26 @@ Generato: 2026-07-20T01:23:43+00:00
 
 | Tipo | Portafoglio | Posizioni | Equity | Margine impegnato | Esposizione con leva | Rischio agli stop | P&L aperto |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| PRINCIPALE | Principale 4H | 4 | €9.919,49 | €1.317,93 | €3.953,78 | €197,45 | €-29,44 |
-| TEST | Scanner Top 5 Long 1H | 3 | €10.356,31 | €1.055,42 | €2.110,84 | €103,25 | €61,87 |
-| TEST | Forza relativa 1H V2 | 4 | €10.296,01 | €2.879,58 | €5.759,15 | €100,67 | €120,43 |
-| TEST | Scanner Top 5 + forza BTC 1H | 3 | €10.289,35 | €1.866,89 | €3.733,78 | €152,65 | €20,85 |
-| TEST | Combo Adaptive | 3 | €10.264,19 | €3.522,36 | €7.044,73 | €153,58 | €16,09 |
-| TEST | Benchmark Donchian breakout 1H | 2 | €10.249,80 | €1.798,47 | €3.596,94 | €101,86 | €17,86 |
-| TEST | Bilanciata 1H V1 | 4 | €10.238,06 | €1.894,36 | €5.683,07 | €202,38 | €-27,19 |
-| TEST | Ampia 4H | 4 | €10.225,80 | €1.561,79 | €3.123,57 | €150,11 | €69,04 |
-| TEST | Rapida 1H V1 | 4 | €10.182,61 | €1.670,54 | €5.011,61 | €204,00 | €-17,09 |
+| PRINCIPALE | Principale 4H | 4 | €9.916,99 | €1.317,93 | €3.953,78 | €197,45 | €-31,94 |
+| TEST | Scanner Top 5 Long 1H | 3 | €10.360,71 | €1.055,42 | €2.110,84 | €103,25 | €66,27 |
+| TEST | Forza relativa 1H V2 | 4 | €10.299,65 | €2.879,58 | €5.759,15 | €100,67 | €124,06 |
+| TEST | Scanner Top 5 + forza BTC 1H | 3 | €10.286,31 | €1.866,89 | €3.733,78 | €152,65 | €17,81 |
+| TEST | Combo Adaptive | 3 | €10.266,02 | €3.522,36 | €7.044,73 | €153,58 | €17,92 |
+| TEST | Benchmark Donchian breakout 1H | 2 | €10.248,52 | €1.798,47 | €3.596,94 | €101,86 | €16,58 |
+| TEST | Bilanciata 1H V1 | 4 | €10.232,59 | €1.894,36 | €5.683,07 | €202,38 | €-32,66 |
+| TEST | Ampia 4H | 4 | €10.231,49 | €1.561,79 | €3.123,57 | €150,11 | €74,73 |
+| TEST | Rapida 1H V1 | 4 | €10.179,69 | €1.670,54 | €5.011,61 | €204,00 | €-20,01 |
+| TEST | Bilanciata 1H V3 Filtered | 3 | €10.178,64 | €2.448,79 | €7.346,37 | €99,77 | €56,46 |
 | TEST | Combo Mean Reversion | 1 | €10.175,60 | €281,61 | €563,22 | €50,37 | €0,00 |
-| TEST | Forza relativa 1H V1 | 4 | €10.151,60 | €3.004,75 | €6.009,51 | €151,30 | €69,84 |
-| TEST | Bilanciata 1H V3 Filtered | 4 | €10.149,07 | €3.432,06 | €10.296,18 | €99,77 | €123,66 |
+| TEST | Forza relativa 1H V1 | 4 | €10.165,40 | €3.004,75 | €6.009,51 | €100,88 | €83,64 |
 | TEST | Btc Bollinger 1H | 0 | €10.068,69 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Rapida 1H V2 | 0 | €10.062,78 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Benchmark Bollinger mean reversion 1H | 2 | €10.048,10 | €2.277,23 | €4.554,46 | €97,61 | €-19,69 |
-| TEST | Combo Trend | 2 | €10.046,80 | €756,14 | €1.512,28 | €100,70 | €-17,54 |
+| TEST | Benchmark Bollinger mean reversion 1H | 2 | €10.046,05 | €2.277,23 | €4.554,46 | €97,61 | €-21,75 |
+| TEST | Combo Trend | 3 | €10.043,46 | €965,38 | €1.930,77 | €150,92 | €-20,63 |
+| TEST | Bilanciata 1H V2 | 3 | €10.028,10 | €1.757,85 | €5.273,55 | €99,11 | €55,57 |
 | TEST | Doge Donchian 1H | 0 | €10.026,22 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Bilanciata 1H V2 | 3 | €10.021,11 | €1.757,85 | €5.273,55 | €99,11 | €48,58 |
-| TEST | Eth Donchian 1H | 1 | €10.015,10 | €1.302,08 | €3.906,25 | €50,00 | €17,66 |
-| TEST | Rapida 1H V3 Filtered | 4 | €10.009,97 | €1.925,27 | €5.775,81 | €150,03 | €9,33 |
+| TEST | Eth Donchian 1H | 1 | €10.017,11 | €1.302,08 | €3.906,25 | €50,00 | €19,67 |
+| TEST | Rapida 1H V3 Filtered | 4 | €10.014,28 | €1.925,27 | €5.775,81 | €150,03 | €13,64 |
 | TEST | Scalp RSI Long 15 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scalp RSI Long 20 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scalp RSI Long 25 · €10 · 15x | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
@@ -121,23 +121,23 @@ Generato: 2026-07-20T01:23:43+00:00
 | TEST | Doge Bollinger 1H | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scalp RSI Short 75 · €10 · 15x | 0 | €9.995,97 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Sol Donchian 1H | 0 | €9.995,51 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Combo Scanner | 3 | €9.992,69 | €2.570,72 | €5.141,43 | €150,40 | €-7,72 |
 | TEST | Sol Ema 1H | 0 | €9.990,84 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Scanner Bottom 5 Short 1H | 3 | €9.986,92 | €2.159,34 | €4.318,68 | €100,25 | €-40,84 |
+| TEST | Combo Scanner | 3 | €9.987,28 | €2.570,72 | €5.141,43 | €150,40 | €-13,12 |
 | TEST | Scalp RSI Short 75 · prudente · 5x | 0 | €9.982,18 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Sol Adaptive 1H | 0 | €9.981,55 | €0,00 | €0,00 | €0,00 | €0,00 |
+| TEST | Scanner Bottom 5 Short 1H | 3 | €9.981,54 | €2.159,34 | €4.318,68 | €100,25 | €-46,21 |
 | TEST | Scalp RSI Short 75 · €50 · 15x | 0 | €9.979,87 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Eth Bollinger 1H | 1 | €9.977,22 | €1.388,89 | €4.166,67 | €50,00 | €-20,51 |
-| TEST | Eth Ema 1H | 1 | €9.973,82 | €1.151,05 | €3.453,16 | €0,00 | €31,15 |
-| TEST | Benchmark trend following EMA 1H | 3 | €9.958,96 | €1.373,57 | €2.747,14 | €149,36 | €-17,34 |
-| TEST | Doge Ema 1H | 1 | €9.958,45 | €1.155,81 | €3.467,44 | €49,93 | €-27,07 |
-| TEST | Eth Adaptive 1H | 1 | €9.958,45 | €1.151,05 | €3.453,16 | €49,73 | €15,61 |
+| TEST | Eth Ema 1H | 1 | €9.975,60 | €1.151,05 | €3.453,16 | €0,00 | €32,94 |
+| TEST | Eth Bollinger 1H | 1 | €9.975,07 | €1.388,89 | €4.166,67 | €50,00 | €-22,66 |
+| TEST | Eth Adaptive 1H | 1 | €9.960,22 | €1.151,05 | €3.453,16 | €49,73 | €17,39 |
+| TEST | Doge Ema 1H | 1 | €9.956,05 | €1.155,81 | €3.467,44 | €49,93 | €-29,47 |
+| TEST | Benchmark trend following EMA 1H | 3 | €9.955,99 | €1.373,57 | €2.747,14 | €149,36 | €-20,31 |
 | TEST | Btc Ema 1H | 0 | €9.945,45 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Btc Adaptive 1H | 0 | €9.945,45 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Btc Donchian 1H | 0 | €9.944,88 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Sol Bollinger 1H | 0 | €9.944,21 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Global Confluence puro 1H | 1 | €9.903,84 | €1.551,38 | €3.102,75 | €49,64 | €-24,66 |
-| TEST | Combo Adaptive MFE Trail | 3 | €9.781,92 | €4.836,25 | €9.672,50 | €48,78 | €34,14 |
+| TEST | Global Confluence puro 1H | 1 | €9.901,69 | €1.551,38 | €3.102,75 | €49,64 | €-26,81 |
+| TEST | Combo Adaptive MFE Trail | 3 | €9.787,69 | €4.836,25 | €9.672,50 | €48,78 | €39,90 |
 
 **Importante:** ogni riga è un conto virtuale separato da €10.000. I margini dei diversi portafogli non vanno sommati come se appartenessero a un unico conto.
 
@@ -216,26 +216,26 @@ Generato: 2026-07-20T01:23:43+00:00
 
 | Tipo | Portafoglio | Strategia | Equity | P&L chiuso | Trade | Eventi indip. | Win rate | PF | Expectancy | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| PRINCIPALE | Principale 4H | Confluenza trend | €9.919,49 | €-50,49 | 15 | 15 | 33,33% | 0,89 | €-3,37 | 4,26% |
-| TEST | Scanner Top 5 Long 1H | Scanner Top 5 Long | €10.356,31 | €295,85 | 16 | 16 | 50,00% | 1,90 | €18,49 | 2,13% |
-| TEST | Forza relativa 1H V2 | Forza relativa vs BTC V2 | €10.296,01 | €179,19 | 12 | 12 | 33,33% | 1,69 | €14,93 | 2,32% |
-| TEST | Scanner Top 5 + forza BTC 1H | Scanner Top 5 + forza BTC | €10.289,35 | €270,73 | 13 | 13 | 46,15% | 2,00 | €20,83 | 1,62% |
-| TEST | Combo Adaptive | Combo Adaptive | €10.264,19 | €252,59 | 14 | 14 | 42,86% | 2,15 | €18,04 | 1,01% |
-| TEST | Benchmark Donchian breakout 1H | Donchian breakout 20 barre | €10.249,80 | €234,28 | 11 | 11 | 54,55% | 2,08 | €21,30 | 1,98% |
-| TEST | Bilanciata 1H V1 | Confluenza trend | €10.238,06 | €268,13 | 14 | 14 | 50,00% | 2,59 | €19,15 | 1,12% |
-| TEST | Ampia 4H | Confluenza trend | €10.225,80 | €157,06 | 10 | 10 | 30,00% | 1,60 | €15,71 | 2,08% |
-| TEST | Rapida 1H V1 | Momentum / breakout | €10.182,61 | €202,61 | 38 | 38 | 42,11% | 1,25 | €5,33 | 2,83% |
+| PRINCIPALE | Principale 4H | Confluenza trend | €9.916,99 | €-50,49 | 15 | 15 | 33,33% | 0,89 | €-3,37 | 4,26% |
+| TEST | Scanner Top 5 Long 1H | Scanner Top 5 Long | €10.360,71 | €295,85 | 16 | 16 | 50,00% | 1,90 | €18,49 | 2,13% |
+| TEST | Forza relativa 1H V2 | Forza relativa vs BTC V2 | €10.299,65 | €179,19 | 12 | 12 | 33,33% | 1,69 | €14,93 | 2,32% |
+| TEST | Scanner Top 5 + forza BTC 1H | Scanner Top 5 + forza BTC | €10.286,31 | €270,73 | 13 | 13 | 46,15% | 2,00 | €20,83 | 1,62% |
+| TEST | Combo Adaptive | Combo Adaptive | €10.266,02 | €252,59 | 14 | 14 | 42,86% | 2,15 | €18,04 | 1,01% |
+| TEST | Benchmark Donchian breakout 1H | Donchian breakout 20 barre | €10.248,52 | €234,28 | 11 | 11 | 54,55% | 2,08 | €21,30 | 1,98% |
+| TEST | Bilanciata 1H V1 | Confluenza trend | €10.232,59 | €268,13 | 14 | 14 | 50,00% | 2,59 | €19,15 | 1,12% |
+| TEST | Ampia 4H | Confluenza trend | €10.231,49 | €157,06 | 10 | 10 | 30,00% | 1,60 | €15,71 | 2,08% |
+| TEST | Rapida 1H V1 | Momentum / breakout | €10.179,69 | €202,61 | 38 | 38 | 42,11% | 1,25 | €5,33 | 2,83% |
+| TEST | Bilanciata 1H V3 Filtered | Confluenza trend V3 Filtered | €10.178,64 | €126,31 | 15 | 15 | 40,00% | 1,30 | €8,42 | 2,20% |
 | TEST | Combo Mean Reversion | Combo Mean Reversion | €10.175,60 | €176,28 | 4 | 4 | 75,00% | 4,42 | €44,07 | 0,59% |
-| TEST | Forza relativa 1H V1 | Forza relativa vs BTC V1 | €10.151,60 | €85,74 | 9 | 9 | 55,56% | 1,53 | €9,53 | 1,84% |
-| TEST | Bilanciata 1H V3 Filtered | Confluenza trend V3 Filtered | €10.149,07 | €30,29 | 14 | 14 | 35,71% | 1,07 | €2,16 | 2,20% |
+| TEST | Forza relativa 1H V1 | Forza relativa vs BTC V1 | €10.165,40 | €85,74 | 9 | 9 | 55,56% | 1,53 | €9,53 | 1,84% |
 | TEST | Btc Bollinger 1H | Bollinger mean reversion | €10.068,69 | €68,69 | 1 | 1 | 100,00% | ∞ | €68,69 | 0,31% |
 | TEST | Rapida 1H V2 | Momentum / breakout V2 | €10.062,78 | €62,78 | 2 | 1 | 50,00% | 11,45 | €31,39 | 0,93% |
-| TEST | Benchmark Bollinger mean reversion 1H | Bollinger mean reversion | €10.048,10 | €70,65 | 11 | 11 | 45,45% | 1,32 | €6,42 | 2,06% |
-| TEST | Combo Trend | Combo Trend | €10.046,80 | €65,31 | 10 | 10 | 40,00% | 1,25 | €6,53 | 1,68% |
+| TEST | Benchmark Bollinger mean reversion 1H | Bollinger mean reversion | €10.046,05 | €70,65 | 11 | 11 | 45,45% | 1,32 | €6,42 | 2,06% |
+| TEST | Combo Trend | Combo Trend | €10.043,46 | €65,31 | 10 | 10 | 40,00% | 1,25 | €6,53 | 1,71% |
+| TEST | Bilanciata 1H V2 | Confluenza trend V2 | €10.028,10 | €-24,17 | 14 | 12 | 42,86% | 0,94 | €-1,73 | 2,10% |
 | TEST | Doge Donchian 1H | Donchian breakout 20 barre | €10.026,22 | €26,22 | 1 | 1 | 100,00% | ∞ | €26,22 | 0,36% |
-| TEST | Bilanciata 1H V2 | Confluenza trend V2 | €10.021,11 | €-24,17 | 14 | 12 | 42,86% | 0,94 | €-1,73 | 2,10% |
-| TEST | Eth Donchian 1H | Donchian breakout 20 barre | €10.015,10 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,38% |
-| TEST | Rapida 1H V3 Filtered | Momentum / breakout V3 Filtered | €10.009,97 | €4,35 | 21 | 21 | 33,33% | 1,01 | €0,21 | 2,24% |
+| TEST | Eth Donchian 1H | Donchian breakout 20 barre | €10.017,11 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,38% |
+| TEST | Rapida 1H V3 Filtered | Momentum / breakout V3 Filtered | €10.014,28 | €4,35 | 21 | 21 | 33,33% | 1,01 | €0,21 | 2,24% |
 | TEST | Scalp RSI Long 15 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Scalp RSI Long 20 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Scalp RSI Long 25 · €10 · 15x | Inversione RSI estrema 15m | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
@@ -263,23 +263,23 @@ Generato: 2026-07-20T01:23:43+00:00
 | TEST | Doge Bollinger 1H | Bollinger mean reversion | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
 | TEST | Scalp RSI Short 75 · €10 · 15x | Inversione RSI estrema 15m | €9.995,97 | €-4,03 | 4 | 4 | 25,00% | 0,18 | €-1,01 | 0,04% |
 | TEST | Sol Donchian 1H | Donchian breakout 20 barre | €9.995,51 | €-4,49 | 1 | 1 | 0,00% | 0,00 | €-4,49 | 0,43% |
-| TEST | Combo Scanner | Combo Scanner | €9.992,69 | €1,79 | 11 | 11 | 36,36% | 1,01 | €0,16 | 1,69% |
 | TEST | Sol Ema 1H | Trend following EMA | €9.990,84 | €-9,16 | 2 | 2 | 50,00% | 0,83 | €-4,58 | 0,87% |
-| TEST | Scanner Bottom 5 Short 1H | Scanner Bottom 5 Short | €9.986,92 | €28,41 | 6 | 6 | 50,00% | 1,26 | €4,73 | 2,02% |
+| TEST | Combo Scanner | Combo Scanner | €9.987,28 | €1,79 | 11 | 11 | 36,36% | 1,01 | €0,16 | 1,69% |
 | TEST | Scalp RSI Short 75 · prudente · 5x | Inversione RSI estrema 15m | €9.982,18 | €-17,82 | 4 | 4 | 25,00% | 0,30 | €-4,46 | 0,18% |
 | TEST | Sol Adaptive 1H | Combo Adaptive | €9.981,55 | €-18,45 | 2 | 2 | 50,00% | 0,67 | €-9,23 | 0,89% |
+| TEST | Scanner Bottom 5 Short 1H | Scanner Bottom 5 Short | €9.981,54 | €28,41 | 6 | 6 | 50,00% | 1,26 | €4,73 | 2,07% |
 | TEST | Scalp RSI Short 75 · €50 · 15x | Inversione RSI estrema 15m | €9.979,87 | €-20,13 | 4 | 4 | 25,00% | 0,18 | €-5,03 | 0,20% |
-| TEST | Eth Bollinger 1H | Bollinger mean reversion | €9.977,22 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,42% |
-| TEST | Eth Ema 1H | Trend following EMA | €9.973,82 | €-54,90 | 1 | 1 | 0,00% | 0,00 | €-54,90 | 0,61% |
-| TEST | Benchmark trend following EMA 1H | Trend following EMA | €9.958,96 | €-22,06 | 5 | 5 | 40,00% | 0,86 | €-4,41 | 1,10% |
-| TEST | Doge Ema 1H | Trend following EMA | €9.958,45 | €-13,78 | 2 | 2 | 50,00% | 0,75 | €-6,89 | 1,17% |
-| TEST | Eth Adaptive 1H | Combo Adaptive | €9.958,45 | €-54,90 | 1 | 1 | 0,00% | 0,00 | €-54,90 | 0,77% |
+| TEST | Eth Ema 1H | Trend following EMA | €9.975,60 | €-54,90 | 1 | 1 | 0,00% | 0,00 | €-54,90 | 0,61% |
+| TEST | Eth Bollinger 1H | Bollinger mean reversion | €9.975,07 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,44% |
+| TEST | Eth Adaptive 1H | Combo Adaptive | €9.960,22 | €-54,90 | 1 | 1 | 0,00% | 0,00 | €-54,90 | 0,77% |
+| TEST | Doge Ema 1H | Trend following EMA | €9.956,05 | €-13,78 | 2 | 2 | 50,00% | 0,75 | €-6,89 | 1,17% |
+| TEST | Benchmark trend following EMA 1H | Trend following EMA | €9.955,99 | €-22,06 | 5 | 5 | 40,00% | 0,86 | €-4,41 | 1,12% |
 | TEST | Btc Ema 1H | Trend following EMA | €9.945,45 | €-54,55 | 1 | 1 | 0,00% | 0,00 | €-54,55 | 0,65% |
 | TEST | Btc Adaptive 1H | Combo Adaptive | €9.945,45 | €-54,55 | 1 | 1 | 0,00% | 0,00 | €-54,55 | 0,65% |
 | TEST | Btc Donchian 1H | Donchian breakout 20 barre | €9.944,88 | €-55,12 | 1 | 1 | 0,00% | 0,00 | €-55,12 | 0,67% |
 | TEST | Sol Bollinger 1H | Bollinger mean reversion | €9.944,21 | €-55,79 | 1 | 1 | 0,00% | 0,00 | €-55,79 | 0,62% |
-| TEST | Global Confluence puro 1H | Global Confluence puro | €9.903,84 | €-71,19 | 3 | 3 | 33,33% | 0,35 | €-23,73 | 1,19% |
-| TEST | Combo Adaptive MFE Trail | Combo Adaptive | €9.781,92 | €-246,28 | 12 | 12 | 25,00% | 0,18 | €-20,52 | 2,87% |
+| TEST | Global Confluence puro 1H | Global Confluence puro | €9.901,69 | €-71,19 | 3 | 3 | 33,33% | 0,35 | €-23,73 | 1,19% |
+| TEST | Combo Adaptive MFE Trail | Combo Adaptive | €9.787,69 | €-246,28 | 12 | 12 | 25,00% | 0,18 | €-20,52 | 2,87% |
 
 **Eventi indip.** conta gli eventi di mercato distinti; varianti dello stesso movimento restano collegate allo stesso evento sperimentale.
 
@@ -287,80 +287,81 @@ Generato: 2026-07-20T01:23:43+00:00
 
 | Portafoglio | Asset | Lato | Metodo | TF | Leva | Entry | Mark | Stop | Liquidazione | Target | Margine | Esposizione | Rischio stop | P&L |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Principale 4H | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07292 | 0,07272 | 0,07500 | 0,09686 | 0,06875 | €574,44 | €1.723,33 | €49,28 | €4,62 |
-| Principale 4H | HYPE | SHORT | Confluenza trend | 240m | 3,0x | 59,36013 | 60,66900 | 62,47190 | 78,85003 | 53,13657 | €313,25 | €939,76 | €49,26 | €-20,72 |
+| Principale 4H | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07292 | 0,07277 | 0,07500 | 0,09686 | 0,06875 | €574,44 | €1.723,33 | €49,28 | €3,44 |
+| Principale 4H | HYPE | SHORT | Confluenza trend | 240m | 3,0x | 59,36013 | 60,71800 | 62,47190 | 78,85003 | 53,13657 | €313,25 | €939,76 | €49,26 | €-21,50 |
 | Principale 4H | LAB | SHORT | Confluenza trend | 240m | 3,0x | 0,17841 | 0,17841 | 0,19982 | 0,23699 | 0,13559 | €136,26 | €408,77 | €49,05 | €-0,00 |
-| Principale 4H | ZEC | LONG | Confluenza trend | 240m | 3,0x | 556,07119 | 547,66000 | 524,63715 | 373,49448 | 618,93927 | €293,97 | €881,92 | €49,85 | €-13,34 |
+| Principale 4H | ZEC | LONG | Confluenza trend | 240m | 3,0x | 556,07119 | 547,32000 | 524,63715 | 373,49448 | 618,93927 | €293,97 | €881,92 | €49,85 | €-13,88 |
 | Bilanciata 1H V1 | LAB | SHORT | Confluenza trend | 60m | 3,0x | 0,18667 | 0,18667 | 0,20845 | 0,24796 | 0,14311 | €143,84 | €431,52 | €50,35 | €-0,00 |
 | Bilanciata 1H V1 | ONDO | LONG | Confluenza trend | 60m | 3,0x | 0,37613 | 0,37613 | 0,36189 | 0,25263 | 0,40460 | €442,89 | €1.328,68 | €50,30 | €0,00 |
-| Bilanciata 1H V1 | DOGE | SHORT | Confluenza trend | 60m | 3,0x | 0,07253 | 0,07272 | 0,07357 | 0,09634 | 0,07044 | €1.164,82 | €3.494,46 | €50,32 | €-9,33 |
-| Bilanciata 1H V1 | ESPORTS | SHORT | Confluenza trend | 60m | 3,0x | 0,02241 | 0,02334 | 0,02509 | 0,02976 | 0,01703 | €142,80 | €428,41 | €51,41 | €-17,87 |
+| Bilanciata 1H V1 | DOGE | SHORT | Confluenza trend | 60m | 3,0x | 0,07253 | 0,07277 | 0,07357 | 0,09634 | 0,07044 | €1.164,82 | €3.494,46 | €50,32 | €-11,73 |
+| Bilanciata 1H V1 | ESPORTS | SHORT | Confluenza trend | 60m | 3,0x | 0,02241 | 0,02350 | 0,02509 | 0,02976 | 0,01703 | €142,80 | €428,41 | €51,41 | €-20,93 |
 | Bilanciata 1H V2 | LAB | SHORT | Confluenza trend V2 | 60m | 3,0x | 0,18667 | 0,18667 | 0,20845 | 0,24796 | 0,14311 | €139,69 | €419,08 | €48,90 | €-0,00 |
 | Bilanciata 1H V2 | GRAM | SHORT | Confluenza trend V2 | 60m | 3,0x | 1,49240 | 1,49240 | 1,53621 | 1,98241 | 1,40478 | €570,19 | €1.710,58 | €50,21 | €-0,00 |
-| Bilanciata 1H V2 | PEPE | LONG | Confluenza trend V2 | 60m | 3,0x | 0,00000 | 0,00000 | 0,00000 | 0,00000 | 0,00000 | €1.047,96 | €3.143,89 | €0,00 | €48,58 |
-| Bilanciata 1H V3 Filtered | DOGE | SHORT | Confluenza trend V3 Filtered | 60m | 3,0x | 0,07217 | 0,07272 | 0,07321 | 0,09586 | 0,07009 | €1.157,41 | €3.472,22 | €50,00 | €-26,62 |
-| Bilanciata 1H V3 Filtered | ETH | LONG | Confluenza trend V3 Filtered | 60m | 3,0x | 1867,19336 | 1876,57000 | 1840,30578 | 1254,13154 | 1920,96853 | €1.152,16 | €3.456,47 | €49,77 | €17,36 |
-| Bilanciata 1H V3 Filtered | BANK | LONG | Confluenza trend V3 Filtered | 60m | 3,0x | 0,19596 | 0,22864 | 0,20131 | 0,13162 | 0,24299 | €139,22 | €417,67 | €0,00 | €69,66 |
-| Bilanciata 1H V3 Filtered | PEPE | LONG | Confluenza trend V3 Filtered | 60m | 3,0x | 0,00000 | 0,00000 | 0,00000 | 0,00000 | 0,00000 | €983,27 | €2.949,82 | €0,00 | €63,26 |
+| Bilanciata 1H V2 | PEPE | LONG | Confluenza trend V2 | 60m | 3,0x | 0,00000 | 0,00000 | 0,00000 | 0,00000 | 0,00000 | €1.047,96 | €3.143,89 | €0,00 | €55,57 |
+| Bilanciata 1H V3 Filtered | DOGE | SHORT | Confluenza trend V3 Filtered | 60m | 3,0x | 0,07217 | 0,07277 | 0,07321 | 0,09586 | 0,07009 | €1.157,41 | €3.472,22 | €50,00 | €-29,03 |
+| Bilanciata 1H V3 Filtered | ETH | LONG | Confluenza trend V3 Filtered | 60m | 3,0x | 1867,19336 | 1877,53000 | 1840,30578 | 1254,13154 | 1920,96853 | €1.152,16 | €3.456,47 | €49,77 | €19,13 |
+| Bilanciata 1H V3 Filtered | BANK | LONG | Confluenza trend V3 Filtered | 60m | 3,0x | 0,19596 | 0,22709 | 0,20131 | 0,13162 | 0,24299 | €139,22 | €417,67 | €0,00 | €66,35 |
 | Rapida 1H V1 | LAB | SHORT | Momentum / breakout | 60m | 3,0x | 0,18833 | 0,18833 | 0,20479 | 0,25016 | 0,16363 | €195,85 | €587,54 | €51,37 | €-0,00 |
 | Rapida 1H V1 | ONDO | LONG | Momentum / breakout | 60m | 3,0x | 0,37292 | 0,37292 | 0,36188 | 0,25048 | 0,38949 | €580,83 | €1.742,48 | €51,60 | €0,00 |
 | Rapida 1H V1 | GRAM | SHORT | Momentum / breakout | 60m | 3,0x | 1,49240 | 1,49240 | 1,52648 | 1,98241 | 1,44129 | €757,31 | €2.271,94 | €51,87 | €-0,00 |
-| Rapida 1H V1 | ESPORTS | SHORT | Momentum / breakout | 60m | 3,0x | 0,02241 | 0,02334 | 0,02509 | 0,02976 | 0,01837 | €136,55 | €409,65 | €49,16 | €-17,09 |
-| Rapida 1H V3 Filtered | ETH | LONG | Momentum / breakout V3 Filtered | 60m | 3,0x | 1868,12355 | 1876,57000 | 1868,12355 | 1254,75632 | 1899,50803 | €1.482,34 | €4.447,03 | €0,00 | €20,11 |
-| Rapida 1H V3 Filtered | BANK | LONG | Momentum / breakout V3 Filtered | 60m | 3,0x | 0,22677 | 0,22864 | 0,19955 | 0,15231 | 0,26758 | €138,75 | €416,26 | €49,95 | €3,44 |
-| Rapida 1H V3 Filtered | ESPORTS | SHORT | Momentum / breakout V3 Filtered | 60m | 3,0x | 0,02258 | 0,02334 | 0,02528 | 0,02999 | 0,01851 | €138,96 | €416,88 | €50,03 | €-14,12 |
-| Rapida 1H V3 Filtered | AKE | LONG | Momentum / breakout V3 Filtered | 60m | 3,0x | 0,00214 | 0,00214 | 0,00192 | 0,00144 | 0,00246 | €165,22 | €495,66 | €50,05 | €-0,10 |
-| Ampia 4H | DOGE | SHORT | Confluenza trend | 240m | 2,0x | 0,07237 | 0,07272 | 0,07515 | 0,10819 | 0,06457 | €649,49 | €1.298,97 | €50,00 | €-6,34 |
-| Ampia 4H | ZEC | LONG | Confluenza trend | 240m | 2,0x | 522,36445 | 547,66000 | 483,09844 | 263,79405 | 632,30930 | €332,53 | €665,06 | €49,99 | €32,21 |
-| Ampia 4H | HYPE | SHORT | Confluenza trend | 240m | 2,0x | 59,36013 | 60,66900 | 63,40544 | 88,74339 | 48,03325 | €367,70 | €735,40 | €50,12 | €-16,22 |
-| Ampia 4H | AKE | LONG | Confluenza trend | 240m | 2,0x | 0,00188 | 0,00214 | 0,00188 | 0,00095 | 0,00251 | €212,07 | €424,14 | €0,00 | €59,39 |
+| Rapida 1H V1 | ESPORTS | SHORT | Momentum / breakout | 60m | 3,0x | 0,02241 | 0,02350 | 0,02509 | 0,02976 | 0,01837 | €136,55 | €409,65 | €49,16 | €-20,01 |
+| Rapida 1H V3 Filtered | ETH | LONG | Momentum / breakout V3 Filtered | 60m | 3,0x | 1868,12355 | 1877,53000 | 1868,12355 | 1254,75632 | 1899,50803 | €1.482,34 | €4.447,03 | €0,00 | €22,39 |
+| Rapida 1H V3 Filtered | BANK | LONG | Momentum / breakout V3 Filtered | 60m | 3,0x | 0,22677 | 0,22709 | 0,19955 | 0,15231 | 0,26758 | €138,75 | €416,26 | €49,95 | €0,60 |
+| Rapida 1H V3 Filtered | ESPORTS | SHORT | Momentum / breakout V3 Filtered | 60m | 3,0x | 0,02258 | 0,02350 | 0,02528 | 0,02999 | 0,01851 | €138,96 | €416,88 | €50,03 | €-17,07 |
+| Rapida 1H V3 Filtered | AKE | LONG | Momentum / breakout V3 Filtered | 60m | 3,0x | 0,00214 | 0,00217 | 0,00192 | 0,00144 | 0,00246 | €165,22 | €495,66 | €50,05 | €7,72 |
+| Ampia 4H | DOGE | SHORT | Confluenza trend | 240m | 2,0x | 0,07237 | 0,07277 | 0,07515 | 0,10819 | 0,06457 | €649,49 | €1.298,97 | €50,00 | €-7,24 |
+| Ampia 4H | ZEC | LONG | Confluenza trend | 240m | 2,0x | 522,36445 | 547,32000 | 483,09844 | 263,79405 | 632,30930 | €332,53 | €665,06 | €49,99 | €31,77 |
+| Ampia 4H | HYPE | SHORT | Confluenza trend | 240m | 2,0x | 59,36013 | 60,71800 | 63,40544 | 88,74339 | 48,03325 | €367,70 | €735,40 | €50,12 | €-16,82 |
+| Ampia 4H | AKE | LONG | Confluenza trend | 240m | 2,0x | 0,00188 | 0,00217 | 0,00188 | 0,00095 | 0,00251 | €212,07 | €424,14 | €0,00 | €67,02 |
 | Forza relativa 1H V1 | NEAR | LONG | Forza relativa vs BTC V1 | 60m | 2,0x | 2,02421 | 2,02421 | 1,97233 | 1,02223 | 2,13836 | €984,05 | €1.968,10 | €50,44 | €0,00 |
 | Forza relativa 1H V1 | ALLO | SHORT | Forza relativa vs BTC V1 | 60m | 2,0x | 0,37581 | 0,37581 | 0,40458 | 0,56184 | 0,31252 | €329,44 | €658,87 | €50,44 | €-0,00 |
-| Forza relativa 1H V1 | PEPE | LONG | Forza relativa vs BTC V1 | 60m | 2,0x | 0,00000 | 0,00000 | 0,00000 | 0,00000 | 0,00000 | €1.481,55 | €2.963,10 | €50,42 | €29,98 |
-| Forza relativa 1H V1 | AKE | LONG | Forza relativa vs BTC V1 | 60m | 2,0x | 0,00195 | 0,00214 | 0,00195 | 0,00099 | 0,00247 | €209,72 | €419,44 | €0,00 | €39,86 |
+| Forza relativa 1H V1 | PEPE | LONG | Forza relativa vs BTC V1 | 60m | 2,0x | 0,00000 | 0,00000 | 0,00000 | 0,00000 | 0,00000 | €1.481,55 | €2.963,10 | €0,00 | €36,53 |
+| Forza relativa 1H V1 | AKE | LONG | Forza relativa vs BTC V1 | 60m | 2,0x | 0,00195 | 0,00217 | 0,00195 | 0,00099 | 0,00247 | €209,72 | €419,44 | €0,00 | €47,11 |
 | Forza relativa 1H V2 | LAB | SHORT | Forza relativa vs BTC V2 | 60m | 2,0x | 0,18833 | 0,18833 | 0,20950 | 0,28155 | 0,14176 | €222,78 | €445,56 | €50,08 | €-0,00 |
 | Forza relativa 1H V2 | GRAM | SHORT | Forza relativa vs BTC V2 | 60m | 2,0x | 1,47771 | 1,47771 | 1,52060 | 2,20918 | 1,38336 | €871,54 | €1.743,07 | €50,59 | €-0,00 |
-| Forza relativa 1H V2 | PEPE | LONG | Forza relativa vs BTC V2 | 60m | 2,0x | 0,00000 | 0,00000 | 0,00000 | 0,00000 | 0,00000 | €1.573,66 | €3.147,32 | €0,00 | €48,63 |
-| Forza relativa 1H V2 | BANK | LONG | Forza relativa vs BTC V2 | 60m | 2,0x | 0,19548 | 0,22864 | 0,20010 | 0,09872 | 0,24709 | €211,61 | €423,21 | €0,00 | €71,79 |
-| Benchmark Donchian breakout 1H | ETH | LONG | Donchian breakout 20 barre | 60m | 2,0x | 1868,12355 | 1876,57000 | 1838,23357 | 943,40239 | 1942,84849 | €1.585,47 | €3.170,93 | €50,73 | €14,34 |
-| Benchmark Donchian breakout 1H | BANK | LONG | Donchian breakout 20 barre | 60m | 2,0x | 0,22677 | 0,22864 | 0,19955 | 0,11452 | 0,29479 | €213,00 | €426,01 | €51,12 | €3,52 |
+| Forza relativa 1H V2 | PEPE | LONG | Forza relativa vs BTC V2 | 60m | 2,0x | 0,00000 | 0,00000 | 0,00000 | 0,00000 | 0,00000 | €1.573,66 | €3.147,32 | €0,00 | €55,63 |
+| Forza relativa 1H V2 | BANK | LONG | Forza relativa vs BTC V2 | 60m | 2,0x | 0,19548 | 0,22709 | 0,20010 | 0,09872 | 0,24709 | €211,61 | €423,21 | €0,00 | €68,44 |
+| Benchmark Donchian breakout 1H | ETH | LONG | Donchian breakout 20 barre | 60m | 2,0x | 1868,12355 | 1877,53000 | 1838,23357 | 943,40239 | 1942,84849 | €1.585,47 | €3.170,93 | €50,73 | €15,97 |
+| Benchmark Donchian breakout 1H | BANK | LONG | Donchian breakout 20 barre | 60m | 2,0x | 0,22677 | 0,22709 | 0,19955 | 0,11452 | 0,29479 | €213,00 | €426,01 | €51,12 | €0,61 |
 | Benchmark Bollinger mean reversion 1H | LAB | LONG | Bollinger mean reversion | 60m | 2,0x | 0,18881 | 0,18881 | 0,17193 | 0,09535 | 0,21414 | €277,38 | €554,76 | €49,61 | €0,00 |
-| Benchmark Bollinger mean reversion 1H | ETH | SHORT | Bollinger mean reversion | 60m | 2,0x | 1867,37645 | 1876,57000 | 1889,78497 | 2791,72779 | 1833,76367 | €1.999,85 | €3.999,71 | €48,00 | €-19,69 |
+| Benchmark Bollinger mean reversion 1H | ETH | SHORT | Bollinger mean reversion | 60m | 2,0x | 1867,37645 | 1877,53000 | 1889,78497 | 2791,72779 | 1833,76367 | €1.999,85 | €3.999,71 | €48,00 | €-21,75 |
 | Benchmark trend following EMA 1H | NEAR | LONG | Trend following EMA | 60m | 2,0x | 2,02421 | 2,02421 | 1,96657 | 1,02223 | 2,15104 | €873,40 | €1.746,81 | €49,75 | €0,00 |
 | Benchmark trend following EMA 1H | ALLO | SHORT | Trend following EMA | 60m | 2,0x | 0,37581 | 0,37581 | 0,40778 | 0,56184 | 0,30549 | €292,32 | €584,65 | €49,73 | €-0,00 |
-| Benchmark trend following EMA 1H | ESPORTS | SHORT | Trend following EMA | 60m | 2,0x | 0,02241 | 0,02334 | 0,02509 | 0,03350 | 0,01649 | €207,84 | €415,69 | €49,88 | €-17,34 |
+| Benchmark trend following EMA 1H | ESPORTS | SHORT | Trend following EMA | 60m | 2,0x | 0,02241 | 0,02350 | 0,02509 | 0,03350 | 0,01649 | €207,84 | €415,69 | €49,88 | €-20,31 |
 | Scanner Top 5 Long 1H | ONDO | LONG | Scanner Top 5 Long | 60m | 2,0x | 0,37282 | 0,37282 | 0,35738 | 0,18828 | 0,40370 | €625,48 | €1.250,97 | €51,81 | €0,00 |
-| Scanner Top 5 Long 1H | AKE | LONG | Scanner Top 5 Long | 60m | 2,0x | 0,00195 | 0,00214 | 0,00195 | 0,00099 | 0,00242 | €215,58 | €431,17 | €0,00 | €40,97 |
-| Scanner Top 5 Long 1H | BANK | LONG | Scanner Top 5 Long | 60m | 2,0x | 0,21801 | 0,22864 | 0,19185 | 0,11010 | 0,27034 | €214,35 | €428,71 | €51,44 | €20,90 |
+| Scanner Top 5 Long 1H | AKE | LONG | Scanner Top 5 Long | 60m | 2,0x | 0,00195 | 0,00217 | 0,00195 | 0,00099 | 0,00242 | €215,58 | €431,17 | €0,00 | €48,43 |
+| Scanner Top 5 Long 1H | BANK | LONG | Scanner Top 5 Long | 60m | 2,0x | 0,21801 | 0,22709 | 0,19185 | 0,11010 | 0,27034 | €214,35 | €428,71 | €51,44 | €17,85 |
 | Scanner Bottom 5 Short 1H | LAB | SHORT | Scanner Bottom 5 Short | 60m | 2,0x | 0,22091 | 0,22091 | 0,20335 | 0,33025 | 0,16789 | €209,34 | €418,67 | €0,00 | €-0,00 |
-| Scanner Bottom 5 Short 1H | DOGE | SHORT | Scanner Bottom 5 Short | 60m | 2,0x | 0,07217 | 0,07272 | 0,07321 | 0,10789 | 0,07009 | €1.741,23 | €3.482,46 | €50,15 | €-26,70 |
-| Scanner Bottom 5 Short 1H | ESPORTS | SHORT | Scanner Bottom 5 Short | 60m | 2,0x | 0,02258 | 0,02334 | 0,02528 | 0,03375 | 0,01716 | €208,78 | €417,55 | €50,11 | €-14,14 |
+| Scanner Bottom 5 Short 1H | DOGE | SHORT | Scanner Bottom 5 Short | 60m | 2,0x | 0,07217 | 0,07277 | 0,07321 | 0,10789 | 0,07009 | €1.741,23 | €3.482,46 | €50,15 | €-29,11 |
+| Scanner Bottom 5 Short 1H | ESPORTS | SHORT | Scanner Bottom 5 Short | 60m | 2,0x | 0,02258 | 0,02350 | 0,02528 | 0,03375 | 0,01716 | €208,78 | €417,55 | €50,11 | €-17,10 |
 | Scanner Top 5 + forza BTC 1H | NEAR | LONG | Scanner Top 5 + forza BTC | 60m | 2,0x | 2,02421 | 2,02421 | 1,97233 | 1,02223 | 2,13836 | €975,15 | €1.950,30 | €49,99 | €0,00 |
 | Scanner Top 5 + forza BTC 1H | ONDO | LONG | Scanner Top 5 + forza BTC | 60m | 2,0x | 0,37613 | 0,37613 | 0,36189 | 0,18994 | 0,40745 | €677,81 | €1.355,62 | €51,32 | €0,00 |
-| Scanner Top 5 + forza BTC 1H | BANK | LONG | Scanner Top 5 + forza BTC | 60m | 2,0x | 0,21801 | 0,22864 | 0,19185 | 0,11010 | 0,27557 | €213,93 | €427,86 | €51,34 | €20,85 |
-| Global Confluence puro 1H | DOGE | SHORT | Global Confluence puro | 60m | 2,0x | 0,07215 | 0,07272 | 0,07330 | 0,10786 | 0,06926 | €1.551,38 | €3.102,75 | €49,64 | €-24,66 |
+| Scanner Top 5 + forza BTC 1H | BANK | LONG | Scanner Top 5 + forza BTC | 60m | 2,0x | 0,21801 | 0,22709 | 0,19185 | 0,11010 | 0,27557 | €213,93 | €427,86 | €51,34 | €17,81 |
+| Global Confluence puro 1H | DOGE | SHORT | Global Confluence puro | 60m | 2,0x | 0,07215 | 0,07277 | 0,07330 | 0,10786 | 0,06926 | €1.551,38 | €3.102,75 | €49,64 | €-26,81 |
 | Combo Trend | ONDO | LONG | Combo Trend | 60m | 2,0x | 0,37282 | 0,37282 | 0,35567 | 0,18828 | 0,41057 | €545,86 | €1.091,71 | €50,24 | €0,00 |
-| Combo Trend | ESPORTS | SHORT | Combo Trend | 60m | 2,0x | 0,02241 | 0,02334 | 0,02509 | 0,03350 | 0,01649 | €210,28 | €420,56 | €50,47 | €-17,54 |
+| Combo Trend | ESPORTS | SHORT | Combo Trend | 60m | 2,0x | 0,02241 | 0,02350 | 0,02509 | 0,03350 | 0,01649 | €210,28 | €420,56 | €50,47 | €-20,54 |
+| Combo Trend | BANK | LONG | Combo Trend | 60m | 2,0x | 0,22714 | 0,22709 | 0,19988 | 0,11470 | 0,28710 | €209,25 | €418,49 | €50,22 | €-0,08 |
 | Combo Mean Reversion | LAB | LONG | Combo Mean Reversion | 60m | 2,0x | 0,18881 | 0,18881 | 0,17193 | 0,09535 | 0,21583 | €281,61 | €563,22 | €50,37 | €0,00 |
 | Combo Scanner | ONDO | LONG | Combo Scanner | 60m | 2,0x | 0,37282 | 0,37282 | 0,35738 | 0,18828 | 0,40679 | €599,14 | €1.198,28 | €49,63 | €0,00 |
-| Combo Scanner | DOGE | SHORT | Combo Scanner | 60m | 2,0x | 0,07215 | 0,07272 | 0,07319 | 0,10786 | 0,06986 | €1.763,29 | €3.526,57 | €50,78 | €-28,02 |
-| Combo Scanner | BANK | LONG | Combo Scanner | 60m | 2,0x | 0,21801 | 0,22864 | 0,19185 | 0,11010 | 0,27557 | €208,29 | €416,59 | €49,99 | €20,31 |
+| Combo Scanner | DOGE | SHORT | Combo Scanner | 60m | 2,0x | 0,07215 | 0,07277 | 0,07319 | 0,10786 | 0,06986 | €1.763,29 | €3.526,57 | €50,78 | €-30,47 |
+| Combo Scanner | BANK | LONG | Combo Scanner | 60m | 2,0x | 0,21801 | 0,22709 | 0,19185 | 0,11010 | 0,27557 | €208,29 | €416,59 | €49,99 | €17,34 |
 | Combo Adaptive | ONDO | LONG | Combo Adaptive | 60m | 2,0x | 0,37282 | 0,37282 | 0,35738 | 0,18828 | 0,40370 | €613,42 | €1.226,85 | €50,81 | €0,00 |
 | Combo Adaptive | GRAM | SHORT | Combo Adaptive | 60m | 2,0x | 1,48181 | 1,48181 | 1,51561 | 2,21531 | 1,41422 | €1.129,35 | €2.258,70 | €51,51 | €-0,00 |
-| Combo Adaptive | ETH | LONG | Combo Adaptive | 60m | 2,0x | 1868,12355 | 1876,57000 | 1841,22257 | 943,40239 | 1921,92551 | €1.779,59 | €3.559,18 | €51,25 | €16,09 |
-| Combo Adaptive MFE Trail | ETH | LONG | Combo Adaptive | 60m | 2,0x | 1868,12355 | 1876,57000 | 1870,36530 | 943,40239 | 1921,92551 | €1.710,41 | €3.420,83 | €0,00 | €15,47 |
-| Combo Adaptive MFE Trail | DOGE | SHORT | Combo Adaptive | 60m | 2,0x | 0,07231 | 0,07272 | 0,07335 | 0,10810 | 0,07022 | €1.693,88 | €3.387,77 | €48,78 | €-19,37 |
-| Combo Adaptive MFE Trail | PEPE | LONG | Combo Adaptive | 60m | 2,0x | 0,00000 | 0,00000 | 0,00000 | 0,00000 | 0,00000 | €1.431,95 | €2.863,90 | €0,00 | €38,04 |
-| Eth Ema 1H | ETH | LONG | Trend following EMA | 60m | 3,0x | 1859,79188 | 1876,57000 | 1867,23817 | 1249,16022 | 1913,35389 | €1.151,05 | €3.453,16 | €0,00 | €31,15 |
-| Eth Donchian 1H | ETH | LONG | Donchian breakout 20 barre | 60m | 3,0x | 1868,12355 | 1876,57000 | 1844,21157 | 1254,75632 | 1915,94751 | €1.302,08 | €3.906,25 | €50,00 | €17,66 |
-| Eth Bollinger 1H | ETH | SHORT | Bollinger mean reversion | 60m | 3,0x | 1867,37645 | 1876,57000 | 1889,78497 | 2480,49838 | 1833,76367 | €1.388,89 | €4.166,67 | €50,00 | €-20,51 |
-| Eth Adaptive 1H | ETH | LONG | Combo Adaptive | 60m | 3,0x | 1868,12355 | 1876,57000 | 1841,22257 | 1254,75632 | 1921,92551 | €1.151,05 | €3.453,16 | €49,73 | €15,61 |
-| Doge Ema 1H | DOGE | SHORT | Trend following EMA | 60m | 3,0x | 0,07216 | 0,07272 | 0,07320 | 0,09585 | 0,07008 | €1.155,81 | €3.467,44 | €49,93 | €-27,07 |
+| Combo Adaptive | ETH | LONG | Combo Adaptive | 60m | 2,0x | 1868,12355 | 1877,53000 | 1841,22257 | 943,40239 | 1921,92551 | €1.779,59 | €3.559,18 | €51,25 | €17,92 |
+| Combo Adaptive MFE Trail | ETH | LONG | Combo Adaptive | 60m | 2,0x | 1868,12355 | 1877,53000 | 1870,36530 | 943,40239 | 1921,92551 | €1.710,41 | €3.420,83 | €0,00 | €17,22 |
+| Combo Adaptive MFE Trail | DOGE | SHORT | Combo Adaptive | 60m | 2,0x | 0,07231 | 0,07277 | 0,07335 | 0,10810 | 0,07022 | €1.693,88 | €3.387,77 | €48,78 | €-21,71 |
+| Combo Adaptive MFE Trail | PEPE | LONG | Combo Adaptive | 60m | 2,0x | 0,00000 | 0,00000 | 0,00000 | 0,00000 | 0,00000 | €1.431,95 | €2.863,90 | €0,00 | €44,39 |
+| Eth Ema 1H | ETH | LONG | Trend following EMA | 60m | 3,0x | 1859,79188 | 1877,53000 | 1867,23817 | 1249,16022 | 1913,35389 | €1.151,05 | €3.453,16 | €0,00 | €32,94 |
+| Eth Donchian 1H | ETH | LONG | Donchian breakout 20 barre | 60m | 3,0x | 1868,12355 | 1877,53000 | 1844,21157 | 1254,75632 | 1915,94751 | €1.302,08 | €3.906,25 | €50,00 | €19,67 |
+| Eth Bollinger 1H | ETH | SHORT | Bollinger mean reversion | 60m | 3,0x | 1867,37645 | 1877,53000 | 1889,78497 | 2480,49838 | 1833,76367 | €1.388,89 | €4.166,67 | €50,00 | €-22,66 |
+| Eth Adaptive 1H | ETH | LONG | Combo Adaptive | 60m | 3,0x | 1868,12355 | 1877,53000 | 1841,22257 | 1254,75632 | 1921,92551 | €1.151,05 | €3.453,16 | €49,73 | €17,39 |
+| Doge Ema 1H | DOGE | SHORT | Trend following EMA | 60m | 3,0x | 0,07216 | 0,07277 | 0,07320 | 0,09585 | 0,07008 | €1.155,81 | €3.467,44 | €49,93 | €-29,47 |
 
 ## Ultime operazioni chiuse
 
 | Portafoglio | Asset | Lato | Chiusura UTC | Exit | P&L netto | R | Motivo |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| Bilanciata 1H V3 Filtered | PEPE | LONG | 2026-07-20T01:38:32+00:00 | 0,00000 | €96,02 | 1,92 | TARGET |
 | Combo Trend | XRP | SHORT | 2026-07-20T01:23:39+00:00 | 1,10450 | €-52,30 | -1,04 | STOP |
 | Bilanciata 1H V2 | DOGE | SHORT | 2026-07-20T01:23:39+00:00 | 0,07313 | €-56,40 | -1,13 | STOP |
 | Scanner Top 5 Long 1H | ZEC | LONG | 2026-07-19T23:08:29+00:00 | 543,72677 | €-55,10 | -1,06 | STOP |
@@ -372,7 +373,6 @@ Generato: 2026-07-20T01:23:43+00:00
 | Bilanciata 1H V1 | BANK | LONG | 2026-07-19T21:09:54+00:00 | 0,23610 | €101,07 | 1,99 | TARGET |
 | Benchmark Bollinger mean reversion 1H | PEPE | SHORT | 2026-07-19T20:08:29+00:00 | 0,00000 | €-4,14 | -0,08 | STOP |
 | Rapida 1H V3 Filtered | BANK | LONG | 2026-07-19T19:38:30+00:00 | 0,23119 | €74,14 | 1,49 | TARGET |
-| Rapida 1H V3 Filtered | PEPE | LONG | 2026-07-19T18:23:29+00:00 | 0,00000 | €-55,07 | -1,11 | STOP |
 
 ## Regole invarianti
 
@@ -395,7 +395,7 @@ Requisiti per la revisione live: almeno **30 eventi indipendenti per lato**, PF 
 | RSI_EXTREME_SHORT_15M | Scalp RSI Short 75 · prudente · 5x (riferimento tra 9 varianti) | 5/30 | 4/30 | 0,32 | 0,30 | -0,55R | €-4,46 | 0,18% | COERENTE − | RACCOLTA RESEARCH |
 | SHADOW_1H_BALANCED | Bilanciata 1H V1 | 91/30 | 14/30 | 1,08 | 2,59 | 0,05R | €19,15 | 1,12% | COERENTE + | BOCCIATA RESEARCH |
 | SHADOW_1H_BALANCED_V2 | Bilanciata 1H V2 | 12/30 | 12/30 | 1,60 | 0,94 | 0,34R | €-1,73 | 2,10% | DIVERGENTE | RACCOLTA RESEARCH |
-| SHADOW_1H_BALANCED_V3 | Bilanciata 1H V3 Filtered | 17/30 | 14/30 | 1,67 | 1,07 | 0,37R | €2,16 | 2,20% | COERENTE + | RACCOLTA RESEARCH |
+| SHADOW_1H_BALANCED_V3 | Bilanciata 1H V3 Filtered | 17/30 | 15/30 | 1,67 | 1,30 | 0,37R | €8,42 | 2,20% | COERENTE + | RACCOLTA RESEARCH |
 | SHADOW_1H_FAST | Rapida 1H V1 | 99/30 | 38/30 | 1,03 | 1,25 | 0,02R | €5,33 | 2,83% | COERENTE + | BOCCIATA RESEARCH |
 | SHADOW_1H_FAST_V2 | Rapida 1H V2 | 1/30 | 1/30 | 1,19 | 11,45 | 0,11R | €31,39 | 0,93% | COERENTE + | RACCOLTA RESEARCH |
 | SHADOW_1H_FAST_V3 | Rapida 1H V3 Filtered | 18/30 | 21/30 | 2,20 | 1,01 | 0,49R | €0,21 | 2,24% | COERENTE + | RACCOLTA RESEARCH |
@@ -413,21 +413,21 @@ Requisiti per la revisione live: almeno **30 eventi indipendenti per lato**, PF 
 | SHADOW_COMBO_ADAPTIVE_MFE_TRAIL | Combo Adaptive MFE Trail | 14/30 | 12/30 | 1,93 | 0,18 | 0,48R | €-20,52 | 2,87% | DIVERGENTE | RACCOLTA RESEARCH |
 | SHADOW_COMBO_MEAN_REVERSION | Combo Mean Reversion | 6/30 | 4/30 | 2,98 | 4,42 | 0,67R | €44,07 | 0,59% | COERENTE + | RACCOLTA RESEARCH |
 | SHADOW_COMBO_SCANNER | Combo Scanner | 31/30 | 11/30 | 1,95 | 1,01 | 0,51R | €0,16 | 1,69% | COERENTE + | SEGNALE VALIDATO · PAPER IN RACCOLTA |
-| SHADOW_COMBO_TREND | Combo Trend | 35/30 | 10/30 | 1,38 | 1,25 | 0,24R | €6,53 | 1,68% | COERENTE + | SEGNALE VALIDATO · PAPER IN RACCOLTA |
+| SHADOW_COMBO_TREND | Combo Trend | 35/30 | 10/30 | 1,38 | 1,25 | 0,24R | €6,53 | 1,71% | COERENTE + | SEGNALE VALIDATO · PAPER IN RACCOLTA |
 | SHADOW_DOGE_BOLLINGER_1H | Doge Bollinger 1H | 0/30 | 0/30 | 0,00 | 0,00 | 0,00R | €0,00 | 0,00% | n/a | RACCOLTA RESEARCH |
 | SHADOW_DOGE_DONCHIAN_1H | Doge Donchian 1H | 0/30 | 1/30 | 0,00 | ∞ | 0,00R | €26,22 | 0,36% | n/a | RACCOLTA RESEARCH |
 | SHADOW_DOGE_EMA_1H | Doge Ema 1H | 0/30 | 2/30 | 0,00 | 0,75 | 0,00R | €-6,89 | 1,17% | n/a | RACCOLTA RESEARCH |
 | SHADOW_DONCHIAN_1H | Benchmark Donchian breakout 1H | 18/30 | 11/30 | 0,66 | 2,08 | -0,28R | €21,30 | 1,98% | DIVERGENTE | RACCOLTA RESEARCH |
-| SHADOW_EMA_TREND_1H | Benchmark trend following EMA 1H | 41/30 | 5/30 | 1,19 | 0,86 | 0,13R | €-4,41 | 1,10% | DIVERGENTE | SEGNALE VALIDATO · PAPER IN RACCOLTA |
+| SHADOW_EMA_TREND_1H | Benchmark trend following EMA 1H | 41/30 | 5/30 | 1,19 | 0,86 | 0,13R | €-4,41 | 1,12% | DIVERGENTE | SEGNALE VALIDATO · PAPER IN RACCOLTA |
 | SHADOW_ETH_ADAPTIVE_1H | Eth Adaptive 1H | 1/30 | 1/30 | 0,00 | 0,00 | -1,11R | €-54,90 | 0,77% | COERENTE − | RACCOLTA RESEARCH |
-| SHADOW_ETH_BOLLINGER_1H | Eth Bollinger 1H | 1/30 | 0/30 | 0,00 | 0,00 | -1,13R | €0,00 | 0,42% | n/a | RACCOLTA RESEARCH |
+| SHADOW_ETH_BOLLINGER_1H | Eth Bollinger 1H | 1/30 | 0/30 | 0,00 | 0,00 | -1,13R | €0,00 | 0,44% | n/a | RACCOLTA RESEARCH |
 | SHADOW_ETH_DONCHIAN_1H | Eth Donchian 1H | 0/30 | 0/30 | 0,00 | 0,00 | 0,00R | €0,00 | 0,38% | n/a | RACCOLTA RESEARCH |
 | SHADOW_ETH_EMA_1H | Eth Ema 1H | 1/30 | 1/30 | 0,00 | 0,00 | -1,11R | €-54,90 | 0,61% | COERENTE − | RACCOLTA RESEARCH |
 | SHADOW_ETH_EMA_4H | Eth Ema 4H | 0/30 | 0/30 | 0,00 | 0,00 | 0,00R | €0,00 | 0,00% | n/a | RACCOLTA RESEARCH |
 | SHADOW_GLOBAL_PURE | Global Confluence puro 1H | 1/30 | 3/30 | 0,00 | 0,35 | -1,10R | €-23,73 | 1,19% | COERENTE − | RACCOLTA RESEARCH |
 | SHADOW_RELATIVE_STRENGTH | Forza relativa 1H V1 | 56/30 | 9/30 | 1,25 | 1,53 | 0,16R | €9,53 | 1,84% | COERENTE + | SEGNALE VALIDATO · PAPER IN RACCOLTA |
 | SHADOW_RELATIVE_STRENGTH_V2 | Forza relativa 1H V2 | 15/30 | 12/30 | 2,12 | 1,69 | 0,58R | €14,93 | 2,32% | COERENTE + | RACCOLTA RESEARCH |
-| SHADOW_SCANNER_BOTTOM5_SHORT | Scanner Bottom 5 Short 1H | 14/30 | 6/30 | 0,79 | 1,26 | -0,15R | €4,73 | 2,02% | DIVERGENTE | RACCOLTA RESEARCH |
+| SHADOW_SCANNER_BOTTOM5_SHORT | Scanner Bottom 5 Short 1H | 14/30 | 6/30 | 0,79 | 1,26 | -0,15R | €4,73 | 2,07% | DIVERGENTE | RACCOLTA RESEARCH |
 | SHADOW_SCANNER_TOP5_BTC | Scanner Top 5 + forza BTC 1H | 33/30 | 13/30 | 1,95 | 2,00 | 0,51R | €20,83 | 1,62% | COERENTE + | SEGNALE VALIDATO · PAPER IN RACCOLTA |
 | SHADOW_SCANNER_TOP5_LONG | Scanner Top 5 Long 1H | 42/30 | 16/30 | 1,61 | 1,90 | 0,34R | €18,49 | 2,13% | COERENTE + | SEGNALE VALIDATO · PAPER IN RACCOLTA |
 | SHADOW_SOL_ADAPTIVE_1H | Sol Adaptive 1H | 2/30 | 2/30 | 1,70 | 0,67 | 0,39R | €-9,23 | 0,89% | DIVERGENTE | RACCOLTA RESEARCH |
@@ -447,7 +447,7 @@ Per le famiglie RSI con più configurazioni di leva o margine, il lato paper usa
 Simulazione separata **paper only**: capitale/margine iniziale **€3.600**, leva **5x**, esposizione iniziale **€18.000**. Non modifica i conti paper da €10.000 e non invia ordini reali.
 
 - Stato: **WAITING**
-- Prezzo DOGE: **0.07272**
+- Prezzo DOGE: **0.07277**
 - Pre-allarme: **0.0765**; zona armata: **0.0775**; trigger rejection: **0.078**
 - Invalidazione prima dell’entrata: chiusura 15m sopra **0.07966**
 
@@ -460,17 +460,17 @@ Simulazione separata **paper only**: capitale/margine iniziale **€3.600**, lev
 | Filtro | Valore | Stato |
 | --- | --- | --- |
 | Dati mercato | FRESH | OK |
-| Candela 15m | 23.7 min | OK |
+| Candela 15m | 23.6 min | OK |
 | Global DOGE | -6.0 | OK |
 | Classic raw | -11.0 | OK |
 | DOGE/BTC raw | -6.0 | OK |
 | Pattern ribassista | MATURO | OK |
-| BTC sotto filtro | 64733.2 | OK |
+| BTC sotto filtro | 64854.79 | OK |
 
 ### Ultima candela 15m valutata
 
-- Rejection accettata: **NO**; motivo: **trigger_touched, entry_not_chased, bearish_confirmation**
-- High **0.07311**; close **0.07281**; wick alta **42.3%**; volume **x1.36**
+- Rejection accettata: **NO**; motivo: **trigger_touched, entry_not_chased**
+- High **0.07297**; close **0.0728**; wick alta **41.5%**; volume **x0.54**
 
 ### Gestione
 
@@ -496,8 +496,8 @@ Registro parallelo senza limite globale di quattro posizioni. Considera soltanto
 - BTC trend score: **3,00**; ADX: **22,76**; breadth sopra EMA50: **75,00%**
 - Mediana alt vs BTC: **0,81%**; dispersione: **33,80%**
 
-- Aperti in questo ciclo: **8**
-- Chiusi in questo ciclo: **26**
+- Aperti in questo ciclo: **0**
+- Chiusi in questo ciclo: **0**
 - Posizioni research aperte: **146**
 - Trade research chiusi: **677**
 - Eventi di mercato indipendenti chiusi: **263**
@@ -656,38 +656,38 @@ La matrice diventerà utilizzabile per una rotazione automatica soltanto dopo un
 
 # Block 3 — Shadow Exit Engine
 
-Generato: 2026-07-20T01:23:43+00:00
+Generato: 2026-07-20T01:38:36+00:00
 
 > Motore esclusivamente osservativo e Paper-only. Non modifica le uscite reali. I confronti escludono il funding sia dall'uscita originale sia dalle varianti.
 
 ## Stato operativo
 
-- Gruppi di trade ancora monitorati: **72**
-- Scenari virtuali ancora attivi: **985**
+- Gruppi di trade ancora monitorati: **73**
+- Scenari virtuali ancora attivi: **994**
 - Gruppi in attesa dell'uscita originale: **69**
-- Gruppi con originale chiuso ma Shadow ancora attive: **3**
-- Confronti completati: **240**
+- Gruppi con originale chiuso ma Shadow ancora attive: **4**
+- Confronti completati: **254**
 
 ## Classifica osservativa complessiva
 
 | Scenario | Campione completo | Campione totale | Δ medio vs originale | Migliora | Troppo presto | Troppo tardi | Stato dati |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| TIME_6H | 2 | 13 | +€10,53 | 61,5% | 0 | 3 | COLLECTING |
-| TP_R150 | 2 | 13 | €-5,90 | 0,0% | 1 | 1 | COLLECTING |
-| GB20_R050 | 2 | 13 | €-9,94 | 7,7% | 3 | 0 | COLLECTING |
-| GB20_R100 | 2 | 13 | €-10,80 | 0,0% | 3 | 1 | COLLECTING |
-| GB30_R050 | 2 | 13 | €-11,09 | 7,7% | 3 | 0 | COLLECTING |
-| TP_R050 | 2 | 13 | €-11,51 | 7,7% | 3 | 0 | COLLECTING |
-| TP_R100 | 2 | 13 | €-11,61 | 0,0% | 3 | 1 | COLLECTING |
-| GB40_R050 | 2 | 13 | €-12,24 | 7,7% | 3 | 0 | COLLECTING |
-| GB30_R100 | 2 | 13 | €-12,33 | 0,0% | 3 | 1 | COLLECTING |
-| GB50_R100 | 2 | 13 | €-13,03 | 0,0% | 1 | 3 | COLLECTING |
-| GB50_R050 | 2 | 13 | €-13,39 | 7,7% | 3 | 0 | COLLECTING |
-| GB40_R100 | 2 | 13 | €-13,68 | 0,0% | 2 | 2 | COLLECTING |
-| BE_R050 | 2 | 13 | €-19,15 | 0,0% | 4 | 0 | COLLECTING |
+| TIME_6H | 3 | 14 | +€6,63 | 57,1% | 1 | 3 | COLLECTING |
+| TP_R150 | 3 | 14 | €-7,27 | 0,0% | 2 | 1 | COLLECTING |
+| GB20_R100 | 3 | 14 | €-14,12 | 0,0% | 4 | 1 | COLLECTING |
+| TP_R100 | 3 | 14 | €-14,36 | 0,0% | 4 | 1 | COLLECTING |
+| GB20_R050 | 3 | 14 | €-14,56 | 7,1% | 4 | 0 | COLLECTING |
+| GB30_R100 | 3 | 14 | €-14,97 | 0,0% | 4 | 1 | COLLECTING |
+| GB30_R050 | 3 | 14 | €-15,86 | 7,1% | 4 | 0 | COLLECTING |
+| TP_R050 | 3 | 14 | €-16,05 | 7,1% | 4 | 0 | COLLECTING |
+| GB50_R100 | 3 | 14 | €-16,66 | 0,0% | 2 | 3 | COLLECTING |
+| GB40_R100 | 3 | 14 | €-16,74 | 0,0% | 3 | 2 | COLLECTING |
+| GB40_R050 | 3 | 14 | €-17,08 | 7,1% | 4 | 0 | COLLECTING |
+| GB50_R050 | 3 | 14 | €-18,39 | 7,1% | 4 | 0 | COLLECTING |
+| BE_R050 | 3 | 14 | €-24,93 | 0,0% | 5 | 0 | COLLECTING |
+| TP_R200 | 2 | 12 | €-4,28 | 0,0% | 0 | 1 | COLLECTING |
 | TIME_12H | 1 | 10 | +€16,94 | 70,0% | 0 | 0 | COLLECTING |
 | TIME_24H | 1 | 10 | +€10,81 | 60,0% | 0 | 1 | COLLECTING |
-| TP_R200 | 1 | 11 | €-4,67 | 0,0% | 0 | 1 | COLLECTING |
 | ATR15_R100 | 1 | 10 | €-5,13 | 0,0% | 0 | 1 | COLLECTING |
 | ATR20_R100 | 1 | 10 | €-5,13 | 0,0% | 0 | 1 | COLLECTING |
 | ATR30_R100 | 1 | 10 | €-5,13 | 0,0% | 0 | 1 | COLLECTING |
@@ -706,14 +706,14 @@ Le regole Shadow mantengono entrata, quantità, commissioni, stop protettivo ini
 
 # Blocco 4 — Valutazione statistica Shadow
 
-Generato: 2026-07-20T01:23:43+00:00
+Generato: 2026-07-20T01:38:36+00:00
 
 > Modulo esclusivamente valutativo. Non modifica strategie, uscite, posizioni o capitale. Le candidature vengono consegnate al futuro Blocco 5, senza applicazione automatica.
 
 ## Stato
 
-- Risultati Block 3 disponibili: **240**
-- Valutazioni prodotte: **522**
+- Risultati Block 3 disponibili: **254**
+- Valutazioni prodotte: **550**
 - Candidature al Blocco 5: **0**
 - Mutazioni create automaticamente: **0**
 
@@ -721,26 +721,26 @@ Generato: 2026-07-20T01:23:43+00:00
 
 | Scenario | Campione pieno | Δ medio (R) | Mediana (R) | CI bootstrap basso | Migliora | Score | Stato |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| TP_R150 | 2 | 0,000 | 0,000 | 0,000 | 0,0% | 27,9 | INSUFFICIENT_DATA |
+| TP_R200 | 2 | 0,000 | 0,000 | 0,000 | 0,0% | 27,9 | INSUFFICIENT_DATA |
 | ATR15_R100 | 1 | 0,000 | 0,000 | 0,000 | 0,0% | 25,2 | INSUFFICIENT_DATA |
 | ATR20_R100 | 1 | 0,000 | 0,000 | 0,000 | 0,0% | 25,2 | INSUFFICIENT_DATA |
 | ATR30_R100 | 1 | 0,000 | 0,000 | 0,000 | 0,0% | 25,2 | INSUFFICIENT_DATA |
 | BE_R100 | 1 | 0,000 | 0,000 | 0,000 | 0,0% | 25,2 | INSUFFICIENT_DATA |
 | TIME_12H | 1 | 0,000 | 0,000 | 0,000 | 0,0% | 25,2 | INSUFFICIENT_DATA |
 | TIME_24H | 1 | 0,000 | 0,000 | 0,000 | 0,0% | 25,2 | INSUFFICIENT_DATA |
-| TP_R200 | 1 | 0,000 | 0,000 | 0,000 | 0,0% | 25,2 | INSUFFICIENT_DATA |
-| TIME_6H | 2 | -0,157 | -0,157 | -0,315 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| GB20_R100 | 2 | -0,204 | -0,204 | -0,408 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| TP_R100 | 2 | -0,250 | -0,250 | -0,500 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| GB30_R100 | 2 | -0,272 | -0,272 | -0,545 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| GB40_R100 | 2 | -0,341 | -0,341 | -0,681 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| GB50_R100 | 2 | -0,389 | -0,389 | -0,779 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| TP_R050 | 2 | -0,500 | -0,500 | -0,999 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| GB20_R050 | 2 | -0,548 | -0,548 | -1,097 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| GB30_R050 | 2 | -0,574 | -0,574 | -1,147 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| GB40_R050 | 2 | -0,599 | -0,599 | -1,197 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| GB50_R050 | 2 | -0,624 | -0,624 | -1,248 | 0,0% | 10,4 | INSUFFICIENT_DATA |
-| BE_R050 | 2 | -0,749 | -0,749 | -1,499 | 0,0% | 10,4 | INSUFFICIENT_DATA |
+| TP_R150 | 3 | -0,167 | 0,000 | -0,500 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| TIME_6H | 3 | -0,398 | -0,315 | -0,881 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| TP_R100 | 3 | -0,500 | -0,500 | -0,999 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| GB30_R100 | 3 | -0,510 | -0,545 | -0,984 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| GB20_R100 | 3 | -0,517 | -0,408 | -1,143 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| GB40_R100 | 3 | -0,603 | -0,681 | -1,129 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| GB50_R100 | 3 | -0,684 | -0,779 | -1,274 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| TP_R050 | 3 | -0,833 | -0,999 | -1,499 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| GB20_R050 | 3 | -0,862 | -1,097 | -1,359 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| GB30_R050 | 3 | -0,900 | -1,147 | -1,418 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| GB40_R050 | 3 | -0,932 | -1,197 | -1,597 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| GB50_R050 | 3 | -0,971 | -1,248 | -1,664 | 0,0% | 10,6 | INSUFFICIENT_DATA |
+| BE_R050 | 3 | -1,166 | -1,499 | -1,998 | 0,0% | 10,6 | INSUFFICIENT_DATA |
 
 ## Stati di evidenza
 
@@ -757,7 +757,7 @@ Sono utilizzati solo trade osservati integralmente dall'entrata. Il controllo co
 
 # Blocco 4.5 — Crash Cascade Guard
 
-Generato: 2026-07-20T01:23:39+00:00
+Generato: 2026-07-20T01:38:32+00:00
 
 > Paper-only. In mercato NORMAL/WATCH non riduce i segnali. Le limitazioni iniziano soltanto in STRESS, RECOVERY, CRASH, EXTREME o con dati non affidabili.
 
@@ -776,14 +776,14 @@ Generato: 2026-07-20T01:23:39+00:00
 
 | Scenario | Posizioni interessate | Liquidazioni stimate | Perdita stimata EUR |
 | --- | ---: | ---: | ---: |
-| DOWN_10 | 37 | 0 | 6569.08 |
-| DOWN_20 | 37 | 0 | 13138.16 |
-| DOWN_30 | 37 | 0 | 19707.24 |
-| DOWN_40 | 37 | 11 | 24303.20 |
-| UP_10 | 33 | 0 | 5785.47 |
-| UP_20 | 33 | 0 | 11570.95 |
-| UP_30 | 33 | 4 | 17429.58 |
-| UP_40 | 33 | 16 | 21286.84 |
+| DOWN_10 | 38 | 0 | 6618.65 |
+| DOWN_20 | 38 | 0 | 13237.29 |
+| DOWN_30 | 38 | 0 | 19855.94 |
+| DOWN_40 | 38 | 12 | 24468.42 |
+| UP_10 | 31 | 0 | 5124.52 |
+| UP_20 | 31 | 0 | 10249.04 |
+| UP_30 | 31 | 4 | 15446.72 |
+| UP_40 | 31 | 15 | 18874.86 |
 
 ## Modello di esecuzione
 
@@ -798,7 +798,7 @@ Se una candela di cascata attraversa nello stesso intervallo sia lo stop sia il 
 
 # Blocco 5 — Candidati evolutivi controllati
 
-Generato: 2026-07-20T01:23:21+00:00
+Generato: 2026-07-20T01:38:14+00:00
 
 > Paper-only. Nessuna promozione, sostituzione del MASTER, modifica live o ordine reale.
 
@@ -828,7 +828,7 @@ Ogni candidato è una copia indipendente del genitore e cambia un solo parametro
 
 # Blocco 6 — Validazione Champion/Challenger
 
-Generato: 2026-07-20T01:23:43+00:00
+Generato: 2026-07-20T01:38:36+00:00
 
 > Paper-only. Confronto sulle stesse entrate tramite `experiment_group_id`. Nessuna promozione, sostituzione, pensione o modifica live automatica.
 
@@ -855,7 +855,7 @@ Generato: 2026-07-20T01:23:43+00:00
 
 # Blocco 7 — Governance promozioni Paper
 
-Generato: 2026-07-20T01:23:43+00:00
+Generato: 2026-07-20T01:38:36+00:00
 
 > Nessuna promozione automatica. Approvazione umana e comando di esecuzione separato sono obbligatori.
 
@@ -884,7 +884,7 @@ Generato: 2026-07-20T01:23:43+00:00
 
 # Blocco 8 — Sorveglianza post-promozione
 
-Generato: 2026-07-20T01:23:43+00:00
+Generato: 2026-07-20T01:38:36+00:00
 
 > Paper-only. Il nuovo MASTER viene confrontato con l’EX_MASTER sugli stessi eventi successivi alla promozione. Nessun rollback automatico.
 
