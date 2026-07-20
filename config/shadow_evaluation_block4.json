@@ -1,0 +1,42 @@
+{
+  "bootstrap_confidence": 0.95,
+  "bootstrap_iterations": 1000,
+  "bootstrap_seed": 4004,
+  "candidate_scopes": [
+    "STRATEGY",
+    "PORTFOLIO"
+  ],
+  "comparison_tolerance_eur": 0.01,
+  "enabled": true,
+  "minimum_initial_risk_eur": 0.01,
+  "primary_evidence": "FULL_FROM_ENTRY_ONLY",
+  "schema_version": 1,
+  "scopes": [
+    "ALL",
+    "PORTFOLIO",
+    "STRATEGY",
+    "ASSET"
+  ],
+  "temporal_folds": 4,
+  "thresholds": {
+    "early_signal_min_samples": 30,
+    "maximum_ambiguity_pct": 10.0,
+    "maximum_gap_pct": 10.0,
+    "maximum_top_positive_5pct_contribution_pct": 50.0,
+    "minimum_average_delta_r": 0.03,
+    "minimum_bootstrap_ci_low_delta_r": 0.0,
+    "minimum_evidence_score_for_mutation": 78.0,
+    "minimum_evidence_score_for_robust": 70.0,
+    "minimum_improved_pct": 55.0,
+    "minimum_median_delta_r": 0.0,
+    "minimum_positive_temporal_folds": 3,
+    "minimum_total_delta_r": 3.0,
+    "minimum_trimmed_mean_delta_r": 0.02,
+    "mutation_min_samples": 120,
+    "require_last_temporal_fold_positive": true,
+    "robust_min_samples": 100,
+    "validating_min_samples": 50
+  },
+  "top_outlier_fraction": 0.05,
+  "trim_fraction": 0.1
+}

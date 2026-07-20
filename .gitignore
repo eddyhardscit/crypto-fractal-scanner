@@ -25,3 +25,34 @@ reports/paper_trading_storage_status.json
 /reports/sol_spot_adaptive_latest.json
 /reports/sol_spot_adaptive_config_snapshot.json
 /reports/sol_spot_adaptive_storage_status.json
+
+# Local secrets and guarded SOL live state
+.env
+.env.*
+!.env.example
+/STOP_SOL_LIVE
+/reports/sol_spot_live_state.json
+/reports/sol_spot_live_status.json
+/reports/sol_spot_live_orders.csv
+
+# === EVOLUTION SYNC SAFETY ===
+__pycache__/
+*.py[cod]
+*.zip
+*.bak
+*.bak-*
+*.backup
+*.backup-*
+
+scanner_backups/
+data/evolution/backups/
+
+reports/*install_result*.json
+reports/*_implementation_inventory.md
+reports/*_runtime_sources_manifest.json
+reports/*_runtime_target_install_result.json
+reports/*_source_bundle_manifest.json
+reports/telegram_*_status.*
+reports/*.bak
+reports/*.bak-*
+# === END EVOLUTION SYNC SAFETY ===

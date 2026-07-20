@@ -51,6 +51,100 @@ FILES = (
     "paper_trading_equity.csv",
     "paper_trading_open_positions.csv",
     "paper_trading_shadow_metrics.csv",
+    # BLOCK3_SHADOW_EXIT_STORAGE_START
+    "paper_trading_shadow_exit_state.json",
+    "paper_trading_shadow_exit_events.csv",
+    "paper_trading_shadow_exit_results.csv",
+    "paper_trading_shadow_exit_metrics.csv",
+    "paper_trading_shadow_exit_report.md",
+    "paper_trading_shadow_exit_config_snapshot.json",
+    # BLOCK3_SHADOW_EXIT_STORAGE_END
+    # BLOCK4_SHADOW_EVALUATION_STORAGE_START
+    "paper_trading_shadow_evaluation_state.json",
+    "paper_trading_shadow_evaluations.csv",
+    "paper_trading_shadow_evaluation_history.csv",
+    "paper_trading_shadow_evaluation_candidates.json",
+    "paper_trading_shadow_evaluation_report.md",
+    "paper_trading_shadow_evaluation_config_snapshot.json",
+    # BLOCK4_SHADOW_EVALUATION_STORAGE_END
+    # BLOCK4_5_CRASH_GUARD_STORAGE_START
+    "paper_trading_crash_guard_state.json",
+    "paper_trading_crash_guard_decisions.csv",
+    "paper_trading_crash_guard_events.csv",
+    "paper_trading_crash_guard_shadow_results.csv",
+    "paper_trading_crash_guard_stress_test.json",
+    "paper_trading_crash_guard_report.md",
+    "paper_trading_crash_guard_config_snapshot.json",
+    # BLOCK4_5_CRASH_GUARD_STORAGE_END
+    # BLOCK5_EVOLUTION_CANDIDATE_STORAGE_START
+    "paper_trading_evolution_candidate_state.json",
+    "paper_trading_evolution_candidate_registry.json",
+    "paper_trading_evolution_candidate_events.csv",
+    "paper_trading_evolution_candidate_report.md",
+    "paper_trading_evolution_candidate_config_snapshot.json",
+    # BLOCK5_EVOLUTION_CANDIDATE_STORAGE_END
+    # BLOCK6_CANDIDATE_VALIDATION_STORAGE_START
+    "paper_trading_evolution_candidate_validation_state.json",
+    "paper_trading_evolution_candidate_validations.csv",
+    "paper_trading_evolution_candidate_validation_history.csv",
+    "paper_trading_evolution_promotion_review.json",
+    "paper_trading_evolution_candidate_validation_report.md",
+    "paper_trading_evolution_candidate_validation_config_snapshot.json",
+    # BLOCK6_CANDIDATE_VALIDATION_STORAGE_END
+    # BLOCK7_PROMOTION_GOVERNANCE_STORAGE_START
+    "paper_trading_evolution_promotion_state.json",
+    "paper_trading_evolution_promotion_governance_state.json",
+    "paper_trading_evolution_promotion_plans.json",
+    "paper_trading_evolution_promotion_events.csv",
+    "paper_trading_evolution_promotion_report.md",
+    "paper_trading_evolution_promotion_config_snapshot.json",
+    # BLOCK7_PROMOTION_GOVERNANCE_STORAGE_END
+    # BLOCK8_POST_PROMOTION_WATCHDOG_STORAGE_START
+    "paper_trading_evolution_post_promotion_state.json",
+    "paper_trading_evolution_post_promotion_comparisons.csv",
+    "paper_trading_evolution_post_promotion_history.csv",
+    "paper_trading_evolution_rollback_recommendations.json",
+    "paper_trading_evolution_post_promotion_report.md",
+    "paper_trading_evolution_post_promotion_config_snapshot.json",
+    # BLOCK8_POST_PROMOTION_WATCHDOG_STORAGE_END
+    # BLOCK9_EVOLUTION_MEMORY_STORAGE_START
+    "paper_trading_evolution_memory_state.json",
+    "paper_trading_evolution_scores.csv",
+    "paper_trading_evolution_hall_of_fame.json",
+    "paper_trading_evolution_hall_of_fame.csv",
+    "paper_trading_evolution_genetic_memory.json",
+    "paper_trading_evolution_genetic_memory.csv",
+    "paper_trading_evolution_memory_history.csv",
+    "paper_trading_evolution_memory_report.md",
+    "paper_trading_evolution_memory_config_snapshot.json",
+    # BLOCK9_EVOLUTION_MEMORY_STORAGE_END
+    # BLOCK10_REGIME_EVOLUTION_STORAGE_START
+    "paper_trading_evolution_regime_state.json",
+    "paper_trading_evolution_regime_performance.csv",
+    "paper_trading_evolution_regime_leaderboard.json",
+    "paper_trading_evolution_regime_memory.json",
+    "paper_trading_evolution_regime_history.csv",
+    "paper_trading_evolution_regime_report.md",
+    "paper_trading_evolution_regime_config_snapshot.json",
+    # BLOCK10_REGIME_EVOLUTION_STORAGE_END
+    # BLOCK11_PROTECTED_LIVE_BRIDGE_STORAGE_START
+    "paper_trading_evolution_live_bridge_state.json",
+    "paper_trading_evolution_live_release_candidates.csv",
+    "paper_trading_evolution_live_release_plans.json",
+    "paper_trading_evolution_live_release_approvals.json",
+    "paper_trading_evolution_live_release_history.csv",
+    "paper_trading_evolution_live_release_report.md",
+    "paper_trading_evolution_live_release_config_snapshot.json",
+    # BLOCK11_PROTECTED_LIVE_BRIDGE_STORAGE_END
+    # BLOCK12_EVOLUTION_CONTROL_TOWER_STORAGE_START
+    "paper_trading_evolution_control_tower_state.json",
+    "paper_trading_evolution_control_tower_checks.csv",
+    "paper_trading_evolution_control_tower_incidents.json",
+    "paper_trading_evolution_control_tower_audit_chain.csv",
+    "paper_trading_evolution_recovery_readiness.json",
+    "paper_trading_evolution_control_tower_report.md",
+    "paper_trading_evolution_control_tower_config_snapshot.json",
+    # BLOCK12_EVOLUTION_CONTROL_TOWER_STORAGE_END
     "paper_trading_config_snapshot.json",
     "paper_trading_market_cache.json",
     "paper_trading_signal_diagnostics.json",

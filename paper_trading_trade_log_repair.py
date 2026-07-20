@@ -20,6 +20,8 @@ from typing import Any, Iterable
 
 import pandas as pd
 
+from paper_trading_excursions import backfill_trade_excursion_fields
+
 
 REPORTS_DIR = Path("reports")
 BACKUP_PATH = REPORTS_DIR / "paper_trading_trade_log_before_repair.csv"
@@ -191,6 +193,7 @@ def repair_trade_log(
         "rows_recovered": 0,
         "rows_quarantined": 0,
         "duplicates_removed": 0,
+        "rows_excursion_enriched": 0,
         "header_before": [],
         "header_after": canonical_fields,
         "records": [],
@@ -239,6 +242,10 @@ def repair_trade_log(
             )
             continue
 
+        mapped, excursion_enriched = backfill_trade_excursion_fields(mapped)
+        if excursion_enriched:
+            result["rows_excursion_enriched"] += 1
+
         key = _dedupe_key(mapped)
         if key in seen:
             result["duplicates_removed"] += 1
@@ -256,6 +263,7 @@ def repair_trade_log(
         file_header != canonical_fields
         or bool(quarantine)
         or result["duplicates_removed"] > 0
+        or result["rows_excursion_enriched"] > 0
         or result["rows_before"] != result["rows_after"]
     )
 

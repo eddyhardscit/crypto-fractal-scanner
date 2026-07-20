@@ -17,6 +17,13 @@ import pandas as pd
 from kucoin_public_data import bundle_frames, safe_float
 from paper_signal_engine import Signal
 from paper_trading_config import public_config_snapshot
+from paper_trading_crash_guard import resolve_protective_exit
+from paper_trading_excursions import (
+    close_excursion_metrics,
+    conservative_exit_interval,
+    update_position_excursion,
+    update_position_excursion_at_price,
+)
 
 REPORTS_DIR = Path("reports")
 STATE_PATH = REPORTS_DIR / "paper_trading_state.json"
@@ -34,7 +41,16 @@ TRADE_FIELDS = [
     "net_pnl_eur", "return_on_margin_pct", "r_multiple",
     "max_favorable_price", "max_adverse_price",
     "mfe_gross_eur", "mae_gross_eur", "mfe_net_eur", "mae_net_eur",
+    "mfe_pct", "mae_pct", "mfe_at_utc", "mae_at_utc",
+    "excursion_observation_count", "excursion_quality",
+    "capture_ratio_signed", "winner_capture_ratio",
     "profit_retained_pct", "peak_profit_giveback_eur",
+    "profit_giveback_pct_of_mfe", "lost_after_positive_mfe",
+    "risk_model_version_at_entry", "risk_model_version_at_exit",
+    "crash_guard_level_at_entry", "crash_guard_level_at_exit",
+    "asset_stress_level_at_entry", "asset_stress_level_at_exit",
+    "stop_slippage_pct", "liquidation_crossed_intrabar",
+    "protective_execution_model",
     "close_reason", "signal_score", "confidence",
     "source", "eur_usdt_rate"
 ]
@@ -606,6 +622,12 @@ def build_position(
         "mae_gross_eur": 0.0,
         "mfe_net_eur": -entry_fee_eur,
         "mae_net_eur": -entry_fee_eur,
+        "mfe_pct": 0.0,
+        "mae_pct": 0.0,
+        "mfe_at_utc": "",
+        "mae_at_utc": "",
+        "excursion_observation_count": 0,
+        "excursion_quality": "NO_OBSERVATIONS",
         "last_funding_time": iso_utc(when),
         "last_processed_candle": "",
         "max_holding_hours": (
@@ -620,6 +642,23 @@ def build_position(
         "confidence": signal.confidence,
         "source": bundle.get("source", ""),
         "eur_usdt_rate": eur_usdt_rate,
+        "risk_model_version_at_entry": "block4_5_v1",
+        "risk_model_version_at_exit": "",
+        "crash_guard_level_at_entry": str(
+            bundle.get("_crash_guard_context", {})
+            .get("level", "NORMAL")
+        ),
+        "crash_guard_level_at_exit": "",
+        "asset_stress_level_at_entry": str(
+            bundle.get("_crash_guard_context", {})
+            .get("asset_context", {})
+            .get(signal.asset, {})
+            .get("level", "NORMAL")
+        ),
+        "asset_stress_level_at_exit": "",
+        "stop_slippage_pct": 0.0,
+        "liquidation_crossed_intrabar": False,
+        "protective_execution_model": "PAPER_STOP_MARKET_STRESSED_V1",
     }
     return position, "aperta"
 
@@ -651,78 +690,17 @@ def update_position_excursions(
     position: dict[str, Any],
     candle: pd.Series,
     config: dict[str, Any],
+    observed_at: str,
+    quality: str = "COMPLETED_15M_OHLC",
 ) -> None:
-    """Track favorable and adverse excursion from completed 15m candles."""
-    entry = float(position["entry_price"])
-    quantity = abs(float(position["quantity"]))
-    rate = max(float(position.get("eur_usdt_rate", 1.0)), 1e-12)
-    direction = 1.0 if position["side"] == "LONG" else -1.0
-
-    high = float(candle.get("high", entry))
-    low = float(candle.get("low", entry))
-    favorable_price = high if direction > 0 else low
-    adverse_price = low if direction > 0 else high
-
-    old_favorable = float(position.get("max_favorable_price", entry))
-    old_adverse = float(position.get("max_adverse_price", entry))
-
-    if direction > 0:
-        max_favorable_price = max(old_favorable, favorable_price)
-        max_adverse_price = min(old_adverse, adverse_price)
-    else:
-        max_favorable_price = min(old_favorable, favorable_price)
-        max_adverse_price = max(old_adverse, adverse_price)
-
-    def gross_pnl(price: float) -> float:
-        return (price - entry) * quantity * direction / rate
-
-    fee_rate = (
-        float(config["execution"]["taker_fee_bps"])
-        / 10_000.0
-    )
-    entry_fee = float(position.get("entry_fee_eur", 0.0))
-    funding = float(position.get("funding_pnl_eur", 0.0))
-
-    favorable_gross = gross_pnl(max_favorable_price)
-    adverse_gross = gross_pnl(max_adverse_price)
-    favorable_exit_fee = (
-        abs(max_favorable_price * quantity / rate)
-        * fee_rate
-    )
-    adverse_exit_fee = (
-        abs(max_adverse_price * quantity / rate)
-        * fee_rate
-    )
-    favorable_net = (
-        favorable_gross
-        - favorable_exit_fee
-        - entry_fee
-        + funding
-    )
-    adverse_net = (
-        adverse_gross
-        - adverse_exit_fee
-        - entry_fee
-        + funding
-    )
-
-    position["max_favorable_price"] = max_favorable_price
-    position["max_adverse_price"] = max_adverse_price
-    position["mfe_gross_eur"] = max(
-        float(position.get("mfe_gross_eur", 0.0)),
-        favorable_gross,
-    )
-    position["mae_gross_eur"] = min(
-        float(position.get("mae_gross_eur", 0.0)),
-        adverse_gross,
-    )
-    position["mfe_net_eur"] = max(
-        float(position.get("mfe_net_eur", -entry_fee)),
-        favorable_net,
-    )
-    position["mae_net_eur"] = min(
-        float(position.get("mae_net_eur", -entry_fee)),
-        adverse_net,
+    """Track side-aware excursion over an observed price interval."""
+    update_position_excursion(
+        position,
+        observed_high=float(candle.get("high", position["entry_price"])),
+        observed_low=float(candle.get("low", position["entry_price"])),
+        taker_fee_bps=float(config["execution"]["taker_fee_bps"]),
+        observed_at=observed_at,
+        quality=quality,
     )
 
 
@@ -754,7 +732,19 @@ def close_position(
     bundle: dict[str, Any], config: dict[str, Any], when: datetime
 ) -> dict[str, Any]:
     bps = slippage_bps(bundle, position["asset"], config)
-    exit_price = adverse_price(raw_exit_price, position["side"], False, bps)
+    pre_slipped = bool(
+        position.pop("_block4_5_exit_pre_slipped", False)
+    )
+    exit_price = (
+        float(raw_exit_price)
+        if pre_slipped
+        else adverse_price(
+            raw_exit_price,
+            position["side"],
+            False,
+            bps,
+        )
+    )
     direction = 1.0 if position["side"] == "LONG" else -1.0
     gross_usdt = (exit_price - float(position["entry_price"])) * float(position["quantity"]) * direction
     rate = float(position.get("eur_usdt_rate", bundle.get("eur_usdt_rate", 1.0)))
@@ -773,17 +763,75 @@ def close_position(
 
     opened = parse_time(position["opened_at"])
     initial_risk = max(float(position.get("initial_risk_eur", 0.0)), 1e-9)
+    update_position_excursion_at_price(
+        position,
+        price=float(raw_exit_price),
+        taker_fee_bps=float(config["execution"]["taker_fee_bps"]),
+        observed_at=iso_utc(when),
+        quality="MARK_ONLY",
+    )
     mfe_net = float(position.get("mfe_net_eur", 0.0))
-    profit_retained_pct = (
-        net_total / mfe_net * 100.0
-        if mfe_net > 0
-        else 0.0
+    excursion_metrics = close_excursion_metrics(net_total, mfe_net)
+    position.setdefault(
+        "risk_model_version_at_exit",
+        "block4_5_v1",
     )
-    peak_profit_giveback = (
-        mfe_net - net_total
-        if mfe_net > 0
-        else 0.0
+    position.setdefault(
+        "crash_guard_level_at_exit",
+        str(
+            bundle.get("_crash_guard_context", {})
+            .get("level", "NORMAL")
+        ),
     )
+    position.setdefault(
+        "asset_stress_level_at_exit",
+        str(
+            bundle.get("_crash_guard_context", {})
+            .get("asset_context", {})
+            .get(position.get("asset", ""), {})
+            .get("level", "NORMAL")
+        ),
+    )
+    position.setdefault(
+        "protective_execution_model",
+        "PAPER_STOP_MARKET_STRESSED_V1",
+    )
+    position.setdefault("stop_slippage_pct", 0.0)
+    position.setdefault(
+        "liquidation_crossed_intrabar",
+        False,
+    )
+
+    position.setdefault(
+        "risk_model_version_at_exit",
+        "block4_5_v1",
+    )
+    position.setdefault(
+        "crash_guard_level_at_exit",
+        str(
+            bundle.get("_crash_guard_context", {})
+            .get("level", "NORMAL")
+        ),
+    )
+    position.setdefault(
+        "asset_stress_level_at_exit",
+        str(
+            bundle.get("_crash_guard_context", {})
+            .get("asset_context", {})
+            .get(position.get("asset", ""), {})
+            .get("level", "NORMAL")
+        ),
+    )
+    position.setdefault(
+        "protective_execution_model",
+        "PAPER_STOP_MARKET_STRESSED_V1",
+    )
+    position.setdefault("stop_slippage_pct", 0.0)
+    position.setdefault(
+        "liquidation_crossed_intrabar",
+        False,
+    )
+
     record = {
         **position,
         "closed_at": iso_utc(when),
@@ -807,8 +855,17 @@ def close_position(
         "mae_gross_eur": position.get("mae_gross_eur", 0.0),
         "mfe_net_eur": mfe_net,
         "mae_net_eur": position.get("mae_net_eur", 0.0),
-        "profit_retained_pct": profit_retained_pct,
-        "peak_profit_giveback_eur": peak_profit_giveback,
+        "mfe_pct": position.get("mfe_pct", 0.0),
+        "mae_pct": position.get("mae_pct", 0.0),
+        "mfe_at_utc": position.get("mfe_at_utc", ""),
+        "mae_at_utc": position.get("mae_at_utc", ""),
+        "excursion_observation_count": position.get(
+            "excursion_observation_count", 0
+        ),
+        "excursion_quality": position.get(
+            "excursion_quality", "NO_OBSERVATIONS"
+        ),
+        **excursion_metrics,
         "close_reason": reason,
         "eur_usdt_rate": rate,
     }
@@ -842,9 +899,10 @@ def update_positions(
             remaining.append(position)
             continue
         position["last_processed_candle"] = candle_time
-        update_position_excursions(position, candle, config)
-        maybe_trail(position, candle, mark)
 
+        # Use the stop that existed before this completed candle. A trailing
+        # stop derived from this candle becomes active only for the next one;
+        # this removes same-candle look-ahead.
         stop = float(position["stop_price"])
         target = float(position["target_price"])
         liquidation_raw = position.get(
@@ -856,41 +914,86 @@ def update_positions(
             else None
         )
         candle_open = float(candle.get("open", mark))
-        if position["side"] == "LONG":
-            stop_hit = float(candle["low"]) <= stop
-            target_hit = float(candle["high"]) >= target
-            liquidation_gap = (
-                liquidation is not None
-                and candle_open <= liquidation
+        block4_5_exit = resolve_protective_exit(
+            position,
+            candle,
+            stop,
+            target,
+            liquidation,
+            bundle,
+            config,
+        )
+        exit_price = block4_5_exit.get("exit_price")
+        reason = str(block4_5_exit.get("reason", ""))
+        if exit_price is not None:
+            position["_block4_5_exit_pre_slipped"] = bool(
+                block4_5_exit.get("pre_slipped", False)
             )
-        else:
-            stop_hit = float(candle["high"]) >= stop
-            target_hit = float(candle["low"]) <= target
-            liquidation_gap = (
-                liquidation is not None
-                and candle_open >= liquidation
-            )
-
-        exit_price = None
-        reason = ""
-        if liquidation_gap:
-            exit_price = liquidation
-            reason = "LIQUIDATION_GAP"
-        elif stop_hit and target_hit:
-            if config["execution"].get("same_candle_stop_target_policy") == "TARGET_FIRST":
-                exit_price, reason = target, "TARGET_SAME_CANDLE"
-            else:
-                exit_price, reason = stop, "STOP_SAME_CANDLE_CONSERVATIVE"
-        elif stop_hit:
-            exit_price, reason = stop, "STOP"
-        elif target_hit:
-            exit_price, reason = target, "TARGET"
-        elif (when - parse_time(position["opened_at"])).total_seconds() / 3600.0 >= float(position["max_holding_hours"]):
+            for field in (
+                "risk_model_version_at_exit",
+                "crash_guard_level_at_exit",
+                "asset_stress_level_at_exit",
+                "stop_slippage_pct",
+                "liquidation_crossed_intrabar",
+                "protective_execution_model",
+            ):
+                if field in block4_5_exit:
+                    position[field] = block4_5_exit[field]
+        elif (
+            (when - parse_time(position["opened_at"]))
+            .total_seconds()
+            / 3600.0
+            >= float(position["max_holding_hours"])
+        ):
             exit_price, reason = mark, "TIME_EXIT"
+            position["risk_model_version_at_exit"] = (
+                "block4_5_v1"
+            )
+            position["crash_guard_level_at_exit"] = str(
+                bundle.get("_crash_guard_context", {})
+                .get("level", "NORMAL")
+            )
 
         if exit_price is not None:
-            closed.append(close_position(portfolio, position, exit_price, reason, bundle, config, when))
+            if reason in {
+                "LIQUIDATION_GAP",
+                "LIQUIDATION_STOP_GAP_STRESS",
+                "LIQUIDATION_INTRABAR_WORST_CASE",
+                "LIQUIDATION_STOP_STRESS",
+                "STOP_GAP_STRESS",
+                "STOP_STRESS_SLIPPAGE",
+                "TARGET_SAME_CANDLE",
+                "STOP_SAME_CANDLE_CONSERVATIVE",
+                "STOP",
+                "TARGET",
+            }:
+                capped_high, capped_low = conservative_exit_interval(
+                    candle_open, float(exit_price)
+                )
+                excursion_candle = candle.copy()
+                excursion_candle["high"] = capped_high
+                excursion_candle["low"] = capped_low
+                update_position_excursions(
+                    position,
+                    excursion_candle,
+                    config,
+                    candle_time,
+                    "EXIT_CAPPED_OHLC_CONSERVATIVE",
+                )
+            else:
+                update_position_excursions(
+                    position, candle, config, candle_time
+                )
+            closed.append(
+                close_position(
+                    portfolio, position, exit_price, reason, bundle, config, when
+                )
+            )
         else:
+            update_position_excursions(
+                position, candle, config, candle_time
+            )
+            maybe_trail(position, candle, mark)
             remaining.append(position)
 
     portfolio["open_positions"] = remaining
@@ -1011,6 +1114,10 @@ def write_open_positions(state: dict[str, Any], bundle: dict[str, Any]) -> None:
         "notional_eur", "margin_eur", "leverage", "initial_risk_eur", "entry_fee_eur", "funding_pnl_eur",
         "max_favorable_price", "max_adverse_price",
         "mfe_gross_eur", "mae_gross_eur", "mfe_net_eur", "mae_net_eur",
+        "mfe_pct", "mae_pct", "mfe_at_utc", "mae_at_utc",
+        "excursion_observation_count", "excursion_quality",
+        "risk_model_version_at_entry", "crash_guard_level_at_entry",
+        "asset_stress_level_at_entry", "protective_execution_model",
         "signal_score", "confidence"
     ]
     prices = current_prices(bundle)
@@ -1041,3 +1148,26 @@ def run_execution_cycle(
     write_open_positions(state, bundle)
     save_state(state, config, current)
     return summary
+
+# COMBO_ADAPTIVE_MFE_TRAIL_RUNTIME_V1
+_maybe_trail_before_combo_mfe_v1 = maybe_trail
+
+
+def maybe_trail(position, candle, mark):
+    if (
+        str(position.get("portfolio", ""))
+        == "SHADOW_COMBO_ADAPTIVE_MFE_TRAIL"
+        and not position.get("mfe_trail_initial_stop_price")
+    ):
+        position["mfe_trail_initial_stop_price"] = position.get(
+            "stop_price"
+        )
+
+    _maybe_trail_before_combo_mfe_v1(position, candle, mark)
+
+    if (
+        str(position.get("portfolio", ""))
+        == "SHADOW_COMBO_ADAPTIVE_MFE_TRAIL"
+    ):
+        from paper_trading_mfe_trail import apply_mfe_trail
+        apply_mfe_trail(position, candle, mark)

@@ -1,0 +1,98 @@
+{
+  "analysis_timeframes_minutes": [
+    15,
+    60
+  ],
+  "blocked_signal_shadow": {
+    "enabled": true,
+    "estimated_round_trip_fee_bps": 12.0,
+    "maximum_active_simulations": 5000,
+    "maximum_seen_signal_ids": 50000,
+    "same_candle_policy": "STOP_FIRST"
+  },
+  "enabled": true,
+  "entry_policy": {
+    "block_all_leveraged_on_extreme": true,
+    "block_all_leveraged_on_stale_data": true,
+    "block_with_direction_on_crash": true,
+    "cooldown_minutes_after_crash": 30,
+    "cooldown_minutes_after_extreme": 60,
+    "crash_opposite_direction_max_new_per_cycle": 1,
+    "recovery_max_correlated_same_direction": 2,
+    "recovery_max_new_leveraged_per_cycle": 1,
+    "stress_max_correlated_same_direction": 3,
+    "stress_max_new_leveraged_per_cycle": 2
+  },
+  "execution_model": {
+    "crash_extra_slippage_bps": 100.0,
+    "extreme_extra_slippage_bps": 250.0,
+    "gap_extra_slippage_bps": 40.0,
+    "intrabar_liquidation_policy": "WORST_CASE_IF_STOP_AND_LIQUIDATION_CROSSED_IN_CRASH",
+    "maximum_stop_slippage_pct": 0.15,
+    "normal_extra_slippage_bps": 0.0,
+    "penetration_capture_fraction": 0.35,
+    "recovery_extra_slippage_bps": 20.0,
+    "stress_extra_slippage_bps": 30.0,
+    "watch_extra_slippage_bps": 5.0
+  },
+  "live_readiness_requirements": {
+    "cross_margin_forbidden": true,
+    "exchange_native_stop_required": true,
+    "margin_mode": "ISOLATED",
+    "stop_confirmation_required_before_position_acceptance": true
+  },
+  "market_scope": {
+    "core_assets": [
+      "BTC",
+      "ETH",
+      "SOL"
+    ],
+    "crash_breadth_fraction": 0.5,
+    "crash_min_additional_core_count": 1,
+    "crash_require_btc": true,
+    "extreme_breadth_fraction": 0.65,
+    "extreme_min_additional_core_count": 1,
+    "extreme_require_btc": true,
+    "stress_breadth_fraction": 0.35,
+    "stress_min_core_count": 2,
+    "version": "asset_market_separation_v1"
+  },
+  "normal_market_passthrough": true,
+  "paper_only": true,
+  "protect_spot_or_1x": false,
+  "risk_model_version": "block4_5_v1",
+  "schema_version": 2,
+  "stress_test": {
+    "isolated_margin_loss_cap": true,
+    "shock_fractions": [
+      0.1,
+      0.2,
+      0.3,
+      0.4
+    ]
+  },
+  "thresholds": {
+    "breadth_crash_fraction": 0.65,
+    "breadth_extreme_fraction": 0.8,
+    "breadth_move_pct": 2.0,
+    "breadth_stress_fraction": 0.5,
+    "crash_15m_range_pct": 9.0,
+    "crash_15m_return_pct": 5.0,
+    "crash_60m_return_pct": 9.0,
+    "crash_mark_move_pct": 6.0,
+    "crash_range_multiple": 5.0,
+    "extreme_15m_range_pct": 15.0,
+    "extreme_15m_return_pct": 8.0,
+    "extreme_60m_return_pct": 15.0,
+    "extreme_mark_move_pct": 10.0,
+    "extreme_range_multiple": 8.0,
+    "stress_15m_range_pct": 6.0,
+    "stress_15m_return_pct": 3.5,
+    "stress_60m_return_pct": 6.0,
+    "stress_mark_move_pct": 3.5,
+    "stress_range_multiple": 3.0,
+    "watch_15m_range_pct": 4.0,
+    "watch_15m_return_pct": 2.0,
+    "watch_mark_move_pct": 2.0
+  }
+}
