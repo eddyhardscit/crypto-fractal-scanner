@@ -1,0 +1,2 @@
+generated_utc,event_type,previous_level,current_level,direction,cooldown_until_utc,blocked_signals,details_json
+2026-07-19T20:21:11+00:00,LEVEL_CHANGE,NORMAL,CRASH,UP,2026-07-19T20:51:11+00:00,0,"{""down_breadth_fraction"":0.08333333333333333,""up_breadth_fraction"":0.0,""median_15m_return_pct"":0.08100336530110219}"

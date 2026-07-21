@@ -1,0 +1,17 @@
+{
+  "automatic_mutations": 0,
+  "automatic_promotions": 0,
+  "automatic_retirements": 0,
+  "automatic_rollbacks": 0,
+  "blocked_signature_count": 0,
+  "candidate_policy_enabled": true,
+  "engine_version": "block9-evolution-memory-v1",
+  "existing_strategies_modified": false,
+  "generated_utc": "2026-07-21T05:08:41+00:00",
+  "live_modified": false,
+  "orders_sent": false,
+  "paper_only": true,
+  "record_count": 0,
+  "records": {},
+  "schema_version": 1
+}

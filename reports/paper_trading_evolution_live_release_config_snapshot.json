@@ -1,0 +1,73 @@
+{
+  "allowed_change_domains": [
+    "ENTRY",
+    "EXIT",
+    "RISK"
+  ],
+  "allowed_crash_guard_levels": [
+    "NORMAL",
+    "WATCH"
+  ],
+  "allowed_evolution_grades": [
+    "S",
+    "A"
+  ],
+  "allowed_post_promotion_statuses": [
+    "HEALTHY"
+  ],
+  "allowed_regime_memory_statuses": [
+    "FAVOR",
+    "NEUTRAL"
+  ],
+  "approval_ttl_hours": 72,
+  "automatic_mutation": false,
+  "automatic_position_changes": false,
+  "automatic_promotion": false,
+  "automatic_release": false,
+  "automatic_retirement": false,
+  "automatic_rollback": false,
+  "automatic_strategy_switching": false,
+  "blocked_genetic_memory_statuses": [
+    "AVOID",
+    "CAUTION"
+  ],
+  "enabled": true,
+  "explicit_execution_required": true,
+  "human_approval_required": true,
+  "live_adapter_configured": false,
+  "live_execution_enabled": false,
+  "live_side_effects_allowed": false,
+  "maximum_change_domains_per_release": 1,
+  "maximum_sol_drawdown_r": 4.0,
+  "maximum_sol_liquidations": 0,
+  "minimum_evolution_score": 85.0,
+  "minimum_post_health_score": 75.0,
+  "minimum_post_promotion_days": 30,
+  "minimum_post_promotion_pairs": 150,
+  "minimum_regime_trades": 30,
+  "minimum_sol_closed_trades": 100,
+  "minimum_sol_expectancy_r": 0.1,
+  "minimum_sol_profit_factor": 1.3,
+  "minimum_validation_pairs": 200,
+  "minimum_validation_score": 85.0,
+  "mode": "LOCKED_REVIEW_ONLY",
+  "orders_allowed": false,
+  "paper_only_until_explicit_release": true,
+  "plan_ttl_days": 7,
+  "previous_live_version_required": true,
+  "require_single_parameter_mutation": true,
+  "rollback_blueprint_required": true,
+  "schema_version": 1,
+  "target_profile": {
+    "asset": "SOL",
+    "automatic_reinvestment": false,
+    "capital_ceiling_eur": 100.0,
+    "entry_notional_max_eur": 20.0,
+    "entry_notional_min_eur": 10.0,
+    "maximum_open_positions": 1,
+    "profile_id": "SOL_SPOT_100_EUR",
+    "quote": "USDT",
+    "spot_only": true
+  },
+  "transactional_backup_required": true
+}

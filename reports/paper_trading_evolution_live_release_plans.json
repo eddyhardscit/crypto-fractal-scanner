@@ -1,0 +1,14 @@
+{
+  "automatic_releases": 0,
+  "engine_version": "block11-protected-live-bridge-v1",
+  "explicit_execution_required": true,
+  "generated_utc": "2026-07-21T05:08:41+00:00",
+  "human_approval_required": true,
+  "live_adapter_configured": false,
+  "live_execution_enabled": false,
+  "live_modified": false,
+  "mode": "LOCKED_REVIEW_ONLY",
+  "orders_sent": false,
+  "plans": [],
+  "schema_version": 1
+}

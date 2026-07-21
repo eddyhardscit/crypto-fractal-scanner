@@ -1,0 +1,19 @@
+{
+  "active_promotions": 0,
+  "approved_waiting_execute": 0,
+  "automatic_promotions": 0,
+  "automatic_retirements": 0,
+  "automatic_rollbacks": 0,
+  "candidate_state_modified": false,
+  "engine_version": "block7-human-approved-promotion-v1",
+  "explicit_execute_required": true,
+  "human_approval_required": true,
+  "live_modified": false,
+  "orders_sent": false,
+  "parent_state_modified": false,
+  "pending_approval": 0,
+  "plans": 0,
+  "schema_version": 1,
+  "status": "OK",
+  "updated_utc": "2026-07-21T05:08:41+00:00"
+}

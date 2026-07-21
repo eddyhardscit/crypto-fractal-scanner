@@ -1,6 +1,6 @@
 # Accuratezza moduli / autocalibrazione allargata
 
-Generato: 2026-07-20 05:14 UTC
+Generato: 2026-07-21 05:14 UTC
 
 Questo report salva ogni giorno i segnali dei moduli e controlla ogni giorno quali orizzonti sono maturati.
 
@@ -26,7 +26,7 @@ Regola anti-doppio-conteggio: **Scanner e Market Regime continuano a essere misu
 
 Nota: i controlli vengono aggiornati **ogni giorno**, ma i pesi del Global non devono cambiare automaticamente sotto 30 controlli. Prima si osserva, poi si calibra.
 
-Segnali totali salvati: **36**.
+Segnali totali salvati: **39**.
 
 Backfill storico Famiglia statistica: **3 righe totali già completate nel diario**; righe completate in questa esecuzione: **0**. Per le righe retroattive è stato usato soltanto lo Scanner grezzo, senza inventare un bonus Market Regime storico.
 
@@ -36,6 +36,9 @@ Politica snapshot giornaliero: **la prima fotografia per data e asset resta cong
 
 | Data | Asset | Prezzo | Global | Famiglia stat. | Scanner grezzo | Market grezzo | Tecnico | Classic | Frattale | Azione |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-07-21 | BTC | 65.476,52 | +3 | +2 | +2 | 0 | 0 | 0 | 0 | ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE |
+| 2026-07-21 | DOGE | 0.07281 | -6 | -3 | -2 | -2 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
+| 2026-07-21 | SOL | 78,22 | +1 | +2 | +1 | +2 | -1 | 0 | 0 | HOLD LEGGERO / ATTESA CONFERME |
 | 2026-07-20 | BTC | 64.190,23 | +2 | +2 | +2 | 0 | -1 | 0 | 0 | HOLD / ATTESA CONFERME |
 | 2026-07-20 | DOGE | 0.07180 | -7 | -3 | -2 | -2 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
 | 2026-07-20 | SOL | 76,01 | -4 | 0 | 0 | 0 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE |
@@ -45,58 +48,55 @@ Politica snapshot giornaliero: **la prima fotografia per data e asset resta cong
 | 2026-07-18 | BTC | 63.883,71 | 0 | +1 | +1 | +3 | -1 | 0 | 0 | HOLD / ATTESA CONFERME |
 | 2026-07-18 | DOGE | 0.07234 | -6 | -3 | -2 | -2 | -2 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
 | 2026-07-18 | SOL | 74,93 | -3 | 0 | -1 | +1 | -2 | -1 | 0 | TAKE PROFIT SU SPIKE / NON INSEGUIRE |
-| 2026-07-17 | BTC | 63.638,61 | -1 | +1 | +1 | +3 | -2 | 0 | 0 | NON INSEGUIRE / RIDUCI RISCHIO |
-| 2026-07-17 | DOGE | 0.07218 | -6 | -3 | -2 | -3 | -2 | -1 | 0 | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE |
-| 2026-07-17 | SOL | 75,11 | -5 | -1 | -1 | 0 | -3 | -1 | 0 | STAI FUORI / VENDI PARZIALE |
 
 ## Stato controlli per orizzonte
 
 | Asset | Segnali salvati | 1g | 2g | 3g | 5g | 7g | 10g | 14g | 21g | 30g | 45g | 60g |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 12 | 11 | 10 | 9 | 7 | 5 | 2 | 0 | 0 | 0 | 0 | 0 |
-| SOL | 12 | 11 | 10 | 9 | 7 | 5 | 2 | 0 | 0 | 0 | 0 | 0 |
-| DOGE | 12 | 11 | 10 | 9 | 7 | 5 | 2 | 0 | 0 | 0 | 0 | 0 |
+| BTC | 13 | 12 | 11 | 10 | 8 | 6 | 3 | 0 | 0 | 0 | 0 | 0 |
+| SOL | 13 | 12 | 11 | 10 | 8 | 6 | 3 | 0 | 0 | 0 | 0 | 0 |
+| DOGE | 13 | 12 | 11 | 10 | 8 | 6 | 3 | 0 | 0 | 0 | 0 | 0 |
 
 ## Prossimi controlli in arrivo
 
 | Asset | Segnale | Orizzonte | Data target | Quando |
 | --- | --- | --- | --- | --- |
-| BTC | 2026-07-11 | 10g | 2026-07-21 | domani |
-| SOL | 2026-07-11 | 10g | 2026-07-21 | domani |
-| DOGE | 2026-07-11 | 10g | 2026-07-21 | domani |
+| BTC | 2026-07-12 | 10g | 2026-07-22 | domani |
+| SOL | 2026-07-12 | 10g | 2026-07-22 | domani |
+| DOGE | 2026-07-12 | 10g | 2026-07-22 | domani |
 
 ## Lettura rapida Global Confluence
 
 | Asset | Orizzonte | Controlli | Accuratezza direzione | Return medio | Return corretto direzione | Stato |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 1g | 10 | 30,00% | -0,11% | -0,06% | FEEDBACK RAPIDO |
-| BTC | 2g | 9 | 44,44% | +0,28% | -0,05% | FEEDBACK RAPIDO |
+| BTC | 1g | 11 | 36,36% | +0,08% | +0,13% | FEEDBACK RAPIDO |
+| BTC | 2g | 10 | 50,00% | +0,37% | +0,06% | FEEDBACK RAPIDO |
 | BTC | 3g | 9 | 44,44% | +0,30% | -0,14% | FEEDBACK RAPIDO |
-| BTC | 5g | 7 | 42,86% | +0,64% | +0,64% | FEEDBACK RAPIDO |
-| BTC | 7g | 5 | 60,00% | +0,88% | +0,88% | FEEDBACK RAPIDO |
-| BTC | 10g | 2 | 100,00% | +1,45% | +1,45% | FEEDBACK RAPIDO |
+| BTC | 5g | 8 | 37,50% | +0,84% | +0,27% | FEEDBACK RAPIDO |
+| BTC | 7g | 6 | 66,67% | +1,52% | +1,52% | FEEDBACK RAPIDO |
+| BTC | 10g | 3 | 100,00% | +1,72% | +1,72% | FEEDBACK RAPIDO |
 | BTC | 14g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 | BTC | 21g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 | BTC | 30g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 | BTC | 45g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 | BTC | 60g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
-| SOL | 1g | 10 | 50,00% | -0,23% | -0,53% | FEEDBACK RAPIDO |
-| SOL | 2g | 9 | 22,22% | -0,34% | -0,83% | FEEDBACK RAPIDO |
-| SOL | 3g | 8 | 12,50% | -0,83% | -1,43% | FEEDBACK RAPIDO |
-| SOL | 5g | 6 | 33,33% | -1,74% | -1,01% | FEEDBACK RAPIDO |
-| SOL | 7g | 4 | 50,00% | -1,83% | -1,31% | FEEDBACK RAPIDO |
-| SOL | 10g | 1 | 0,00% | -2,54% | -2,54% | FEEDBACK RAPIDO |
+| SOL | 1g | 11 | 45,45% | +0,06% | -0,75% | FEEDBACK RAPIDO |
+| SOL | 2g | 10 | 20,00% | -0,02% | -1,04% | FEEDBACK RAPIDO |
+| SOL | 3g | 9 | 11,11% | -0,25% | -1,76% | FEEDBACK RAPIDO |
+| SOL | 5g | 7 | 28,57% | -1,08% | -1,29% | FEEDBACK RAPIDO |
+| SOL | 7g | 5 | 40,00% | -0,59% | -1,92% | FEEDBACK RAPIDO |
+| SOL | 10g | 2 | 50,00% | -1,00% | -1,00% | FEEDBACK RAPIDO |
 | SOL | 14g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 | SOL | 21g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 | SOL | 30g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 | SOL | 45g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 | SOL | 60g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
-| DOGE | 1g | 11 | 63,64% | -0,26% | +0,26% | FEEDBACK RAPIDO |
-| DOGE | 2g | 10 | 60,00% | -0,33% | +0,33% | FEEDBACK RAPIDO |
-| DOGE | 3g | 9 | 66,67% | -0,62% | +0,62% | FEEDBACK RAPIDO |
-| DOGE | 5g | 7 | 57,14% | -0,77% | +0,77% | FEEDBACK RAPIDO |
-| DOGE | 7g | 5 | 80,00% | -1,08% | +1,08% | FEEDBACK RAPIDO |
-| DOGE | 10g | 2 | 100,00% | -1,70% | +1,70% | FEEDBACK RAPIDO |
+| DOGE | 1g | 12 | 58,33% | -0,12% | +0,12% | FEEDBACK RAPIDO |
+| DOGE | 2g | 11 | 54,55% | -0,25% | +0,25% | FEEDBACK RAPIDO |
+| DOGE | 3g | 10 | 60,00% | -0,50% | +0,50% | FEEDBACK RAPIDO |
+| DOGE | 5g | 8 | 62,50% | -0,71% | +0,71% | FEEDBACK RAPIDO |
+| DOGE | 7g | 6 | 66,67% | -0,72% | +0,72% | FEEDBACK RAPIDO |
+| DOGE | 10g | 3 | 100,00% | -1,67% | +1,67% | FEEDBACK RAPIDO |
 | DOGE | 14g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 | DOGE | 21g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
 | DOGE | 30g | 0 | n/a | n/a | n/a | RACCOLTA DATI |
@@ -107,110 +107,112 @@ Politica snapshot giornaliero: **la prima fotografia per data e asset resta cong
 
 | Asset | Orizzonte | Modulo | Ruolo | Controlli | Accuratezza direzione | Return medio | Return corretto direzione | Drawdown medio | Max gain medio | Stato |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 1g | Global confluence | BENCHMARK | 10 | 30,00% | -0,11% | -0,06% | -0,26% | +0,65% | FEEDBACK RAPIDO |
-| BTC | 1g | Famiglia statistica | CALIBRABILE | 11 | 36,36% | +0,03% | +0,03% | -0,14% | +0,74% | FEEDBACK RAPIDO |
-| BTC | 1g | Scanner grezzo | DIAGNOSTICO | 11 | 36,36% | +0,03% | +0,03% | -0,14% | +0,74% | FEEDBACK RAPIDO |
+| BTC | 1g | Global confluence | BENCHMARK | 11 | 36,36% | +0,08% | +0,13% | -0,10% | +0,80% | FEEDBACK RAPIDO |
+| BTC | 1g | Famiglia statistica | CALIBRABILE | 12 | 41,67% | +0,19% | +0,19% | -0,00% | +0,86% | FEEDBACK RAPIDO |
+| BTC | 1g | Scanner grezzo | DIAGNOSTICO | 12 | 41,67% | +0,19% | +0,19% | -0,00% | +0,86% | FEEDBACK RAPIDO |
 | BTC | 1g | Market regime grezzo | DIAGNOSTICO | 10 | 40,00% | +0,11% | +0,11% | -0,05% | +0,77% | FEEDBACK RAPIDO |
-| BTC | 1g | Tecnico | CALIBRABILE | 10 | 30,00% | +0,00% | -0,73% | -0,17% | +0,77% | FEEDBACK RAPIDO |
-| BTC | 2g | Global confluence | BENCHMARK | 9 | 44,44% | +0,28% | -0,05% | -0,37% | +1,42% | FEEDBACK RAPIDO |
-| BTC | 2g | Famiglia statistica | CALIBRABILE | 10 | 50,00% | +0,30% | +0,30% | -0,30% | +1,45% | FEEDBACK RAPIDO |
-| BTC | 2g | Scanner grezzo | DIAGNOSTICO | 10 | 50,00% | +0,30% | +0,30% | -0,30% | +1,45% | FEEDBACK RAPIDO |
+| BTC | 1g | Tecnico | CALIBRABILE | 11 | 27,27% | +0,18% | -0,84% | -0,02% | +0,90% | FEEDBACK RAPIDO |
+| BTC | 1g | Microstruttura exchange | CALIBRABILE / NON PESATO FINO AL GATE | 1 | 100,00% | +2,00% | +2,00% | +1,48% | +2,25% | FEEDBACK RAPIDO |
+| BTC | 2g | Global confluence | BENCHMARK | 10 | 50,00% | +0,37% | +0,06% | -0,28% | +1,41% | FEEDBACK RAPIDO |
+| BTC | 2g | Famiglia statistica | CALIBRABILE | 11 | 54,55% | +0,38% | +0,38% | -0,22% | +1,44% | FEEDBACK RAPIDO |
+| BTC | 2g | Scanner grezzo | DIAGNOSTICO | 11 | 54,55% | +0,38% | +0,38% | -0,22% | +1,44% | FEEDBACK RAPIDO |
 | BTC | 2g | Market regime grezzo | DIAGNOSTICO | 10 | 50,00% | +0,30% | +0,30% | -0,30% | +1,45% | FEEDBACK RAPIDO |
-| BTC | 2g | Tecnico | CALIBRABILE | 9 | 33,33% | +0,34% | -0,47% | -0,30% | +1,51% | FEEDBACK RAPIDO |
+| BTC | 2g | Tecnico | CALIBRABILE | 10 | 40,00% | +0,42% | -0,31% | -0,21% | +1,49% | FEEDBACK RAPIDO |
 | BTC | 3g | Global confluence | BENCHMARK | 9 | 44,44% | +0,30% | -0,14% | -1,30% | +2,10% | FEEDBACK RAPIDO |
-| BTC | 3g | Famiglia statistica | CALIBRABILE | 9 | 66,67% | +0,30% | +0,30% | -1,30% | +2,10% | FEEDBACK RAPIDO |
-| BTC | 3g | Scanner grezzo | DIAGNOSTICO | 9 | 66,67% | +0,30% | +0,30% | -1,30% | +2,10% | FEEDBACK RAPIDO |
-| BTC | 3g | Market regime grezzo | DIAGNOSTICO | 9 | 66,67% | +0,30% | +0,30% | -1,30% | +2,10% | FEEDBACK RAPIDO |
-| BTC | 3g | Tecnico | CALIBRABILE | 8 | 37,50% | +0,56% | -0,02% | -1,21% | +2,25% | FEEDBACK RAPIDO |
-| BTC | 5g | Global confluence | BENCHMARK | 7 | 42,86% | +0,64% | +0,64% | -2,36% | +2,73% | FEEDBACK RAPIDO |
-| BTC | 5g | Famiglia statistica | CALIBRABILE | 7 | 42,86% | +0,64% | +0,64% | -2,36% | +2,73% | FEEDBACK RAPIDO |
-| BTC | 5g | Scanner grezzo | DIAGNOSTICO | 7 | 42,86% | +0,64% | +0,64% | -2,36% | +2,73% | FEEDBACK RAPIDO |
-| BTC | 5g | Market regime grezzo | DIAGNOSTICO | 7 | 42,86% | +0,64% | +0,64% | -2,36% | +2,73% | FEEDBACK RAPIDO |
-| BTC | 5g | Tecnico | CALIBRABILE | 6 | 50,00% | +0,57% | -0,24% | -2,20% | +2,84% | FEEDBACK RAPIDO |
-| BTC | 7g | Global confluence | BENCHMARK | 5 | 60,00% | +0,88% | +0,88% | -2,65% | +3,10% | FEEDBACK RAPIDO |
-| BTC | 7g | Famiglia statistica | CALIBRABILE | 5 | 60,00% | +0,88% | +0,88% | -2,65% | +3,10% | FEEDBACK RAPIDO |
-| BTC | 7g | Scanner grezzo | DIAGNOSTICO | 5 | 60,00% | +0,88% | +0,88% | -2,65% | +3,10% | FEEDBACK RAPIDO |
-| BTC | 7g | Market regime grezzo | DIAGNOSTICO | 5 | 60,00% | +0,88% | +0,88% | -2,65% | +3,10% | FEEDBACK RAPIDO |
-| BTC | 7g | Tecnico | CALIBRABILE | 4 | 75,00% | +1,19% | +0,68% | -2,49% | +3,23% | FEEDBACK RAPIDO |
-| BTC | 10g | Global confluence | BENCHMARK | 2 | 100,00% | +1,45% | +1,45% | -2,80% | +3,08% | FEEDBACK RAPIDO |
-| BTC | 10g | Famiglia statistica | CALIBRABILE | 2 | 100,00% | +1,45% | +1,45% | -2,80% | +3,08% | FEEDBACK RAPIDO |
-| BTC | 10g | Scanner grezzo | DIAGNOSTICO | 2 | 100,00% | +1,45% | +1,45% | -2,80% | +3,08% | FEEDBACK RAPIDO |
-| BTC | 10g | Market regime grezzo | DIAGNOSTICO | 2 | 100,00% | +1,45% | +1,45% | -2,80% | +3,08% | FEEDBACK RAPIDO |
-| BTC | 10g | Tecnico | CALIBRABILE | 1 | 0,00% | +2,40% | -2,40% | -2,32% | +3,59% | FEEDBACK RAPIDO |
-| DOGE | 1g | Global confluence | BENCHMARK | 11 | 63,64% | -0,26% | +0,26% | -0,51% | +0,56% | FEEDBACK RAPIDO |
-| DOGE | 1g | Famiglia statistica | CALIBRABILE | 11 | 63,64% | -0,26% | +0,26% | -0,51% | +0,56% | FEEDBACK RAPIDO |
-| DOGE | 1g | Scanner grezzo | DIAGNOSTICO | 11 | 63,64% | -0,26% | +0,26% | -0,51% | +0,56% | FEEDBACK RAPIDO |
-| DOGE | 1g | Market regime grezzo | DIAGNOSTICO | 11 | 63,64% | -0,26% | +0,26% | -0,51% | +0,56% | FEEDBACK RAPIDO |
-| DOGE | 1g | Tecnico | CALIBRABILE | 11 | 63,64% | -0,26% | +0,26% | -0,51% | +0,56% | FEEDBACK RAPIDO |
-| DOGE | 1g | Classic technical | CALIBRABILE | 10 | 60,00% | -0,17% | +0,17% | -0,39% | +0,57% | FEEDBACK RAPIDO |
-| DOGE | 2g | Global confluence | BENCHMARK | 10 | 60,00% | -0,33% | +0,33% | -0,98% | +1,26% | FEEDBACK RAPIDO |
-| DOGE | 2g | Famiglia statistica | CALIBRABILE | 10 | 60,00% | -0,33% | +0,33% | -0,98% | +1,26% | FEEDBACK RAPIDO |
-| DOGE | 2g | Scanner grezzo | DIAGNOSTICO | 10 | 60,00% | -0,33% | +0,33% | -0,98% | +1,26% | FEEDBACK RAPIDO |
-| DOGE | 2g | Market regime grezzo | DIAGNOSTICO | 10 | 60,00% | -0,33% | +0,33% | -0,98% | +1,26% | FEEDBACK RAPIDO |
-| DOGE | 2g | Tecnico | CALIBRABILE | 10 | 60,00% | -0,33% | +0,33% | -0,98% | +1,26% | FEEDBACK RAPIDO |
-| DOGE | 2g | Classic technical | CALIBRABILE | 9 | 55,56% | -0,10% | +0,10% | -0,84% | +1,63% | FEEDBACK RAPIDO |
-| DOGE | 3g | Global confluence | BENCHMARK | 9 | 66,67% | -0,62% | +0,62% | -1,81% | +2,09% | FEEDBACK RAPIDO |
-| DOGE | 3g | Famiglia statistica | CALIBRABILE | 9 | 66,67% | -0,62% | +0,62% | -1,81% | +2,09% | FEEDBACK RAPIDO |
-| DOGE | 3g | Scanner grezzo | DIAGNOSTICO | 9 | 66,67% | -0,62% | +0,62% | -1,81% | +2,09% | FEEDBACK RAPIDO |
-| DOGE | 3g | Market regime grezzo | DIAGNOSTICO | 9 | 66,67% | -0,62% | +0,62% | -1,81% | +2,09% | FEEDBACK RAPIDO |
-| DOGE | 3g | Tecnico | CALIBRABILE | 9 | 66,67% | -0,62% | +0,62% | -1,81% | +2,09% | FEEDBACK RAPIDO |
-| DOGE | 3g | Classic technical | CALIBRABILE | 8 | 62,50% | -0,43% | +0,43% | -1,74% | +2,28% | FEEDBACK RAPIDO |
-| DOGE | 5g | Global confluence | BENCHMARK | 7 | 57,14% | -0,77% | +0,77% | -2,79% | +2,82% | FEEDBACK RAPIDO |
-| DOGE | 5g | Famiglia statistica | CALIBRABILE | 7 | 57,14% | -0,77% | +0,77% | -2,79% | +2,82% | FEEDBACK RAPIDO |
-| DOGE | 5g | Scanner grezzo | DIAGNOSTICO | 7 | 57,14% | -0,77% | +0,77% | -2,79% | +2,82% | FEEDBACK RAPIDO |
-| DOGE | 5g | Market regime grezzo | DIAGNOSTICO | 7 | 57,14% | -0,77% | +0,77% | -2,79% | +2,82% | FEEDBACK RAPIDO |
-| DOGE | 5g | Tecnico | CALIBRABILE | 7 | 57,14% | -0,77% | +0,77% | -2,79% | +2,82% | FEEDBACK RAPIDO |
-| DOGE | 5g | Classic technical | CALIBRABILE | 6 | 50,00% | -0,42% | +0,42% | -2,60% | +3,21% | FEEDBACK RAPIDO |
-| DOGE | 7g | Global confluence | BENCHMARK | 5 | 80,00% | -1,08% | +1,08% | -2,94% | +2,99% | FEEDBACK RAPIDO |
-| DOGE | 7g | Famiglia statistica | CALIBRABILE | 5 | 80,00% | -1,08% | +1,08% | -2,94% | +2,99% | FEEDBACK RAPIDO |
-| DOGE | 7g | Scanner grezzo | DIAGNOSTICO | 5 | 80,00% | -1,08% | +1,08% | -2,94% | +2,99% | FEEDBACK RAPIDO |
-| DOGE | 7g | Market regime grezzo | DIAGNOSTICO | 5 | 80,00% | -1,08% | +1,08% | -2,94% | +2,99% | FEEDBACK RAPIDO |
-| DOGE | 7g | Tecnico | CALIBRABILE | 5 | 80,00% | -1,08% | +1,08% | -2,94% | +2,99% | FEEDBACK RAPIDO |
-| DOGE | 7g | Classic technical | CALIBRABILE | 5 | 80,00% | -1,08% | +1,08% | -2,94% | +2,99% | FEEDBACK RAPIDO |
-| DOGE | 10g | Global confluence | BENCHMARK | 2 | 100,00% | -1,70% | +1,70% | -3,25% | +2,87% | FEEDBACK RAPIDO |
-| DOGE | 10g | Famiglia statistica | CALIBRABILE | 2 | 100,00% | -1,70% | +1,70% | -3,25% | +2,87% | FEEDBACK RAPIDO |
-| DOGE | 10g | Scanner grezzo | DIAGNOSTICO | 2 | 100,00% | -1,70% | +1,70% | -3,25% | +2,87% | FEEDBACK RAPIDO |
-| DOGE | 10g | Market regime grezzo | DIAGNOSTICO | 2 | 100,00% | -1,70% | +1,70% | -3,25% | +2,87% | FEEDBACK RAPIDO |
-| DOGE | 10g | Tecnico | CALIBRABILE | 2 | 100,00% | -1,70% | +1,70% | -3,25% | +2,87% | FEEDBACK RAPIDO |
-| DOGE | 10g | Classic technical | CALIBRABILE | 2 | 100,00% | -1,70% | +1,70% | -3,25% | +2,87% | FEEDBACK RAPIDO |
-| SOL | 1g | Global confluence | BENCHMARK | 10 | 50,00% | -0,23% | -0,53% | -0,60% | +0,67% | FEEDBACK RAPIDO |
+| BTC | 3g | Famiglia statistica | CALIBRABILE | 10 | 70,00% | +0,52% | +0,52% | -1,11% | +2,17% | FEEDBACK RAPIDO |
+| BTC | 3g | Scanner grezzo | DIAGNOSTICO | 10 | 70,00% | +0,52% | +0,52% | -1,11% | +2,17% | FEEDBACK RAPIDO |
+| BTC | 3g | Market regime grezzo | DIAGNOSTICO | 10 | 70,00% | +0,52% | +0,52% | -1,11% | +2,17% | FEEDBACK RAPIDO |
+| BTC | 3g | Tecnico | CALIBRABILE | 9 | 33,33% | +0,77% | -0,30% | -1,01% | +2,31% | FEEDBACK RAPIDO |
+| BTC | 5g | Global confluence | BENCHMARK | 8 | 37,50% | +0,84% | +0,27% | -2,36% | +2,70% | FEEDBACK RAPIDO |
+| BTC | 5g | Famiglia statistica | CALIBRABILE | 8 | 50,00% | +0,84% | +0,84% | -2,36% | +2,70% | FEEDBACK RAPIDO |
+| BTC | 5g | Scanner grezzo | DIAGNOSTICO | 8 | 50,00% | +0,84% | +0,84% | -2,36% | +2,70% | FEEDBACK RAPIDO |
+| BTC | 5g | Market regime grezzo | DIAGNOSTICO | 8 | 50,00% | +0,84% | +0,84% | -2,36% | +2,70% | FEEDBACK RAPIDO |
+| BTC | 5g | Tecnico | CALIBRABILE | 7 | 42,86% | +0,81% | -0,53% | -2,23% | +2,79% | FEEDBACK RAPIDO |
+| BTC | 7g | Global confluence | BENCHMARK | 6 | 66,67% | +1,52% | +1,52% | -2,22% | +3,40% | FEEDBACK RAPIDO |
+| BTC | 7g | Famiglia statistica | CALIBRABILE | 6 | 66,67% | +1,52% | +1,52% | -2,22% | +3,40% | FEEDBACK RAPIDO |
+| BTC | 7g | Scanner grezzo | DIAGNOSTICO | 6 | 66,67% | +1,52% | +1,52% | -2,22% | +3,40% | FEEDBACK RAPIDO |
+| BTC | 7g | Market regime grezzo | DIAGNOSTICO | 6 | 66,67% | +1,52% | +1,52% | -2,22% | +3,40% | FEEDBACK RAPIDO |
+| BTC | 7g | Tecnico | CALIBRABILE | 5 | 60,00% | +1,89% | -0,39% | -2,01% | +3,57% | FEEDBACK RAPIDO |
+| BTC | 10g | Global confluence | BENCHMARK | 3 | 100,00% | +1,72% | +1,72% | -3,05% | +2,89% | FEEDBACK RAPIDO |
+| BTC | 10g | Famiglia statistica | CALIBRABILE | 3 | 100,00% | +1,72% | +1,72% | -3,05% | +2,89% | FEEDBACK RAPIDO |
+| BTC | 10g | Scanner grezzo | DIAGNOSTICO | 3 | 100,00% | +1,72% | +1,72% | -3,05% | +2,89% | FEEDBACK RAPIDO |
+| BTC | 10g | Market regime grezzo | DIAGNOSTICO | 3 | 100,00% | +1,72% | +1,72% | -3,05% | +2,89% | FEEDBACK RAPIDO |
+| BTC | 10g | Tecnico | CALIBRABILE | 2 | 0,00% | +2,32% | -2,32% | -2,93% | +3,04% | FEEDBACK RAPIDO |
+| DOGE | 1g | Global confluence | BENCHMARK | 12 | 58,33% | -0,12% | +0,12% | -0,45% | +0,63% | FEEDBACK RAPIDO |
+| DOGE | 1g | Famiglia statistica | CALIBRABILE | 12 | 58,33% | -0,12% | +0,12% | -0,45% | +0,63% | FEEDBACK RAPIDO |
+| DOGE | 1g | Scanner grezzo | DIAGNOSTICO | 12 | 58,33% | -0,12% | +0,12% | -0,45% | +0,63% | FEEDBACK RAPIDO |
+| DOGE | 1g | Market regime grezzo | DIAGNOSTICO | 12 | 58,33% | -0,12% | +0,12% | -0,45% | +0,63% | FEEDBACK RAPIDO |
+| DOGE | 1g | Tecnico | CALIBRABILE | 12 | 58,33% | -0,12% | +0,12% | -0,45% | +0,63% | FEEDBACK RAPIDO |
+| DOGE | 1g | Classic technical | CALIBRABILE | 11 | 54,55% | -0,02% | +0,02% | -0,33% | +0,64% | FEEDBACK RAPIDO |
+| DOGE | 2g | Global confluence | BENCHMARK | 11 | 54,55% | -0,25% | +0,25% | -0,95% | +1,19% | FEEDBACK RAPIDO |
+| DOGE | 2g | Famiglia statistica | CALIBRABILE | 11 | 54,55% | -0,25% | +0,25% | -0,95% | +1,19% | FEEDBACK RAPIDO |
+| DOGE | 2g | Scanner grezzo | DIAGNOSTICO | 11 | 54,55% | -0,25% | +0,25% | -0,95% | +1,19% | FEEDBACK RAPIDO |
+| DOGE | 2g | Market regime grezzo | DIAGNOSTICO | 11 | 54,55% | -0,25% | +0,25% | -0,95% | +1,19% | FEEDBACK RAPIDO |
+| DOGE | 2g | Tecnico | CALIBRABILE | 11 | 54,55% | -0,25% | +0,25% | -0,95% | +1,19% | FEEDBACK RAPIDO |
+| DOGE | 2g | Classic technical | CALIBRABILE | 10 | 50,00% | -0,04% | +0,04% | -0,82% | +1,52% | FEEDBACK RAPIDO |
+| DOGE | 3g | Global confluence | BENCHMARK | 10 | 60,00% | -0,50% | +0,50% | -1,70% | +1,94% | FEEDBACK RAPIDO |
+| DOGE | 3g | Famiglia statistica | CALIBRABILE | 10 | 60,00% | -0,50% | +0,50% | -1,70% | +1,94% | FEEDBACK RAPIDO |
+| DOGE | 3g | Scanner grezzo | DIAGNOSTICO | 10 | 60,00% | -0,50% | +0,50% | -1,70% | +1,94% | FEEDBACK RAPIDO |
+| DOGE | 3g | Market regime grezzo | DIAGNOSTICO | 10 | 60,00% | -0,50% | +0,50% | -1,70% | +1,94% | FEEDBACK RAPIDO |
+| DOGE | 3g | Tecnico | CALIBRABILE | 10 | 60,00% | -0,50% | +0,50% | -1,70% | +1,94% | FEEDBACK RAPIDO |
+| DOGE | 3g | Classic technical | CALIBRABILE | 9 | 55,56% | -0,31% | +0,31% | -1,62% | +2,10% | FEEDBACK RAPIDO |
+| DOGE | 5g | Global confluence | BENCHMARK | 8 | 62,50% | -0,71% | +0,71% | -2,77% | +2,44% | FEEDBACK RAPIDO |
+| DOGE | 5g | Famiglia statistica | CALIBRABILE | 8 | 62,50% | -0,71% | +0,71% | -2,77% | +2,44% | FEEDBACK RAPIDO |
+| DOGE | 5g | Scanner grezzo | DIAGNOSTICO | 8 | 62,50% | -0,71% | +0,71% | -2,77% | +2,44% | FEEDBACK RAPIDO |
+| DOGE | 5g | Market regime grezzo | DIAGNOSTICO | 8 | 62,50% | -0,71% | +0,71% | -2,77% | +2,44% | FEEDBACK RAPIDO |
+| DOGE | 5g | Tecnico | CALIBRABILE | 8 | 62,50% | -0,71% | +0,71% | -2,77% | +2,44% | FEEDBACK RAPIDO |
+| DOGE | 5g | Classic technical | CALIBRABILE | 7 | 57,14% | -0,40% | +0,40% | -2,62% | +2,71% | FEEDBACK RAPIDO |
+| DOGE | 7g | Global confluence | BENCHMARK | 6 | 66,67% | -0,72% | +0,72% | -2,68% | +3,21% | FEEDBACK RAPIDO |
+| DOGE | 7g | Famiglia statistica | CALIBRABILE | 6 | 66,67% | -0,72% | +0,72% | -2,68% | +3,21% | FEEDBACK RAPIDO |
+| DOGE | 7g | Scanner grezzo | DIAGNOSTICO | 6 | 66,67% | -0,72% | +0,72% | -2,68% | +3,21% | FEEDBACK RAPIDO |
+| DOGE | 7g | Market regime grezzo | DIAGNOSTICO | 6 | 66,67% | -0,72% | +0,72% | -2,68% | +3,21% | FEEDBACK RAPIDO |
+| DOGE | 7g | Tecnico | CALIBRABILE | 6 | 66,67% | -0,72% | +0,72% | -2,68% | +3,21% | FEEDBACK RAPIDO |
+| DOGE | 7g | Classic technical | CALIBRABILE | 6 | 66,67% | -0,72% | +0,72% | -2,68% | +3,21% | FEEDBACK RAPIDO |
+| DOGE | 10g | Global confluence | BENCHMARK | 3 | 100,00% | -1,67% | +1,67% | -3,54% | +2,47% | FEEDBACK RAPIDO |
+| DOGE | 10g | Famiglia statistica | CALIBRABILE | 3 | 100,00% | -1,67% | +1,67% | -3,54% | +2,47% | FEEDBACK RAPIDO |
+| DOGE | 10g | Scanner grezzo | DIAGNOSTICO | 3 | 100,00% | -1,67% | +1,67% | -3,54% | +2,47% | FEEDBACK RAPIDO |
+| DOGE | 10g | Market regime grezzo | DIAGNOSTICO | 3 | 100,00% | -1,67% | +1,67% | -3,54% | +2,47% | FEEDBACK RAPIDO |
+| DOGE | 10g | Tecnico | CALIBRABILE | 3 | 100,00% | -1,67% | +1,67% | -3,54% | +2,47% | FEEDBACK RAPIDO |
+| DOGE | 10g | Classic technical | CALIBRABILE | 3 | 100,00% | -1,67% | +1,67% | -3,54% | +2,47% | FEEDBACK RAPIDO |
+| SOL | 1g | Global confluence | BENCHMARK | 11 | 45,45% | +0,06% | -0,75% | -0,35% | +0,89% | FEEDBACK RAPIDO |
 | SOL | 1g | Famiglia statistica | CALIBRABILE | 8 | 75,00% | -0,68% | +0,18% | -0,88% | +0,20% | FEEDBACK RAPIDO |
 | SOL | 1g | Scanner grezzo | DIAGNOSTICO | 11 | 63,64% | -0,20% | -0,17% | -0,54% | +0,66% | FEEDBACK RAPIDO |
 | SOL | 1g | Market regime grezzo | DIAGNOSTICO | 7 | 57,14% | -0,12% | +0,46% | -0,69% | +0,86% | FEEDBACK RAPIDO |
-| SOL | 1g | Tecnico | CALIBRABILE | 11 | 54,55% | -0,20% | -0,13% | -0,54% | +0,66% | FEEDBACK RAPIDO |
-| SOL | 1g | Classic technical | CALIBRABILE | 4 | 75,00% | +0,01% | -0,01% | -0,13% | +0,66% | FEEDBACK RAPIDO |
+| SOL | 1g | Tecnico | CALIBRABILE | 12 | 50,00% | +0,06% | -0,36% | -0,31% | +0,86% | FEEDBACK RAPIDO |
+| SOL | 1g | Classic technical | CALIBRABILE | 5 | 60,00% | +0,59% | -0,59% | +0,34% | +1,15% | FEEDBACK RAPIDO |
 | SOL | 1g | Frattale SOL | CALIBRABILE | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | FEEDBACK RAPIDO |
-| SOL | 2g | Global confluence | BENCHMARK | 9 | 22,22% | -0,34% | -0,83% | -1,09% | +1,22% | FEEDBACK RAPIDO |
-| SOL | 2g | Famiglia statistica | CALIBRABILE | 7 | 57,14% | -0,81% | -0,10% | -1,71% | +0,57% | FEEDBACK RAPIDO |
-| SOL | 2g | Scanner grezzo | DIAGNOSTICO | 10 | 50,00% | -0,46% | -0,17% | -1,21% | +1,23% | FEEDBACK RAPIDO |
+| SOL | 2g | Global confluence | BENCHMARK | 10 | 20,00% | -0,02% | -1,04% | -0,76% | +1,40% | FEEDBACK RAPIDO |
+| SOL | 2g | Famiglia statistica | CALIBRABILE | 8 | 50,00% | -0,35% | -0,44% | -1,23% | +0,88% | FEEDBACK RAPIDO |
+| SOL | 2g | Scanner grezzo | DIAGNOSTICO | 11 | 45,45% | -0,16% | -0,42% | -0,91% | +1,40% | FEEDBACK RAPIDO |
 | SOL | 2g | Market regime grezzo | DIAGNOSTICO | 7 | 42,86% | -0,41% | -0,28% | -1,27% | +1,46% | FEEDBACK RAPIDO |
-| SOL | 2g | Tecnico | CALIBRABILE | 10 | 20,00% | -0,46% | -0,68% | -1,21% | +1,23% | FEEDBACK RAPIDO |
-| SOL | 2g | Classic technical | CALIBRABILE | 3 | 33,33% | +0,42% | -0,42% | +0,19% | +1,21% | FEEDBACK RAPIDO |
+| SOL | 2g | Tecnico | CALIBRABILE | 11 | 18,18% | -0,16% | -0,88% | -0,91% | +1,40% | FEEDBACK RAPIDO |
+| SOL | 2g | Classic technical | CALIBRABILE | 4 | 25,00% | +1,03% | -1,03% | +0,68% | +1,67% | FEEDBACK RAPIDO |
 | SOL | 2g | Frattale SOL | CALIBRABILE | 1 | 0,00% | -0,28% | -0,28% | -0,31% | +0,05% | FEEDBACK RAPIDO |
-| SOL | 3g | Global confluence | BENCHMARK | 8 | 12,50% | -0,83% | -1,43% | -2,49% | +2,04% | FEEDBACK RAPIDO |
+| SOL | 3g | Global confluence | BENCHMARK | 9 | 11,11% | -0,25% | -1,76% | -2,14% | +2,32% | FEEDBACK RAPIDO |
 | SOL | 3g | Famiglia statistica | CALIBRABILE | 7 | 42,86% | -0,70% | -0,27% | -2,61% | +1,72% | FEEDBACK RAPIDO |
-| SOL | 3g | Scanner grezzo | DIAGNOSTICO | 9 | 44,44% | -0,93% | +0,17% | -2,51% | +1,96% | FEEDBACK RAPIDO |
-| SOL | 3g | Market regime grezzo | DIAGNOSTICO | 6 | 33,33% | -1,31% | -1,62% | -2,63% | +2,21% | FEEDBACK RAPIDO |
-| SOL | 3g | Tecnico | CALIBRABILE | 9 | 33,33% | -0,93% | -0,40% | -2,51% | +1,96% | FEEDBACK RAPIDO |
-| SOL | 3g | Classic technical | CALIBRABILE | 2 | 0,00% | +0,63% | -0,63% | -2,09% | +1,54% | FEEDBACK RAPIDO |
+| SOL | 3g | Scanner grezzo | DIAGNOSTICO | 10 | 40,00% | -0,40% | -0,28% | -2,19% | +2,22% | FEEDBACK RAPIDO |
+| SOL | 3g | Market regime grezzo | DIAGNOSTICO | 7 | 42,86% | -0,50% | -0,76% | -2,15% | +2,54% | FEEDBACK RAPIDO |
+| SOL | 3g | Tecnico | CALIBRABILE | 10 | 30,00% | -0,40% | -0,80% | -2,19% | +2,22% | FEEDBACK RAPIDO |
+| SOL | 3g | Classic technical | CALIBRABILE | 3 | 0,00% | +1,88% | -1,88% | -1,17% | +2,55% | FEEDBACK RAPIDO |
 | SOL | 3g | Frattale SOL | CALIBRABILE | 1 | 0,00% | -1,97% | -1,97% | -2,74% | +1,96% | FEEDBACK RAPIDO |
-| SOL | 5g | Global confluence | BENCHMARK | 6 | 33,33% | -1,74% | -1,01% | -3,74% | +2,48% | FEEDBACK RAPIDO |
-| SOL | 5g | Famiglia statistica | CALIBRABILE | 5 | 80,00% | -1,96% | +1,16% | -4,05% | +1,91% | FEEDBACK RAPIDO |
-| SOL | 5g | Scanner grezzo | DIAGNOSTICO | 7 | 71,43% | -1,52% | +0,95% | -3,86% | +2,31% | FEEDBACK RAPIDO |
+| SOL | 5g | Global confluence | BENCHMARK | 7 | 28,57% | -1,08% | -1,29% | -3,69% | +2,57% | FEEDBACK RAPIDO |
+| SOL | 5g | Famiglia statistica | CALIBRABILE | 6 | 66,67% | -1,15% | +0,48% | -3,95% | +2,11% | FEEDBACK RAPIDO |
+| SOL | 5g | Scanner grezzo | DIAGNOSTICO | 8 | 62,50% | -0,97% | +0,47% | -3,80% | +2,41% | FEEDBACK RAPIDO |
 | SOL | 5g | Market regime grezzo | DIAGNOSTICO | 6 | 50,00% | -1,74% | -0,52% | -3,74% | +2,48% | FEEDBACK RAPIDO |
-| SOL | 5g | Tecnico | CALIBRABILE | 7 | 28,57% | -1,52% | -0,83% | -3,86% | +2,31% | FEEDBACK RAPIDO |
+| SOL | 5g | Tecnico | CALIBRABILE | 8 | 25,00% | -0,97% | -1,10% | -3,80% | +2,41% | FEEDBACK RAPIDO |
+| SOL | 5g | Classic technical | CALIBRABILE | 1 | 0,00% | +2,92% | -2,92% | -3,42% | +3,10% | FEEDBACK RAPIDO |
 | SOL | 5g | Frattale SOL | CALIBRABILE | 1 | 0,00% | -3,96% | -3,96% | -4,95% | +1,96% | FEEDBACK RAPIDO |
-| SOL | 7g | Global confluence | BENCHMARK | 4 | 50,00% | -1,83% | -1,31% | -4,38% | +2,44% | FEEDBACK RAPIDO |
+| SOL | 7g | Global confluence | BENCHMARK | 5 | 40,00% | -0,59% | -1,92% | -3,91% | +3,01% | FEEDBACK RAPIDO |
 | SOL | 7g | Famiglia statistica | CALIBRABILE | 4 | 100,00% | -1,74% | +1,74% | -4,35% | +2,47% | FEEDBACK RAPIDO |
-| SOL | 7g | Scanner grezzo | DIAGNOSTICO | 5 | 100,00% | -2,13% | +2,13% | -4,42% | +2,26% | FEEDBACK RAPIDO |
-| SOL | 7g | Market regime grezzo | DIAGNOSTICO | 4 | 50,00% | -1,83% | -1,31% | -4,38% | +2,44% | FEEDBACK RAPIDO |
-| SOL | 7g | Tecnico | CALIBRABILE | 5 | 20,00% | -2,13% | -1,94% | -4,42% | +2,26% | FEEDBACK RAPIDO |
+| SOL | 7g | Scanner grezzo | DIAGNOSTICO | 6 | 83,33% | -1,04% | +1,04% | -4,02% | +2,76% | FEEDBACK RAPIDO |
+| SOL | 7g | Market regime grezzo | DIAGNOSTICO | 5 | 60,00% | -0,59% | -0,17% | -3,91% | +3,01% | FEEDBACK RAPIDO |
+| SOL | 7g | Tecnico | CALIBRABILE | 6 | 16,67% | -1,04% | -2,35% | -4,02% | +2,76% | FEEDBACK RAPIDO |
 | SOL | 7g | Frattale SOL | CALIBRABILE | 1 | 0,00% | -2,59% | -2,59% | -4,95% | +1,96% | FEEDBACK RAPIDO |
-| SOL | 10g | Global confluence | BENCHMARK | 1 | 0,00% | -2,54% | -2,54% | -5,92% | +1,96% | FEEDBACK RAPIDO |
+| SOL | 10g | Global confluence | BENCHMARK | 2 | 50,00% | -1,00% | -1,00% | -5,79% | +1,67% | FEEDBACK RAPIDO |
 | SOL | 10g | Famiglia statistica | CALIBRABILE | 2 | 100,00% | -2,36% | +2,36% | -5,73% | +1,74% | FEEDBACK RAPIDO |
-| SOL | 10g | Scanner grezzo | DIAGNOSTICO | 2 | 100,00% | -2,36% | +2,36% | -5,73% | +1,74% | FEEDBACK RAPIDO |
-| SOL | 10g | Market regime grezzo | DIAGNOSTICO | 1 | 0,00% | -2,54% | -2,54% | -5,92% | +1,96% | FEEDBACK RAPIDO |
-| SOL | 10g | Tecnico | CALIBRABILE | 2 | 0,00% | -2,36% | -2,36% | -5,73% | +1,74% | FEEDBACK RAPIDO |
+| SOL | 10g | Scanner grezzo | DIAGNOSTICO | 3 | 66,67% | -1,39% | +1,39% | -5,70% | +1,62% | FEEDBACK RAPIDO |
+| SOL | 10g | Market regime grezzo | DIAGNOSTICO | 2 | 50,00% | -1,00% | -1,00% | -5,79% | +1,67% | FEEDBACK RAPIDO |
+| SOL | 10g | Tecnico | CALIBRABILE | 3 | 33,33% | -1,39% | -1,39% | -5,70% | +1,62% | FEEDBACK RAPIDO |
 | SOL | 10g | Frattale SOL | CALIBRABILE | 1 | 0,00% | -2,54% | -2,54% | -5,92% | +1,96% | FEEDBACK RAPIDO |
 
 ## Come leggerlo

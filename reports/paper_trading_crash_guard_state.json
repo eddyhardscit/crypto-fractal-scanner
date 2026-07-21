@@ -1,0 +1,48 @@
+{
+  "active_simulations": {
+    "62a0b45c7b8086e1533b": {
+      "asset": "ESPORTS",
+      "block_reason": "CRASH_GUARD_ASSET_EXTREME",
+      "entry_price": 0.02158,
+      "full_from_signal": true,
+      "guard_direction": "NONE",
+      "guard_level": "NORMAL",
+      "last_processed_candle": "2026-07-20T14:30:00+00:00",
+      "leverage": 3.0,
+      "liquidation_price": 0.028665433333333334,
+      "max_holding_hours": 72.0,
+      "opened_at": "2026-07-20T05:08:30+00:00",
+      "portfolio": "SHADOW_1H_FAST_V3",
+      "side": "SHORT",
+      "signal_id": "62a0b45c7b8086e1533b",
+      "stop_pct": 0.12,
+      "stop_price": 0.0241696,
+      "strategy": "momentum_breakout_v3_filtered",
+      "target_pct": 0.18,
+      "target_price": 0.0176956
+    }
+  },
+  "cooldown_until_utc": "",
+  "created_utc": "2026-07-19T20:21:11+00:00",
+  "engine_version": "block4_5-crash-guard-v1",
+  "market_scope_version": "asset_market_separation_v1",
+  "previous_direction": "NONE",
+  "previous_level": "NORMAL",
+  "schema_version": 1,
+  "seen_blocked_signal_ids": [
+    "62a0b45c7b8086e1533b",
+    "58c590fa3dd5e43dacc2",
+    "8c6b182f021d7ed83e03",
+    "50bb41ffb7884f62da4b",
+    "9f50309c0d7735516f75",
+    "9fb3160cf223ef7ce49b"
+  ],
+  "totals": {
+    "avoided_liquidations": 0,
+    "blocked_signals": 6,
+    "completed_simulations": 5,
+    "guard_value_r": 5.0500000000000025,
+    "missed_profit_r": 0.0
+  },
+  "updated_utc": "2026-07-21T05:08:33+00:00"
+}

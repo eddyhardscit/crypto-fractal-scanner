@@ -1,0 +1,19 @@
+{
+  "approval_ttl_hours": 72,
+  "automatic_plan_generation": true,
+  "automatic_promotion": false,
+  "automatic_retirement": false,
+  "automatic_rollback": false,
+  "enabled": true,
+  "explicit_execute_required": true,
+  "human_approval_required": true,
+  "live_side_effects_allowed": false,
+  "maximum_active_master_per_family": 1,
+  "orders_allowed": false,
+  "paper_only": true,
+  "plan_ttl_hours": 168,
+  "require_flat_parent_and_candidate": true,
+  "retain_ex_master_active": true,
+  "rollback_window_days": 30,
+  "schema_version": 1
+}

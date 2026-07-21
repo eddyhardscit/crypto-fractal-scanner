@@ -1,7 +1,7 @@
 <!-- SCANNER_FORECAST_TRACKER_START -->
 # Scanner forecast path / cono probabilistico
 
-Generato: 2026-07-20 05:13:53 UTC
+Generato: 2026-07-21 05:13:51 UTC
 
 Questo report trasforma i 40 casi simili dello scanner in un cono previsionale leggibile.
 
@@ -18,9 +18,9 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 | Asset   | Data       | Prezzo iniziale   | Direzione scanner   | Casi positivi   | P10 30g     | P25 30g     | P50 30g     | P75 30g     | P90 30g     |
 |:--------|:-----------|:------------------|:--------------------|:----------------|:------------|:------------|:------------|:------------|:------------|
-| BTC | 2026-07-20 | 64.150 $ | SALITA | 60,00% | 45.330,31 $ | 55.350,25 $ | 68.291,17 $ | 75.255,37 $ | 81.147,32 $ |
-| SOL | 2026-07-20 | 75,92 $ | INCERTO | 50,00% | 58,34 $ | 67,00 $ | 75,97 $ | 84,77 $ | 89,14 $ |
-| DOGE | 2026-07-20 | 0.07174 $ | DISCESA | 30,00% | 0.04875 $ | 0.05587 $ | 0.06217 $ | 0.07625 $ | 0.08746 $ |
+| BTC | 2026-07-21 | 65.472 $ | SALITA | 60,00% | 47.826,22 $ | 58.392,28 $ | 68.968,40 $ | 80.082,47 $ | 83.516,80 $ |
+| SOL | 2026-07-21 | 78,18 $ | INCERTO | 52,50% | 60,08 $ | 68,09 $ | 78,73 $ | 87,79 $ | 91,80 $ |
+| DOGE | 2026-07-21 | 0.07277 $ | DISCESA | 32,50% | 0.05162 $ | 0.05680 $ | 0.06383 $ | 0.07996 $ | 0.09210 $ |
 
 ## Grafici
 
@@ -32,9 +32,9 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 ![Verifica storica cono BTC](scanner_forecast_history_BTC.png)
 
-- Cono congelato il **2026-07-10**; verificato fino al **2026-07-20**; stato **PARZIALE 10/30g**.
-- Reale **64.190,23 $**; p50 previsto **69.176,96 $**; scarto **-7,21%**.
-- Errore medio assoluto **4,03%**; massimo **8,47%**; DENTRO p10-p90; FUORI p25-p75.
+- Cono congelato il **2026-07-10**; verificato fino al **2026-07-21**; stato **PARZIALE 11/30g**.
+- Reale **65.471,66 $**; p50 previsto **69.497,05 $**; scarto **-5,79%**.
+- Errore medio assoluto **3,96%**; massimo **7,75%**; DENTRO p10-p90; DENTRO p25-p75.
 
 ### SOL
 
@@ -44,9 +44,9 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 ![Verifica storica cono SOL](scanner_forecast_history_SOL.png)
 
-- Cono congelato il **2026-07-10**; verificato fino al **2026-07-20**; stato **PARZIALE 10/30g**.
-- Reale **75,95 $**; p50 previsto **76,61 $**; scarto **-0,86%**.
-- Errore medio assoluto **2,62%**; massimo **5,38%**; DENTRO p10-p90; DENTRO p25-p75.
+- Cono congelato il **2026-07-10**; verificato fino al **2026-07-21**; stato **PARZIALE 11/30g**.
+- Reale **78,21 $**; p50 previsto **75,15 $**; scarto **4,07%**.
+- Errore medio assoluto **2,80%**; massimo **5,38%**; DENTRO p10-p90; DENTRO p25-p75.
 
 ### DOGE
 
@@ -56,27 +56,27 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 ![Verifica storica cono DOGE](scanner_forecast_history_DOGE.png)
 
-- Cono congelato il **2026-07-10**; verificato fino al **2026-07-20**; stato **PARZIALE 10/30g**.
-- Reale **0.07177 $**; p50 previsto **0.07055 $**; scarto **1,72%**.
-- Errore medio assoluto **1,23%**; massimo **2,71%**; DENTRO p10-p90; DENTRO p25-p75.
+- Cono congelato il **2026-07-10**; verificato fino al **2026-07-21**; stato **PARZIALE 11/30g**.
+- Reale **0.07281 $**; p50 previsto **0.06693 $**; scarto **8,78%**.
+- Errore medio assoluto **2,04%**; massimo **8,78%**; DENTRO p10-p90; DENTRO p25-p75.
 
 ## Accuratezza percorso scanner
 
 | Asset   | Giorno   |   Controlli | Dentro p10-p90   | Dentro p25-p75   | Errore medio abs vs p50   | Errore medio vs p50   |
 |:--------|:---------|------------:|:-----------------|:-----------------|:--------------------------|:----------------------|
-| BTC | 1g | 10 | 100,00% | 80,00% | 1,76% | -0,55% |
-| BTC | 3g | 8 | 100,00% | 75,00% | 2,79% | -2,21% |
-| BTC | 7g | 4 | 100,00% | 50,00% | 4,10% | -4,10% |
+| BTC | 1g | 11 | 100,00% | 72,73% | 1,97% | -0,01% |
+| BTC | 3g | 9 | 100,00% | 66,67% | 2,99% | -1,35% |
+| BTC | 7g | 5 | 100,00% | 60,00% | 2,74% | -2,74% |
 | BTC | 14g | 0 | n/a | n/a | n/a | n/a |
 | BTC | 30g | 0 | n/a | n/a | n/a | n/a |
-| SOL | 1g | 10 | 90,00% | 60,00% | 2,13% | -0,68% |
-| SOL | 3g | 8 | 100,00% | 62,50% | 2,27% | -1,53% |
-| SOL | 7g | 4 | 100,00% | 100,00% | 2,13% | -1,43% |
+| SOL | 1g | 11 | 72,73% | 45,45% | 2,70% | 0,14% |
+| SOL | 3g | 9 | 100,00% | 44,44% | 2,90% | -0,48% |
+| SOL | 7g | 5 | 100,00% | 100,00% | 3,01% | 0,16% |
 | SOL | 14g | 0 | n/a | n/a | n/a | n/a |
 | SOL | 30g | 0 | n/a | n/a | n/a | n/a |
-| DOGE | 1g | 10 | 100,00% | 60,00% | 1,97% | 0,31% |
-| DOGE | 3g | 8 | 100,00% | 100,00% | 1,70% | -0,09% |
-| DOGE | 7g | 4 | 100,00% | 100,00% | 3,57% | 3,57% |
+| DOGE | 1g | 11 | 100,00% | 54,55% | 2,49% | 0,98% |
+| DOGE | 3g | 9 | 100,00% | 88,89% | 2,14% | 0,55% |
+| DOGE | 7g | 5 | 100,00% | 100,00% | 4,68% | 4,68% |
 | DOGE | 14g | 0 | n/a | n/a | n/a | n/a |
 | DOGE | 30g | 0 | n/a | n/a | n/a | n/a |
 
@@ -86,17 +86,17 @@ Il cono ufficiale resta grezzo e invariato. Il calibratore usa soltanto previsio
 
 | Asset   | Orizzonte   |   Controlli indipendenti |   Soglia | Stato                  | Forza correzione   | Shift p50   |   Scala p10-p90 |
 |:--------|:------------|-------------------------:|---------:|:-----------------------|:-------------------|:------------|----------------:|
-| BTC | 1g | 2 | 30 | RACCOLTA (28 mancanti) | 0,0% | 0,00% | 1,000 |
+| BTC | 1g | 3 | 30 | RACCOLTA (27 mancanti) | 0,0% | 0,00% | 1,000 |
 | BTC | 3g | 2 | 30 | RACCOLTA (28 mancanti) | 0,0% | 0,00% | 1,000 |
 | BTC | 7g | 2 | 30 | RACCOLTA (28 mancanti) | 0,0% | 0,00% | 1,000 |
 | BTC | 14g | 0 | 30 | RACCOLTA (30 mancanti) | 0,0% | 0,00% | 1,000 |
 | BTC | 30g | 0 | 30 | RACCOLTA (30 mancanti) | 0,0% | 0,00% | 1,000 |
-| SOL | 1g | 2 | 30 | RACCOLTA (28 mancanti) | 0,0% | 0,00% | 1,000 |
+| SOL | 1g | 3 | 30 | RACCOLTA (27 mancanti) | 0,0% | 0,00% | 1,000 |
 | SOL | 3g | 2 | 30 | RACCOLTA (28 mancanti) | 0,0% | 0,00% | 1,000 |
 | SOL | 7g | 2 | 30 | RACCOLTA (28 mancanti) | 0,0% | 0,00% | 1,000 |
 | SOL | 14g | 0 | 30 | RACCOLTA (30 mancanti) | 0,0% | 0,00% | 1,000 |
 | SOL | 30g | 0 | 30 | RACCOLTA (30 mancanti) | 0,0% | 0,00% | 1,000 |
-| DOGE | 1g | 2 | 30 | RACCOLTA (28 mancanti) | 0,0% | 0,00% | 1,000 |
+| DOGE | 1g | 3 | 30 | RACCOLTA (27 mancanti) | 0,0% | 0,00% | 1,000 |
 | DOGE | 3g | 2 | 30 | RACCOLTA (28 mancanti) | 0,0% | 0,00% | 1,000 |
 | DOGE | 7g | 2 | 30 | RACCOLTA (28 mancanti) | 0,0% | 0,00% | 1,000 |
 | DOGE | 14g | 0 | 30 | RACCOLTA (30 mancanti) | 0,0% | 0,00% | 1,000 |

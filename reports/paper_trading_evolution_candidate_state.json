@@ -1,0 +1,14 @@
+{
+  "candidates": {},
+  "created_utc": "2026-07-19T21:09:36+00:00",
+  "engine_version": "block5-controlled-candidate-v1",
+  "processed_evidence": {},
+  "schema_version": 1,
+  "totals": {
+    "automatic_promotions": 0,
+    "automatic_retirements": 0,
+    "created": 0,
+    "rejected": 0
+  },
+  "updated_utc": "2026-07-21T05:08:13+00:00"
+}

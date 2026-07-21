@@ -1,0 +1,123 @@
+{
+  "comparison_tolerance_eur": 0.01,
+  "enabled": true,
+  "evaluation_horizon_multiplier": 2.0,
+  "maximum_evaluation_horizon_hours": 168.0,
+  "minimum_evaluation_horizon_hours": 24.0,
+  "scenario_set_version": "block3-v1-r-matrix",
+  "scenarios": [
+    {
+      "activation_r": 0.5,
+      "giveback_fraction": 0.2,
+      "id": "GB20_R050",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 0.5,
+      "giveback_fraction": 0.3,
+      "id": "GB30_R050",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 0.5,
+      "giveback_fraction": 0.4,
+      "id": "GB40_R050",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 0.5,
+      "giveback_fraction": 0.5,
+      "id": "GB50_R050",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 1.0,
+      "giveback_fraction": 0.2,
+      "id": "GB20_R100",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 1.0,
+      "giveback_fraction": 0.3,
+      "id": "GB30_R100",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 1.0,
+      "giveback_fraction": 0.4,
+      "id": "GB40_R100",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 1.0,
+      "giveback_fraction": 0.5,
+      "id": "GB50_R100",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "id": "TP_R050",
+      "kind": "FIXED_R",
+      "target_r": 0.5
+    },
+    {
+      "id": "TP_R100",
+      "kind": "FIXED_R",
+      "target_r": 1.0
+    },
+    {
+      "id": "TP_R150",
+      "kind": "FIXED_R",
+      "target_r": 1.5
+    },
+    {
+      "id": "TP_R200",
+      "kind": "FIXED_R",
+      "target_r": 2.0
+    },
+    {
+      "activation_r": 0.5,
+      "id": "BE_R050",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 1.0,
+      "id": "BE_R100",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 1.0,
+      "atr_multiple": 1.5,
+      "id": "ATR15_R100",
+      "kind": "ATR_TRAIL"
+    },
+    {
+      "activation_r": 1.0,
+      "atr_multiple": 2.0,
+      "id": "ATR20_R100",
+      "kind": "ATR_TRAIL"
+    },
+    {
+      "activation_r": 1.0,
+      "atr_multiple": 3.0,
+      "id": "ATR30_R100",
+      "kind": "ATR_TRAIL"
+    },
+    {
+      "hours": 6.0,
+      "id": "TIME_6H",
+      "kind": "TIME_EXIT"
+    },
+    {
+      "hours": 12.0,
+      "id": "TIME_12H",
+      "kind": "TIME_EXIT"
+    },
+    {
+      "hours": 24.0,
+      "id": "TIME_24H",
+      "kind": "TIME_EXIT"
+    }
+  ],
+  "schema_version": 1,
+  "timeframe_minutes": 15
+}

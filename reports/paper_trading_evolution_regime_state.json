@@ -1,0 +1,860 @@
+{
+  "created_utc": "2026-07-20T05:10:22+00:00",
+  "current_regime": "UNKNOWN",
+  "engine_version": "block10-regime-fitness-v1",
+  "entities": {
+    "FAMILY|main|RANGE": {
+      "fitness_score": 21.38,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-balanced-v2|RANGE": {
+      "fitness_score": 39.5,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-balanced-v2|UNKNOWN": {
+      "fitness_score": 17.46,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-balanced-v3|HIGH_VOLATILITY": {
+      "fitness_score": 14.66,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-balanced-v3|RANGE": {
+      "fitness_score": 49.42,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-balanced-v3|UNKNOWN": {
+      "fitness_score": 72.87,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-balanced|HIGH_VOLATILITY": {
+      "fitness_score": 11.58,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-balanced|RANGE": {
+      "fitness_score": 44.04,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-balanced|UNKNOWN": {
+      "fitness_score": 79.13,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-fast-v2|RANGE": {
+      "fitness_score": 70.62,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-fast-v2|UNKNOWN": {
+      "fitness_score": 13.66,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-fast-v3|HIGH_VOLATILITY": {
+      "fitness_score": 19.34,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-fast-v3|RANGE": {
+      "fitness_score": 20.0,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-fast-v3|UNKNOWN": {
+      "fitness_score": 63.08,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-fast|HIGH_VOLATILITY": {
+      "fitness_score": 10.17,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-fast|RANGE": {
+      "fitness_score": 54.58,
+      "status": "NEUTRAL",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-1h-fast|UNKNOWN": {
+      "fitness_score": 24.03,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-4h-wide|RANGE": {
+      "fitness_score": 55.470000000000006,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-4h-wide|UNKNOWN": {
+      "fitness_score": 14.88,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-bollinger-mr-1h|HIGH_VOLATILITY": {
+      "fitness_score": 70.64,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-bollinger-mr-1h|RANGE": {
+      "fitness_score": 54.34,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-bollinger-mr-1h|UNKNOWN": {
+      "fitness_score": 20.19,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-btc-adaptive-1h|RANGE": {
+      "fitness_score": 13.76,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-btc-bollinger-1h|RANGE": {
+      "fitness_score": 80.4,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-btc-donchian-1h|RANGE": {
+      "fitness_score": 13.75,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-btc-donchian-1h|UNKNOWN": {
+      "fitness_score": 13.73,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-btc-ema-1h|HIGH_VOLATILITY": {
+      "fitness_score": 13.76,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-btc-ema-1h|RANGE": {
+      "fitness_score": 13.76,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-adaptive-mfe-trail|HIGH_VOLATILITY": {
+      "fitness_score": 11.89,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-adaptive-mfe-trail|RANGE": {
+      "fitness_score": 13.81,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-adaptive-mfe-trail|UNKNOWN": {
+      "fitness_score": 47.05,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-adaptive|HIGH_VOLATILITY": {
+      "fitness_score": 17.05,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-adaptive|RANGE": {
+      "fitness_score": 73.29,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-mean-reversion|HIGH_VOLATILITY": {
+      "fitness_score": 13.79,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-mean-reversion|RANGE": {
+      "fitness_score": 75.48,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-mean-reversion|UNKNOWN": {
+      "fitness_score": 80.4,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-scanner|HIGH_VOLATILITY": {
+      "fitness_score": 55.39000000000001,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-scanner|RANGE": {
+      "fitness_score": 41.78,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-scanner|UNKNOWN": {
+      "fitness_score": 13.75,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-trend|HIGH_VOLATILITY": {
+      "fitness_score": 57.27,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-combo-trend|RANGE": {
+      "fitness_score": 36.1,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-doge-donchian-1h|RANGE": {
+      "fitness_score": 80.4,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-doge-donchian-1h|UNKNOWN": {
+      "fitness_score": 13.69,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-doge-ema-1h|RANGE": {
+      "fitness_score": 47.04999999999999,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-doge-ema-1h|UNKNOWN": {
+      "fitness_score": 13.71,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-donchian-1h|HIGH_VOLATILITY": {
+      "fitness_score": 13.79,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-donchian-1h|RANGE": {
+      "fitness_score": 57.93,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-donchian-1h|UNKNOWN": {
+      "fitness_score": 80.8,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-ema-trend-1h|HIGH_VOLATILITY": {
+      "fitness_score": 12.61,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-ema-trend-1h|RANGE": {
+      "fitness_score": 18.28,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-ema-trend-1h|UNKNOWN": {
+      "fitness_score": 80.4,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-eth-adaptive-1h|RANGE": {
+      "fitness_score": 24.15,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-eth-bollinger-1h|RANGE": {
+      "fitness_score": 76.6,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-eth-donchian-1h|HIGH_VOLATILITY": {
+      "fitness_score": 13.74,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-eth-donchian-1h|RANGE": {
+      "fitness_score": 13.72,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-eth-ema-1h|HIGH_VOLATILITY": {
+      "fitness_score": 12.51,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-eth-ema-1h|RANGE": {
+      "fitness_score": 24.15,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-global-pure|HIGH_VOLATILITY": {
+      "fitness_score": 13.73,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-global-pure|RANGE": {
+      "fitness_score": 24.47,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-global-pure|UNKNOWN": {
+      "fitness_score": 13.77,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-relative-strength-v2|HIGH_VOLATILITY": {
+      "fitness_score": 12.62,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-relative-strength-v2|RANGE": {
+      "fitness_score": 58.39000000000001,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-relative-strength-v2|UNKNOWN": {
+      "fitness_score": 75.4,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-relative-strength|HIGH_VOLATILITY": {
+      "fitness_score": 47.18,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-relative-strength|RANGE": {
+      "fitness_score": 39.5,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-relative-strength|UNKNOWN": {
+      "fitness_score": 54.29,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-rsi-short-15x-10-rsi75|RANGE": {
+      "fitness_score": 16.85,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-rsi-short-15x-50-rsi75|RANGE": {
+      "fitness_score": 16.85,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-rsi-short-5x-rsi75|RANGE": {
+      "fitness_score": 16.43,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-scanner-bottom5-short|HIGH_VOLATILITY": {
+      "fitness_score": 13.78,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-scanner-bottom5-short|RANGE": {
+      "fitness_score": 31.14,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-scanner-bottom5-short|UNKNOWN": {
+      "fitness_score": 13.75,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-scanner-top5-btc|HIGH_VOLATILITY": {
+      "fitness_score": 70.58,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-scanner-top5-btc|RANGE": {
+      "fitness_score": 72.01,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-scanner-top5-long|HIGH_VOLATILITY": {
+      "fitness_score": 50.65,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-scanner-top5-long|RANGE": {
+      "fitness_score": 71.99,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-scanner-top5-long|UNKNOWN": {
+      "fitness_score": 14.72,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-sol-adaptive-1h|RANGE": {
+      "fitness_score": 25.85,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-sol-bollinger-1h|RANGE": {
+      "fitness_score": 13.73,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-sol-donchian-1h|RANGE": {
+      "fitness_score": 19.86,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "FAMILY|shadow-sol-ema-1h|RANGE": {
+      "fitness_score": 32.17,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|MAIN|RANGE": {
+      "fitness_score": 21.38,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_BALANCED_V2|RANGE": {
+      "fitness_score": 39.5,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_BALANCED_V2|UNKNOWN": {
+      "fitness_score": 17.46,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_BALANCED_V3|HIGH_VOLATILITY": {
+      "fitness_score": 14.66,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_BALANCED_V3|RANGE": {
+      "fitness_score": 49.42,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_BALANCED_V3|UNKNOWN": {
+      "fitness_score": 72.87,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_BALANCED|HIGH_VOLATILITY": {
+      "fitness_score": 11.58,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_BALANCED|RANGE": {
+      "fitness_score": 44.04,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_BALANCED|UNKNOWN": {
+      "fitness_score": 79.13,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_FAST_V2|RANGE": {
+      "fitness_score": 70.62,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_FAST_V2|UNKNOWN": {
+      "fitness_score": 13.66,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_FAST_V3|HIGH_VOLATILITY": {
+      "fitness_score": 19.34,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_FAST_V3|RANGE": {
+      "fitness_score": 20.0,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_FAST_V3|UNKNOWN": {
+      "fitness_score": 63.08,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_FAST|HIGH_VOLATILITY": {
+      "fitness_score": 10.17,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_FAST|RANGE": {
+      "fitness_score": 54.58,
+      "status": "NEUTRAL",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_1H_FAST|UNKNOWN": {
+      "fitness_score": 24.03,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_4H_WIDE|RANGE": {
+      "fitness_score": 55.47,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_4H_WIDE|UNKNOWN": {
+      "fitness_score": 14.88,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_BOLLINGER_MR_1H|HIGH_VOLATILITY": {
+      "fitness_score": 70.64,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_BOLLINGER_MR_1H|RANGE": {
+      "fitness_score": 54.34,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_BOLLINGER_MR_1H|UNKNOWN": {
+      "fitness_score": 20.19,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_BTC_ADAPTIVE_1H|RANGE": {
+      "fitness_score": 13.76,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_BTC_BOLLINGER_1H|RANGE": {
+      "fitness_score": 80.4,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_BTC_DONCHIAN_1H|RANGE": {
+      "fitness_score": 13.75,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_BTC_DONCHIAN_1H|UNKNOWN": {
+      "fitness_score": 13.73,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_BTC_EMA_1H|HIGH_VOLATILITY": {
+      "fitness_score": 13.76,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_BTC_EMA_1H|RANGE": {
+      "fitness_score": 13.76,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_ADAPTIVE_MFE_TRAIL|HIGH_VOLATILITY": {
+      "fitness_score": 11.89,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_ADAPTIVE_MFE_TRAIL|RANGE": {
+      "fitness_score": 13.81,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_ADAPTIVE_MFE_TRAIL|UNKNOWN": {
+      "fitness_score": 47.05,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_ADAPTIVE|HIGH_VOLATILITY": {
+      "fitness_score": 17.05,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_ADAPTIVE|RANGE": {
+      "fitness_score": 73.29,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_MEAN_REVERSION|HIGH_VOLATILITY": {
+      "fitness_score": 13.79,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_MEAN_REVERSION|RANGE": {
+      "fitness_score": 75.48,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_MEAN_REVERSION|UNKNOWN": {
+      "fitness_score": 80.4,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_SCANNER|HIGH_VOLATILITY": {
+      "fitness_score": 55.39,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_SCANNER|RANGE": {
+      "fitness_score": 41.78,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_SCANNER|UNKNOWN": {
+      "fitness_score": 13.75,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_TREND|HIGH_VOLATILITY": {
+      "fitness_score": 57.27,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_COMBO_TREND|RANGE": {
+      "fitness_score": 36.1,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_DOGE_DONCHIAN_1H|RANGE": {
+      "fitness_score": 80.4,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_DOGE_DONCHIAN_1H|UNKNOWN": {
+      "fitness_score": 13.69,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_DOGE_EMA_1H|RANGE": {
+      "fitness_score": 47.05,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_DOGE_EMA_1H|UNKNOWN": {
+      "fitness_score": 13.71,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_DONCHIAN_1H|HIGH_VOLATILITY": {
+      "fitness_score": 13.79,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_DONCHIAN_1H|RANGE": {
+      "fitness_score": 57.93,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_DONCHIAN_1H|UNKNOWN": {
+      "fitness_score": 80.8,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_EMA_TREND_1H|HIGH_VOLATILITY": {
+      "fitness_score": 12.61,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_EMA_TREND_1H|RANGE": {
+      "fitness_score": 18.28,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_EMA_TREND_1H|UNKNOWN": {
+      "fitness_score": 80.4,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_ETH_ADAPTIVE_1H|RANGE": {
+      "fitness_score": 24.15,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_ETH_BOLLINGER_1H|RANGE": {
+      "fitness_score": 76.6,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_ETH_DONCHIAN_1H|HIGH_VOLATILITY": {
+      "fitness_score": 13.74,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_ETH_DONCHIAN_1H|RANGE": {
+      "fitness_score": 13.72,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_ETH_EMA_1H|HIGH_VOLATILITY": {
+      "fitness_score": 12.51,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_ETH_EMA_1H|RANGE": {
+      "fitness_score": 24.15,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_GLOBAL_PURE|HIGH_VOLATILITY": {
+      "fitness_score": 13.73,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_GLOBAL_PURE|RANGE": {
+      "fitness_score": 24.47,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_GLOBAL_PURE|UNKNOWN": {
+      "fitness_score": 13.77,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_RELATIVE_STRENGTH_V2|HIGH_VOLATILITY": {
+      "fitness_score": 12.62,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_RELATIVE_STRENGTH_V2|RANGE": {
+      "fitness_score": 58.39,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_RELATIVE_STRENGTH_V2|UNKNOWN": {
+      "fitness_score": 75.4,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_RELATIVE_STRENGTH|HIGH_VOLATILITY": {
+      "fitness_score": 47.18,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_RELATIVE_STRENGTH|RANGE": {
+      "fitness_score": 39.5,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_RELATIVE_STRENGTH|UNKNOWN": {
+      "fitness_score": 54.29,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_RSI_SHORT_15X_10_RSI75|RANGE": {
+      "fitness_score": 16.85,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_RSI_SHORT_15X_50_RSI75|RANGE": {
+      "fitness_score": 16.85,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_RSI_SHORT_5X_RSI75|RANGE": {
+      "fitness_score": 16.43,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SCANNER_BOTTOM5_SHORT|HIGH_VOLATILITY": {
+      "fitness_score": 13.78,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SCANNER_BOTTOM5_SHORT|RANGE": {
+      "fitness_score": 31.14,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SCANNER_BOTTOM5_SHORT|UNKNOWN": {
+      "fitness_score": 13.75,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SCANNER_TOP5_BTC|HIGH_VOLATILITY": {
+      "fitness_score": 70.58,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SCANNER_TOP5_BTC|RANGE": {
+      "fitness_score": 72.01,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SCANNER_TOP5_LONG|HIGH_VOLATILITY": {
+      "fitness_score": 50.65,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SCANNER_TOP5_LONG|RANGE": {
+      "fitness_score": 71.99,
+      "status": "OBSERVING",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SCANNER_TOP5_LONG|UNKNOWN": {
+      "fitness_score": 14.72,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SOL_ADAPTIVE_1H|RANGE": {
+      "fitness_score": 25.85,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SOL_BOLLINGER_1H|RANGE": {
+      "fitness_score": 13.73,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SOL_DONCHIAN_1H|RANGE": {
+      "fitness_score": 19.86,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    },
+    "PORTFOLIO|SHADOW_SOL_EMA_1H|RANGE": {
+      "fitness_score": 32.17,
+      "status": "INSUFFICIENT",
+      "updated_utc": "2026-07-21T05:08:41+00:00"
+    }
+  },
+  "latest_snapshot": {
+    "as_of_utc": "2026-07-21T05:08:24+00:00",
+    "raw": {
+      "confidence_pct": 73.0,
+      "features": {
+        "alt_outperform_share_pct": 54.545,
+        "alt_relative_median_pct": 1.2865,
+        "alt_underperform_share_pct": 18.182,
+        "assets_used": 12,
+        "breadth_above_ema200_pct": 100.0,
+        "breadth_above_ema20_pct": 83.333,
+        "breadth_above_ema50_pct": 100.0,
+        "breadth_breakout_down_pct": 8.333,
+        "breadth_breakout_up_pct": 8.333,
+        "btc_adx": 23.382,
+        "btc_atr_pct": 0.9924,
+        "btc_return_24h_pct": 1.5246,
+        "btc_timeframe_minutes": 240,
+        "btc_trend_score": 4.0,
+        "btc_volatility_ratio": 0.9669,
+        "cross_asset_dispersion_pct": 3.0079,
+        "market_timeframe_minutes": 60,
+        "market_volatility_ratio": 1.3193
+      },
+      "generated_utc": "2026-07-21T05:08:24+00:00",
+      "reason": "Le altcoin stanno sovraperformando BTC: mediana relativa +1.29%, 55% oltre +1%.",
+      "regime": "ALT_ROTATION_UP",
+      "regime_family": "ALT_ROTATION",
+      "rotation_mode": "OBSERVATION_ONLY",
+      "volatility_state": "HIGH"
+    },
+    "regime": "UNKNOWN",
+    "source": "market_regime_latest.json"
+  },
+  "schema_version": 1,
+  "totals": {
+    "automatic_mutations": 0,
+    "automatic_position_changes": 0,
+    "automatic_promotions": 0,
+    "automatic_switches": 0,
+    "cycles": 102
+  },
+  "updated_utc": "2026-07-21T05:08:41+00:00"
+}
