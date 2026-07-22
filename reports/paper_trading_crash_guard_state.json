@@ -30,19 +30,20 @@
   "previous_level": "NORMAL",
   "schema_version": 1,
   "seen_blocked_signal_ids": [
-    "62a0b45c7b8086e1533b",
-    "58c590fa3dd5e43dacc2",
     "8c6b182f021d7ed83e03",
+    "62a0b45c7b8086e1533b",
     "50bb41ffb7884f62da4b",
+    "58c590fa3dd5e43dacc2",
     "9f50309c0d7735516f75",
+    "8943716f91bec819b4e6",
     "9fb3160cf223ef7ce49b"
   ],
   "totals": {
     "avoided_liquidations": 0,
-    "blocked_signals": 6,
-    "completed_simulations": 5,
-    "guard_value_r": 5.0500000000000025,
+    "blocked_signals": 7,
+    "completed_simulations": 6,
+    "guard_value_r": 6.060000000000002,
     "missed_profit_r": 0.0
   },
-  "updated_utc": "2026-07-21T05:08:33+00:00"
+  "updated_utc": "2026-07-22T05:08:33+00:00"
 }
