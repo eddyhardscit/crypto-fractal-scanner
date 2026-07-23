@@ -4,7 +4,7 @@
   "evaluation_horizon_multiplier": 2.0,
   "maximum_evaluation_horizon_hours": 168.0,
   "minimum_evaluation_horizon_hours": 24.0,
-  "scenario_set_version": "block3-v1-r-matrix",
+  "scenario_set_version": "block3-v1-r-matrix+balanced-be020-long-v1",
   "scenarios": [
     {
       "activation_r": 0.5,
@@ -73,6 +73,17 @@
       "id": "TP_R200",
       "kind": "FIXED_R",
       "target_r": 2.0
+    },
+    {
+      "activation_r": 0.2,
+      "id": "BE_R020_BALANCED_LONG",
+      "kind": "BREAKEVEN",
+      "apply_to_portfolios": [
+        "SHADOW_1H_BALANCED"
+      ],
+      "apply_to_sides": [
+        "LONG"
+      ]
     },
     {
       "activation_r": 0.5,

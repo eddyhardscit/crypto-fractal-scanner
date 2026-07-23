@@ -430,6 +430,52 @@ def evaluation_horizon_hours(position: dict[str, Any], config: dict[str, Any]) -
     return min(max(original * multiplier, minimum), maximum)
 
 
+
+def scenario_applies_to_group(
+    definition: dict[str, Any],
+    group: dict[str, Any],
+) -> bool:
+    """Apply optional scenario portfolio/side filters.
+
+    Missing filters preserve the historical global behaviour.
+    """
+
+    def matches(raw: Any, current: Any) -> bool:
+        if raw is None:
+            return True
+
+        values = (
+            raw
+            if isinstance(raw, (list, tuple, set))
+            else [raw]
+        )
+
+        allowed = {
+            str(value).strip().upper()
+            for value in values
+            if str(value).strip()
+        }
+
+        current_value = str(current or "").strip().upper()
+
+        return (
+            not allowed
+            or "*" in allowed
+            or current_value in allowed
+        )
+
+    return (
+        matches(
+            definition.get("apply_to_portfolios"),
+            group.get("portfolio"),
+        )
+        and matches(
+            definition.get("apply_to_sides"),
+            group.get("side"),
+        )
+    )
+
+
 def create_group(
     position: dict[str, Any],
     portfolio_name: str,
@@ -498,6 +544,7 @@ def create_group(
     group["scenarios"] = {
         definition["id"]: scenario_initial_state(definition, group)
         for definition in block_config.get("scenarios", [])
+        if scenario_applies_to_group(definition, group)
     }
     return group
 
