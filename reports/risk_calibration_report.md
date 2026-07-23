@@ -1,6 +1,6 @@
 # Calibrazione rischio spot / leva
 
-Generato: **2026-07-22 05:14 UTC**
+Generato: **2026-07-23 07:38 UTC**
 
 Questo report controlla se le zone di rischio previste dallo scanner vengono davvero toccate nei 30 giorni successivi.
 
@@ -24,17 +24,17 @@ Questo file **non modifica ancora il Decision Report**. Per ora salva dati e mis
 
 | Asset   | Prezzo    | Direzione scanner                    | Drawdown normale    | Drawdown brutto     | Max gain normale   | Rischio spot   | Rischio leva   |
 |:--------|:----------|:-------------------------------------|:--------------------|:--------------------|:-------------------|:---------------|:---------------|
-| BTC     | 220,37 $  | Direzione più probabile a 30 giorni: | 256,86 $ / -10,52%  | 924,59 $ / -15,55%  | 162,24 $ / 16,52%  | MEDIO          | MOLTO ALTO     |
-| SOL     | 77,84 $   | Direzione più probabile a 30 giorni: | 70,35 $ / -9,63%    | 63,57 $ / -18,33%   | 84,73 $ / 8,85%    | MEDIO          | MOLTO ALTO     |
-| DOGE    | 0.07000 $ | Direzione più probabile a 30 giorni: | 0.06000 $ / -20,48% | 0.05000 $ / -30,59% | 0.08000 $ / 14,24% | MOLTO ALTO     | MOLTO ALTO     |
+| BTC     | 399,99 $  | Direzione più probabile a 30 giorni: | 984,06 $ / -11,34%  | 125,30 $ / -20,30%  | 464,18 $ / 13,86%  | MEDIO          | MOLTO ALTO     |
+| SOL     | 77,11 $   | Direzione più probabile a 30 giorni: | 70,43 $ / -8,66%    | 68,03 $ / -11,77%   | 85,06 $ / 10,31%   | MEDIO          | MOLTO ALTO     |
+| DOGE    | 0.07000 $ | Direzione più probabile a 30 giorni: | 0.06000 $ / -14,61% | 0.06000 $ / -23,17% | 0.08000 $ / 13,74% | ALTO           | MOLTO ALTO     |
 
 ## Stato calibrazione rischio
 
 | Asset   |   Snapshot |   Controlli 30g |   In attesa | Stato         | DD normale hit   | DD brutto hit   | DD molto brutto hit   | Bias rischio   |
 |:--------|-----------:|----------------:|------------:|:--------------|:-----------------|:----------------|:----------------------|:---------------|
-| BTC     |         14 |               0 |          14 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
-| SOL     |         14 |               0 |          14 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
-| DOGE    |         14 |               0 |          14 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
+| BTC     |         15 |               0 |          15 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
+| SOL     |         15 |               0 |          15 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
+| DOGE    |         15 |               0 |          15 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
 
 ## Come leggerlo
 
