@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-24T05:08:24+00:00",
+  "generated_utc": "2026-07-25T05:08:25+00:00",
   "regime": "RANGE",
   "regime_family": "RANGE",
   "confidence_pct": 80.4,
@@ -8,22 +8,22 @@
   "features": {
     "btc_timeframe_minutes": 240,
     "market_timeframe_minutes": 60,
-    "btc_trend_score": 1.0,
-    "btc_adx": 21.404,
-    "btc_atr_pct": 0.8796,
-    "btc_volatility_ratio": 0.9197,
-    "btc_return_24h_pct": -0.4649,
-    "breadth_above_ema20_pct": 41.667,
+    "btc_trend_score": 0.0,
+    "btc_adx": 21.6,
+    "btc_atr_pct": 0.8708,
+    "btc_volatility_ratio": 0.9235,
+    "btc_return_24h_pct": -1.7196,
+    "breadth_above_ema20_pct": 33.333,
     "breadth_above_ema50_pct": 25.0,
-    "breadth_above_ema200_pct": 33.333,
+    "breadth_above_ema200_pct": 25.0,
     "breadth_breakout_up_pct": 0.0,
     "breadth_breakout_down_pct": 0.0,
-    "alt_relative_median_pct": -0.9642,
-    "alt_outperform_share_pct": 27.273,
-    "alt_underperform_share_pct": 45.455,
-    "cross_asset_dispersion_pct": 14.1433,
-    "market_volatility_ratio": 0.9662,
+    "alt_relative_median_pct": 0.4891,
+    "alt_outperform_share_pct": 36.364,
+    "alt_underperform_share_pct": 9.091,
+    "cross_asset_dispersion_pct": 7.3864,
+    "market_volatility_ratio": 0.7705,
     "assets_used": 12
   },
-  "reason": "Direzione poco definita: score BTC +1.0, breadth EMA50 25%, ADX 21.4."
+  "reason": "Direzione poco definita: score BTC +0.0, breadth EMA50 25%, ADX 21.6."
 }
