@@ -1,6 +1,6 @@
 # Calibrazione rischio spot / leva
 
-Generato: **2026-07-25 05:15 UTC**
+Generato: **2026-07-26 05:14 UTC**
 
 Questo report controlla se le zone di rischio previste dallo scanner vengono davvero toccate nei 30 giorni successivi.
 
@@ -22,19 +22,19 @@ Questo file **non modifica ancora il Decision Report**. Per ora salva dati e mis
 
 ## Ultima lettura rischio salvata
 
-| Asset   | Prezzo    | Direzione scanner                    | Drawdown normale    | Drawdown brutto     | Max gain normale   | Rischio spot   | Rischio leva   |
-|:--------|:----------|:-------------------------------------|:--------------------|:--------------------|:-------------------|:---------------|:---------------|
-| BTC     | 91,08 $   | Direzione più probabile a 30 giorni: | 692,59 $ / -8,42%   | 776,21 $ / -16,09%  | 305,69 $ / 17,50%  | MEDIO          | MOLTO ALTO     |
-| SOL     | 74,20 $   | Direzione più probabile a 30 giorni: | 67,78 $ / -8,66%    | 65,50 $ / -11,72%   | 81,62 $ / 9,99%    | MEDIO          | MOLTO ALTO     |
-| DOGE    | 0.07000 $ | Direzione più probabile a 30 giorni: | 0.06000 $ / -11,73% | 0.06000 $ / -19,87% | 0.08000 $ / 14,80% | MEDIO          | MOLTO ALTO     |
+| Asset   | Prezzo    | Direzione scanner                    | Drawdown normale   | Drawdown brutto     | Max gain normale   | Rischio spot   | Rischio leva   |
+|:--------|:----------|:-------------------------------------|:-------------------|:--------------------|:-------------------|:---------------|:---------------|
+| BTC     | 459,57 $  | Direzione più probabile a 30 giorni: | 323,94 $ / -7,97%  | 216,74 $ / -17,44%  | 184,96 $ / 15,09%  | MEDIO          | MOLTO ALTO     |
+| SOL     | 75,08 $   | Direzione più probabile a 30 giorni: | 68,87 $ / -8,27%   | 65,45 $ / -12,83%   | 83,93 $ / 11,78%   | MEDIO          | MOLTO ALTO     |
+| DOGE    | 0.07000 $ | Direzione più probabile a 30 giorni: | 0.07000 $ / -7,57% | 0.06000 $ / -17,02% | 0.08000 $ / 15,51% | MEDIO          | MOLTO ALTO     |
 
 ## Stato calibrazione rischio
 
 | Asset   |   Snapshot |   Controlli 30g |   In attesa | Stato         | DD normale hit   | DD brutto hit   | DD molto brutto hit   | Bias rischio   |
 |:--------|-----------:|----------------:|------------:|:--------------|:-----------------|:----------------|:----------------------|:---------------|
-| BTC     |         17 |               0 |          17 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
-| SOL     |         17 |               0 |          17 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
-| DOGE    |         17 |               0 |          17 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
+| BTC     |         18 |               0 |          18 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
+| SOL     |         18 |               0 |          18 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
+| DOGE    |         18 |               0 |          18 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
 
 ## Come leggerlo
 

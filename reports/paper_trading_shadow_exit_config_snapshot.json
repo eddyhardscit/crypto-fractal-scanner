@@ -4,7 +4,7 @@
   "evaluation_horizon_multiplier": 2.0,
   "maximum_evaluation_horizon_hours": 168.0,
   "minimum_evaluation_horizon_hours": 24.0,
-  "scenario_set_version": "block3-v1-r-matrix+balanced-be020-long-v1",
+  "scenario_set_version": "strategy-evolution-v1.3-autoresearch-expanded",
   "scenarios": [
     {
       "activation_r": 0.5,
@@ -127,6 +127,161 @@
       "hours": 24.0,
       "id": "TIME_24H",
       "kind": "TIME_EXIT"
+    },
+    {
+      "id": "TP_R035",
+      "kind": "FIXED_R",
+      "target_r": 0.35
+    },
+    {
+      "id": "TP_R040",
+      "kind": "FIXED_R",
+      "target_r": 0.4
+    },
+    {
+      "id": "TP_R060",
+      "kind": "FIXED_R",
+      "target_r": 0.6
+    },
+    {
+      "id": "TP_R075",
+      "kind": "FIXED_R",
+      "target_r": 0.75
+    },
+    {
+      "id": "TP_R125",
+      "kind": "FIXED_R",
+      "target_r": 1.25
+    },
+    {
+      "id": "TP_R250",
+      "kind": "FIXED_R",
+      "target_r": 2.5
+    },
+    {
+      "id": "TP_R300",
+      "kind": "FIXED_R",
+      "target_r": 3.0
+    },
+    {
+      "activation_r": 0.4,
+      "giveback_fraction": 0.2,
+      "id": "GB20_R040",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 0.4,
+      "giveback_fraction": 0.3,
+      "id": "GB30_R040",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 0.4,
+      "giveback_fraction": 0.4,
+      "id": "GB40_R040",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 0.75,
+      "giveback_fraction": 0.2,
+      "id": "GB20_R075",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 0.75,
+      "giveback_fraction": 0.3,
+      "id": "GB30_R075",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 0.75,
+      "giveback_fraction": 0.4,
+      "id": "GB40_R075",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 0.75,
+      "giveback_fraction": 0.5,
+      "id": "GB50_R075",
+      "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 0.4,
+      "id": "BE_R040",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 0.75,
+      "id": "BE_R075",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 0.5,
+      "atr_multiple": 1.0,
+      "id": "ATR10_R050",
+      "kind": "ATR_TRAIL"
+    },
+    {
+      "activation_r": 0.5,
+      "atr_multiple": 1.5,
+      "id": "ATR15_R050",
+      "kind": "ATR_TRAIL"
+    },
+    {
+      "activation_r": 0.5,
+      "atr_multiple": 2.0,
+      "id": "ATR20_R050",
+      "kind": "ATR_TRAIL"
+    },
+    {
+      "hours": 4.0,
+      "id": "TIME_4H",
+      "kind": "TIME_EXIT"
+    },
+    {
+      "hours": 48.0,
+      "id": "TIME_48H",
+      "kind": "TIME_EXIT"
+    },
+    {
+      "activation_r": 0.2,
+      "id": "BE_A020",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 0.3,
+      "id": "BE_A030",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 0.4,
+      "id": "BE_A040",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 0.5,
+      "id": "BE_A050",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 0.6,
+      "id": "BE_A060",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 0.75,
+      "id": "BE_A075",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 1.0,
+      "id": "BE_A100",
+      "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 1.25,
+      "id": "BE_A125",
+      "kind": "BREAKEVEN"
     }
   ],
   "schema_version": 1,
