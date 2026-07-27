@@ -1440,6 +1440,11 @@
   "created_utc": "2026-07-19T21:09:36+00:00",
   "engine_version": "block5-controlled-candidate-v1",
   "processed_evidence": {
+    "0933d687b008bbca284014a6a8b17442caaad7f4b7464f92decc30f115d15cdf": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
+    },
     "0e2fc71ec941e0a0e6b661bb535a01e5c17b6f94aa0488a1dcf998df84ea7325": {
       "candidate_id": "7bbb9481-3342-5a01-912e-f0d1a6054135",
       "genetic_memory": {
@@ -1464,6 +1469,16 @@
         "regime": "RANGE",
         "status": "NO_HISTORY"
       }
+    },
+    "0f3266327eadc356fa72c15c09897a6ad337615d5b8ef5b5f60497627fc03256": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
+    },
+    "1896281b3301919f4f69a0596f09603457444e54eb869c9de59897185b90ee4c": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
     },
     "1b10459ec7ee537733b9258c7db8a515cf3cae094ce82e5540090a9e262d2a7b": {
       "candidate_id": "8346046b-2c3b-52d8-817a-30ed576c34c8",
@@ -1490,6 +1505,11 @@
         "status": "NO_HISTORY"
       }
     },
+    "2795ba89534edf2d602fab2cba5d4c19c27405000f711dc22d275043f000ea8e": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
+    },
     "2836ace736e6e4e24058737d701c47cfd751b39178dd52d54c7c6aa46ef9de30": {
       "candidate_id": "903364ad-d487-5704-90fe-ad93bda3ff28",
       "genetic_memory": {
@@ -1515,6 +1535,11 @@
         "status": "NO_HISTORY"
       }
     },
+    "339e3b89036e04e050d4d43489635b0b19b8d65aff3013956dedf4687d413412": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
+    },
     "35c026fd1f0e4484868432a3a4e6fc7433d5ccf5cd0659e7fb71889655be92c2": {
       "candidate_id": "751e55c4-14bf-55ff-a953-e59e7325d859",
       "genetic_memory": {
@@ -1539,6 +1564,21 @@
         "regime": "RANGE",
         "status": "NO_HISTORY"
       }
+    },
+    "69580bc74c2d077209a890f44e73c18fab47d5f74496ce0d01b5fedddba50e2c": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
+    },
+    "6c86abc94b9a9f7458cbf7594118db97034630b71e03e6f659311d2ea2551f01": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
+    },
+    "6e6269c1c7d2a9cddaba2dd93376c8583c6f166610e0501fdae8ec9fa22c671d": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
     },
     "880daebceb7ee26c768c73a49e1361a7b9ea81f1b820c3bb439ac9a01d9cd905": {
       "candidate_id": "3ee5afb4-8bf9-5456-b65e-2b1327669693",
@@ -1661,6 +1701,16 @@
         "status": "NO_HISTORY"
       }
     },
+    "a0fe8103728685b6c0509f2a6fa859cbcfafe44e0a7fe477571e86f358cd41aa": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
+    },
+    "c74f2e91020a8ef17767b37088116c97b33ba5d316f44e0bd6eb1d7b817efbdb": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
+    },
     "cd9582804e5ff5a6a0e1b84044a8efb94497d0178175651efa28ba60755b09ad": {
       "candidate_id": "6b7c560f-a947-5c21-8ec0-bebb7c6ea4ee",
       "genetic_memory": {
@@ -1711,6 +1761,16 @@
         "status": "NO_HISTORY"
       }
     },
+    "d7755cb2baabb216e20d34b400e266646394bb0455e1c973559337b440f381d0": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
+    },
+    "f47669ae2b791064ce8641e6fc091e472f00e7c7cae529d7fa99300f699e5b0d": {
+      "outcome": "REJECTED",
+      "processed_utc": "2026-07-26T08:23:12+00:00",
+      "reason": "UNSUPPORTED_SCENARIO_KIND"
+    },
     "fc4aeb3c45dbaed7cc4644158ff34f35f72ac2841bce4c0631edf53bb0c8d746": {
       "candidate_id": "051501d0-7361-5cfd-818b-32de452f195e",
       "genetic_memory": {
@@ -1742,7 +1802,7 @@
     "automatic_promotions": 0,
     "automatic_retirements": 0,
     "created": 12,
-    "rejected": 0
+    "rejected": 12
   },
-  "updated_utc": "2026-07-26T05:08:12+00:00"
+  "updated_utc": "2026-07-27T05:08:12+00:00"
 }

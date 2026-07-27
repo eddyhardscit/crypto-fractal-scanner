@@ -282,6 +282,12 @@
       "activation_r": 1.25,
       "id": "BE_A125",
       "kind": "BREAKEVEN"
+    },
+    {
+      "activation_r": 1.4,
+      "giveback_fraction": 0.2,
+      "id": "GB20_R140",
+      "kind": "MFE_GIVEBACK"
     }
   ],
   "schema_version": 1,
