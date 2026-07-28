@@ -288,6 +288,34 @@
       "giveback_fraction": 0.2,
       "id": "GB20_R140",
       "kind": "MFE_GIVEBACK"
+    },
+    {
+      "activation_r": 1.0,
+      "apply_to_strategies": [
+        "momentum_breakout_v3_filtered"
+      ],
+      "challenger_id": "momentum_breakout_v3_filtered__exit_local_search",
+      "giveback_fraction": 0.2,
+      "id": "CH_MBV3_GB20_R100",
+      "kind": "MFE_GIVEBACK",
+      "mother_strategy": "momentum_breakout_v3_filtered",
+      "paper_only": true,
+      "source_stage": "WALK_FORWARD",
+      "source_state": "SHADOW_REVIEW_READY"
+    },
+    {
+      "activation_r": 1.4,
+      "apply_to_strategies": [
+        "scanner_top5_btc_strength"
+      ],
+      "challenger_id": "scanner_top5_btc_strength__exit_search",
+      "giveback_fraction": 0.2,
+      "id": "CH_TOP5BTC_GB20_R140",
+      "kind": "MFE_GIVEBACK",
+      "mother_strategy": "scanner_top5_btc_strength",
+      "paper_only": true,
+      "source_stage": "WALK_FORWARD",
+      "source_state": "SHADOW_REVIEW_READY"
     }
   ],
   "schema_version": 1,

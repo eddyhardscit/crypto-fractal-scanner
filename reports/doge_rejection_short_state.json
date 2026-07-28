@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-13T07:47:54+00:00",
-  "updated_utc": "2026-07-27T05:09:30+00:00",
+  "updated_utc": "2026-07-28T05:09:48+00:00",
   "initial_capital_eur": 3600.0,
   "balance_eur": 3600.0,
   "peak_equity_eur": 3600.0,
@@ -22,7 +22,7 @@
     "pending": []
   },
   "last_checks": {
-    "generated_utc": "2026-07-27T05:09:30+00:00",
+    "generated_utc": "2026-07-28T05:09:48+00:00",
     "static": {
       "checks": {
         "fresh_market": true,
@@ -36,13 +36,13 @@
         "candle_15m_fresh": true
       },
       "freshness_status": "FRESH",
-      "doge_mark": 0.07286,
-      "btc_mark": 65285.8,
+      "doge_mark": 0.07008,
+      "btc_mark": 63450.8,
       "global_score": -6.0,
       "classic_raw_score": -11.0,
       "relative_raw_score": -6.0,
       "bearish_pattern_status": "MATURO",
-      "candle_age_minutes": 24.501342266666665
+      "candle_age_minutes": 24.815000416666667
     },
     "rejection": {
       "accepted": false,
@@ -51,22 +51,22 @@
         "closed_back_below_trigger": true,
         "close_below_invalidation": true,
         "entry_not_chased": false,
-        "upper_wick": false,
-        "bearish_confirmation": true,
+        "upper_wick": true,
+        "bearish_confirmation": false,
         "volume_valid": true,
         "stop_within_limit": true
       },
-      "candle_time": "2026-07-27 04:45:00+00:00",
-      "open": 0.07285,
-      "high": 0.07286,
-      "low": 0.07278,
-      "close": 0.07278,
-      "previous_close": 0.07286,
-      "volume_ratio": 0.017638572397163557,
-      "upper_wick_ratio": 0.12499999999995663,
-      "close_location": 0.0,
+      "candle_time": "2026-07-28 04:45:00+00:00",
+      "open": 0.06999,
+      "high": 0.07009,
+      "low": 0.06999,
+      "close": 0.07001,
+      "previous_close": 0.06998,
+      "volume_ratio": 0.1623949643104539,
+      "upper_wick_ratio": 0.7999999999999445,
+      "close_location": 0.20000000000005552,
       "stop_price": 0.0806,
-      "reason": "trigger_touched, entry_not_chased, upper_wick"
+      "reason": "trigger_touched, entry_not_chased, bearish_confirmation"
     }
   }
 }
