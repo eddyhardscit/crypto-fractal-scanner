@@ -1,6 +1,6 @@
 # Decisione operativa sintetica
 
-Generato: 2026-07-29 05:15 UTC
+Generato: 2026-07-30 05:15 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 
@@ -9,13 +9,13 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 | Asset | Global | Direzione | Spot | Long leva | Short leva | Max long | Max short | Rischio |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | BTC | +2 | NEUTRALE / COSTRUTTIVO | HOLD / ATTESA CONFERME | NO LONG A LEVA / ATTENDI SOPRA 67.248 $ | NO SHORT | nessuna | nessuna | MEDIO / ALTO |
-| SOL | 0 | NEUTRALE / INCERTO | HOLD LEGGERO / ATTESA CONFERME | NO LONG A LEVA | NO SHORT | nessuna | nessuna | MOLTO ALTO |
+| SOL | -1 | LEGGERMENTE BEARISH | TAKE PROFIT SU SPIKE / NON INSEGUIRE | NO LONG A LEVA | NO SHORT | nessuna | nessuna | MOLTO ALTO |
 | DOGE | +1 | NEUTRALE / INCERTO | STAI ALLA FINESTRA | NO LONG A LEVA | NO SHORT | nessuna | nessuna | MOLTO ALTO |
 
 ## Lettura immediata
 
 - **BTC**: Global = **+2**, spot = **HOLD / ATTESA CONFERME**, long = **NO LONG A LEVA / ATTENDI SOPRA 67.248 $**, short = **NO SHORT**, rischio = **MEDIO / ALTO**.
-- **SOL**: Global = **0**, spot = **HOLD LEGGERO / ATTESA CONFERME**, long = **NO LONG A LEVA**, short = **NO SHORT**, rischio = **MOLTO ALTO**.
+- **SOL**: Global = **-1**, spot = **TAKE PROFIT SU SPIKE / NON INSEGUIRE**, long = **NO LONG A LEVA**, short = **NO SHORT**, rischio = **MOLTO ALTO**.
 - **DOGE**: Global = **+1**, spot = **STAI ALLA FINESTRA**, long = **NO LONG A LEVA**, short = **NO SHORT**, rischio = **MOLTO ALTO**.
 
 ## Dettaglio logica
@@ -35,16 +35,16 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 
 ### SOL
 
-- Global Confluence: **0**
-- Confluenza: **MISTA / PARZIALE**
-- Bias Global: **Neutrale / misto**
-- Direzione decisionale: **NEUTRALE / INCERTO**
-- Azione spot dal Global: **HOLD LEGGERO / ATTESA CONFERME**
+- Global Confluence: **-1**
+- Confluenza: **DEBOLE / FRAGILE**
+- Bias Global: **Fragile**
+- Direzione decisionale: **LEGGERMENTE BEARISH**
+- Azione spot dal Global: **TAKE PROFIT SU SPIKE / NON INSEGUIRE**
 - Long leva: **NO LONG A LEVA**
 - Short leva: **NO SHORT**
 - Rischio: **MOLTO ALTO**
-- Conferme: conferma del adam and eve bottom sopra 83,81; nuova conferma tecnica sopra 78,73; milestone analogiche 85,31 / 91,62, valide soltanto se rientra anche il gap frattale.
-- Invalidazioni: Allarmi sotto 69,80 / 73,40 / 62,19.
+- Conferme: conferma del adam and eve bottom sopra 83,81; nuova conferma tecnica sopra 78,73; milestone analogiche 80,93 / 86,92, valide soltanto se rientra anche il gap frattale.
+- Invalidazioni: Allarmi sotto 69,76 / 73,40 / 62,19.
 
 ### DOGE
 

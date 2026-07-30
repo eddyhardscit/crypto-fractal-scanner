@@ -1,6 +1,6 @@
 {
   "automatic_actions": 0,
-  "generated_utc": "2026-07-29T05:08:37+00:00",
+  "generated_utc": "2026-07-30T05:08:38+00:00",
   "health": "DEGRADED",
   "incidents": [
     {
@@ -8,7 +8,7 @@
       "check_id": "sol_live_timer",
       "detail": "Osservazione read-only: nessun servizio viene riavviato o modificato.",
       "expected": "OBSERVABLE; TIMERS ENABLED",
-      "generated_utc": "2026-07-29T05:08:37+00:00",
+      "generated_utc": "2026-07-30T05:08:38+00:00",
       "observed": "{\"ActiveState\": \"inactive\", \"SubState\": \"dead\", \"UnitFileState\": \"disabled\", \"available\": \"true\"}",
       "severity": "WARN",
       "status": "WARN"

@@ -1,6 +1,6 @@
 # Accuratezza dati exchange e microstruttura
 
-Generato: 2026-07-29 05:14 UTC
+Generato: 2026-07-30 05:15 UTC
 
 Questo tracker verifica se il segnale candidato exchange ±1 anticipa correttamente la direzione del prezzo a 1/3/7/14/30 giorni.
 Il peso Global resta 0 finché l'orizzonte 7g non ha almeno 30 controlli, accuratezza almeno 55% e return corretto direzione positivo. L'overlay a 30g ha un gate separato.
@@ -11,15 +11,15 @@ Controlli maturati completati in questa esecuzione: **12**.
 
 | Data | Asset | Prezzo | Versione | Calibrazione | Candidato | Peso Global | Score raw | Confidenza | Taker 4h | OI 24h | Book 0,5% |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-07-30 | BTC | 63.972,87 | V2.1.3 | OK | 0 | 0 | 2,38 | MEDIA | 1,65 | -2,61% | +5,28% |
+| 2026-07-30 | DOGE | 0.06970 | V2.1.3 | OK | 0 | 0 | 2,12 | MEDIA | 1,34 | -2,17% | -2,67% |
+| 2026-07-30 | SOL | 73,50 | V2.1.3 | OK | 0 | 0 | 2,38 | MEDIA | 2,18 | -2,19% | +0,21% |
 | 2026-07-29 | BTC | 63.939,70 | V2.1.3 | OK | 0 | 0 | 2,38 | MEDIA | 1,94 | -1,46% | +5,06% |
 | 2026-07-29 | DOGE | 0.07058 | V2.1.3 | OK | 0 | 0 | 2,12 | MEDIA | 2,01 | -0,21% | +3,11% |
 | 2026-07-29 | SOL | 73,46 | V2.1.3 | OK | 0 | 0 | 2,38 | MEDIA | 2,01 | +1,25% | +1,41% |
 | 2026-07-28 | BTC | 63.446,30 | V2.1.3 | OK | 0 | 0 | 2,12 | MEDIA | 2,67 | -1,38% | +7,93% |
 | 2026-07-28 | DOGE | 0.07006 | V2.1.3 | OK | 0 | 0 | 0,75 | BASSA | 0,95 | +1,18% | -4,54% |
 | 2026-07-28 | SOL | 73,32 | V2.1.3 | OK | 0 | 0 | 2,88 | MEDIA | 1,49 | -14,97% | -7,39% |
-| 2026-07-27 | BTC | 65.281,70 | V2.1.3 | OK | 0 | 0 | 2,12 | MEDIA | 2,18 | -3,17% | +5,05% |
-| 2026-07-27 | DOGE | 0.07287 | V2.1.3 | OK | 0 | 0 | 2,38 | MEDIA | 1,27 | +1,92% | +1,33% |
-| 2026-07-27 | SOL | 76,31 | V2.1.3 | OK | 0 | 0 | 2,25 | MEDIA | 1,33 | -3,21% | +2,79% |
 
 ## Accuratezza direzionale
 
