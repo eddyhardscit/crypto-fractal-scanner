@@ -1,6 +1,6 @@
 # Extreme cases path report
 
-Generato: 2026-07-30 05:14 UTC
+Generato: 2026-07-31 05:14 UTC
 
 Questo report si attiva quando i casi positivi o negativi sono almeno **80%**.
 
@@ -10,9 +10,9 @@ Ora misura anche il **rialzo massimo prima della discesa principale**, quindi di
 
 | Asset   | Direzione   | Trigger   | Percentuale   | Motivo                           |   Match disponibili |
 |:--------|:------------|:----------|:--------------|:---------------------------------|--------------------:|
-| BTC     | NESSUNO     | NO        | +67,50%       | Nessun lato sopra soglia estrema |                  40 |
-| SOL     | NESSUNO     | NO        | +62,50%       | Nessun lato sopra soglia estrema |                  40 |
-| DOGE    | NESSUNO     | NO        | +67,50%       | Nessun lato sopra soglia estrema |                  40 |
+| BTC     | NESSUNO     | NO        | +72,50%       | Nessun lato sopra soglia estrema |                  40 |
+| SOL     | NESSUNO     | NO        | +65,00%       | Nessun lato sopra soglia estrema |                  40 |
+| DOGE    | NESSUNO     | NO        | +62,50%       | Nessun lato sopra soglia estrema |                  40 |
 
 ## Come leggerlo
 

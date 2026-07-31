@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-13T07:47:54+00:00",
-  "updated_utc": "2026-07-30T05:10:12+00:00",
+  "updated_utc": "2026-07-31T05:10:18+00:00",
   "initial_capital_eur": 3600.0,
   "balance_eur": 3600.0,
   "peak_equity_eur": 3600.0,
@@ -22,7 +22,7 @@
     "pending": []
   },
   "last_checks": {
-    "generated_utc": "2026-07-30T05:10:12+00:00",
+    "generated_utc": "2026-07-31T05:10:18+00:00",
     "static": {
       "checks": {
         "fresh_market": true,
@@ -36,13 +36,13 @@
         "candle_15m_fresh": true
       },
       "freshness_status": "FRESH",
-      "doge_mark": 0.06971,
-      "btc_mark": 63978.33,
+      "doge_mark": 0.07014,
+      "btc_mark": 64361.38,
       "global_score": -6.0,
       "classic_raw_score": -11.0,
       "relative_raw_score": -6.0,
       "bearish_pattern_status": "MATURO",
-      "candle_age_minutes": 25.203662633333334
+      "candle_age_minutes": 25.303232266666665
     },
     "rejection": {
       "accepted": false,
@@ -52,21 +52,21 @@
         "close_below_invalidation": true,
         "entry_not_chased": false,
         "upper_wick": false,
-        "bearish_confirmation": true,
+        "bearish_confirmation": false,
         "volume_valid": true,
         "stop_within_limit": true
       },
-      "candle_time": "2026-07-30 04:45:00+00:00",
-      "open": 0.06991,
-      "high": 0.06998,
-      "low": 0.06969,
-      "close": 0.06973,
-      "previous_close": 0.06991,
-      "volume_ratio": 2.8175360879859466,
-      "upper_wick_ratio": 0.2413793103448309,
-      "close_location": 0.13793103448275368,
+      "candle_time": "2026-07-31 04:45:00+00:00",
+      "open": 0.06998,
+      "high": 0.07009,
+      "low": 0.06998,
+      "close": 0.07008,
+      "previous_close": 0.06997,
+      "volume_ratio": 0.2924883669399512,
+      "upper_wick_ratio": 0.0909090909090565,
+      "close_location": 0.9090909090909435,
       "stop_price": 0.0806,
-      "reason": "trigger_touched, entry_not_chased, upper_wick"
+      "reason": "trigger_touched, entry_not_chased, upper_wick, bearish_confirmation"
     }
   }
 }

@@ -1,81 +1,81 @@
 generated_utc,module,asset,field,before,snapshot_price,difference_before_pct,location,status
-2026-07-30T05:14:57+00:00,latest_scanner_summary.csv,BTC,current_price,63884.80078125,63884.80078125,0.0,row 0,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,latest_scanner_summary.csv,DOGE,current_price,0.0696299970149993,0.06962999701499939,-1.2212453270876722e-13,row 1,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,latest_scanner_summary.csv,SOL,current_price,73.43000030517578,73.43000030517578,0.0,row 2,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,scanner_forecast_latest.csv,BTC,current_price,63884.80078125,63884.80078125,0.0,row 0,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,scanner_forecast_latest.csv,SOL,current_price,73.43000030517578,73.43000030517578,0.0,row 1,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,scanner_forecast_latest.csv,DOGE,current_price,0.0696299970149993,0.06962999701499939,-1.2212453270876722e-13,row 2,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,technical_structure_metrics.csv,BTC,price,63884.80078125,63884.80078125,0.0,row 0,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,technical_structure_metrics.csv,SOL,price,73.43000030517578,73.43000030517578,0.0,row 1,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,technical_structure_metrics.csv,DOGE,price,0.0696299970149993,0.06962999701499939,-1.2212453270876722e-13,row 2,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,classic_technical_confirmation_metrics.csv,BTC,price,63917.078125,63884.80078125,0.050524292719522634,row 0,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_confirmation_metrics.csv,SOL,price,73.44000244140625,73.43000030517578,0.013621321243229012,row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_confirmation_metrics.csv,DOGE,price,0.0696199983358383,0.06962999701499939,-0.014359729412216637,row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_visual_metrics.csv,BTC,price,63884.80078125,63884.80078125,0.0,row 0,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,classic_technical_visual_metrics.csv,SOL,price,73.43000030517578,73.43000030517578,0.0,row 1,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,classic_technical_visual_metrics.csv,DOGE,price,0.0696299970149993,0.06962999701499939,-1.2212453270876722e-13,row 2,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,rsi_top_cycle_metrics.csv,SOL,current_price,73.43000030517578,73.43000030517578,0.0,row 0,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,rsi_top_cycle_metrics.csv,SOL,current_price,73.43000030517578,73.43000030517578,0.0,row 1,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,btc_2022_vs_sol_2026_metrics.csv,SOL,sol_current_price,73.43000030517578,73.43000030517578,0.0,row 0,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,fractal_path_tracker_metrics.csv,SOL,current_price,73.43000030517578,73.43000030517578,0.0,row 0,ALREADY_ALIGNED
-2026-07-30T05:14:57+00:00,liquidation_metrics.csv,BTC,price,63993.6,63884.80078125,0.17030532680619714,row 0,SYNCHRONISED
-2026-07-30T05:14:57+00:00,liquidation_metrics.csv,SOL,price,73.48,73.43000030517578,0.0680916445818136,row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,liquidation_metrics.csv,DOGE,price,0.06968,0.06962999701499939,0.0718124187048863,row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,sol_onchain_metrics_latest.json,SOL,sol_price_usd,73.45,73.43000030517578,0.02723640847215325,$.sol_price_usd,SYNCHRONISED
-2026-07-30T05:14:57+00:00,technical_structure_report.md,BTC,Prezzo,63.885,63884.80078125,-99.8999996881594,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,technical_structure_report.md,SOL,Prezzo,"73,43",73.43000030517578,,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,technical_structure_report.md,DOGE,Prezzo,0.06963,0.06962999701499939,4.286946331255592e-06,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,technical_structure_report.md,BTC,Prezzo corrente,63.885,63884.80078125,-99.8999996881594,markdown line 52,SYNCHRONISED
-2026-07-30T05:14:57+00:00,technical_structure_report.md,SOL,Prezzo corrente,"73,43",73.43000030517578,,markdown line 93,SYNCHRONISED
-2026-07-30T05:14:57+00:00,technical_structure_report.md,DOGE,Prezzo corrente,0.06963,0.06962999701499939,4.286946331255592e-06,markdown line 134,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_confirmation_report.md,BTC,Prezzo,63.917 $,63884.80078125,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_confirmation_report.md,SOL,Prezzo,"73,44 $",73.43000030517578,,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_confirmation_report.md,DOGE,Prezzo,0.06962 $,0.06962999701499939,,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_confirmation_report.md,BTC,Prezzo corrente,63.917 $,63884.80078125,,markdown line 47,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_confirmation_report.md,SOL,Prezzo corrente,"73,44 $",73.43000030517578,,markdown line 83,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_confirmation_report.md,DOGE,Prezzo corrente,0.06962 $,0.06962999701499939,,markdown line 119,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_visual_report.md,BTC,Prezzo,63.885 $,63884.80078125,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_visual_report.md,SOL,Prezzo,"73,43 $",73.43000030517578,,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,classic_technical_visual_report.md,DOGE,Prezzo,0.06963 $,0.06962999701499939,,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,btc_2022_vs_sol_2026_report.md,SOL,Data,30 luglio 2026,73.43000030517578,,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,rsi_top_cycle_report.md,SOL,Valore,"73,43 $",73.43000030517578,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,sol_onchain_metrics_report.md,SOL,Valore,"73,45 $",73.43000030517578,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,major_alt_lifecycle_squeeze_report.md,SOL,Valore,"73,46 $",73.43000030517578,,markdown table row 9,SYNCHRONISED
-2026-07-30T05:14:57+00:00,market_regime_match_report.md,BTC,target_price,63897.8,63884.80078125,0.020347905277984246,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,market_regime_match_report.md,DOGE,target_price,0.07,0.06962999701499939,0.531384461959572,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,market_regime_match_report.md,SOL,target_price,73.42,73.43000030517578,-0.013618827637507103,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,fractal_path_tracker.md,SOL,Prezzo corrente,"73,43 $",73.43000030517578,,markdown line 19,SYNCHRONISED
-2026-07-30T05:14:57+00:00,liquidation_report.md,BTC,Prezzo,"$63,994",63884.80078125,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,liquidation_report.md,SOL,Prezzo,$73.48,73.43000030517578,,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,liquidation_report.md,DOGE,Prezzo,$0.06968,0.06962999701499939,,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,scanner_forecast_tracker_report.md,BTC,Prezzo iniziale,"63.884,80 $",63884.80078125,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,scanner_forecast_tracker_report.md,SOL,Prezzo iniziale,"73,43 $",73.43000030517578,,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,scanner_forecast_tracker_report.md,DOGE,Prezzo iniziale,0.06963 $,0.06962999701499939,,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:RSI_TOP_CYCLE,SOL,Valore,"73,43 $",73.43000030517578,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:SOL_ONCHAIN_METRICS,SOL,Valore,"73,45 $",73.43000030517578,,markdown table row 4,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:MAJOR_ALT_LIFECYCLE_SQUEEZE,SOL,Valore,"73,46 $",73.43000030517578,,markdown table row 9,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:MARKET_REGIME_MATCH,BTC,target_price,63897.8,63884.80078125,0.020347905277984246,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:MARKET_REGIME_MATCH,DOGE,target_price,0.07,0.06962999701499939,0.531384461959572,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:MARKET_REGIME_MATCH,SOL,target_price,73.42,73.43000030517578,-0.013618827637507103,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:TECHNICAL_STRUCTURE,BTC,Prezzo,63.885,63884.80078125,-99.8999996881594,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:TECHNICAL_STRUCTURE,SOL,Prezzo,"73,43",73.43000030517578,,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:TECHNICAL_STRUCTURE,DOGE,Prezzo,0.06963,0.06962999701499939,4.286946331255592e-06,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:TECHNICAL_STRUCTURE,BTC,Prezzo corrente,63.885,63884.80078125,-99.8999996881594,markdown line 53,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:TECHNICAL_STRUCTURE,SOL,Prezzo corrente,"73,43",73.43000030517578,,markdown line 94,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:TECHNICAL_STRUCTURE,DOGE,Prezzo corrente,0.06963,0.06962999701499939,4.286946331255592e-06,markdown line 135,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,BTC,Prezzo,63.917 $,63884.80078125,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,SOL,Prezzo,"73,44 $",73.43000030517578,,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,DOGE,Prezzo,0.06962 $,0.06962999701499939,,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,BTC,Prezzo corrente,63.917 $,63884.80078125,,markdown line 48,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,SOL,Prezzo corrente,"73,44 $",73.43000030517578,,markdown line 84,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,DOGE,Prezzo corrente,0.06962 $,0.06962999701499939,,markdown line 120,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:CLASSIC_TECHNICAL_VISUAL,BTC,Prezzo,63.885 $,63884.80078125,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:CLASSIC_TECHNICAL_VISUAL,SOL,Prezzo,"73,43 $",73.43000030517578,,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:CLASSIC_TECHNICAL_VISUAL,DOGE,Prezzo,0.06963 $,0.06962999701499939,,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:FRACTAL_PATH_TRACKER,SOL,Prezzo corrente,"73,43 $",73.43000030517578,,markdown line 19,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:LIQUIDATION_SUMMARY,BTC,Prezzo,"$63,994",63884.80078125,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:LIQUIDATION_SUMMARY,SOL,Prezzo,$73.48,73.43000030517578,,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:LIQUIDATION_SUMMARY,DOGE,Prezzo,$0.06968,0.06962999701499939,,markdown table row 3,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:SCANNER_FORECAST_TRACKER,BTC,Prezzo iniziale,"63.884,80 $",63884.80078125,,markdown table row 1,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:SCANNER_FORECAST_TRACKER,SOL,Prezzo iniziale,"73,43 $",73.43000030517578,,markdown table row 2,SYNCHRONISED
-2026-07-30T05:14:57+00:00,latest_report:SCANNER_FORECAST_TRACKER,DOGE,Prezzo iniziale,0.06963 $,0.06962999701499939,,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:58+00:00,latest_scanner_summary.csv,BTC,current_price,64329.8515625,64329.8515625,0.0,row 0,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,latest_scanner_summary.csv,DOGE,current_price,0.0700500011444091,0.07005000114440918,-1.2212453270876722e-13,row 1,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,latest_scanner_summary.csv,SOL,current_price,74.0,74.0,0.0,row 2,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,scanner_forecast_latest.csv,BTC,current_price,64329.8515625,64329.8515625,0.0,row 0,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,scanner_forecast_latest.csv,SOL,current_price,74.0,74.0,0.0,row 1,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,scanner_forecast_latest.csv,DOGE,current_price,0.0700500011444091,0.07005000114440918,-1.2212453270876722e-13,row 2,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,technical_structure_metrics.csv,BTC,price,64329.8515625,64329.8515625,0.0,row 0,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,technical_structure_metrics.csv,SOL,price,74.0,74.0,0.0,row 1,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,technical_structure_metrics.csv,DOGE,price,0.0700500011444091,0.07005000114440918,-1.2212453270876722e-13,row 2,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,classic_technical_confirmation_metrics.csv,BTC,price,64351.7890625,64329.8515625,0.034101586537449435,row 0,SYNCHRONISED
+2026-07-31T05:14:58+00:00,classic_technical_confirmation_metrics.csv,SOL,price,74.02999877929688,74.0,0.040538890941732575,row 1,SYNCHRONISED
+2026-07-31T05:14:58+00:00,classic_technical_confirmation_metrics.csv,DOGE,price,0.0700599998235702,0.07005000114440918,0.01427363168831075,row 2,SYNCHRONISED
+2026-07-31T05:14:58+00:00,classic_technical_visual_metrics.csv,BTC,price,64329.8515625,64329.8515625,0.0,row 0,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,classic_technical_visual_metrics.csv,SOL,price,74.0,74.0,0.0,row 1,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,classic_technical_visual_metrics.csv,DOGE,price,0.0700500011444091,0.07005000114440918,-1.2212453270876722e-13,row 2,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,rsi_top_cycle_metrics.csv,SOL,current_price,74.0,74.0,0.0,row 0,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,rsi_top_cycle_metrics.csv,SOL,current_price,74.0,74.0,0.0,row 1,ALREADY_ALIGNED
+2026-07-31T05:14:58+00:00,btc_2022_vs_sol_2026_metrics.csv,SOL,sol_current_price,74.0,74.0,0.0,row 0,ALREADY_ALIGNED
+2026-07-31T05:14:59+00:00,fractal_path_tracker_metrics.csv,SOL,current_price,74.0,74.0,0.0,row 0,ALREADY_ALIGNED
+2026-07-31T05:14:59+00:00,liquidation_metrics.csv,BTC,price,64385.0,64329.8515625,0.08572759948999309,row 0,SYNCHRONISED
+2026-07-31T05:14:59+00:00,liquidation_metrics.csv,SOL,price,74.06,74.0,0.08108108108109136,row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,liquidation_metrics.csv,DOGE,price,0.07006,0.07005000114440918,0.014273883550997013,row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,sol_onchain_metrics_latest.json,SOL,sol_price_usd,74.03,74.0,0.04054054054054568,$.sol_price_usd,SYNCHRONISED
+2026-07-31T05:14:59+00:00,technical_structure_report.md,BTC,Prezzo,64.330,64329.8515625,-99.89999976925564,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,technical_structure_report.md,SOL,Prezzo,"74,00",74.0,,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,technical_structure_report.md,DOGE,Prezzo,0.07005,0.07005000114440918,-1.6337032948676722e-06,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,technical_structure_report.md,BTC,Prezzo corrente,64.330,64329.8515625,-99.89999976925564,markdown line 52,SYNCHRONISED
+2026-07-31T05:14:59+00:00,technical_structure_report.md,SOL,Prezzo corrente,"74,00",74.0,,markdown line 93,SYNCHRONISED
+2026-07-31T05:14:59+00:00,technical_structure_report.md,DOGE,Prezzo corrente,0.07005,0.07005000114440918,-1.6337032948676722e-06,markdown line 134,SYNCHRONISED
+2026-07-31T05:14:59+00:00,classic_technical_confirmation_report.md,BTC,Prezzo,64.352 $,64329.8515625,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,classic_technical_confirmation_report.md,SOL,Prezzo,"74,03 $",74.0,,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,classic_technical_confirmation_report.md,DOGE,Prezzo,0.07006 $,0.07005000114440918,,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,classic_technical_confirmation_report.md,BTC,Prezzo corrente,64.352 $,64329.8515625,,markdown line 47,SYNCHRONISED
+2026-07-31T05:14:59+00:00,classic_technical_confirmation_report.md,SOL,Prezzo corrente,"74,03 $",74.0,,markdown line 83,SYNCHRONISED
+2026-07-31T05:14:59+00:00,classic_technical_confirmation_report.md,DOGE,Prezzo corrente,0.07006 $,0.07005000114440918,,markdown line 119,SYNCHRONISED
+2026-07-31T05:14:59+00:00,classic_technical_visual_report.md,BTC,Prezzo,64.330 $,64329.8515625,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,classic_technical_visual_report.md,SOL,Prezzo,"74,00 $",74.0,,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,classic_technical_visual_report.md,DOGE,Prezzo,0.07005 $,0.07005000114440918,,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,btc_2022_vs_sol_2026_report.md,SOL,Data,31 luglio 2026,74.0,,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,rsi_top_cycle_report.md,SOL,Valore,"74,00 $",74.0,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,sol_onchain_metrics_report.md,SOL,Valore,"74,03 $",74.0,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,major_alt_lifecycle_squeeze_report.md,SOL,Valore,"74,04 $",74.0,,markdown table row 9,SYNCHRONISED
+2026-07-31T05:14:59+00:00,market_regime_match_report.md,BTC,target_price,64346.4,64329.8515625,0.025724352066824885,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,market_regime_match_report.md,DOGE,target_price,0.07,0.07005000114440918,-0.07137921997473207,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,market_regime_match_report.md,SOL,target_price,74.04,74.0,0.0540540540540535,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,fractal_path_tracker.md,SOL,Prezzo corrente,"74,00 $",74.0,,markdown line 19,SYNCHRONISED
+2026-07-31T05:14:59+00:00,liquidation_report.md,BTC,Prezzo,"$64,385",64329.8515625,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,liquidation_report.md,SOL,Prezzo,$74.06,74.0,,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,liquidation_report.md,DOGE,Prezzo,$0.07006,0.07005000114440918,,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,scanner_forecast_tracker_report.md,BTC,Prezzo iniziale,"64.329,85 $",64329.8515625,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,scanner_forecast_tracker_report.md,SOL,Prezzo iniziale,"74,00 $",74.0,,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,scanner_forecast_tracker_report.md,DOGE,Prezzo iniziale,0.07005 $,0.07005000114440918,,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:RSI_TOP_CYCLE,SOL,Valore,"74,00 $",74.0,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:SOL_ONCHAIN_METRICS,SOL,Valore,"74,03 $",74.0,,markdown table row 4,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:MAJOR_ALT_LIFECYCLE_SQUEEZE,SOL,Valore,"74,04 $",74.0,,markdown table row 9,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:MARKET_REGIME_MATCH,BTC,target_price,64346.4,64329.8515625,0.025724352066824885,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:MARKET_REGIME_MATCH,DOGE,target_price,0.07,0.07005000114440918,-0.07137921997473207,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:MARKET_REGIME_MATCH,SOL,target_price,74.04,74.0,0.0540540540540535,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:TECHNICAL_STRUCTURE,BTC,Prezzo,64.330,64329.8515625,-99.89999976925564,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:TECHNICAL_STRUCTURE,SOL,Prezzo,"74,00",74.0,,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:TECHNICAL_STRUCTURE,DOGE,Prezzo,0.07005,0.07005000114440918,-1.6337032948676722e-06,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:TECHNICAL_STRUCTURE,BTC,Prezzo corrente,64.330,64329.8515625,-99.89999976925564,markdown line 53,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:TECHNICAL_STRUCTURE,SOL,Prezzo corrente,"74,00",74.0,,markdown line 94,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:TECHNICAL_STRUCTURE,DOGE,Prezzo corrente,0.07005,0.07005000114440918,-1.6337032948676722e-06,markdown line 135,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,BTC,Prezzo,64.352 $,64329.8515625,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,SOL,Prezzo,"74,03 $",74.0,,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,DOGE,Prezzo,0.07006 $,0.07005000114440918,,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,BTC,Prezzo corrente,64.352 $,64329.8515625,,markdown line 48,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,SOL,Prezzo corrente,"74,03 $",74.0,,markdown line 84,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:CLASSIC_TECHNICAL_CONFIRMATION,DOGE,Prezzo corrente,0.07006 $,0.07005000114440918,,markdown line 120,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:CLASSIC_TECHNICAL_VISUAL,BTC,Prezzo,64.330 $,64329.8515625,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:CLASSIC_TECHNICAL_VISUAL,SOL,Prezzo,"74,00 $",74.0,,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:CLASSIC_TECHNICAL_VISUAL,DOGE,Prezzo,0.07005 $,0.07005000114440918,,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:FRACTAL_PATH_TRACKER,SOL,Prezzo corrente,"74,00 $",74.0,,markdown line 19,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:LIQUIDATION_SUMMARY,BTC,Prezzo,"$64,385",64329.8515625,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:LIQUIDATION_SUMMARY,SOL,Prezzo,$74.06,74.0,,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:LIQUIDATION_SUMMARY,DOGE,Prezzo,$0.07006,0.07005000114440918,,markdown table row 3,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:SCANNER_FORECAST_TRACKER,BTC,Prezzo iniziale,"64.329,85 $",64329.8515625,,markdown table row 1,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:SCANNER_FORECAST_TRACKER,SOL,Prezzo iniziale,"74,00 $",74.0,,markdown table row 2,SYNCHRONISED
+2026-07-31T05:14:59+00:00,latest_report:SCANNER_FORECAST_TRACKER,DOGE,Prezzo iniziale,0.07005 $,0.07005000114440918,,markdown table row 3,SYNCHRONISED
