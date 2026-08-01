@@ -1,6 +1,6 @@
 # Market Regime Match Report
 
-Generated: 2026-07-31 05:14 UTC
+Generated: 2026-08-01 05:14 UTC
 
 This report adds market regime context to the raw fractal matches.
 
@@ -14,63 +14,63 @@ Main idea:
 
 | target   | target_regime_today   |   target_price | target_above_ma200   | target_return_90d   | target_ma200_slope_60d   | btc_regime_today   | btc_return_90d   | btc_ma200_slope_60d   |
 |:---------|:----------------------|---------------:|:---------------------|:--------------------|:-------------------------|:-------------------|:-----------------|:----------------------|
-| BTC-USD | BEAR | 64.330 $ | False | -18.19% | -9.81% | BEAR | -18.19% | -9.81% |
-| DOGE-USD | BEAR | 0.07005 $ | False | -35.41% | -16.24% | BEAR | -18.19% | -9.81% |
-| SOL-USD | BEAR | 74,00 $ | False | -12.15% | -16.66% | BEAR | -18.19% | -9.81% |
+| BTC-USD | BEAR | 63.065 $ | False | -19.71% | -9.83% | BEAR | -19.71% | -9.83% |
+| DOGE-USD | BEAR | 0.07009 $ | False | -35.26% | -16.29% | BEAR | -19.71% | -9.83% |
+| SOL-USD | BEAR | 73,12 $ | False | -12.86% | -16.72% | BEAR | -19.71% | -9.83% |
 
 ## Summary by regime filter
 
 | target   | group                     |   matches | positive_30d_rate   | return_30d_p50   | return_30d_p75   | return_30d_p90   | drawdown_30d_p50   | drawdown_30d_p10   | max_gain_30d_p50   | max_gain_30d_p75   | max_gain_30d_p90   | positive_60d_rate   | return_60d_p50   | return_60d_p75   | return_60d_p90   |
 |:---------|:--------------------------|----------:|:--------------------|:-----------------|:-----------------|:-----------------|:-------------------|:-------------------|:-------------------|:-------------------|:-------------------|:--------------------|:-----------------|:-----------------|:-----------------|
-| BTC-USD | ALL_MATCHES | 40 | 72.50% | 6.74% | 21.70% | 50.98% | -3.36% | -26.20% | 17.12% | 40.79% | 65.47% | 65.00% | 10.48% | 43.65% | 82.89% |
-| BTC-USD | SAME_BTC_REGIME | 12 | 83.33% | 8.07% | 15.48% | 18.97% | -3.11% | -11.86% | 12.20% | 20.27% | 24.70% | 41.67% | -0.45% | 3.16% | 8.95% |
-| BTC-USD | SAME_ASSET_REGIME | 24 | 79.17% | 8.07% | 23.33% | 49.80% | -2.24% | -13.70% | 15.12% | 40.79% | 58.70% | 66.67% | 12.93% | 47.92% | 97.85% |
-| BTC-USD | SAME_BTC_AND_ASSET_REGIME | 10 | 90.00% | 8.07% | 13.98% | 17.53% | -1.28% | -9.17% | 12.20% | 19.12% | 24.03% | 40.00% | -0.45% | 2.14% | 5.01% |
-| DOGE-USD | ALL_MATCHES | 40 | 62.50% | 6.96% | 18.27% | 29.01% | -10.32% | -28.99% | 14.35% | 24.45% | 39.53% | 75.00% | 12.30% | 18.72% | 83.34% |
-| DOGE-USD | SAME_BTC_REGIME | 24 | 79.17% | 10.78% | 18.27% | 29.86% | -9.41% | -15.68% | 15.08% | 24.96% | 42.23% | 87.50% | 12.92% | 16.43% | 31.72% |
-| DOGE-USD | SAME_ASSET_REGIME | 26 | 76.92% | 10.26% | 17.63% | 27.75% | -9.59% | -15.74% | 14.35% | 22.25% | 36.21% | 84.62% | 14.66% | 32.62% | 86.88% |
-| DOGE-USD | SAME_BTC_AND_ASSET_REGIME | 20 | 80.00% | 10.26% | 15.96% | 20.04% | -9.59% | -14.77% | 13.87% | 18.34% | 33.92% | 85.00% | 13.80% | 17.31% | 46.04% |
-| SOL-USD | ALL_MATCHES | 40 | 65.00% | 6.12% | 20.87% | 42.46% | -6.91% | -21.51% | 11.63% | 26.44% | 60.68% | 57.50% | 2.57% | 31.20% | 78.57% |
-| SOL-USD | SAME_BTC_REGIME | 24 | 83.33% | 8.07% | 18.01% | 33.02% | -3.46% | -11.68% | 12.87% | 23.87% | 36.44% | 58.33% | 1.82% | 8.50% | 64.18% |
-| SOL-USD | SAME_ASSET_REGIME | 31 | 70.97% | 6.34% | 18.69% | 41.91% | -4.18% | -21.16% | 11.78% | 24.40% | 60.53% | 61.29% | 4.52% | 35.62% | 77.34% |
-| SOL-USD | SAME_BTC_AND_ASSET_REGIME | 19 | 89.47% | 6.75% | 15.82% | 28.35% | -2.75% | -10.89% | 12.72% | 22.79% | 37.44% | 57.89% | 1.20% | 6.93% | 76.77% |
+| BTC-USD | ALL_MATCHES | 40 | 75.00% | 6.31% | 23.54% | 51.43% | -2.60% | -28.37% | 14.79% | 40.35% | 64.29% | 57.50% | 6.70% | 43.76% | 70.10% |
+| BTC-USD | SAME_BTC_REGIME | 11 | 90.91% | 5.81% | 14.23% | 18.63% | -2.03% | -10.87% | 12.27% | 17.93% | 24.99% | 27.27% | -10.09% | -1.08% | 4.52% |
+| BTC-USD | SAME_ASSET_REGIME | 21 | 85.71% | 6.75% | 35.65% | 50.41% | -2.03% | -11.31% | 17.22% | 41.18% | 60.53% | 61.90% | 16.42% | 49.70% | 98.26% |
+| BTC-USD | SAME_BTC_AND_ASSET_REGIME | 8 | 100.00% | 6.28% | 13.92% | 15.99% | -0.09% | -8.20% | 12.50% | 17.58% | 25.40% | 25.00% | -9.43% | -2.98% | 3.25% |
+| DOGE-USD | ALL_MATCHES | 40 | 62.50% | 6.13% | 17.11% | 31.21% | -11.77% | -30.06% | 15.08% | 28.70% | 44.33% | 65.00% | 8.94% | 17.21% | 72.02% |
+| DOGE-USD | SAME_BTC_REGIME | 22 | 72.73% | 9.00% | 16.49% | 27.86% | -11.33% | -22.55% | 15.08% | 18.81% | 32.86% | 72.73% | 11.36% | 15.56% | 29.69% |
+| DOGE-USD | SAME_ASSET_REGIME | 22 | 72.73% | 9.00% | 16.49% | 28.62% | -11.33% | -20.38% | 14.35% | 18.81% | 33.28% | 72.73% | 13.80% | 27.45% | 70.12% |
+| DOGE-USD | SAME_BTC_AND_ASSET_REGIME | 18 | 72.22% | 6.13% | 14.19% | 16.78% | -12.50% | -18.37% | 13.87% | 17.06% | 20.00% | 66.67% | 7.09% | 15.56% | 40.38% |
+| SOL-USD | ALL_MATCHES | 40 | 65.00% | 5.70% | 20.87% | 52.55% | -6.97% | -21.92% | 10.03% | 25.92% | 64.24% | 55.00% | 1.95% | 33.33% | 81.92% |
+| SOL-USD | SAME_BTC_REGIME | 19 | 84.21% | 6.75% | 16.46% | 28.35% | -1.77% | -12.33% | 12.72% | 22.79% | 37.44% | 57.89% | 1.20% | 22.82% | 77.52% |
+| SOL-USD | SAME_ASSET_REGIME | 30 | 70.00% | 6.60% | 19.68% | 42.88% | -2.59% | -21.92% | 11.72% | 24.68% | 62.87% | 60.00% | 3.61% | 38.68% | 81.92% |
+| SOL-USD | SAME_BTC_AND_ASSET_REGIME | 18 | 88.89% | 7.17% | 17.55% | 30.04% | -1.07% | -12.28% | 12.87% | 23.15% | 37.99% | 61.11% | 1.95% | 23.71% | 77.96% |
 
 ## Breakdown by historical BTC regime
 
 | target   | group                       |   matches | positive_30d_rate   | return_30d_p50   | drawdown_30d_p50   | max_gain_30d_p75   | positive_60d_rate   | return_60d_p50   | max_gain_60d_p75   |
 |:---------|:----------------------------|----------:|:--------------------|:-----------------|:-------------------|:-------------------|:--------------------|:-----------------|:-------------------|
-| BTC-USD | HISTORICAL_BTC_BEAR | 12 | 83.33% | 8.07% | -3.11% | 20.27% | 41.67% | -0.45% | 22.87% |
-| BTC-USD | HISTORICAL_BTC_BULL | 17 | 82.35% | 19.20% | -2.44% | 60.53% | 70.59% | 25.43% | 64.13% |
+| BTC-USD | HISTORICAL_BTC_BEAR | 11 | 90.91% | 5.81% | -2.03% | 17.93% | 27.27% | -10.09% | 22.69% |
+| BTC-USD | HISTORICAL_BTC_BULL | 16 | 81.25% | 20.69% | -3.05% | 52.94% | 68.75% | 21.48% | 65.82% |
 | BTC-USD | HISTORICAL_BTC_DISTRIBUTION | 3 | 33.33% | -2.54% | -2.54% | 68.05% | 100.00% | 98.26% | 134.71% |
-| BTC-USD | HISTORICAL_BTC_RECOVERY | 8 | 50.00% | 2.39% | -12.84% | 19.10% | 75.00% | 17.45% | 51.47% |
-| DOGE-USD | HISTORICAL_BTC_BEAR | 24 | 79.17% | 10.78% | -9.41% | 24.96% | 87.50% | 12.92% | 62.41% |
-| DOGE-USD | HISTORICAL_BTC_BULL | 8 | 50.00% | -2.55% | -9.26% | 29.83% | 62.50% | 8.43% | 52.42% |
+| BTC-USD | HISTORICAL_BTC_MIXED | 2 | 100.00% | 19.09% | -1.50% | 26.63% | 50.00% | 20.88% | 39.51% |
+| BTC-USD | HISTORICAL_BTC_RECOVERY | 8 | 50.00% | 2.11% | -10.74% | 19.10% | 62.50% | 13.28% | 51.47% |
+| DOGE-USD | HISTORICAL_BTC_BEAR | 22 | 72.73% | 9.00% | -11.33% | 18.81% | 72.73% | 11.36% | 51.21% |
+| DOGE-USD | HISTORICAL_BTC_BULL | 11 | 63.64% | 8.28% | -7.26% | 43.96% | 63.64% | 7.68% | 53.55% |
 | DOGE-USD | HISTORICAL_BTC_DISTRIBUTION | 1 | 0.00% | -8.74% | -20.84% | 2.91% | 100.00% | 14.25% | 20.66% |
-| DOGE-USD | HISTORICAL_BTC_RECOVERY | 7 | 28.57% | -11.30% | -21.22% | 16.16% | 42.86% | -6.60% | 70.88% |
-| SOL-USD | HISTORICAL_BTC_BEAR | 24 | 83.33% | 8.07% | -3.46% | 23.87% | 58.33% | 1.82% | 36.36% |
-| SOL-USD | HISTORICAL_BTC_BULL | 7 | 57.14% | 23.40% | -2.44% | 49.87% | 57.14% | 23.57% | 75.12% |
-| SOL-USD | HISTORICAL_BTC_DISTRIBUTION | 1 | 0.00% | -6.44% | -13.55% | 8.68% | 100.00% | 41.35% | 87.69% |
-| SOL-USD | HISTORICAL_BTC_MIXED | 1 | 100.00% | 62.06% | -7.74% | 62.06% | 100.00% | 221.46% | 221.46% |
-| SOL-USD | HISTORICAL_BTC_RECOVERY | 7 | 14.29% | -14.15% | -24.73% | 4.66% | 42.86% | -10.89% | 69.39% |
+| DOGE-USD | HISTORICAL_BTC_RECOVERY | 6 | 33.33% | -8.54% | -21.38% | 28.08% | 33.33% | -9.47% | 65.65% |
+| SOL-USD | HISTORICAL_BTC_BEAR | 19 | 84.21% | 6.75% | -1.77% | 22.79% | 57.89% | 1.20% | 34.80% |
+| SOL-USD | HISTORICAL_BTC_BULL | 12 | 50.00% | -1.92% | -9.36% | 31.39% | 50.00% | 2.23% | 46.89% |
+| SOL-USD | HISTORICAL_BTC_DISTRIBUTION | 2 | 50.00% | 52.24% | -6.77% | 90.71% | 100.00% | 41.96% | 110.46% |
+| SOL-USD | HISTORICAL_BTC_MIXED | 2 | 100.00% | 37.51% | -4.05% | 50.37% | 50.00% | 107.82% | 169.93% |
+| SOL-USD | HISTORICAL_BTC_RECOVERY | 5 | 20.00% | -14.15% | -24.73% | 4.63% | 40.00% | -10.89% | 111.01% |
 
 ## Breakdown by historical asset regime
 
 | target   | group                         |   matches | positive_30d_rate   | return_30d_p50   | drawdown_30d_p50   | max_gain_30d_p75   | positive_60d_rate   | return_60d_p50   | max_gain_60d_p75   |
 |:---------|:------------------------------|----------:|:--------------------|:-----------------|:-------------------|:-------------------|:--------------------|:-----------------|:-------------------|
-| BTC-USD | HISTORICAL_ASSET_BEAR | 24 | 79.17% | 8.07% | -2.24% | 40.79% | 66.67% | 12.93% | 65.82% |
-| BTC-USD | HISTORICAL_ASSET_BULL | 8 | 62.50% | 3.83% | -11.66% | 31.54% | 50.00% | -11.69% | 41.96% |
-| BTC-USD | HISTORICAL_ASSET_DISTRIBUTION | 1 | 100.00% | 49.35% | 0.00% | 64.13% | 100.00% | 46.87% | 64.13% |
-| BTC-USD | HISTORICAL_ASSET_MIXED | 1 | 100.00% | 110.91% | 0.00% | 118.05% | 100.00% | 42.57% | 118.05% |
-| BTC-USD | HISTORICAL_ASSET_RECOVERY | 6 | 50.00% | 1.27% | -8.05% | 29.83% | 66.67% | 10.19% | 37.66% |
-| DOGE-USD | HISTORICAL_ASSET_BEAR | 26 | 76.92% | 10.26% | -9.59% | 22.25% | 84.62% | 14.66% | 68.77% |
-| DOGE-USD | HISTORICAL_ASSET_BULL | 5 | 40.00% | -10.84% | -21.32% | 33.07% | 80.00% | 9.96% | 75.34% |
-| DOGE-USD | HISTORICAL_ASSET_DISTRIBUTION | 1 | 0.00% | -1.83% | -24.71% | 17.21% | 100.00% | 7.76% | 37.34% |
-| DOGE-USD | HISTORICAL_ASSET_RECOVERY | 8 | 37.50% | -9.28% | -17.31% | 31.58% | 37.50% | -7.52% | 33.39% |
-| SOL-USD | HISTORICAL_ASSET_BEAR | 31 | 70.97% | 6.34% | -4.18% | 24.40% | 61.29% | 4.52% | 70.15% |
-| SOL-USD | HISTORICAL_ASSET_BULL | 1 | 0.00% | -36.80% | -40.77% | 1.46% | 0.00% | -46.57% | 1.46% |
-| SOL-USD | HISTORICAL_ASSET_DISTRIBUTION | 2 | 50.00% | 8.73% | -8.02% | 23.46% | 50.00% | 11.01% | 35.68% |
-| SOL-USD | HISTORICAL_ASSET_MIXED | 1 | 100.00% | 33.93% | 0.00% | 36.50% | 100.00% | 9.42% | 36.50% |
-| SOL-USD | HISTORICAL_ASSET_RECOVERY | 5 | 40.00% | -0.90% | -11.38% | 14.95% | 40.00% | -7.25% | 16.31% |
+| BTC-USD | HISTORICAL_ASSET_BEAR | 21 | 85.71% | 6.75% | -2.03% | 41.18% | 61.90% | 16.42% | 77.49% |
+| BTC-USD | HISTORICAL_ASSET_BULL | 8 | 62.50% | 3.83% | -7.56% | 32.94% | 50.00% | -10.62% | 42.54% |
+| BTC-USD | HISTORICAL_ASSET_MIXED | 3 | 66.67% | 25.21% | -2.65% | 74.23% | 66.67% | 42.57% | 82.82% |
+| BTC-USD | HISTORICAL_ASSET_RECOVERY | 8 | 62.50% | 4.11% | -6.96% | 26.60% | 50.00% | 1.52% | 34.58% |
+| DOGE-USD | HISTORICAL_ASSET_BEAR | 22 | 72.73% | 9.00% | -11.33% | 18.81% | 72.73% | 13.80% | 55.85% |
+| DOGE-USD | HISTORICAL_ASSET_BULL | 6 | 66.67% | 13.10% | -8.53% | 34.85% | 66.67% | 12.13% | 74.26% |
+| DOGE-USD | HISTORICAL_ASSET_DISTRIBUTION | 2 | 50.00% | 13.08% | -17.22% | 25.72% | 100.00% | 12.97% | 61.37% |
+| DOGE-USD | HISTORICAL_ASSET_RECOVERY | 10 | 40.00% | -6.75% | -16.15% | 33.37% | 40.00% | -9.89% | 33.98% |
+| SOL-USD | HISTORICAL_ASSET_BEAR | 30 | 70.00% | 6.60% | -2.59% | 24.68% | 60.00% | 3.61% | 80.35% |
+| SOL-USD | HISTORICAL_ASSET_BULL | 2 | 50.00% | -17.31% | -24.50% | 4.61% | 50.00% | -20.90% | 4.61% |
+| SOL-USD | HISTORICAL_ASSET_DISTRIBUTION | 2 | 50.00% | 5.50% | -7.15% | 21.87% | 50.00% | 3.45% | 32.04% |
+| SOL-USD | HISTORICAL_ASSET_MIXED | 1 | 100.00% | 110.91% | 0.00% | 118.05% | 100.00% | 42.57% | 118.05% |
+| SOL-USD | HISTORICAL_ASSET_RECOVERY | 5 | 40.00% | -0.90% | -10.48% | 15.31% | 20.00% | -5.83% | 16.16% |
 
 ## Top regime-adjusted matches
 
@@ -78,36 +78,36 @@ The table below shows the top matches separately for each target, so BTC does no
 
 | target   | similar_asset   | start_date   | similarity   | btc_regime_at_match   | similar_asset_regime_at_match   | regime_alignment   | outcome_family   | return_30d   | drawdown_30d   | max_gain_30d   | return_60d   | drawdown_60d   | max_gain_60d   |
 |:---------|:----------------|:-------------|:-------------|:----------------------|:--------------------------------|:-------------------|:-----------------|:-------------|:---------------|:---------------|:-------------|:---------------|:---------------|
-| BTC-USD | XRP-USD | 2019-10-14 | 88.29% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 14.85% | -7.06% | 41.18% | -33.30% | -41.12% | 41.18% |
-| BTC-USD | ONE-USD | 2020-01-27 | 88.22% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 9.39% | -4.18% | 11.48% | -11.35% | -20.74% | 11.52% |
-| BTC-USD | ETH-USD | 2025-12-21 | 87.21% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 11.36% | 0.00% | 19.65% | -0.57% | -0.79% | 19.65% |
-| BTC-USD | XTZ-USD | 2025-12-26 | 86.95% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 3.95% | -2.03% | 10.38% | -15.12% | -15.41% | 15.04% |
-| BTC-USD | BNB-USD | 2025-12-26 | 86.69% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 4.95% | -0.18% | 8.46% | 4.52% | -0.18% | 21.01% |
-| BTC-USD | BTC-USD | 2025-12-25 | 86.35% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 17.34% | 0.00% | 17.52% | -0.34% | -0.34% | 22.72% |
-| BTC-USD | XRP-USD | 2025-12-21 | 86.11% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 3.53% | -0.53% | 11.68% | 0.43% | -1.24% | 12.21% |
-| BTC-USD | LTC-USD | 2020-01-26 | 85.61% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | -0.63% | -12.16% | 1.37% | -13.20% | -13.20% | 1.37% |
-| BTC-USD | QTUM-USD | 2020-01-27 | 85.38% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 19.22% | -8.83% | 22.12% | 9.44% | -8.83% | 22.12% |
-| BTC-USD | SOL-USD | 2025-12-24 | 85.33% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 6.75% | 0.00% | 12.72% | 2.71% | 0.00% | 23.30% |
-| DOGE-USD | DASH-USD | 2022-03-12 | 89.81% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 13.34% | -9.62% | 18.11% | 13.82% | -9.62% | 28.65% |
-| DOGE-USD | OP-USD | 2025-12-27 | 89.48% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 16.75% | -2.92% | 22.25% | 1.62% | -2.92% | 56.55% |
-| DOGE-USD | XTZ-USD | 2025-12-26 | 89.19% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 3.95% | -2.03% | 10.38% | -15.12% | -15.41% | 15.04% |
-| DOGE-USD | THETA-USD | 2022-03-16 | 89.18% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 0.32% | -16.14% | 13.49% | -6.06% | -16.14% | 28.27% |
-| DOGE-USD | LTC-USD | 2018-04-11 | 89.17% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -33.91% | -37.12% | 3.02% | -39.38% | -40.40% | 3.02% |
-| DOGE-USD | VET-USD | 2022-03-14 | 89.01% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 7.68% | -8.95% | 11.10% | 9.39% | -8.95% | 41.71% |
-| DOGE-USD | ENJ-USD | 2022-03-17 | 88.99% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 7.44% | -14.62% | 14.24% | 4.04% | -14.62% | 29.60% |
-| DOGE-USD | OMG-USD | 2022-03-12 | 88.59% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 10.56% | -9.26% | 12.35% | 16.89% | -9.26% | 32.62% |
-| DOGE-USD | BAT-USD | 2022-03-12 | 88.27% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 26.67% | 0.00% | 33.34% | 15.73% | 0.00% | 37.73% |
-| DOGE-USD | NEO-USD | 2022-03-12 | 88.25% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 15.70% | -11.00% | 15.70% | 15.06% | -11.00% | 32.52% |
-| SOL-USD | RUNE-USD | 2025-12-27 | 80.37% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 41.91% | -0.37% | 41.91% | -5.22% | -5.22% | 62.96% |
-| SOL-USD | NEAR-USD | 2025-12-21 | 79.80% | BEAR | BEAR | SAME_BTC_AND_ASSET | EXPLOSIVE_60D | 14.29% | 0.00% | 23.51% | 104.94% | 0.00% | 139.37% |
-| SOL-USD | BNB-USD | 2025-12-26 | 79.44% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 4.95% | -0.18% | 8.46% | 4.52% | -0.18% | 21.01% |
-| SOL-USD | KAVA-USD | 2025-12-26 | 79.26% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 24.96% | -2.75% | 24.96% | 1.20% | -2.75% | 31.13% |
-| SOL-USD | SOL-USD | 2025-12-24 | 78.92% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 6.75% | 0.00% | 12.72% | 2.71% | 0.00% | 23.30% |
-| SOL-USD | XRP-USD | 2020-01-27 | 77.47% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | -5.30% | -10.39% | 1.55% | -17.78% | -18.75% | 1.55% |
-| SOL-USD | BNB-USD | 2020-01-27 | 77.38% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 3.82% | -10.77% | 5.88% | -8.08% | -10.77% | 5.88% |
-| SOL-USD | BTC-USD | 2025-12-25 | 76.92% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 17.34% | 0.00% | 17.52% | -0.34% | -0.34% | 22.72% |
-| SOL-USD | LINK-USD | 2025-12-21 | 76.90% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 5.89% | 0.00% | 11.78% | 4.70% | 0.00% | 24.41% |
-| SOL-USD | EOS-USD | 2018-10-19 | 76.87% | BEAR | BEAR | SAME_BTC_AND_ASSET | EXPLOSIVE_60D | 47.40% | -7.62% | 75.20% | 77.34% | -7.62% | 77.34% |
+| BTC-USD | XRP-USD | 2025-12-26 | 87.73% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 5.81% | 0.00% | 12.27% | -8.77% | -8.77% | 12.81% |
+| BTC-USD | ETH-USD | 2025-12-26 | 87.61% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 13.61% | 0.00% | 17.22% | -12.28% | -12.28% | 17.22% |
+| BTC-USD | XRP-USD | 2019-10-14 | 87.22% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 14.85% | -7.06% | 41.18% | -33.30% | -41.12% | 41.18% |
+| BTC-USD | BNB-USD | 2025-12-26 | 86.88% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 4.95% | -0.18% | 8.46% | 4.52% | -0.18% | 21.01% |
+| BTC-USD | BTC-USD | 2025-12-26 | 86.76% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 18.63% | 0.00% | 18.63% | -4.87% | -4.87% | 22.07% |
+| BTC-USD | XTZ-USD | 2025-12-26 | 86.66% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 3.95% | -2.03% | 10.38% | -15.12% | -15.41% | 15.04% |
+| BTC-USD | SOL-USD | 2025-12-24 | 85.90% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 6.75% | 0.00% | 12.72% | 2.71% | 0.00% | 23.30% |
+| BTC-USD | LTC-USD | 2020-01-27 | 85.87% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 1.82% | -10.87% | 2.86% | -10.09% | -11.93% | 2.86% |
+| BTC-USD | ETH-USD | 2018-07-06 | 86.60% | BEAR | RECOVERY | SAME_BTC_ONLY | MIXED | 5.29% | -2.06% | 9.31% | -54.67% | -55.49% | 9.31% |
+| BTC-USD | EOS-USD | 2020-01-27 | 85.72% | BEAR | RECOVERY | SAME_BTC_ONLY | MIXED | -1.64% | -13.03% | 1.65% | -11.18% | -15.14% | 1.94% |
+| DOGE-USD | OP-USD | 2025-12-27 | 90.73% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 16.75% | -2.92% | 22.25% | 1.62% | -2.92% | 56.55% |
+| DOGE-USD | LTC-USD | 2018-04-12 | 89.48% | BEAR | BEAR | SAME_BTC_AND_ASSET | BEARISH_30D | -29.99% | -34.14% | 7.89% | -34.63% | -37.58% | 7.89% |
+| DOGE-USD | VET-USD | 2022-03-19 | 89.39% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | -4.00% | -11.66% | 7.24% | 10.13% | -11.66% | 37.50% |
+| DOGE-USD | DASH-USD | 2022-03-12 | 89.36% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 13.34% | -9.62% | 18.11% | 13.82% | -9.62% | 28.65% |
+| DOGE-USD | XTZ-USD | 2025-12-26 | 89.03% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 3.95% | -2.03% | 10.38% | -15.12% | -15.41% | 15.04% |
+| DOGE-USD | ENJ-USD | 2022-03-17 | 88.77% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 7.44% | -14.62% | 14.24% | 4.04% | -14.62% | 29.60% |
+| DOGE-USD | HBAR-USD | 2022-03-19 | 88.71% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | -4.48% | -13.35% | 6.89% | 1.24% | -13.35% | 20.52% |
+| DOGE-USD | THETA-USD | 2022-03-16 | 88.48% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 0.32% | -16.14% | 13.49% | -6.06% | -16.14% | 28.27% |
+| DOGE-USD | INJ-USD | 2022-03-19 | 88.24% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | -8.63% | -13.94% | 4.96% | 30.97% | -13.94% | 53.75% |
+| DOGE-USD | ADA-USD | 2022-03-17 | 88.08% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 2.92% | -16.28% | 3.63% | -6.81% | -16.28% | 14.25% |
+| SOL-USD | RUNE-USD | 2025-12-27 | 80.61% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 41.91% | -0.37% | 41.91% | -5.22% | -5.22% | 62.96% |
+| SOL-USD | SOL-USD | 2025-12-24 | 79.44% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 6.75% | 0.00% | 12.72% | 2.71% | 0.00% | 23.30% |
+| SOL-USD | BNB-USD | 2025-12-26 | 78.72% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 4.95% | -0.18% | 8.46% | 4.52% | -0.18% | 21.01% |
+| SOL-USD | NEAR-USD | 2025-12-21 | 78.53% | BEAR | BEAR | SAME_BTC_AND_ASSET | EXPLOSIVE_60D | 14.29% | 0.00% | 23.51% | 104.94% | 0.00% | 139.37% |
+| SOL-USD | KAVA-USD | 2025-12-26 | 78.50% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 24.96% | -2.75% | 24.96% | 1.20% | -2.75% | 31.13% |
+| SOL-USD | QTUM-USD | 2018-10-14 | 78.39% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 6.45% | -14.45% | 6.45% | 24.60% | -14.45% | 33.28% |
+| SOL-USD | EOS-USD | 2018-10-24 | 77.90% | BEAR | BEAR | SAME_BTC_AND_ASSET | EXPLOSIVE_60D | 51.66% | 0.00% | 83.90% | 81.05% | 0.00% | 86.15% |
+| SOL-USD | BTC-USD | 2025-12-26 | 77.03% | BEAR | BEAR | SAME_BTC_AND_ASSET | BULLISH_30D | 18.63% | 0.00% | 18.63% | -4.87% | -4.87% | 22.07% |
+| SOL-USD | LINK-USD | 2025-12-26 | 76.41% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | 7.60% | 0.00% | 10.72% | -4.12% | -4.12% | 23.23% |
+| SOL-USD | DOT-USD | 2025-12-21 | 76.28% | BEAR | BEAR | SAME_BTC_AND_ASSET | MIXED | -2.50% | -6.20% | 7.56% | -4.04% | -6.20% | 11.28% |
 
 ## Interpretation rules
 

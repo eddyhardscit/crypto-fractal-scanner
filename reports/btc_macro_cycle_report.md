@@ -1,6 +1,6 @@
 # Bitcoin Macro Cycle — Power Law e Four-Year Spiral
 
-Generato: 2026-07-31 05:15 UTC
+Generato: 2026-08-01 05:15 UTC
 
 Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche, non autorizza leva e pesa **0** nel Global Confluence.
 
@@ -8,25 +8,25 @@ Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche
 
 | Voce | Valore | Lettura |
 | --- | --- | --- |
-| Prezzo BTC | 64.349 $ | prezzo corrente |
-| Power Law centrale | 123.091 $ | deviazione -47,72% |
-| Banda p10-p90 | 76.498 $ / 308.959 $ | SOTTO LA BANDA P10 |
-| Percentile residuo | 1,71% | posizione storica nel corridoio |
-| Esponente β | 5,8325 | R² log-log 91,97% |
-| Stabilità β | BASSA | range 1,3101 cambiando finestra |
-| Ultimo halving | 2024-04-19 | 833 giorni fa |
-| Fase ciclo | 57,02% | percentuale indicativa del ciclo quadriennale |
+| Prezzo BTC | 63.059 $ | prezzo corrente |
+| Power Law centrale | 123.103 $ | deviazione -48,78% |
+| Banda p10-p90 | 76.472 $ / 309.096 $ | SOTTO LA BANDA P10 |
+| Percentile residuo | 0,51% | posizione storica nel corridoio |
+| Esponente β | 5,8316 | R² log-log 91,97% |
+| Stabilità β | BASSA | range 1,3104 cambiando finestra |
+| Ultimo halving | 2024-04-19 | 834 giorni fa |
+| Fase ciclo | 57,09% | percentuale indicativa del ciclo quadriennale |
 | Peso Global | 0 | CONTESTO MACRO / DIAGNOSTICO |
 
 La Power Law viene trattata come regressione empirica, non come legge fisica. Il report mostra quanto cambia l'esponente usando finestre iniziali diverse e la confronta con il benchmark ingenuo 'prezzo invariato'.
 
 ## Bitcoin Power Law
 
-- Campione: 2014-09-17 → 2026-07-31 (4335 osservazioni)
-- Formula stimata: prezzo ≈ exp(-39.2914) × giorni^5.8325
-- Prezzo centrale oggi: **123.091 $**
-- Posizione corrente: **SOTTO LA BANDA P10**, percentile 1,71%
-- Scarto dal centro: **-47,72%**
+- Campione: 2014-09-17 → 2026-08-01 (4336 osservazioni)
+- Formula stimata: prezzo ≈ exp(-39.2846) × giorni^5.8316
+- Prezzo centrale oggi: **123.103 $**
+- Posizione corrente: **SOTTO LA BANDA P10**, percentile 0,51%
+- Scarto dal centro: **-48,78%**
 
 ![Bitcoin Power Law](btc_power_law_chart.png)
 
@@ -36,11 +36,11 @@ La Power Law viene trattata come regressione empirica, non come legge fisica. Il
 
 | Inizio campione | β | R² log-log |
 | --- | --- | --- |
-| 2014 | 5,8325 | 91,97% |
-| 2015 | 5,9180 | 91,53% |
-| 2016 | 5,6063 | 87,77% |
-| 2017 | 4,8762 | 82,88% |
-| 2018 | 4,6079 | 78,34% |
+| 2014 | 5,8316 | 91,97% |
+| 2015 | 5,9171 | 91,53% |
+| 2016 | 5,6053 | 87,77% |
+| 2017 | 4,8751 | 82,87% |
+| 2018 | 4,6067 | 78,34% |
 
 ### Backtest walk-forward contro prezzo invariato
 
@@ -61,9 +61,9 @@ Nel grafico l'angolo rappresenta il tempo dentro una finestra di quattro anni e 
 
 | Ciclo | Data analoga | +30g | +90g | +180g | +365g |
 | --- | --- | --- | --- | --- | --- |
-| 2012-11-28 → 2016-07-09 | 2014-12-20 | -34,88% | -20,67% | -24,53% | +34,16% |
-| 2016-07-09 → 2020-05-11 | 2018-09-16 | +1,21% | -50,33% | -39,22% | +57,69% |
-| 2020-05-11 → 2024-04-19 | 2022-08-09 | -16,55% | -11,06% | -0,90% | +27,62% |
+| 2012-11-28 → 2016-07-09 | 2014-12-21 | -34,14% | -18,96% | -23,76% | +36,71% |
+| 2016-07-09 → 2020-05-11 | 2018-09-17 | +4,19% | -48,21% | -35,54% | +63,05% |
+| 2020-05-11 → 2024-04-19 | 2022-08-10 | -10,72% | -22,58% | -4,96% | +22,89% |
 
 Campione molto piccolo: questi rendimenti sono contesto di ciclo, non probabilità affidabili.
 
@@ -73,8 +73,8 @@ Campione molto piccolo: questi rendimenti sono contesto di ciclo, non probabilit
 
 | Asset | Coppia | Forza vs BTC | Score raw | Candidato | 30g | Peso Global |
 | --- | --- | --- | --- | --- | --- | --- |
-| SOL | SOL/BTC | SOTTOPERFORMA BTC | -6 | -1 | -8.630573962749688 | 0 |
-| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -6 | -1 | -11.442907806766867 | 0 |
+| SOL | SOL/BTC | SOTTOPERFORMA BTC | -5 | -1 | -10.201399400483657 | 0 |
+| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -6 | -1 | -7.595930782393423 | 0 |
 
 ## Tracker live Power Law
 

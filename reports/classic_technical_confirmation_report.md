@@ -1,6 +1,6 @@
 # Classic technical confirmation report
 
-Generato: 2026-07-31 05:14 UTC
+Generato: 2026-08-01 05:14 UTC
 
 Questo modulo controlla se il setup è confermato secondo analisi tecnica classica. Non sostituisce lo scanner frattale: serve come filtro di conferma.
 
@@ -20,115 +20,43 @@ Cosa controlla:
 
 | Asset | Prezzo | Score | Verdetto | Stage | Struttura | Wyckoff | Volatilità locale | Azione |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 64.330 $ | -2 | DEBOLE / NON CONFERMATO | STAGE 4 / MARKDOWN | MASSIMI E MINIMI CRESCENTI | ACCUMULO POSSIBILE / RANGE BASSO | BASSO | RIDUCI RISCHIO / NO LONG A LEVA |
-| SOL | 74,00 $ | -8 | RIBASSISTA / FRAGILE | STAGE 4 / MARKDOWN | COMPRESSIONE / TRIANGOLO POSSIBILE | ACCUMULO POSSIBILE / RANGE BASSO | BASSO | NON INSEGUIRE / TAKE PROFIT SU SPIKE |
-| DOGE | 0.07005 $ | -8 | RIBASSISTA / FRAGILE | STAGE 4 / MARKDOWN | VOLATILITÀ IN ESPANSIONE | MARKDOWN / DEBOLEZZA | BASSO | NO LONG / SHORT SOLO DOPO SPIKE E REJECTION |
+| BTC | 63.065 $ | -5 | RIBASSISTA / FRAGILE | STAGE 4 / MARKDOWN | MASSIMI E MINIMI CRESCENTI | MARKDOWN / DEBOLEZZA | BASSO | RIDUCI RISCHIO / NO LONG A LEVA |
+| SOL | 73,12 $ | -9 | RIBASSISTA / FRAGILE | STAGE 4 / MARKDOWN | MASSIMI E MINIMI DECRESCENTI | MARKDOWN / DEBOLEZZA | BASSO | NON INSEGUIRE / TAKE PROFIT SU SPIKE |
+| DOGE | 0.07009 $ | -5 | RIBASSISTA / FRAGILE | STAGE 4 / MARKDOWN | VOLATILITÀ IN ESPANSIONE | SPRING / TEST POSSIBILE | BASSO | NO LONG / SHORT SOLO DOPO SPIKE E REJECTION |
 
 ## Punteggi per area
 
 | Asset | Trend | Struttura | Momentum | Volume | Prezzo | Candela | Wyckoff | Totale |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | -4 | +2 | -1 | +1 | 0 | 0 | 0 | -2 |
-| SOL | -4 | 0 | -2 | -2 | 0 | 0 | 0 | -8 |
-| DOGE | -4 | 0 | 0 | -2 | 0 | 0 | -2 | -8 |
+| BTC | -4 | +2 | -3 | +2 | 0 | 0 | -2 | -5 |
+| SOL | -4 | -2 | -1 | 0 | 0 | 0 | -2 | -9 |
+| DOGE | -4 | 0 | -1 | -1 | 0 | 0 | +1 | -5 |
 
 ## Livelli tecnici
 
 | Asset | Supporto | Resistenza | Breakout 60g | Breakdown 60g | ATR14 | Rendimento 30g | Rendimento 90g |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 63.062 $ | 64.598 $ | 76.014 $ | 57.748 $ | 2,26% | 9,89% | -17,69% |
-| SOL | 73,47 $ | 74,89 $ | 84,56 $ | 60,41 $ | 2,73% | 0,69% | -11,58% |
-| DOGE | 0.06961 $ | 0.07377 $ | 0.10285 $ | 0.06829 $ | 3,02% | -2,69% | -35,37% |
+| BTC | 62.715 $ | 64.186 $ | 74.460 $ | 57.748 $ | 2,33% | 5,09% | -19,83% |
+| SOL | 72,38 $ | 74,89 $ | 83,81 $ | 60,41 $ | 2,74% | -5,52% | -13,25% |
+| DOGE | 0.06961 $ | 0.07377 $ | 0.10161 $ | 0.06829 $ | 2,97% | -2,88% | -35,36% |
 
 ## Lettura dettagliata
 
 ### BTC
 
-- Prezzo: **64.330 $**
-- Score classico: **-2 / 12**
-- Verdetto: **DEBOLE / NON CONFERMATO**
-- Azione coerente: **RIDUCI RISCHIO / NO LONG A LEVA**
-- Volatilità tecnica locale: **BASSO** — ATR14 2,26%; distanza supporto 2,04%; distanza resistenza 0,38%
-
-Dettaglio:
-
-- Trend: **-4** — prezzo sotto MA200 daily; MA50 daily in discesa; MA200 daily in discesa; STAGE 4 / MARKDOWN
-- Stage weekly: **STAGE 4 / MARKDOWN** — Prezzo sotto MA30 weekly con MA30 in discesa.
-- Struttura: **+2** — MASSIMI E MINIMI CRESCENTI
-- Momentum: **-1** — RSI sano 50.8; MACD sotto signal; istogramma MACD in peggioramento
-- Volume: **+1** — OBV sopra media; CMF neutrale -0.04; volume ratio 1.12
-- Conferma prezzo: **0** — Nessuna rottura confermata di prezzo.
-- Candela: **0** — Nessuna candela forte
-- Wyckoff: **0** — ACCUMULO POSSIBILE / RANGE BASSO. Prezzo nella metà bassa del range, ma senza spring confermato.
-
-Indicatori principali:
-
-| Indicatore | Valore |
-| --- | --- |
-| RSI14 | 50.78 |
-| MACD histogram | -105.70136 |
-| CMF20 | -0.041 |
-| Volume ratio 20 | 1.12 |
-| MA20 | 64.457 $ |
-| MA50 | 63.393 $ |
-| MA100 | 69.200 $ |
-| MA200 | 71.595 $ |
-| Pendenza MA50 20g | -3,02% |
-| Pendenza MA200 60g | -9,97% |
-| Bollinger width | 5,89% |
-| Bollinger position | 0.47 |
-
-### SOL
-
-- Prezzo: **74,00 $**
-- Score classico: **-8 / 12**
+- Prezzo: **63.065 $**
+- Score classico: **-5 / 12**
 - Verdetto: **RIBASSISTA / FRAGILE**
-- Azione coerente: **NON INSEGUIRE / TAKE PROFIT SU SPIKE**
-- Volatilità tecnica locale: **BASSO** — ATR14 2,73%; distanza supporto 0,76%; distanza resistenza 1,16%
+- Azione coerente: **RIDUCI RISCHIO / NO LONG A LEVA**
+- Volatilità tecnica locale: **BASSO** — ATR14 2,33%; distanza supporto 0,55%; distanza resistenza 1,79%
 
 Dettaglio:
 
 - Trend: **-4** — prezzo sotto MA200 daily; MA200 daily in discesa; STAGE 4 / MARKDOWN
 - Stage weekly: **STAGE 4 / MARKDOWN** — Prezzo sotto MA30 weekly con MA30 in discesa.
-- Struttura: **0** — COMPRESSIONE / TRIANGOLO POSSIBILE
-- Momentum: **-2** — RSI neutrale 44.9; MACD sotto signal; istogramma MACD in peggioramento
-- Volume: **-2** — OBV sotto media; CMF negativo -0.07; volume ratio 0.95
-- Conferma prezzo: **0** — Nessuna rottura confermata di prezzo.
-- Candela: **0** — Nessuna candela forte
-- Wyckoff: **0** — ACCUMULO POSSIBILE / RANGE BASSO. Prezzo nella metà bassa del range, ma senza spring confermato.
-
-Indicatori principali:
-
-| Indicatore | Valore |
-| --- | --- |
-| RSI14 | 44.93 |
-| MACD histogram | -0.40512 |
-| CMF20 | -0.066 |
-| Volume ratio 20 | 0.95 |
-| MA20 | 75,79 $ |
-| MA50 | 74,65 $ |
-| MA100 | 78,77 $ |
-| MA200 | 86,78 $ |
-| Pendenza MA50 20g | -0,04% |
-| Pendenza MA200 60g | -16,92% |
-| Bollinger width | 8,36% |
-| Bollinger position | 0.22 |
-
-### DOGE
-
-- Prezzo: **0.07005 $**
-- Score classico: **-8 / 12**
-- Verdetto: **RIBASSISTA / FRAGILE**
-- Azione coerente: **NO LONG / SHORT SOLO DOPO SPIKE E REJECTION**
-- Volatilità tecnica locale: **BASSO** — ATR14 3,02%; distanza supporto 0,65%; distanza resistenza 5,29%
-
-Dettaglio:
-
-- Trend: **-4** — prezzo sotto MA200 daily; medie daily allineate ribassiste; MA50 daily in discesa; MA200 daily in discesa; STAGE 4 / MARKDOWN
-- Stage weekly: **STAGE 4 / MARKDOWN** — Prezzo sotto MA30 weekly con MA30 in discesa.
-- Struttura: **0** — VOLATILITÀ IN ESPANSIONE
-- Momentum: **0** — RSI neutrale 39.7; MACD sopra signal; istogramma MACD in peggioramento
-- Volume: **-2** — OBV sotto media; CMF negativo -0.09; volume ratio 0.92
+- Struttura: **+2** — MASSIMI E MINIMI CRESCENTI
+- Momentum: **-3** — RSI neutrale 45.0; RSI in peggioramento; MACD sotto signal; istogramma MACD in peggioramento
+- Volume: **+2** — OBV sopra media; CMF positivo 0.10; volume ratio 1.11
 - Conferma prezzo: **0** — Nessuna rottura confermata di prezzo.
 - Candela: **0** — Nessuna candela forte
 - Wyckoff: **-2** — MARKDOWN / DEBOLEZZA. Prezzo basso nel range e sotto medie principali.
@@ -137,18 +65,90 @@ Indicatori principali:
 
 | Indicatore | Valore |
 | --- | --- |
-| RSI14 | 39.74 |
-| MACD histogram | 0.00017 |
-| CMF20 | -0.092 |
-| Volume ratio 20 | 0.92 |
-| MA20 | 0.07196 $ |
-| MA50 | 0.07622 $ |
-| MA100 | 0.08894 $ |
-| MA200 | 0.09534 $ |
-| Pendenza MA50 20g | -10,51% |
-| Pendenza MA200 60g | -16,47% |
-| Bollinger width | 8,63% |
-| Bollinger position | 0.19 |
+| RSI14 | 44.95 |
+| MACD histogram | -165.11723 |
+| CMF20 | 0.103 |
+| Volume ratio 20 | 1.11 |
+| MA20 | 64.438 $ |
+| MA50 | 63.390 $ |
+| MA100 | 69.052 $ |
+| MA200 | 71.456 $ |
+| Pendenza MA50 20g | -2,68% |
+| Pendenza MA200 60g | -9,98% |
+| Bollinger width | 6,28% |
+| Bollinger position | 0.15 |
+
+### SOL
+
+- Prezzo: **73,12 $**
+- Score classico: **-9 / 12**
+- Verdetto: **RIBASSISTA / FRAGILE**
+- Azione coerente: **NON INSEGUIRE / TAKE PROFIT SU SPIKE**
+- Volatilità tecnica locale: **BASSO** — ATR14 2,74%; distanza supporto 1,01%; distanza resistenza 2,44%
+
+Dettaglio:
+
+- Trend: **-4** — prezzo sotto MA200 daily; MA200 daily in discesa; STAGE 4 / MARKDOWN
+- Stage weekly: **STAGE 4 / MARKDOWN** — Prezzo sotto MA30 weekly con MA30 in discesa.
+- Struttura: **-2** — MASSIMI E MINIMI DECRESCENTI
+- Momentum: **-1** — RSI neutrale 42.7; RSI in peggioramento; MACD sotto signal; istogramma MACD in miglioramento
+- Volume: **0** — OBV sotto media; CMF positivo 0.07; volume ratio 0.88
+- Conferma prezzo: **0** — Nessuna rottura confermata di prezzo.
+- Candela: **0** — Nessuna candela forte
+- Wyckoff: **-2** — MARKDOWN / DEBOLEZZA. Prezzo basso nel range e sotto medie principali.
+
+Indicatori principali:
+
+| Indicatore | Valore |
+| --- | --- |
+| RSI14 | 42.68 |
+| MACD histogram | -0.40080 |
+| CMF20 | 0.071 |
+| Volume ratio 20 | 0.88 |
+| MA20 | 75,62 $ |
+| MA50 | 74,79 $ |
+| MA100 | 78,64 $ |
+| MA200 | 86,45 $ |
+| Pendenza MA50 20g | +0,34% |
+| Pendenza MA200 60g | -16,98% |
+| Bollinger width | 8,85% |
+| Bollinger position | 0.11 |
+
+### DOGE
+
+- Prezzo: **0.07009 $**
+- Score classico: **-5 / 12**
+- Verdetto: **RIBASSISTA / FRAGILE**
+- Azione coerente: **NO LONG / SHORT SOLO DOPO SPIKE E REJECTION**
+- Volatilità tecnica locale: **BASSO** — ATR14 2,97%; distanza supporto 0,70%; distanza resistenza 5,23%
+
+Dettaglio:
+
+- Trend: **-4** — prezzo sotto MA200 daily; medie daily allineate ribassiste; MA50 daily in discesa; MA200 daily in discesa; STAGE 4 / MARKDOWN
+- Stage weekly: **STAGE 4 / MARKDOWN** — Prezzo sotto MA30 weekly con MA30 in discesa.
+- Struttura: **0** — VOLATILITÀ IN ESPANSIONE
+- Momentum: **-1** — RSI neutrale 40.3; RSI in peggioramento; MACD sopra signal; istogramma MACD in peggioramento
+- Volume: **-1** — OBV sotto media; CMF neutrale 0.03; volume ratio 0.96
+- Conferma prezzo: **0** — Nessuna rottura confermata di prezzo.
+- Candela: **0** — Nessuna candela forte
+- Wyckoff: **+1** — SPRING / TEST POSSIBILE. Ha bucato un minimo importante e ha recuperato: possibile spring, da confermare.
+
+Indicatori principali:
+
+| Indicatore | Valore |
+| --- | --- |
+| RSI14 | 40.33 |
+| MACD histogram | 0.00018 |
+| CMF20 | 0.030 |
+| Volume ratio 20 | 0.96 |
+| MA20 | 0.07182 $ |
+| MA50 | 0.07591 $ |
+| MA100 | 0.08869 $ |
+| MA200 | 0.09501 $ |
+| Pendenza MA50 20g | -10,26% |
+| Pendenza MA200 60g | -16,53% |
+| Bollinger width | 8,60% |
+| Bollinger position | 0.21 |
 
 ## Come leggere lo score
 
