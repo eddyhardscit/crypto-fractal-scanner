@@ -1,7 +1,7 @@
 # Storico frattale SOL/BTC
 
-Generato: **2026-08-02 07:15:58 CEST**  
-UTC: **2026-08-02 05:15:58 UTC**
+Generato: **2026-08-03 07:16:30 CEST**  
+UTC: **2026-08-03 05:16:30 UTC**
 
 Questo file salva giorno per giorno la lettura del frattale **BTC novembre 2022 vs SOL giugno 2026**.
 
@@ -14,27 +14,27 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | Voce | Valore |
 | --- | --- |
 | Prima rilevazione salvata | 2026-07-08 |
-| Ultima rilevazione salvata | 2026-08-02 |
-| Righe salvate | 25 |
+| Ultima rilevazione salvata | 2026-08-03 |
+| Righe salvate | 26 |
 
 ## Ultima lettura
 
 | Voce | Valore |
 | --- | --- |
-| Data lettura | 2026-08-02 |
-| Prezzo SOL | 73,42 $ |
-| BTC scalato | 83,36 $ |
-| Gap SOL vs BTC-scalato | -11,92% |
-| Somiglianza totale | +58,00% |
+| Data lettura | 2026-08-03 |
+| Prezzo SOL | 72,93 $ |
+| BTC scalato | 81,50 $ |
+| Gap SOL vs BTC-scalato | -10,51% |
+| Somiglianza totale | +56,90% |
 | Fase | FRATTALE SOLO DI CONTESTO |
 | Tracking | STRUTTURA STABILE |
-| Errore medio da inizio programma | +15,16% |
+| Errore medio da inizio programma | +15,10% |
 | Errore ultimo giorno | n/a |
-| Conferma 1 | 82,49 $ |
-| Conferma 2 | 95,15 $ |
-| Invalidazione soft | 69,75 $ |
+| Conferma 1 | 83,81 $ |
+| Conferma 2 | 98,84 $ |
+| Invalidazione soft | 69,65 $ |
 | Invalidazione forte | 62,19 $ |
-| Target ciclo base da oggi | 432,83 $ |
+| Target ciclo base da oggi | 439,77 $ |
 
 ## Storico compatto giorno per giorno
 
@@ -63,6 +63,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | 2026-07-31 | 74,00 $ | 82,26 $ | -10,04% | +59,58% | FRATTALE SOLO DI CONTESTO | STRUTTURA STABILE | +15,34% | n/a | 78,75 $ | 88,79 $ | 70,30 $ | 84,26 $ | 442,11 $ |
 | 2026-08-01 | 73,12 $ | 83,39 $ | -12,32% | +59,64% | FRATTALE SOLO DI CONTESTO | STRUTTURA STABILE | +15,18% | n/a | 83,96 $ | 94,72 $ | 69,65 $ | 82,12 $ | 430,90 $ |
 | 2026-08-02 | 73,42 $ | 83,36 $ | -11,92% | +58,00% | FRATTALE SOLO DI CONTESTO | STRUTTURA STABILE | +15,16% | n/a | 81,96 $ | 93,56 $ | 69,75 $ | 82,49 $ | 432,83 $ |
+| 2026-08-03 | 72,93 $ | 81,50 $ | -10,51% | +56,90% | FRATTALE SOLO DI CONTESTO | STRUTTURA STABILE | +15,10% | n/a | 86,60 $ | 98,84 $ | 69,65 $ | 83,81 $ | 439,77 $ |
 | nan | 77,58 $ | 70,55 $ | +9,96% | +73,80% | nan | nan | +21,83% | +9,96% | 105,65 $ | 111,43 $ | 73,73 $ | 105,65 $ | 574,68 $ |
 | nan | 77,58 $ | 70,55 $ | +9,96% | +73,79% | nan | nan | +21,83% | +9,96% | 105,70 $ | 111,48 $ | 73,77 $ | 105,70 $ | 574,97 $ |
 
@@ -93,6 +94,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | 2026-07-31 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +69,33% | +15,34% | STACCATO / NON ADERENTE | +78,31% | +10,85% | DEVIAZIONE MODERATA |
 | 2026-08-01 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +69,63% | +15,18% | STACCATO / NON ADERENTE | +78,31% | +10,84% | DEVIAZIONE MODERATA |
 | 2026-08-02 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +69,69% | +15,16% | STACCATO / NON ADERENTE | +78,19% | +10,91% | DEVIAZIONE MODERATA |
+| 2026-08-03 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +69,79% | +15,10% | STACCATO / NON ADERENTE | +78,10% | +10,95% | DEVIAZIONE MODERATA |
 | nan | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +56,35% | +21,83% | STACCATO / MOLTO IN ANTICIPO | +81,44% | +9,28% | ABBASTANZA ALLINEATO |
 | nan | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +56,33% | +21,83% | STACCATO / MOLTO IN ANTICIPO | +81,44% | +9,28% | ABBASTANZA ALLINEATO |
 
@@ -123,6 +125,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | 2026-07-31 | 80,52 $ | 84,26 $ | 78,75 $ | 88,79 $ | 107,45 $ | 96,37 $ | 73,32 $ | 84,26 $ | 442,11 $ |
 | 2026-08-01 | 79,22 $ | 78,89 $ | 83,96 $ | 94,72 $ | 104,71 $ | 93,38 $ | 71,46 $ | 83,96 $ | 430,90 $ |
 | 2026-08-02 | 78,54 $ | 80,28 $ | 81,96 $ | 93,56 $ | 102,16 $ | 95,06 $ | 71,78 $ | 84,34 $ | 432,83 $ |
+| 2026-08-03 | 81,49 $ | 83,63 $ | 86,60 $ | 98,84 $ | 107,15 $ | 94,59 $ | 72,93 $ | 86,60 $ | 439,77 $ |
 | nan | 76,23 $ | 78,10 $ | 105,65 $ | 111,43 $ | 126,65 $ | 127,10 $ | 76,23 $ | 105,65 $ | 574,68 $ |
 | nan | 76,27 $ | 78,14 $ | 105,70 $ | 111,48 $ | 126,71 $ | 127,17 $ | 76,27 $ | 105,70 $ | 574,97 $ |
 
