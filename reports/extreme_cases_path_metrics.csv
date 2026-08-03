@@ -1,1 +1,2 @@
-
+asset,direction,trigger_pct,cases_used,median_spike_before_low_pct,mean_spike_before_low_pct,p75_spike_before_low_pct,median_spike_day,median_low_day,median_dump_from_peak_pct,spike_5_rate,spike_10_rate,spike_15_rate,immediate_drop_rate
+SOL,POSITIVO / RIALZISTA,80.0,32,0.0,1.210034483450017,1.7597456009949386,0.0,1.0,-2.799017533052833,6.25,0.0,0.0,71.875

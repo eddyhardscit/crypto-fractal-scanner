@@ -1,4 +1,4 @@
 asset,snapshots_saved,checked_30d,pending,calibration_stage,stage_note,normal_drawdown_hit_rate_pct,bad_drawdown_hit_rate_pct,very_bad_drawdown_hit_rate_pct,normal_max_gain_hit_rate_pct,good_max_gain_hit_rate_pct,very_good_max_gain_hit_rate_pct,avg_actual_return_30d_pct,avg_actual_drawdown_pct,avg_actual_max_gain_pct,risk_calibration_bias,can_influence_decision,can_strongly_influence_decision
-BTC,25,0,25,RACCOLTA DATI,non applicare correzioni,,,,,,,,,,n/a,False,False
-SOL,25,0,25,RACCOLTA DATI,non applicare correzioni,,,,,,,,,,n/a,False,False
-DOGE,25,0,25,RACCOLTA DATI,non applicare correzioni,,,,,,,,,,n/a,False,False
+BTC,26,0,26,RACCOLTA DATI,non applicare correzioni,,,,,,,,,,n/a,False,False
+SOL,26,0,26,RACCOLTA DATI,non applicare correzioni,,,,,,,,,,n/a,False,False
+DOGE,26,0,26,RACCOLTA DATI,non applicare correzioni,,,,,,,,,,n/a,False,False
