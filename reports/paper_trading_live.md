@@ -1,6 +1,6 @@
 # Paper trading automatico KuCoin
 
-Generato: 2026-08-04T12:27:01+00:00
+Generato: 2026-08-04T12:45:54+00:00
 
 ## Configurazione attiva
 
@@ -10,45 +10,45 @@ Generato: 2026-08-04T12:27:01+00:00
 - Compounding: **ATTIVO**
 - Reinvestimento dei profitti: **100,00%**
 - Politica target: **solo monitoraggio; il bot non aumenta il rischio per inseguirlo**
-- Snapshot prezzi usato: **2026-08-04T12:23:29+00:00**; stato dati: **FRESH**; età: **0,0 min**; conversione EUR/USDT: **CONFIG_FALLBACK**
+- Snapshot prezzi usato: **2026-08-04T12:38:38+00:00**; stato dati: **FRESH**; età: **0,0 min**; conversione EUR/USDT: **CONFIG_FALLBACK**
 - Dashboard intraday: [apri la pagina live](https://github.com/eddyhardscit/crypto-fractal-scanner/blob/paper-trading-live/reports/paper_trading_live.md)
 
 ## Freschezza dati di mercato
 
 | Stato | Fonte | Snapshot mercato | Controllato | Età | Limite | Nuove entrate |
 | --- | --- | --- | --- | --- | --- | --- |
-| FRESH | KUCOIN_PUBLIC_API | 2026-08-04T12:23:29+00:00 | 2026-08-04T12:23:29+00:00 | 0,0 min | 25,0 min | ABILITATE |
+| FRESH | KUCOIN_PUBLIC_API | 2026-08-04T12:38:38+00:00 | 2026-08-04T12:38:38+00:00 | 0,0 min | 25,0 min | ABILITATE |
 
 | TF | Asset con dati | Candela più recente | Candela più vecchia | Ritardo dopo chiusura | Tolleranza | Stato |
 | --- | --- | --- | --- | --- | --- | --- |
-| 15m | 12 | 2026-08-04T12:00:00+00:00 | 2026-08-04T12:00:00+00:00 | 8,6 min | 25,0 min | OK |
-| 60m | 12 | 2026-08-04T11:00:00+00:00 | 2026-08-04T11:00:00+00:00 | 23,6 min | 45,0 min | OK |
-| 240m | 12 | 2026-08-04T08:00:00+00:00 | 2026-08-04T08:00:00+00:00 | 23,6 min | 1,00 h | OK |
+| 15m | 12 | 2026-08-04T12:15:00+00:00 | 2026-08-04T12:15:00+00:00 | 9,0 min | 25,0 min | OK |
+| 60m | 12 | 2026-08-04T11:00:00+00:00 | 2026-08-04T11:00:00+00:00 | 39,0 min | 45,0 min | OK |
+| 240m | 12 | 2026-08-04T08:00:00+00:00 | 2026-08-04T08:00:00+00:00 | 39,0 min | 1,00 h | OK |
 
 ## Segnali quasi entrati / motivi di esclusione
 
 | Portafoglio | Asset | TF | Lato | Score | Soglia | Manca | Stato | Ritardo chiusura | RSI D/W (peso 0) | Motivo |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Principale 4H | ADA | 240m | LONG | 7,75 | 6,00 | 0,00 | RISK_GATE | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro rischio/esecuzione: numero massimo posizioni. |
-| Bilanciata 1H V2 | SPCX | 60m | LONG | 9,44 | 5,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Rapida 1H V2 | SPCX | 60m | LONG | 9,44 | 5,00 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Bilanciata 1H V2 | SNDK | 60m | LONG | 9,25 | 5,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Rapida 1H V2 | SNDK | 60m | LONG | 9,25 | 5,00 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Scalp RSI Short 75 · €10 · 15x | SOXL | 15m | SHORT | 8,00 | 8,00 | 0,00 | STRATEGY_FILTER | 8,7 min | D: n/a | W: n/a | peso 0 | Filtro scalp RSI estremo: servono RSI estremo, shock, volume e conferma della candela successiva; manca: volume ≥2.00x. RSI 77.9→69.8; volume x0.95; shock 2.73 ATR. |
-| Scalp RSI Short 75 · €50 · 15x | SOXL | 15m | SHORT | 8,00 | 8,00 | 0,00 | STRATEGY_FILTER | 8,7 min | D: n/a | W: n/a | peso 0 | Filtro scalp RSI estremo: servono RSI estremo, shock, volume e conferma della candela successiva; manca: volume ≥2.00x. RSI 77.9→69.8; volume x0.95; shock 2.73 ATR. |
-| Scalp RSI Short 75 · prudente · 5x | SOXL | 15m | SHORT | 8,00 | 8,00 | 0,00 | STRATEGY_FILTER | 8,7 min | D: n/a | W: n/a | peso 0 | Filtro scalp RSI estremo: servono RSI estremo, shock, volume e conferma della candela successiva; manca: volume ≥2.00x. RSI 77.9→69.8; volume x0.95; shock 2.73 ATR. |
-| Bilanciata 1H V2 | SOXL | 60m | LONG | 7,75 | 5,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Rapida 1H V2 | SOXL | 60m | LONG | 7,75 | 5,00 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Bilanciata 1H V2 | HYPE | 60m | LONG | 7,01 | 5,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Rapida 1H V2 | HYPE | 60m | LONG | 7,01 | 5,00 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Rapida 1H V1 — madre | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
-| Rapida V1 — no HIGH + score <7,5 | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
-| Rapida V1 — Long + BTC 1–3 + score <7,5 | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
-| Rapida V1 — senza PEPE | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
-| Rapida V1 — target pieno 2R | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
-| Rapida 1H V2 | ZEC | 60m | LONG | 5,16 | 5,00 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
-| Forza relativa 1H V1 | ZEC | 60m | LONG | 5,16 | 4,00 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro forza relativa: serve almeno ±2,0% contro BTC; valore=+0.81%. |
-| FAST NoHigh <7,5 · SHORT only | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 23,6 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
+| Principale 4H | ADA | 240m | LONG | 7,75 | 6,00 | 0,00 | RISK_GATE | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro rischio/esecuzione: numero massimo posizioni. |
+| Scalp RSI Short 75 · €10 · 15x | HYPE | 15m | SHORT | 10,00 | 8,00 | 0,00 | OPENED | 9,0 min | D: n/a | W: n/a | peso 0 | Posizione virtuale aperta in questa esecuzione. |
+| Scalp RSI Short 75 · €50 · 15x | HYPE | 15m | SHORT | 10,00 | 8,00 | 0,00 | OPENED | 9,0 min | D: n/a | W: n/a | peso 0 | Posizione virtuale aperta in questa esecuzione. |
+| Scalp RSI Short 75 · prudente · 5x | HYPE | 15m | SHORT | 10,00 | 8,00 | 0,00 | OPENED | 9,0 min | D: n/a | W: n/a | peso 0 | Posizione virtuale aperta in questa esecuzione. |
+| Bilanciata 1H V2 | SPCX | 60m | LONG | 9,44 | 5,50 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Rapida 1H V2 | SPCX | 60m | LONG | 9,44 | 5,00 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Bilanciata 1H V2 | SNDK | 60m | LONG | 9,25 | 5,50 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Rapida 1H V2 | SNDK | 60m | LONG | 9,25 | 5,00 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Scalp RSI Short 80 · €10 · 15x | HYPE | 15m | SHORT | 8,00 | 8,00 | 0,00 | STRATEGY_FILTER | 9,0 min | D: n/a | W: n/a | peso 0 | Filtro scalp RSI estremo: servono RSI estremo, shock, volume e conferma della candela successiva; manca: RSI ≥80.0. RSI 75.4→66.2; volume x3.10; shock 1.69 ATR. |
+| Scalp RSI Short 80 · €50 · 15x | HYPE | 15m | SHORT | 8,00 | 8,00 | 0,00 | STRATEGY_FILTER | 9,0 min | D: n/a | W: n/a | peso 0 | Filtro scalp RSI estremo: servono RSI estremo, shock, volume e conferma della candela successiva; manca: RSI ≥80.0. RSI 75.4→66.2; volume x3.10; shock 1.69 ATR. |
+| Scalp RSI Short 80 · prudente · 5x | HYPE | 15m | SHORT | 8,00 | 8,00 | 0,00 | STRATEGY_FILTER | 9,0 min | D: n/a | W: n/a | peso 0 | Filtro scalp RSI estremo: servono RSI estremo, shock, volume e conferma della candela successiva; manca: RSI ≥80.0. RSI 75.4→66.2; volume x3.10; shock 1.69 ATR. |
+| Bilanciata 1H V2 | SOXL | 60m | LONG | 7,75 | 5,50 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Rapida 1H V2 | SOXL | 60m | LONG | 7,75 | 5,00 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Bilanciata 1H V2 | HYPE | 60m | LONG | 7,01 | 5,50 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Rapida 1H V2 | HYPE | 60m | LONG | 7,01 | 5,00 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro V2 non superato: regime, EMA, ritorni e RSI; per Rapida V2 servono anche breakout reale, volume e ADX. |
+| Rapida 1H V1 — madre | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
+| Rapida V1 — no HIGH + score <7,5 | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
+| Rapida V1 — Long + BTC 1–3 + score <7,5 | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
+| Rapida V1 — senza PEPE | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
+| Rapida V1 — target pieno 2R | ZEC | 60m | LONG | 5,16 | 4,50 | 0,00 | STRATEGY_FILTER | 39,0 min | D: n/a | W: n/a | peso 0 | Filtro momentum: serve breakout UP oppure movimento breve ≥1,5%; breakout=NONE, movimento=+0.00%. |
 
 **Manca** indica quanti punti servivano per raggiungere la soglia. `STRATEGY_FILTER` significa che lo score bastava, ma mancava breakout, momentum o forza relativa. `ALREADY_PROCESSED` significa che la stessa candela era già stata esaminata.
 
@@ -56,7 +56,7 @@ Generato: 2026-08-04T12:27:01+00:00
 
 | Equity | Rendimento | P&L mese | Target | Progresso | Aperte | Chiuse | Win rate | PF | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| €9.724,61 | -2,75% | €-23,74 | €3.000,00 | -0,79% | 3 | 30 | 36,67% | 0,74 | 6,36% |
+| €9.723,36 | -2,77% | €-24,98 | €3.000,00 | -0,83% | 3 | 30 | 36,67% | 0,74 | 6,36% |
 
 ## Stato del campione statistico
 
@@ -74,7 +74,7 @@ Generato: 2026-08-04T12:27:01+00:00
 
 | Tipo | Portafoglio | Posizioni | Equity | Margine impegnato | Esposizione con leva | Rischio agli stop | P&L aperto |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| PRINCIPALE | Principale 4H | 3 | €9.724,61 | €749,36 | €2.248,08 | €98,74 | €-5,90 |
+| PRINCIPALE | Principale 4H | 3 | €9.723,36 | €749,36 | €2.248,08 | €98,74 | €-7,14 |
 | TEST | Benchmark Donchian breakout 1H | 2 | €10.563,40 | €267,67 | €535,34 | €54,19 | €0,00 |
 | TEST | Rapida score 6–7,5 — Cost Aware | 0 | €10.506,14 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Rapida V1 — no HIGH + score <7,5 | 0 | €10.492,11 | €0,00 | €0,00 | €0,00 | €0,00 |
@@ -97,7 +97,7 @@ Generato: 2026-08-04T12:27:01+00:00
 | TEST | Rapida score 6–7,5 — Range Only | 0 | €10.218,07 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Rapida V3 — score <7,5 | 0 | €10.217,21 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Rapida score 6–7,5 — senza Trend Up | 0 | €10.206,76 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | MAIN — Side × Regime Guard | 2 | €10.206,05 | €641,89 | €1.925,68 | €50,72 | €-6,31 |
+| TEST | MAIN — Side × Regime Guard | 2 | €10.204,76 | €641,89 | €1.925,68 | €50,72 | €-7,60 |
 | TEST | Evo Cand 1H Fast V3 Long Nohigh Cap75 V Tp R200 051501D0 | 0 | €10.185,37 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Rapida V1 — senza PEPE | 0 | €10.184,40 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Evo Cand 1H Fast V3 No Esports V1 Tp R200 68F866E1 | 0 | €10.145,12 | €0,00 | €0,00 | €0,00 | €0,00 |
@@ -116,12 +116,12 @@ Generato: 2026-08-04T12:27:01+00:00
 | TEST | Doge Donchian 1H | 0 | €10.038,53 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Rapida 1H V3 Filtered — madre | 0 | €10.030,12 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Combo Trend — Side × Regime Guard | 0 | €10.027,65 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Scalp RSI Short 75 · €50 · 15x | 0 | €10.012,42 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Combo Adaptive — Quality7 | 0 | €10.012,08 | €0,00 | €0,00 | €0,00 | €0,00 |
+| TEST | Scalp RSI Short 75 · €50 · 15x | 1 | €10.011,82 | €50,00 | €750,00 | €4,30 | €-0,15 |
 | TEST | Scalp RSI Long 20 · prudente · 5x | 0 | €10.009,69 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Evo Cand 1H Fast V3 No Esports Long Onl Tp R200 7Bbb9481 | 0 | €10.008,92 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Evo Cand 1H Fast V3 Nohigh Range Only V Tp R200 52488Eb5 | 0 | €10.003,37 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Scalp RSI Short 75 · €10 · 15x | 0 | €10.002,48 | €0,00 | €0,00 | €0,00 | €0,00 |
+| TEST | Scalp RSI Short 75 · €10 · 15x | 1 | €10.002,36 | €10,00 | €150,00 | €0,86 | €-0,03 |
 | TEST | Scalp RSI Short 85 · €50 · 15x | 0 | €10.000,61 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scalp RSI Short 85 · €10 · 15x | 0 | €10.000,12 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scanner Bottom5 Short Continuation V1 | 0 | €10.000,00 | €0,00 | €0,00 | €0,00 | €0,00 |
@@ -142,11 +142,11 @@ Generato: 2026-08-04T12:27:01+00:00
 | TEST | Scalp RSI Short 80 · €50 · 15x | 0 | €9.981,10 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Rapida 1H V2 | 0 | €9.974,21 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Rapida V1 — target pieno 2R | 0 | €9.973,32 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Ampia 4H | 4 | €9.971,09 | €1.133,51 | €2.267,02 | €101,52 | €-0,52 |
+| TEST | Ampia 4H | 4 | €9.971,00 | €1.133,51 | €2.267,02 | €101,52 | €-0,61 |
 | TEST | Sol Bollinger 1H | 0 | €9.970,30 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scanner Bottom5 Short Profit Lock V1 | 0 | €9.969,87 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Top 5 + BTC — BTC 2–3 | 0 | €9.968,72 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Scalp RSI Short 75 · prudente · 5x | 0 | €9.964,28 | €0,00 | €0,00 | €0,00 | €0,00 |
+| TEST | Scalp RSI Short 75 · prudente · 5x | 1 | €9.962,89 | €347,60 | €1.737,99 | €9,96 | €-0,35 |
 | TEST | Scalp RSI Short 80 · prudente · 5x | 0 | €9.961,01 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Btc Adaptive 1H | 0 | €9.959,54 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Eth Bollinger 1H | 0 | €9.959,49 | €0,00 | €0,00 | €0,00 | €0,00 |
@@ -169,7 +169,7 @@ Generato: 2026-08-04T12:27:01+00:00
 | TEST | Eth Ema 4H | 0 | €9.894,27 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Scanner Bottom 5 Short 1H | 0 | €9.893,14 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Combo Adaptive — target pieno 3R | 0 | €9.883,60 | €0,00 | €0,00 | €0,00 | €0,00 |
-| TEST | Sol Ema 4H | 1 | €9.882,05 | €780,22 | €1.560,44 | €49,48 | €-13,89 |
+| TEST | Sol Ema 4H | 1 | €9.877,91 | €780,22 | €1.560,44 | €49,48 | €-18,03 |
 | TEST | Bilanciata V3 · LONG only | 0 | €9.874,61 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Eth Donchian 1H | 0 | €9.871,99 | €0,00 | €0,00 | €0,00 | €0,00 |
 | TEST | Rapida V3 — no volatilità HIGH | 0 | €9.870,43 | €0,00 | €0,00 | €0,00 | €0,00 |
@@ -374,7 +374,7 @@ Generato: 2026-08-04T12:27:01+00:00
 
 | Tipo | Portafoglio | Strategia | Equity | P&L chiuso | Trade | Eventi indip. | Win rate | PF | Expectancy | Max DD |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| PRINCIPALE | Principale 4H | Confluenza trend | €9.724,61 | €-270,56 | 30 | 30 | 36,67% | 0,74 | €-9,02 | 6,36% |
+| PRINCIPALE | Principale 4H | Confluenza trend | €9.723,36 | €-270,56 | 30 | 30 | 36,67% | 0,74 | €-9,02 | 6,36% |
 | TEST | Benchmark Donchian breakout 1H | Donchian breakout 20 barre | €10.563,40 | €564,30 | 38 | 38 | 55,26% | 1,62 | €14,85 | 3,09% |
 | TEST | Rapida score 6–7,5 — Cost Aware | Momentum / breakout | €10.506,14 | €506,14 | 36 | 36 | 52,78% | 1,93 | €14,06 | 1,96% |
 | TEST | Rapida V1 — no HIGH + score <7,5 | Momentum / breakout | €10.492,11 | €492,11 | 64 | 64 | 46,88% | 1,41 | €7,69 | 2,83% |
@@ -397,7 +397,7 @@ Generato: 2026-08-04T12:27:01+00:00
 | TEST | Rapida score 6–7,5 — Range Only | Momentum / breakout | €10.218,07 | €218,07 | 13 | 13 | 53,85% | 1,74 | €16,77 | 2,28% |
 | TEST | Rapida V3 — score <7,5 | Momentum / breakout V3 Filtered | €10.217,21 | €217,21 | 68 | 68 | 44,12% | 1,16 | €3,19 | 3,62% |
 | TEST | Rapida score 6–7,5 — senza Trend Up | Momentum / breakout | €10.206,76 | €206,76 | 33 | 33 | 51,52% | 1,32 | €6,27 | 2,77% |
-| TEST | MAIN — Side × Regime Guard | Confluenza trend | €10.206,05 | €211,24 | 15 | 15 | 46,67% | 1,56 | €14,08 | 2,40% |
+| TEST | MAIN — Side × Regime Guard | Confluenza trend | €10.204,76 | €211,24 | 15 | 15 | 46,67% | 1,56 | €14,08 | 2,40% |
 | TEST | Evo Cand 1H Fast V3 Long Nohigh Cap75 V Tp R200 051501D0 | Momentum / breakout V3 Filtered | €10.185,37 | €185,37 | 22 | 22 | 40,91% | 1,57 | €8,43 | 2,27% |
 | TEST | Rapida V1 — senza PEPE | Momentum / breakout | €10.184,40 | €184,40 | 72 | 72 | 44,44% | 1,14 | €2,56 | 2,15% |
 | TEST | Evo Cand 1H Fast V3 No Esports V1 Tp R200 68F866E1 | Momentum / breakout V3 Filtered | €10.145,12 | €145,12 | 44 | 44 | 45,45% | 1,20 | €3,30 | 2,91% |
@@ -416,12 +416,12 @@ Generato: 2026-08-04T12:27:01+00:00
 | TEST | Doge Donchian 1H | Donchian breakout 20 barre | €10.038,53 | €38,53 | 6 | 6 | 66,67% | 1,34 | €6,42 | 1,08% |
 | TEST | Rapida 1H V3 Filtered — madre | Momentum / breakout V3 Filtered | €10.030,12 | €30,12 | 103 | 103 | 37,86% | 1,02 | €0,29 | 2,95% |
 | TEST | Combo Trend — Side × Regime Guard | Combo Trend | €10.027,65 | €27,65 | 30 | 30 | 50,00% | 1,06 | €0,92 | 2,61% |
-| TEST | Scalp RSI Short 75 · €50 · 15x | Inversione RSI estrema 15m | €10.012,42 | €12,42 | 16 | 16 | 43,75% | 1,23 | €0,78 | 0,25% |
 | TEST | Combo Adaptive — Quality7 | Combo Adaptive | €10.012,08 | €12,08 | 26 | 26 | 34,62% | 1,03 | €0,46 | 2,48% |
+| TEST | Scalp RSI Short 75 · €50 · 15x | Inversione RSI estrema 15m | €10.011,82 | €12,42 | 16 | 16 | 43,75% | 1,23 | €0,78 | 0,25% |
 | TEST | Scalp RSI Long 20 · prudente · 5x | Inversione RSI estrema 15m | €10.009,69 | €9,69 | 6 | 6 | 50,00% | 1,40 | €1,62 | 0,36% |
 | TEST | Evo Cand 1H Fast V3 No Esports Long Onl Tp R200 7Bbb9481 | Momentum / breakout V3 Filtered | €10.008,92 | €8,92 | 30 | 30 | 36,67% | 1,02 | €0,30 | 4,84% |
 | TEST | Evo Cand 1H Fast V3 Nohigh Range Only V Tp R200 52488Eb5 | Momentum / breakout V3 Filtered | €10.003,37 | €3,37 | 8 | 8 | 37,50% | 1,02 | €0,42 | 2,15% |
-| TEST | Scalp RSI Short 75 · €10 · 15x | Inversione RSI estrema 15m | €10.002,48 | €2,48 | 16 | 16 | 43,75% | 1,23 | €0,16 | 0,05% |
+| TEST | Scalp RSI Short 75 · €10 · 15x | Inversione RSI estrema 15m | €10.002,36 | €2,48 | 16 | 16 | 43,75% | 1,23 | €0,16 | 0,05% |
 | TEST | Scalp RSI Short 85 · €50 · 15x | Inversione RSI estrema 15m | €10.000,61 | €0,61 | 2 | 2 | 50,00% | 1,74 | €0,30 | 0,07% |
 | TEST | Scalp RSI Short 85 · €10 · 15x | Inversione RSI estrema 15m | €10.000,12 | €0,12 | 2 | 2 | 50,00% | 1,74 | €0,06 | 0,01% |
 | TEST | Scanner Bottom5 Short Continuation V1 | Scanner Bottom5 Short Continuation | €10.000,00 | €0,00 | 0 | 0 | 0,00% | 0,00 | €0,00 | 0,00% |
@@ -442,11 +442,11 @@ Generato: 2026-08-04T12:27:01+00:00
 | TEST | Scalp RSI Short 80 · €50 · 15x | Inversione RSI estrema 15m | €9.981,10 | €-18,90 | 5 | 5 | 40,00% | 0,12 | €-3,78 | 0,27% |
 | TEST | Rapida 1H V2 | Momentum / breakout V2 | €9.974,21 | €-25,79 | 17 | 15 | 41,18% | 0,93 | €-1,52 | 1,69% |
 | TEST | Rapida V1 — target pieno 2R | Momentum / breakout | €9.973,32 | €-26,68 | 79 | 79 | 35,44% | 0,98 | €-0,34 | 2,58% |
-| TEST | Ampia 4H | Confluenza trend | €9.971,09 | €-27,14 | 25 | 25 | 24,00% | 0,96 | €-1,09 | 3,68% |
+| TEST | Ampia 4H | Confluenza trend | €9.971,00 | €-27,14 | 25 | 25 | 24,00% | 0,96 | €-1,09 | 3,68% |
 | TEST | Sol Bollinger 1H | Bollinger mean reversion | €9.970,30 | €-29,70 | 5 | 5 | 40,00% | 0,82 | €-5,94 | 1,89% |
 | TEST | Scanner Bottom5 Short Profit Lock V1 | Scanner Bottom 5 Short | €9.969,87 | €-30,13 | 20 | 20 | 40,00% | 0,86 | €-1,51 | 1,53% |
 | TEST | Top 5 + BTC — BTC 2–3 | Scanner Top 5 + forza BTC | €9.968,72 | €-31,28 | 10 | 10 | 30,00% | 0,87 | €-3,13 | 2,84% |
-| TEST | Scalp RSI Short 75 · prudente · 5x | Inversione RSI estrema 15m | €9.964,28 | €-35,72 | 16 | 16 | 50,00% | 0,54 | €-2,23 | 0,58% |
+| TEST | Scalp RSI Short 75 · prudente · 5x | Inversione RSI estrema 15m | €9.962,89 | €-35,72 | 16 | 16 | 50,00% | 0,54 | €-2,23 | 0,58% |
 | TEST | Scalp RSI Short 80 · prudente · 5x | Inversione RSI estrema 15m | €9.961,01 | €-38,99 | 5 | 5 | 40,00% | 0,09 | €-7,80 | 0,50% |
 | TEST | Btc Adaptive 1H | Combo Adaptive | €9.959,54 | €-40,46 | 4 | 4 | 50,00% | 0,63 | €-10,11 | 0,89% |
 | TEST | Eth Bollinger 1H | Bollinger mean reversion | €9.959,49 | €-40,51 | 2 | 2 | 50,00% | 0,28 | €-20,26 | 0,91% |
@@ -469,7 +469,7 @@ Generato: 2026-08-04T12:27:01+00:00
 | TEST | Eth Ema 4H | Trend following EMA | €9.894,27 | €-105,73 | 2 | 2 | 0,00% | 0,00 | €-52,87 | 1,21% |
 | TEST | Scanner Bottom 5 Short 1H | Scanner Bottom 5 Short | €9.893,14 | €-106,86 | 47 | 47 | 36,17% | 0,87 | €-2,27 | 5,48% |
 | TEST | Combo Adaptive — target pieno 3R | Combo Adaptive | €9.883,60 | €-116,40 | 24 | 24 | 37,50% | 0,71 | €-4,85 | 2,44% |
-| TEST | Sol Ema 4H | Trend following EMA | €9.882,05 | €-103,69 | 2 | 2 | 0,00% | 0,00 | €-51,84 | 1,44% |
+| TEST | Sol Ema 4H | Trend following EMA | €9.877,91 | €-103,69 | 2 | 2 | 0,00% | 0,00 | €-51,84 | 1,44% |
 | TEST | Bilanciata V3 · LONG only | Confluenza trend V3 Filtered | €9.874,61 | €-125,39 | 22 | 22 | 31,82% | 0,72 | €-5,70 | 2,01% |
 | TEST | Eth Donchian 1H | Donchian breakout 20 barre | €9.871,99 | €-128,01 | 5 | 5 | 20,00% | 0,42 | €-25,60 | 1,62% |
 | TEST | Rapida V3 — no volatilità HIGH | Momentum / breakout V3 Filtered | €9.870,43 | €-129,57 | 62 | 62 | 38,71% | 0,90 | €-2,09 | 2,96% |
@@ -526,17 +526,20 @@ Generato: 2026-08-04T12:27:01+00:00
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Principale 4H | ONDO | LONG | Confluenza trend | 240m | 3,0x | 0,40344 | 0,40344 | 0,37762 | 0,27098 | 0,45509 | €254,70 | €764,09 | €48,91 | €0,00 |
 | Principale 4H | SHIB | LONG | Confluenza trend | 240m | 3,0x | 0,00001 | 0,00001 | 0,00000 | 0,00000 | 0,00001 | €8,88 | €26,63 | €2,22 | €0,00 |
-| Principale 4H | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07019 | 0,07047 | 0,07248 | 0,09323 | 0,06560 | €485,79 | €1.457,36 | €47,61 | €-5,90 |
+| Principale 4H | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07019 | 0,07053 | 0,07248 | 0,09323 | 0,06560 | €485,79 | €1.457,36 | €47,61 | €-7,14 |
 | Ampia 4H | TAO | SHORT | Confluenza trend | 240m | 2,0x | 189,05650 | 189,05650 | 197,51338 | 282,63946 | 165,37722 | €558,68 | €1.117,36 | €49,98 | €-0,00 |
 | Ampia 4H | XMR | LONG | Confluenza trend | 240m | 2,0x | 364,45854 | 364,45854 | 347,94701 | 184,05156 | 410,69083 | €544,42 | €1.088,84 | €49,33 | €0,00 |
-| Ampia 4H | XRP | SHORT | Confluenza trend | 240m | 2,0x | 1,06427 | 1,07629 | 1,09657 | 1,59108 | 0,97382 | €13,35 | €26,70 | €0,81 | €-0,30 |
-| Ampia 4H | DOGE | SHORT | Confluenza trend | 240m | 2,0x | 0,07002 | 0,07047 | 0,07288 | 0,10467 | 0,06199 | €17,06 | €34,13 | €1,40 | €-0,22 |
+| Ampia 4H | XRP | SHORT | Confluenza trend | 240m | 2,0x | 1,06427 | 1,07848 | 1,09657 | 1,59108 | 0,97382 | €13,35 | €26,70 | €0,81 | €-0,36 |
+| Ampia 4H | DOGE | SHORT | Confluenza trend | 240m | 2,0x | 0,07002 | 0,07053 | 0,07288 | 0,10467 | 0,06199 | €17,06 | €34,13 | €1,40 | €-0,25 |
+| Scalp RSI Short 75 · €10 · 15x | HYPE | SHORT | Inversione RSI estrema 15m | 15m | 15,0x | 55,59188 | 55,60300 | 55,91060 | 59,02005 | 55,11380 | €10,00 | €150,00 | €0,86 | €-0,03 |
+| Scalp RSI Short 75 · €50 · 15x | HYPE | SHORT | Inversione RSI estrema 15m | 15m | 15,0x | 55,59188 | 55,60300 | 55,91060 | 59,02005 | 55,11380 | €50,00 | €750,00 | €4,30 | €-0,15 |
+| Scalp RSI Short 75 · prudente · 5x | HYPE | SHORT | Inversione RSI estrema 15m | 15m | 5,0x | 55,59188 | 55,60300 | 55,91060 | 66,43230 | 54,95444 | €347,60 | €1.737,99 | €9,96 | €-0,35 |
 | Benchmark Donchian breakout 1H | ALLO | SHORT | Donchian breakout 20 barre | 60m | 2,0x | 0,35678 | 0,35678 | 0,39959 | 0,53338 | 0,24974 | €215,19 | €430,38 | €51,65 | €-0,00 |
 | Benchmark Donchian breakout 1H | NEAR | SHORT | Donchian breakout 20 barre | 60m | 2,0x | 1,70198 | 1,70198 | 1,74321 | 2,54446 | 1,59891 | €52,48 | €104,96 | €2,54 | €-0,00 |
 | Donchian 1H Gb20 120R V1 | NEAR | SHORT | Donchian breakout 20 barre | 60m | 2,0x | 1,70198 | 1,70198 | 1,74321 | 2,54446 | 1,59891 | €88,92 | €177,84 | €4,31 | €-0,00 |
-| Sol Ema 4H | SOL | SHORT | Trend following EMA | 240m | 2,0x | 73,19036 | 73,84200 | 75,51123 | 109,41959 | 67,38819 | €780,22 | €1.560,44 | €49,48 | €-13,89 |
+| Sol Ema 4H | SOL | SHORT | Trend following EMA | 240m | 2,0x | 73,19036 | 74,03600 | 75,51123 | 109,41959 | 67,38819 | €780,22 | €1.560,44 | €49,48 | €-18,03 |
 | MAIN — Side × Regime Guard | ALLO | SHORT | Confluenza trend | 240m | 3,0x | 0,38070 | 0,38070 | 0,37357 | 0,50570 | 0,28933 | €140,03 | €420,08 | €0,00 | €-0,00 |
-| MAIN — Side × Regime Guard | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07018 | 0,07047 | 0,07254 | 0,09322 | 0,06545 | €501,87 | €1.505,61 | €50,72 | €-6,31 |
+| MAIN — Side × Regime Guard | DOGE | SHORT | Confluenza trend | 240m | 3,0x | 0,07018 | 0,07053 | 0,07254 | 0,09322 | 0,06545 | €501,87 | €1.505,61 | €50,72 | €-7,60 |
 
 ## Ultime operazioni chiuse
 
@@ -707,7 +710,7 @@ Per le famiglie RSI con più configurazioni di leva o margine, il lato paper usa
 Simulazione separata **paper only**: capitale/margine iniziale **€3.600**, leva **5x**, esposizione iniziale **€18.000**. Non modifica i conti paper da €10.000 e non invia ordini reali.
 
 - Stato: **WAITING**
-- Prezzo DOGE: **0.07047**
+- Prezzo DOGE: **0.07053**
 - Pre-allarme: **0.0765**; zona armata: **0.0775**; trigger rejection: **0.078**
 - Invalidazione prima dell’entrata: chiusura 15m sopra **0.07966**
 
@@ -720,17 +723,17 @@ Simulazione separata **paper only**: capitale/margine iniziale **€3.600**, lev
 | Filtro | Valore | Stato |
 | --- | --- | --- |
 | Dati mercato | FRESH | OK |
-| Candela 15m | 27.0 min | OK |
+| Candela 15m | 30.9 min | OK |
 | Global DOGE | -6.0 | OK |
 | Classic raw | -11.0 | OK |
 | DOGE/BTC raw | -6.0 | OK |
 | Pattern ribassista | MATURO | OK |
-| BTC sotto filtro | 63808 | OK |
+| BTC sotto filtro | 64028.68 | OK |
 
 ### Ultima candela 15m valutata
 
 - Rejection accettata: **NO**; motivo: **trigger_touched, entry_not_chased, upper_wick**
-- High **0.07055**; close **0.07047**; wick alta **0.0%**; volume **x0.61**
+- High **0.07047**; close **0.07044**; wick alta **16.7%**; volume **x0.99**
 
 ### Gestione
 
@@ -756,9 +759,9 @@ Registro parallelo senza limite globale di quattro posizioni. Considera soltanto
 - BTC trend score: **2,00**; ADX: **18,07**; breadth sopra EMA50: **91,67%**
 - Mediana alt vs BTC: **-0,10%**; dispersione: **17,38%**
 
-- Aperti in questo ciclo: **0**
-- Chiusi in questo ciclo: **1**
-- Posizioni research aperte: **662**
+- Aperti in questo ciclo: **1**
+- Chiusi in questo ciclo: **0**
+- Posizioni research aperte: **663**
 - Trade research chiusi: **11597**
 - Eventi di mercato indipendenti chiusi: **1937**
 - Segnali sovrapposti saltati sullo stesso asset/profilo: **36389**
@@ -786,7 +789,7 @@ Registro parallelo senza limite globale di quattro posizioni. Considera soltanto
 | EVO_CAND_SHADOW_1H_FAST_V3_TP_R250_6b45fc13 | 8 | 165 | 165 | 26,67% | 0,50 | -0,29R | €-482,01 |
 | MAIN | 18 | 136 | 136 | 29,41% | 0,82 | -0,12R | €-159,33 |
 | RSI_EXTREME_LONG_15M | 0 | 20 | 20 | 35,00% | 0,42 | -0,36R | €-72,40 |
-| RSI_EXTREME_SHORT_15M | 0 | 23 | 23 | 34,78% | 0,51 | -0,27R | €-61,77 |
+| RSI_EXTREME_SHORT_15M | 1 | 23 | 23 | 34,78% | 0,51 | -0,27R | €-61,77 |
 | Bilanciata 1H V1 | 20 | 353 | 353 | 33,99% | 0,91 | -0,06R | €-202,16 |
 | Bilanciata 1H V2 | 10 | 133 | 118 | 36,84% | 1,04 | 0,02R | €27,65 |
 | Bilanciata 1H V3 Filtered | 13 | 212 | 212 | 34,43% | 0,88 | -0,07R | €-157,31 |
@@ -1025,7 +1028,7 @@ Registro parallelo senza limite globale di quattro posizioni. Considera soltanto
 | RSI_EXTREME_SHORT_15M | RANGE | 0 | 7 | 7 | 28,57% | 0,35 | -0,39R | €-27,45 |
 | RSI_EXTREME_SHORT_15M | TRANSITION | 0 | 1 | 1 | 0,00% | 0,00 | -0,41R | €-4,13 |
 | RSI_EXTREME_SHORT_15M | TREND_DOWN | 0 | 1 | 1 | 100,00% | ∞ | 0,31R | €3,08 |
-| RSI_EXTREME_SHORT_15M | TREND_UP | 0 | 6 | 6 | 33,33% | 0,81 | -0,10R | €-5,72 |
+| RSI_EXTREME_SHORT_15M | TREND_UP | 1 | 6 | 6 | 33,33% | 0,81 | -0,10R | €-5,72 |
 | Bilanciata 1H V1 | ALT_ROTATION_DOWN | 0 | 51 | 51 | 21,57% | 0,42 | -0,41R | €-208,76 |
 | Bilanciata 1H V1 | ALT_ROTATION_UP | 3 | 29 | 29 | 37,93% | 1,14 | 0,08R | €24,11 |
 | Bilanciata 1H V1 | RANGE | 7 | 104 | 104 | 41,35% | 1,20 | 0,11R | €117,79 |
@@ -1623,15 +1626,15 @@ La matrice diventerà utilizzabile per una rotazione automatica soltanto dopo un
 
 # Block 3 — Shadow Exit Engine
 
-Generato: 2026-08-04T12:24:30+00:00
+Generato: 2026-08-04T12:41:21+00:00
 
 > Motore esclusivamente osservativo e Paper-only. Non modifica le uscite reali. I confronti escludono il funding sia dall'uscita originale sia dalle varianti.
 
 ## Stato operativo
 
-- Gruppi di trade ancora monitorati: **24**
-- Scenari virtuali ancora attivi: **125**
-- Gruppi in attesa dell'uscita originale: **13**
+- Gruppi di trade ancora monitorati: **27**
+- Scenari virtuali ancora attivi: **258**
+- Gruppi in attesa dell'uscita originale: **16**
 - Gruppi con originale chiuso ma Shadow ancora attive: **11**
 - Confronti completati: **121199**
 
@@ -1673,7 +1676,7 @@ Le regole Shadow mantengono entrata, quantità, commissioni, stop protettivo ini
 
 # Blocco 4 — Valutazione statistica Shadow
 
-Generato: 2026-08-04T12:24:33+00:00
+Generato: 2026-08-04T12:41:48+00:00
 
 > Modulo esclusivamente valutativo. Non modifica strategie, uscite, posizioni o capitale. Le candidature vengono consegnate al futuro Blocco 5, senza applicazione automatica.
 
@@ -1724,7 +1727,7 @@ Sono utilizzati solo trade osservati integralmente dall'entrata. Il controllo co
 
 # Forward Exit Challengers — verifica pulita
 
-Generato: 2026-08-04T12:26:51+00:00
+Generato: 2026-08-04T12:45:47+00:00
 
 Questi profili sono osservativi e Paper-only. Usano gli stessi trade della madre, ma applicano una specifica uscita Block 3 soltanto ai segnali aperti dopo la loro registrazione.
 Nessuna promozione, modifica live o operazione reale viene eseguita automaticamente.
@@ -1750,7 +1753,7 @@ Nessuna promozione, modifica live o operazione reale viene eseguita automaticame
 
 # Blocco 4.5 — Crash Cascade Guard
 
-Generato: 2026-08-04T12:23:58+00:00
+Generato: 2026-08-04T12:39:52+00:00
 
 > Paper-only. In mercato NORMAL/WATCH non riduce i segnali. Le limitazioni iniziano soltanto in STRESS, RECOVERY, CRASH, EXTREME o con dati non affidabili.
 
@@ -1791,7 +1794,7 @@ Se una candela di cascata attraversa nello stesso intervallo sia lo stop sia il 
 
 # Blocco 5 — Candidati evolutivi controllati
 
-Generato: 2026-08-04T12:23:16+00:00
+Generato: 2026-08-04T12:38:24+00:00
 
 > Paper-only. Nessuna promozione, sostituzione del MASTER, modifica live o ordine reale.
 
@@ -1836,7 +1839,7 @@ Ogni candidato è una copia indipendente del genitore e cambia un solo parametro
 
 # Blocco 6 — Validazione Champion/Challenger
 
-Generato: 2026-08-04T12:26:53+00:00
+Generato: 2026-08-04T12:45:49+00:00
 
 > Paper-only. Confronto sulle stesse entrate tramite `experiment_group_id`. Nessuna promozione, sostituzione, pensione o modifica live automatica.
 
@@ -1878,7 +1881,7 @@ Generato: 2026-08-04T12:26:53+00:00
 
 # Blocco 7 — Governance promozioni Paper
 
-Generato: 2026-08-04T12:26:53+00:00
+Generato: 2026-08-04T12:45:49+00:00
 
 > Nessuna promozione automatica. Approvazione umana e comando di esecuzione separato sono obbligatori.
 
@@ -1907,7 +1910,7 @@ Generato: 2026-08-04T12:26:53+00:00
 
 # Blocco 8 — Sorveglianza post-promozione
 
-Generato: 2026-08-04T12:26:53+00:00
+Generato: 2026-08-04T12:45:49+00:00
 
 > Paper-only. Il nuovo MASTER viene confrontato con l’EX_MASTER sugli stessi eventi successivi alla promozione. Nessun rollback automatico.
 
@@ -1934,7 +1937,7 @@ Generato: 2026-08-04T12:26:53+00:00
 
 # Blocco 9 — Hall of Fame e memoria genetica
 
-Generato: 2026-08-04T12:26:53+00:00
+Generato: 2026-08-04T12:45:49+00:00
 
 > Paper-only. La memoria può bloccare soltanto una futura proposta Block 5 classificata AVOID; non modifica strategie esistenti.
 
@@ -1978,7 +1981,7 @@ Generato: 2026-08-04T12:26:53+00:00
 
 # Blocco 10 — Regime Fitness e specializzazione
 
-Generato: 2026-08-04T12:26:53+00:00
+Generato: 2026-08-04T12:45:49+00:00
 
 > Paper-only e advisory. Il blocco misura quali strategie funzionano nei diversi regimi, ma non cambia automaticamente strategia o posizione.
 
@@ -2015,7 +2018,7 @@ Generato: 2026-08-04T12:26:53+00:00
 
 # Blocco 11 — Collegamento protetto al live
 
-Generato: 2026-08-04T12:26:53+00:00
+Generato: 2026-08-04T12:45:49+00:00
 
 > Modalità LOCKED_REVIEW_ONLY. Il blocco prepara piani immutabili, ma non può modificare il bot reale o inviare ordini.
 
@@ -2054,7 +2057,7 @@ Generato: 2026-08-04T12:26:53+00:00
 
 # Blocco 12 — Evolution Control Tower
 
-Generato: 2026-08-04T12:23:58+00:00
+Generato: 2026-08-04T12:39:52+00:00
 
 > Ultimo livello di osservabilità della pipeline. Non ripara, non riavvia, non modifica strategie o posizioni e non invia ordini.
 
