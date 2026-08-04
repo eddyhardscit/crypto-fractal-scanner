@@ -1,35 +1,35 @@
 generated_utc,category,check_id,status,severity,observed,expected,detail
-2026-08-03T05:08:50+00:00,PIPELINE,BLOCK3_SHADOW_EXIT,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
-2026-08-03T05:08:50+00:00,PIPELINE,BLOCK4_SHADOW_EVALUATION,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
-2026-08-03T05:08:50+00:00,PIPELINE,BLOCK4_5_CRASH_GUARD,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
-2026-08-03T05:08:50+00:00,PIPELINE,BLOCK5_CANDIDATES,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
-2026-08-03T05:08:50+00:00,PIPELINE,BLOCK6_VALIDATION,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
-2026-08-03T05:08:50+00:00,PIPELINE,BLOCK7_PROMOTION,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
-2026-08-03T05:08:50+00:00,PIPELINE,BLOCK8_POST_PROMOTION,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
-2026-08-03T05:08:50+00:00,PIPELINE,BLOCK9_MEMORY,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
-2026-08-03T05:08:50+00:00,PIPELINE,BLOCK10_REGIME,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
-2026-08-03T05:08:50+00:00,PIPELINE,BLOCK11_LIVE_BRIDGE,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
-2026-08-03T05:08:50+00:00,SAFETY,LIVE_BRIDGE_MODE,PASS,INFO,LOCKED_REVIEW_ONLY,LOCKED_REVIEW_ONLY,Il bridge deve restare bloccato alla sola revisione.
-2026-08-03T05:08:50+00:00,SAFETY,LIVE_EXECUTION_DISABLED,PASS,INFO,False,False,L'esecuzione live deve restare disabilitata.
-2026-08-03T05:08:50+00:00,SAFETY,LIVE_ADAPTER_UNCONFIGURED,PASS,INFO,False,False,L'adattatore live resta volutamente non configurato.
-2026-08-03T05:08:50+00:00,SAFETY,NO_AUTOMATIC_OR_LIVE_SIDE_EFFECTS,PASS,INFO,[],[],Nessuna azione automatica o modifica live è consentita.
-2026-08-03T05:08:50+00:00,SAFETY,REGIME_ROUTING_ADVISORY,PASS,INFO,ADVISORY_ONLY,ADVISORY_ONLY,Il routing automatico non deve essere attivo nel rollout iniziale.
-2026-08-03T05:08:50+00:00,DATA,MARKET_DATA_FRESHNESS,PASS,INFO,FRESH,NOT STALE/ERROR,La freschezza dati è osservata; il Crash Guard resta il filtro operativo.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_trade_log.csv,PASS,INFO,0.01,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_shadow_exit_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_shadow_evaluation_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_crash_guard_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_evolution_candidate_state.json,PASS,INFO,0.01,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_evolution_candidate_validation_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_evolution_promotion_governance_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_evolution_post_promotion_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_evolution_memory_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_evolution_regime_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,FILES,paper_trading_evolution_live_bridge_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
-2026-08-03T05:08:50+00:00,PERSISTENCE,STORAGE_MANIFEST_COMPLETE,PASS,INFO,[],[],Tutti gli stati critici e gli output Block 12 devono essere nel bundle persistente.
-2026-08-03T05:08:50+00:00,INTEGRITY,AUDIT_CHAIN_PRECHECK,PASS,INFO,rows=1311,VALID,La catena hash non deve presentare modifiche retroattive.
-2026-08-03T05:08:50+00:00,SYSTEMD,paper_timer,PASS,INFO,"{""ActiveState"": ""active"", ""SubState"": ""running"", ""UnitFileState"": ""enabled"", ""available"": ""true""}",OBSERVABLE; TIMERS ENABLED,Osservazione read-only: nessun servizio viene riavviato o modificato.
-2026-08-03T05:08:50+00:00,SYSTEMD,candidate_sync,PASS,INFO,"{""ActiveState"": ""inactive"", ""SubState"": ""dead"", ""UnitFileState"": ""static"", ""available"": ""true""}",OBSERVABLE; TIMERS ENABLED,Osservazione read-only: nessun servizio viene riavviato o modificato.
-2026-08-03T05:08:50+00:00,SYSTEMD,sol_live_service,PASS,INFO,"{""ActiveState"": ""inactive"", ""SubState"": ""dead"", ""UnitFileState"": ""static"", ""available"": ""true""}",OBSERVABLE; TIMERS ENABLED,Osservazione read-only: nessun servizio viene riavviato o modificato.
-2026-08-03T05:08:50+00:00,SYSTEMD,sol_live_timer,WARN,WARN,"{""ActiveState"": ""inactive"", ""SubState"": ""dead"", ""UnitFileState"": ""disabled"", ""available"": ""true""}",OBSERVABLE; TIMERS ENABLED,Osservazione read-only: nessun servizio viene riavviato o modificato.
-2026-08-03T05:08:50+00:00,INTEGRITY,AUDIT_CHAIN_APPEND,PASS,INFO,049be3d3751a6dc92fc46d55c70869a51a8f9784e02ff344416635968015ec34,VALID HASH,Record del ciclo aggiunto alla catena tamper-evident.
+2026-08-04T05:08:58+00:00,PIPELINE,BLOCK3_SHADOW_EXIT,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
+2026-08-04T05:08:58+00:00,PIPELINE,BLOCK4_SHADOW_EVALUATION,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
+2026-08-04T05:08:58+00:00,PIPELINE,BLOCK4_5_CRASH_GUARD,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
+2026-08-04T05:08:58+00:00,PIPELINE,BLOCK5_CANDIDATES,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
+2026-08-04T05:08:58+00:00,PIPELINE,BLOCK6_VALIDATION,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
+2026-08-04T05:08:58+00:00,PIPELINE,BLOCK7_PROMOTION,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
+2026-08-04T05:08:58+00:00,PIPELINE,BLOCK8_POST_PROMOTION,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
+2026-08-04T05:08:58+00:00,PIPELINE,BLOCK9_MEMORY,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
+2026-08-04T05:08:58+00:00,PIPELINE,BLOCK10_REGIME,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
+2026-08-04T05:08:58+00:00,PIPELINE,BLOCK11_LIVE_BRIDGE,PASS,INFO,OK,NOT ERROR,Blocco presente e senza errore dichiarato.
+2026-08-04T05:08:58+00:00,SAFETY,LIVE_BRIDGE_MODE,PASS,INFO,LOCKED_REVIEW_ONLY,LOCKED_REVIEW_ONLY,Il bridge deve restare bloccato alla sola revisione.
+2026-08-04T05:08:58+00:00,SAFETY,LIVE_EXECUTION_DISABLED,PASS,INFO,False,False,L'esecuzione live deve restare disabilitata.
+2026-08-04T05:08:58+00:00,SAFETY,LIVE_ADAPTER_UNCONFIGURED,PASS,INFO,False,False,L'adattatore live resta volutamente non configurato.
+2026-08-04T05:08:58+00:00,SAFETY,NO_AUTOMATIC_OR_LIVE_SIDE_EFFECTS,PASS,INFO,[],[],Nessuna azione automatica o modifica live è consentita.
+2026-08-04T05:08:58+00:00,SAFETY,REGIME_ROUTING_ADVISORY,PASS,INFO,ADVISORY_ONLY,ADVISORY_ONLY,Il routing automatico non deve essere attivo nel rollout iniziale.
+2026-08-04T05:08:58+00:00,DATA,MARKET_DATA_FRESHNESS,PASS,INFO,FRESH,NOT STALE/ERROR,La freschezza dati è osservata; il Crash Guard resta il filtro operativo.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_trade_log.csv,PASS,INFO,0.012,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_shadow_exit_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_shadow_evaluation_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_crash_guard_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_evolution_candidate_state.json,PASS,INFO,0.012,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_evolution_candidate_validation_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_evolution_promotion_governance_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_evolution_post_promotion_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_evolution_memory_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_evolution_regime_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,FILES,paper_trading_evolution_live_bridge_state.json,PASS,INFO,0.0,<= 24.0h,Controllo presenza e freschezza dell'output persistente.
+2026-08-04T05:08:58+00:00,PERSISTENCE,STORAGE_MANIFEST_COMPLETE,PASS,INFO,[],[],Tutti gli stati critici e gli output Block 12 devono essere nel bundle persistente.
+2026-08-04T05:08:58+00:00,INTEGRITY,AUDIT_CHAIN_PRECHECK,PASS,INFO,rows=1406,VALID,La catena hash non deve presentare modifiche retroattive.
+2026-08-04T05:08:58+00:00,SYSTEMD,paper_timer,PASS,INFO,"{""ActiveState"": ""active"", ""SubState"": ""running"", ""UnitFileState"": ""enabled"", ""available"": ""true""}",OBSERVABLE; TIMERS ENABLED,Osservazione read-only: nessun servizio viene riavviato o modificato.
+2026-08-04T05:08:58+00:00,SYSTEMD,candidate_sync,PASS,INFO,"{""ActiveState"": ""inactive"", ""SubState"": ""dead"", ""UnitFileState"": ""static"", ""available"": ""true""}",OBSERVABLE; TIMERS ENABLED,Osservazione read-only: nessun servizio viene riavviato o modificato.
+2026-08-04T05:08:58+00:00,SYSTEMD,sol_live_service,PASS,INFO,"{""ActiveState"": ""inactive"", ""SubState"": ""dead"", ""UnitFileState"": ""static"", ""available"": ""true""}",OBSERVABLE; TIMERS ENABLED,Osservazione read-only: nessun servizio viene riavviato o modificato.
+2026-08-04T05:08:58+00:00,SYSTEMD,sol_live_timer,WARN,WARN,"{""ActiveState"": ""inactive"", ""SubState"": ""dead"", ""UnitFileState"": ""disabled"", ""available"": ""true""}",OBSERVABLE; TIMERS ENABLED,Osservazione read-only: nessun servizio viene riavviato o modificato.
+2026-08-04T05:08:58+00:00,INTEGRITY,AUDIT_CHAIN_APPEND,PASS,INFO,4c7c7f572568cf22344a63fe5cfef80101ca18ccb6caf463fedae82ac65a97f4,VALID HASH,Record del ciclo aggiunto alla catena tamper-evident.

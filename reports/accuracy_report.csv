@@ -1,4 +1,4 @@
 asset,evaluated_predictions,directional_accuracy_pct,avg_central_error_pct,risk_zone_touched_pct,upside_zone_touched_pct,return_inside_p10_p90_pct,drawdown_inside_p10_p90_pct,max_gain_inside_p10_p90_pct
-BTC-USD,2,0.0,2.6681499984748913,0.0,0.0,100.0,0.0,100.0
-DOGE-USD,2,100.0,6.354996769372029,0.0,0.0,100.0,100.0,0.0
-SOL-USD,2,,9.816367764181988,100.0,0.0,100.0,100.0,0.0
+BTC-USD,3,0.0,3.0948072442676087,0.0,0.0,100.0,0.0,100.0
+DOGE-USD,3,100.0,6.905494866261932,0.0,0.0,100.0,100.0,33.33333333333333
+SOL-USD,3,,9.40501116500974,66.66666666666666,0.0,100.0,100.0,0.0
