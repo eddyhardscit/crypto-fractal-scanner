@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-13T07:47:54+00:00",
-  "updated_utc": "2026-08-04T05:12:56+00:00",
+  "updated_utc": "2026-08-05T05:11:12+00:00",
   "initial_capital_eur": 3600.0,
   "balance_eur": 3600.0,
   "peak_equity_eur": 3600.0,
@@ -22,7 +22,7 @@
     "pending": []
   },
   "last_checks": {
-    "generated_utc": "2026-08-04T05:12:56+00:00",
+    "generated_utc": "2026-08-05T05:11:12+00:00",
     "static": {
       "checks": {
         "fresh_market": true,
@@ -36,13 +36,13 @@
         "candle_15m_fresh": true
       },
       "freshness_status": "FRESH",
-      "doge_mark": 0.07024,
-      "btc_mark": 63911.35,
+      "doge_mark": 0.06997,
+      "btc_mark": 64274.23,
       "global_score": -6.0,
       "classic_raw_score": -11.0,
       "relative_raw_score": -6.0,
       "bearish_pattern_status": "MATURO",
-      "candle_age_minutes": 27.94992735
+      "candle_age_minutes": 26.2052169
     },
     "rejection": {
       "accepted": false,
@@ -51,22 +51,22 @@
         "closed_back_below_trigger": true,
         "close_below_invalidation": true,
         "entry_not_chased": false,
-        "upper_wick": true,
+        "upper_wick": false,
         "bearish_confirmation": true,
         "volume_valid": true,
         "stop_within_limit": true
       },
-      "candle_time": "2026-08-04 04:45:00+00:00",
-      "open": 0.0704,
-      "high": 0.07056,
-      "low": 0.07033,
-      "close": 0.07033,
-      "previous_close": 0.07039,
-      "volume_ratio": 3.1238739848751185,
-      "upper_wick_ratio": 0.695652173913033,
-      "close_location": 0.0,
+      "candle_time": "2026-08-05 04:45:00+00:00",
+      "open": 0.06984,
+      "high": 0.06984,
+      "low": 0.06977,
+      "close": 0.0698,
+      "previous_close": 0.06986,
+      "volume_ratio": 0.36078438815162056,
+      "upper_wick_ratio": 0.0,
+      "close_location": 0.4285714285714569,
       "stop_price": 0.0806,
-      "reason": "trigger_touched, entry_not_chased"
+      "reason": "trigger_touched, entry_not_chased, upper_wick"
     }
   }
 }
