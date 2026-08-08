@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-08-07T05:08:55+00:00",
-  "leveraged_open_positions": 9,
+  "generated_utc": "2026-08-08T05:08:52+00:00",
+  "leveraged_open_positions": 11,
   "note": "Somma di portafogli Paper indipendenti; non rappresenta ancora un singolo conto live.",
   "risk_model_version": "block4_5_v1",
   "scenarios": [
@@ -41,38 +41,38 @@
       "shock_pct": 40.0
     },
     {
-      "affected_positions": 7,
+      "affected_positions": 9,
       "direction": "UP",
-      "estimated_liquidations": 0,
-      "estimated_loss_eur": 612.1658429947635,
-      "margin_at_risk_eur": 2496.9890978123913,
+      "estimated_liquidations": 2,
+      "estimated_loss_eur": 892.1319920729871,
+      "margin_at_risk_eur": 2988.91269316788,
       "scenario": "UP_10",
       "shock_pct": 10.0
     },
     {
-      "affected_positions": 7,
+      "affected_positions": 9,
       "direction": "UP",
-      "estimated_liquidations": 0,
-      "estimated_loss_eur": 1224.331685989527,
-      "margin_at_risk_eur": 2496.9890978123913,
+      "estimated_liquidations": 3,
+      "estimated_loss_eur": 1724.2639841459743,
+      "margin_at_risk_eur": 2988.91269316788,
       "scenario": "UP_20",
       "shock_pct": 20.0
     },
     {
-      "affected_positions": 7,
+      "affected_positions": 9,
       "direction": "UP",
-      "estimated_liquidations": 0,
-      "estimated_loss_eur": 1836.4975289842903,
-      "margin_at_risk_eur": 2496.9890978123913,
+      "estimated_liquidations": 3,
+      "estimated_loss_eur": 2333.7602595404182,
+      "margin_at_risk_eur": 2988.91269316788,
       "scenario": "UP_30",
       "shock_pct": 30.0
     },
     {
-      "affected_positions": 7,
+      "affected_positions": 9,
       "direction": "UP",
-      "estimated_liquidations": 3,
-      "estimated_loss_eur": 2223.1273251144835,
-      "margin_at_risk_eur": 2496.9890978123913,
+      "estimated_liquidations": 6,
+      "estimated_loss_eur": 2717.720488070292,
+      "margin_at_risk_eur": 2988.91269316788,
       "scenario": "UP_40",
       "shock_pct": 40.0
     }

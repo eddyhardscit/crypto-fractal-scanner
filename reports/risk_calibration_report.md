@@ -1,6 +1,6 @@
 # Calibrazione rischio spot / leva
 
-Generato: **2026-08-07 05:17 UTC**
+Generato: **2026-08-08 05:19 UTC**
 
 Questo report controlla se le zone di rischio previste dallo scanner vengono davvero toccate nei 30 giorni successivi.
 
@@ -24,17 +24,25 @@ Questo file **non modifica ancora il Decision Report**. Per ora salva dati e mis
 
 | Asset   | Prezzo    | Direzione scanner                    | Drawdown normale    | Drawdown brutto     | Max gain normale   | Rischio spot   | Rischio leva   |
 |:--------|:----------|:-------------------------------------|:--------------------|:--------------------|:-------------------|:---------------|:---------------|
-| BTC     | 195,01 $  | Direzione più probabile a 30 giorni: | 491,00 $ / -4,21%   | 209,73 $ / -10,88%  | 593,28 $ / 14,64%  | BASSO          | ALTO           |
-| SOL     | 72,65 $   | Direzione più probabile a 30 giorni: | 69,55 $ / -4,27%    | 62,41 $ / -14,09%   | 81,79 $ / 12,59%   | MEDIO          | ALTO           |
-| DOGE    | 0.07000 $ | Direzione più probabile a 30 giorni: | 0.06000 $ / -14,48% | 0.05000 $ / -23,63% | 0.08000 $ / 16,28% | ALTO           | MOLTO ALTO     |
+| BTC     | 959,70 $  | Direzione più probabile a 30 giorni: | 641,07 $ / -2,03%   | 950,52 $ / -6,17%   | 728,15 $ / 19,66%  | BASSO          | MEDIO          |
+| SOL     | 74,58 $   | Direzione più probabile a 30 giorni: | 71,62 $ / -3,97%    | 64,90 $ / -12,98%   | 88,03 $ / 18,03%   | BASSO          | ALTO           |
+| DOGE    | 0.07000 $ | Direzione più probabile a 30 giorni: | 0.06000 $ / -10,20% | 0.05000 $ / -22,81% | 0.08000 $ / 19,62% | ALTO           | MOLTO ALTO     |
 
 ## Stato calibrazione rischio
 
-| Asset   |   Snapshot |   Controlli 30g |   In attesa | Stato         | DD normale hit   | DD brutto hit   | DD molto brutto hit   | Bias rischio   |
-|:--------|-----------:|----------------:|------------:|:--------------|:-----------------|:----------------|:----------------------|:---------------|
-| BTC     |         30 |               0 |          30 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
-| SOL     |         30 |               0 |          30 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
-| DOGE    |         30 |               0 |          30 | RACCOLTA DATI | n/a              | n/a             | n/a                   | n/a            |
+| Asset   |   Snapshot |   Controlli 30g |   In attesa | Stato         | DD normale hit   | DD brutto hit   | DD molto brutto hit   | Bias rischio                |
+|:--------|-----------:|----------------:|------------:|:--------------|:-----------------|:----------------|:----------------------|:----------------------------|
+| BTC     |         31 |               1 |          30 | RACCOLTA DATI | 0,00%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
+| SOL     |         31 |               1 |          30 | RACCOLTA DATI | 0,00%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
+| DOGE    |         31 |               1 |          30 | RACCOLTA DATI | 0,00%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
+
+## Ultimi controlli completati
+
+| Data previsione   | Asset   | Prezzo iniziale   | Min reale   | Max reale   | Drawdown reale   | Max gain reale   | Risultato rischio      |
+|:------------------|:--------|:------------------|:------------|:------------|:-----------------|:-----------------|:-----------------------|
+| 2026-07-09        | BTC     | 241,08 $          | 61.645,75 $ | 66.910,06 $ | 25470,66%        | 27654,30%        | RISCHIO STIMATO SEVERO |
+| 2026-07-09        | SOL     | 78,03 $           | 70,69 $     | 79,55 $     | -9,40%           | 1,95%            | RISCHIO STIMATO SEVERO |
+| 2026-07-09        | DOGE    | 0.07000 $         | 0.06797 $   | 0.07546 $   | -2,90%           | 7,81%            | RISCHIO STIMATO SEVERO |
 
 ## Come leggerlo
 
