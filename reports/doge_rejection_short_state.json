@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-13T07:47:54+00:00",
-  "updated_utc": "2026-08-08T05:12:24+00:00",
+  "updated_utc": "2026-08-09T05:12:21+00:00",
   "initial_capital_eur": 3600.0,
   "balance_eur": 3600.0,
   "peak_equity_eur": 3600.0,
@@ -22,7 +22,7 @@
     "pending": []
   },
   "last_checks": {
-    "generated_utc": "2026-08-08T05:12:24+00:00",
+    "generated_utc": "2026-08-09T05:12:21+00:00",
     "static": {
       "checks": {
         "fresh_market": true,
@@ -36,13 +36,13 @@
         "candle_15m_fresh": true
       },
       "freshness_status": "FRESH",
-      "doge_mark": 0.07011,
-      "btc_mark": 64980.6,
+      "doge_mark": 0.07001,
+      "btc_mark": 64759.94,
       "global_score": -6.0,
       "classic_raw_score": -11.0,
       "relative_raw_score": -6.0,
       "bearish_pattern_status": "MATURO",
-      "candle_age_minutes": 27.40409395
+      "candle_age_minutes": 27.35318326666667
     },
     "rejection": {
       "accepted": false,
@@ -51,22 +51,22 @@
         "closed_back_below_trigger": true,
         "close_below_invalidation": true,
         "entry_not_chased": false,
-        "upper_wick": false,
+        "upper_wick": true,
         "bearish_confirmation": true,
         "volume_valid": true,
         "stop_within_limit": true
       },
-      "candle_time": "2026-08-08 04:45:00+00:00",
-      "open": 0.07014,
-      "high": 0.07014,
-      "low": 0.07002,
-      "close": 0.07006,
-      "previous_close": 0.07014,
-      "volume_ratio": 6.650251250970923,
-      "upper_wick_ratio": 0.0,
-      "close_location": 0.3333333333333333,
+      "candle_time": "2026-08-09 04:45:00+00:00",
+      "open": 0.07,
+      "high": 0.07004,
+      "low": 0.06999,
+      "close": 0.07,
+      "previous_close": 0.07001,
+      "volume_ratio": 0.022040417928305668,
+      "upper_wick_ratio": 0.7999999999998335,
+      "close_location": 0.20000000000016654,
       "stop_price": 0.0806,
-      "reason": "trigger_touched, entry_not_chased, upper_wick"
+      "reason": "trigger_touched, entry_not_chased"
     }
   }
 }
