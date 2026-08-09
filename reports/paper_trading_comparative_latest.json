@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-08T06:30:31+00:00",
+  "generated_utc": "2026-08-09T06:30:27+00:00",
   "account_count": 64,
   "rows": [
     {
@@ -356,11 +356,11 @@
       "portfolio": "MAIN",
       "label": "Principale 4H",
       "strategy": "confluence_trend",
-      "equity_eur": 9730.672501008734,
-      "total_pnl_eur": -269.3274989912661,
-      "total_return_pct": -2.6932749899126613,
+      "equity_eur": 9734.7875210435,
+      "total_pnl_eur": -265.2124789565005,
+      "total_return_pct": -2.6521247895650046,
       "closed_pnl_eur": -271.9354633066377,
-      "open_pnl_eur": -0.2915300062674992,
+      "open_pnl_eur": 3.4460341766510267,
       "open_positions": 2,
       "closed_trades": 31,
       "winning_trades": 11,
@@ -374,7 +374,7 @@
       "profit_retention_sample": 9,
       "sample_status": "VALUTABILE",
       "sample_maturity": 3,
-      "comparison_score": -22.01162312384173,
+      "comparison_score": -21.847022322451103,
       "rank": 15
     },
     {
@@ -528,6 +528,31 @@
       "rank": 21
     },
     {
+      "portfolio": "SHADOW_RSI_SHORT_15X_10_RSI80",
+      "label": "Scalp RSI Short 80 · €10 · 15x",
+      "strategy": "rsi_extreme_reversal",
+      "equity_eur": 9994.751781153314,
+      "total_pnl_eur": -5.248218846685631,
+      "total_return_pct": -0.05248218846685631,
+      "closed_pnl_eur": -5.248218846685368,
+      "open_pnl_eur": 0,
+      "open_positions": 0,
+      "closed_trades": 10,
+      "winning_trades": 3,
+      "win_rate_pct": 30.0,
+      "profit_factor": 0.3900101166947185,
+      "expectancy_eur": -0.5248218846685367,
+      "max_drawdown_pct": 0.10635474533717915,
+      "average_mfe_net_eur": 0.7214779527054804,
+      "average_mae_net_eur": -1.4800700693334987,
+      "average_profit_retained_pct": 39.907043669994046,
+      "profit_retention_sample": 3,
+      "sample_status": "IN OSSERVAZIONE",
+      "sample_maturity": 2,
+      "comparison_score": -2.5614429267908885,
+      "rank": 22
+    },
+    {
       "portfolio": "SHADOW_1H_FAST_V2",
       "label": "Rapida 1H V2",
       "strategy": "momentum_breakout_v2",
@@ -550,7 +575,7 @@
       "sample_status": "IN OSSERVAZIONE",
       "sample_maturity": 2,
       "comparison_score": -2.66702862637388,
-      "rank": 22
+      "rank": 23
     },
     {
       "portfolio": "SHADOW_RSI_LONG_15X_10_RSI25",
@@ -575,7 +600,32 @@
       "sample_status": "IN OSSERVAZIONE",
       "sample_maturity": 2,
       "comparison_score": -3.019108938124399,
-      "rank": 23
+      "rank": 24
+    },
+    {
+      "portfolio": "SHADOW_RSI_SHORT_15X_50_RSI80",
+      "label": "Scalp RSI Short 80 · €50 · 15x",
+      "strategy": "rsi_extreme_reversal",
+      "equity_eur": 9973.758905766563,
+      "total_pnl_eur": -26.241094233437252,
+      "total_return_pct": -0.2624109423343725,
+      "closed_pnl_eur": -26.241094233426846,
+      "open_pnl_eur": 0,
+      "open_positions": 0,
+      "closed_trades": 10,
+      "winning_trades": 3,
+      "win_rate_pct": 30.0,
+      "profit_factor": 0.3900101166947185,
+      "expectancy_eur": -2.6241094233426847,
+      "max_drawdown_pct": 0.5314352399856652,
+      "average_mfe_net_eur": 3.6073897635274017,
+      "average_mae_net_eur": -7.400350346667494,
+      "average_profit_retained_pct": 39.907043669994046,
+      "profit_retention_sample": 3,
+      "sample_status": "IN OSSERVAZIONE",
+      "sample_maturity": 2,
+      "comparison_score": -3.450743850800743,
+      "rank": 25
     },
     {
       "portfolio": "SHADOW_RSI_LONG_5X_RSI25",
@@ -600,7 +650,7 @@
       "sample_status": "IN OSSERVAZIONE",
       "sample_maturity": 2,
       "comparison_score": -4.549653823118576,
-      "rank": 24
+      "rank": 26
     },
     {
       "portfolio": "SHADOW_RSI_LONG_15X_50_RSI25",
@@ -625,7 +675,7 @@
       "sample_status": "IN OSSERVAZIONE",
       "sample_maturity": 2,
       "comparison_score": -4.807954491249975,
-      "rank": 25
+      "rank": 27
     },
     {
       "portfolio": "SHADOW_RSI_SHORT_5X_RSI75",
@@ -650,32 +700,32 @@
       "sample_status": "IN OSSERVAZIONE",
       "sample_maturity": 2,
       "comparison_score": -5.496531020797438,
-      "rank": 26
+      "rank": 28
     },
     {
-      "portfolio": "SHADOW_4H_WIDE",
-      "label": "Ampia 4H",
-      "strategy": "confluence_trend",
-      "equity_eur": 9972.16079953772,
-      "total_pnl_eur": -27.839200462280132,
-      "total_return_pct": -0.27839200462280134,
-      "closed_pnl_eur": -26.49053190859549,
-      "open_pnl_eur": -0.08968451700393776,
-      "open_positions": 3,
-      "closed_trades": 26,
-      "winning_trades": 7,
-      "win_rate_pct": 26.923076923076923,
-      "profit_factor": 0.9600347430768058,
-      "expectancy_eur": -1.0188666118690572,
-      "max_drawdown_pct": 3.680871793617536,
-      "average_mfe_net_eur": 60.036272622464516,
-      "average_mae_net_eur": -37.360537658638236,
-      "average_profit_retained_pct": 71.67302777401297,
-      "profit_retention_sample": 6,
+      "portfolio": "SHADOW_RSI_SHORT_5X_RSI80",
+      "label": "Scalp RSI Short 80 · prudente · 5x",
+      "strategy": "rsi_extreme_reversal",
+      "equity_eur": 9927.0990342774,
+      "total_pnl_eur": -72.90096572259972,
+      "total_return_pct": -0.7290096572259972,
+      "closed_pnl_eur": -72.90096572259961,
+      "open_pnl_eur": 0,
+      "open_positions": 0,
+      "closed_trades": 10,
+      "winning_trades": 3,
+      "win_rate_pct": 30.0,
+      "profit_factor": 0.10666467008146246,
+      "expectancy_eur": -7.29009657225996,
+      "max_drawdown_pct": 0.8858832024954926,
+      "average_mfe_net_eur": 3.5142518788381176,
+      "average_mae_net_eur": -10.794793129106314,
+      "average_profit_retained_pct": 32.34915764114239,
+      "profit_retention_sample": 3,
       "sample_status": "IN OSSERVAZIONE",
       "sample_maturity": 2,
-      "comparison_score": -7.109033013431222,
-      "rank": 27
+      "comparison_score": -5.799486695710642,
+      "rank": 29
     },
     {
       "portfolio": "SHADOW_COMBO_MEAN_REVERSION",
@@ -700,7 +750,7 @@
       "sample_status": "IN OSSERVAZIONE",
       "sample_maturity": 2,
       "comparison_score": -10.914549660114647,
-      "rank": 28
+      "rank": 30
     },
     {
       "portfolio": "SHADOW_GLOBAL_PURE",
@@ -725,7 +775,32 @@
       "sample_status": "IN OSSERVAZIONE",
       "sample_maturity": 2,
       "comparison_score": -11.226787216390976,
-      "rank": 29
+      "rank": 31
+    },
+    {
+      "portfolio": "SHADOW_4H_WIDE",
+      "label": "Ampia 4H",
+      "strategy": "confluence_trend",
+      "equity_eur": 9863.50429043759,
+      "total_pnl_eur": -136.4957095624104,
+      "total_return_pct": -1.3649570956241042,
+      "closed_pnl_eur": -135.91542515802308,
+      "open_pnl_eur": -0.0019525242389805187,
+      "open_positions": 2,
+      "closed_trades": 27,
+      "winning_trades": 7,
+      "win_rate_pct": 25.925925925925924,
+      "profit_factor": 0.8240039162092363,
+      "expectancy_eur": -5.033904635482337,
+      "max_drawdown_pct": 4.185357051161461,
+      "average_mfe_net_eur": 57.696269142448635,
+      "average_mae_net_eur": -40.24311188226981,
+      "average_profit_retained_pct": 71.67302777401297,
+      "profit_retention_sample": 6,
+      "sample_status": "IN OSSERVAZIONE",
+      "sample_maturity": 2,
+      "comparison_score": -12.920774350201206,
+      "rank": 32
     },
     {
       "portfolio": "SHADOW_BTC_BOLLINGER_1H",
@@ -750,7 +825,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": 6.261245264386133,
-      "rank": 30
+      "rank": 33
     },
     {
       "portfolio": "SHADOW_SOL_DONCHIAN_1H",
@@ -775,7 +850,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": 6.165458429816164,
-      "rank": 31
+      "rank": 34
     },
     {
       "portfolio": "SHADOW_BTC_BOLLINGER_4H",
@@ -800,7 +875,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": 3.6343391366313056,
-      "rank": 32
+      "rank": 35
     },
     {
       "portfolio": "SHADOW_SOL_BOLLINGER_4H",
@@ -825,7 +900,57 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": 3.62896224317062,
-      "rank": 33
+      "rank": 36
+    },
+    {
+      "portfolio": "SHADOW_RSI_SHORT_15X_10_RSI85",
+      "label": "Scalp RSI Short 85 · €10 · 15x",
+      "strategy": "rsi_extreme_reversal",
+      "equity_eur": 10000.2847563261,
+      "total_pnl_eur": 0.2847563261002506,
+      "total_return_pct": 0.0028475632610025056,
+      "closed_pnl_eur": 0.2847563260975617,
+      "open_pnl_eur": 0,
+      "open_positions": 0,
+      "closed_trades": 3,
+      "winning_trades": 2,
+      "win_rate_pct": 66.66666666666666,
+      "profit_factor": 2.738685536128118,
+      "expectancy_eur": 0.0949187753658539,
+      "max_drawdown_pct": 0.015648557299110463,
+      "average_mfe_net_eur": 1.1628664683823215,
+      "average_mae_net_eur": -0.5830273427432849,
+      "average_profit_retained_pct": 21.064786171540632,
+      "profit_retention_sample": 2,
+      "sample_status": "PRELIMINARE",
+      "sample_maturity": 1,
+      "comparison_score": 3.2677389202923854,
+      "rank": 37
+    },
+    {
+      "portfolio": "SHADOW_RSI_SHORT_15X_50_RSI85",
+      "label": "Scalp RSI Short 85 · €50 · 15x",
+      "strategy": "rsi_extreme_reversal",
+      "equity_eur": 10001.423781630487,
+      "total_pnl_eur": 1.423781630486701,
+      "total_return_pct": 0.01423781630486701,
+      "closed_pnl_eur": 1.4237816304878086,
+      "open_pnl_eur": 0,
+      "open_positions": 0,
+      "closed_trades": 3,
+      "winning_trades": 2,
+      "win_rate_pct": 66.66666666666666,
+      "profit_factor": 2.7386855361281173,
+      "expectancy_eur": 0.4745938768292695,
+      "max_drawdown_pct": 0.07820011470924704,
+      "average_mfe_net_eur": 5.814332341911608,
+      "average_mae_net_eur": -2.9151367137164255,
+      "average_profit_retained_pct": 21.064786171540632,
+      "profit_retention_sample": 2,
+      "sample_status": "PRELIMINARE",
+      "sample_maturity": 1,
+      "comparison_score": 3.2560776827735123,
+      "rank": 38
     },
     {
       "portfolio": "SHADOW_DOGE_DONCHIAN_1H",
@@ -850,57 +975,32 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": 1.7445785860442888,
-      "rank": 34
+      "rank": 39
     },
     {
-      "portfolio": "SHADOW_RSI_SHORT_15X_10_RSI85",
-      "label": "Scalp RSI Short 85 · €10 · 15x",
+      "portfolio": "SHADOW_RSI_SHORT_5X_RSI85",
+      "label": "Scalp RSI Short 85 · prudente · 5x",
       "strategy": "rsi_extreme_reversal",
-      "equity_eur": 10000.121687924082,
-      "total_pnl_eur": 0.1216879240819253,
-      "total_return_pct": 0.0012168792408192531,
-      "closed_pnl_eur": 0.1216879240807868,
+      "equity_eur": 9999.467245934884,
+      "total_pnl_eur": -0.5327540651160234,
+      "total_return_pct": -0.005327540651160234,
+      "closed_pnl_eur": -0.5327540651174192,
       "open_pnl_eur": 0,
       "open_positions": 0,
-      "closed_trades": 2,
-      "winning_trades": 1,
-      "win_rate_pct": 50.0,
-      "profit_factor": 1.743010827609256,
-      "expectancy_eur": 0.0608439620403934,
-      "max_drawdown_pct": 0.013142965281351154,
-      "average_mfe_net_eur": 1.435462744786818,
-      "average_mae_net_eur": -0.6515673128487425,
-      "average_profit_retained_pct": 15.729169492102224,
-      "profit_retention_sample": 1,
+      "closed_trades": 3,
+      "winning_trades": 2,
+      "win_rate_pct": 66.66666666666666,
+      "profit_factor": 0.7715018274820643,
+      "expectancy_eur": -0.17758468837247307,
+      "max_drawdown_pct": 0.16401090112862898,
+      "average_mfe_net_eur": 10.943589337072103,
+      "average_mae_net_eur": -6.001305250983286,
+      "average_profit_retained_pct": 8.572438764476733,
+      "profit_retention_sample": 2,
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
-      "comparison_score": 1.0167794995004291,
-      "rank": 35
-    },
-    {
-      "portfolio": "SHADOW_RSI_SHORT_15X_50_RSI85",
-      "label": "Scalp RSI Short 85 · €50 · 15x",
-      "strategy": "rsi_extreme_reversal",
-      "equity_eur": 10000.608439620402,
-      "total_pnl_eur": 0.6084396204023506,
-      "total_return_pct": 0.006084396204023505,
-      "closed_pnl_eur": 0.608439620403934,
-      "open_pnl_eur": 0,
-      "open_positions": 0,
-      "closed_trades": 2,
-      "winning_trades": 1,
-      "win_rate_pct": 50.0,
-      "profit_factor": 1.7430108276092557,
-      "expectancy_eur": 0.304219810201967,
-      "max_drawdown_pct": 0.06567898707691502,
-      "average_mfe_net_eur": 7.177313723934089,
-      "average_mae_net_eur": -3.257836564243713,
-      "average_profit_retained_pct": 15.729169492102221,
-      "profit_retention_sample": 1,
-      "sample_status": "PRELIMINARE",
-      "sample_maturity": 1,
-      "comparison_score": 1.003344716867905,
-      "rank": 36
+      "comparison_score": 0.014791552889620687,
+      "rank": 40
     },
     {
       "portfolio": "SHADOW_RSI_LONG_5X_RSI20",
@@ -925,7 +1025,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -0.2098748576911476,
-      "rank": 37
+      "rank": 41
     },
     {
       "portfolio": "SHADOW_BTC_DONCHIAN_1H",
@@ -950,7 +1050,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -0.40492659529381225,
-      "rank": 38
+      "rank": 42
     },
     {
       "portfolio": "SHADOW_SOL_DONCHIAN_4H",
@@ -975,32 +1075,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -0.7100958462904695,
-      "rank": 39
-    },
-    {
-      "portfolio": "SHADOW_RSI_SHORT_5X_RSI85",
-      "label": "Scalp RSI Short 85 · prudente · 5x",
-      "strategy": "rsi_extreme_reversal",
-      "equity_eur": 9998.640900525654,
-      "total_pnl_eur": -1.3590994743462943,
-      "total_return_pct": -0.013590994743462943,
-      "closed_pnl_eur": -1.3590994743472078,
-      "open_pnl_eur": 0,
-      "open_positions": 0,
-      "closed_trades": 2,
-      "winning_trades": 1,
-      "win_rate_pct": 50.0,
-      "profit_factor": 0.4170823528301406,
-      "expectancy_eur": -0.6795497371736039,
-      "max_drawdown_pct": 0.11033927244712585,
-      "average_mfe_net_eur": 11.268800942742061,
-      "average_mae_net_eur": -5.2862345944388185,
-      "average_profit_retained_pct": 9.116780059857115,
-      "profit_retention_sample": 1,
-      "sample_status": "PRELIMINARE",
-      "sample_maturity": 1,
-      "comparison_score": -0.7792690143288715,
-      "rank": 40
+      "rank": 43
     },
     {
       "portfolio": "SHADOW_SOL_ADAPTIVE_4H",
@@ -1025,32 +1100,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -0.8157067137167665,
-      "rank": 41
-    },
-    {
-      "portfolio": "SHADOW_RSI_SHORT_15X_10_RSI80",
-      "label": "Scalp RSI Short 80 · €10 · 15x",
-      "strategy": "rsi_extreme_reversal",
-      "equity_eur": 9996.102176402866,
-      "total_pnl_eur": -3.897823597133538,
-      "total_return_pct": -0.03897823597133538,
-      "closed_pnl_eur": -3.6591802406272738,
-      "open_pnl_eur": -0.14864335650599592,
-      "open_positions": 1,
-      "closed_trades": 7,
-      "winning_trades": 3,
-      "win_rate_pct": 42.857142857142854,
-      "profit_factor": 0.4783585082545598,
-      "expectancy_eur": -0.5227400343753248,
-      "max_drawdown_pct": 0.10635474533717915,
-      "average_mfe_net_eur": 1.0130996801259387,
-      "average_mae_net_eur": -1.732405971359663,
-      "average_profit_retained_pct": 39.907043669994046,
-      "profit_retention_sample": 3,
-      "sample_status": "PRELIMINARE",
-      "sample_maturity": 1,
-      "comparison_score": -1.4067057825653426,
-      "rank": 42
+      "rank": 44
     },
     {
       "portfolio": "SHADOW_RSI_LONG_15X_10_RSI15",
@@ -1075,7 +1125,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -1.4953058087046696,
-      "rank": 43
+      "rank": 45
     },
     {
       "portfolio": "SHADOW_BTC_ADAPTIVE_1H",
@@ -1100,7 +1150,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -1.5806401780993649,
-      "rank": 44
+      "rank": 46
     },
     {
       "portfolio": "SHADOW_RSI_LONG_15X_50_RSI15",
@@ -1125,7 +1175,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -1.6939665864819062,
-      "rank": 45
+      "rank": 47
     },
     {
       "portfolio": "SHADOW_ETH_BOLLINGER_1H",
@@ -1150,7 +1200,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -1.7473790470885493,
-      "rank": 46
+      "rank": 48
     },
     {
       "portfolio": "SHADOW_SOL_BOLLINGER_1H",
@@ -1175,7 +1225,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -1.799221679795804,
-      "rank": 47
+      "rank": 49
     },
     {
       "portfolio": "SHADOW_RSI_LONG_5X_RSI15",
@@ -1200,32 +1250,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -1.8645073426834098,
-      "rank": 48
-    },
-    {
-      "portfolio": "SHADOW_RSI_SHORT_15X_50_RSI80",
-      "label": "Scalp RSI Short 80 · €50 · 15x",
-      "strategy": "rsi_extreme_reversal",
-      "equity_eur": 9980.510882014325,
-      "total_pnl_eur": -19.489117985674966,
-      "total_return_pct": -0.19489117985674967,
-      "closed_pnl_eur": -18.295901203136378,
-      "open_pnl_eur": -0.7432167825299796,
-      "open_positions": 1,
-      "closed_trades": 7,
-      "winning_trades": 3,
-      "win_rate_pct": 42.857142857142854,
-      "profit_factor": 0.47835850825455967,
-      "expectancy_eur": -2.6137001718766255,
-      "max_drawdown_pct": 0.5314352399856652,
-      "average_mfe_net_eur": 5.065498400629693,
-      "average_mae_net_eur": -8.662029856798316,
-      "average_profit_retained_pct": 39.907043669994046,
-      "profit_retention_sample": 3,
-      "sample_status": "PRELIMINARE",
-      "sample_maturity": 1,
-      "comparison_score": -2.0462591813763313,
-      "rank": 49
+      "rank": 50
     },
     {
       "portfolio": "SHADOW_RSI_LONG_15X_10_RSI20",
@@ -1250,7 +1275,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -2.145359257597028,
-      "rank": 50
+      "rank": 51
     },
     {
       "portfolio": "SHADOW_BTC_ADAPTIVE_4H",
@@ -1275,7 +1300,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -2.4873707642891185,
-      "rank": 51
+      "rank": 52
     },
     {
       "portfolio": "SHADOW_BTC_EMA_4H",
@@ -1300,7 +1325,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -2.5351624666330053,
-      "rank": 52
+      "rank": 53
     },
     {
       "portfolio": "SHADOW_RSI_LONG_15X_50_RSI20",
@@ -1325,31 +1350,6 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -2.540107492147268,
-      "rank": 53
-    },
-    {
-      "portfolio": "SHADOW_RSI_SHORT_5X_RSI80",
-      "label": "Scalp RSI Short 80 · prudente · 5x",
-      "strategy": "rsi_extreme_reversal",
-      "equity_eur": 9951.614035633957,
-      "total_pnl_eur": -48.38596436604348,
-      "total_return_pct": -0.48385964366043477,
-      "closed_pnl_eur": -44.843928718957095,
-      "open_pnl_eur": -2.206221347014436,
-      "open_positions": 1,
-      "closed_trades": 7,
-      "winning_trades": 3,
-      "win_rate_pct": 42.857142857142854,
-      "profit_factor": 0.16255239017002396,
-      "expectancy_eur": -6.406275531279585,
-      "max_drawdown_pct": 0.706212534772749,
-      "average_mfe_net_eur": 4.800135791873207,
-      "average_mae_net_eur": -10.427459536994307,
-      "average_profit_retained_pct": 32.34915764114239,
-      "profit_retention_sample": 3,
-      "sample_status": "PRELIMINARE",
-      "sample_maturity": 1,
-      "comparison_score": -3.6037034441628255,
       "rank": 54
     },
     {
@@ -1428,31 +1428,6 @@
       "rank": 57
     },
     {
-      "portfolio": "SHADOW_SOL_EMA_4H",
-      "label": "Sol Ema 4H",
-      "strategy": "ema_trend_following",
-      "equity_eur": 9864.983894397463,
-      "total_pnl_eur": -135.0161056025372,
-      "total_return_pct": -1.350161056025372,
-      "closed_pnl_eur": -103.68717313447921,
-      "open_pnl_eur": -31.567679618802867,
-      "open_positions": 1,
-      "closed_trades": 2,
-      "winning_trades": 0,
-      "win_rate_pct": 0.0,
-      "profit_factor": 0.0,
-      "expectancy_eur": -51.843586567239605,
-      "max_drawdown_pct": 1.44110854093374,
-      "average_mfe_net_eur": 20.94963660093156,
-      "average_mae_net_eur": -51.49499074956606,
-      "average_profit_retained_pct": 0.0,
-      "profit_retention_sample": 0,
-      "sample_status": "PRELIMINARE",
-      "sample_maturity": 1,
-      "comparison_score": -4.663667622838978,
-      "rank": 58
-    },
-    {
       "portfolio": "SHADOW_ETH_DONCHIAN_1H",
       "label": "Eth Donchian 1H",
       "strategy": "donchian_breakout",
@@ -1475,7 +1450,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -4.947148580696192,
-      "rank": 59
+      "rank": 58
     },
     {
       "portfolio": "SHADOW_BTC_EMA_1H",
@@ -1500,7 +1475,7 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -5.6846040023861635,
-      "rank": 60
+      "rank": 59
     },
     {
       "portfolio": "SHADOW_SOL_EMA_1H",
@@ -1525,6 +1500,31 @@
       "sample_status": "PRELIMINARE",
       "sample_maturity": 1,
       "comparison_score": -5.752605044279356,
+      "rank": 60
+    },
+    {
+      "portfolio": "SHADOW_SOL_EMA_4H",
+      "label": "Sol Ema 4H",
+      "strategy": "ema_trend_following",
+      "equity_eur": 9845.781880325167,
+      "total_pnl_eur": -154.21811967483336,
+      "total_return_pct": -1.5421811967483334,
+      "closed_pnl_eur": -154.21811967483248,
+      "open_pnl_eur": 0,
+      "open_positions": 0,
+      "closed_trades": 3,
+      "winning_trades": 0,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "expectancy_eur": -51.406039891610824,
+      "max_drawdown_pct": 1.565292860801006,
+      "average_mfe_net_eur": 32.58779599010551,
+      "average_mae_net_eur": -51.06625025248376,
+      "average_profit_retained_pct": 0.0,
+      "profit_retention_sample": 0,
+      "sample_status": "PRELIMINARE",
+      "sample_maturity": 1,
+      "comparison_score": -6.013597198540206,
       "rank": 61
     },
     {
