@@ -4256,7 +4256,7 @@ Il workflow è tecnicamente coerente nei controlli disponibili.
 <!-- SOL_SPOT_ADAPTIVE_START -->
 # SOL Spot Adaptive Range — paper trading separato
 
-Generato: 2026-08-09T20:17:35+00:00
+Generato: 2026-08-10T00:17:34+00:00
 
 - Modalità: **SOLO PAPER TRADING**
 - Asset: **SOL spot**
@@ -4266,11 +4266,11 @@ Generato: 2026-08-09T20:17:35+00:00
 
 | Equity | Cash | SOL | Prezzo | Rendimento | Realizzato | Commissioni | Max DD | Operazioni |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| €41.570,97 | €17.544,74 | 311.135932 | 77.2210 | +3.93% | €568,83 | €49,51 | 6.48% | 8 |
+| €41.268,85 | €17.544,74 | 311.135932 | 76.2500 | +3.17% | €568,83 | €49,51 | 6.48% | 8 |
 
-**Ultima decisione:** SELL_20_PERCENT — SOL sopra la prima banda adattiva.
+**Ultima decisione:** HOLD — Prezzo dentro la fascia neutrale.
 
-Bande 4H: L2 69.7909 · L1 71.8764 · media 74.4833 · U1 77.0902 · U2 79.1758.
+Bande 4H: L2 69.8697 · L1 71.9576 · media 74.5674 · U1 77.1773 · U2 79.2652.
 
 > Questo portafoglio non condivide capitale, posizioni o statistiche con il paper trading da €10.000.
 <!-- SOL_SPOT_ADAPTIVE_END -->
