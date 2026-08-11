@@ -5,22 +5,22 @@
     "global|FIXED_R|reward_risk|INCREASE|2": {
       "score": 62.5,
       "status": "INSUFFICIENT",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "global|FIXED_R|reward_risk|INCREASE|2.5": {
       "score": 47.5,
       "status": "INSUFFICIENT",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "momentum-breakout-v3-filtered|FIXED_R|reward_risk|INCREASE|2": {
       "score": 62.5,
       "status": "INSUFFICIENT",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "momentum-breakout-v3-filtered|FIXED_R|reward_risk|INCREASE|2.5": {
       "score": 47.5,
       "status": "INSUFFICIENT",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     }
   },
   "schema_version": 1,
@@ -28,712 +28,712 @@
     "051501d0-7361-5cfd-818b-32de452f195e": {
       "score": 24.65,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "3b03ece1-b6c9-5fd9-a615-028d4f486231": {
       "score": 27.99,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "3ee5afb4-8bf9-5456-b65e-2b1327669693": {
       "score": 20.08,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "52488eb5-6e0b-582b-af6c-554a827b004d": {
       "score": 23.39,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "68f866e1-d225-5733-9843-dfc0389d02e9": {
       "score": 28.73,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "6b45fc13-67eb-5166-99cb-d8cbcf0fd700": {
       "score": 23.6,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "6b7c560f-a947-5c21-8ec0-bebb7c6ea4ee": {
       "score": 30.58,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "751e55c4-14bf-55ff-a953-e59e7325d859": {
       "score": 13.75,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "7bbb9481-3342-5a01-912e-f0d1a6054135": {
       "score": 22.15,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "8346046b-2c3b-52d8-817a-30ed576c34c8": {
       "score": 18.93,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "86882aa9-5ed0-5b04-a328-2022bc41da36": {
       "score": 31.69,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "89ab3f19-9b25-5fa4-857d-68a480d6b43b": {
       "score": 24.46,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "903364ad-d487-5704-90fe-ad93bda3ff28": {
       "score": 28.14,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "934590ed-fa46-5672-b8e9-713a79bd8183": {
       "score": 36.55,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "bfc04ed6-72ee-5fd8-ad2c-15c1d256e808": {
       "score": 15.55,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "c467005a-145c-5426-bd9a-5710bf526311": {
       "score": 16.37,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-0670ff0ff223559d1cb4": {
-      "score": 6.62,
+      "score": 6.26,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-070a6a6fb11c2321a3af": {
       "score": 1.37,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-0a0a90ccde67415644d5": {
       "score": 9.88,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-0cb33af5f09e9f755a8d": {
       "score": 0.67,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-0feb8dc3e58c62c4418f": {
       "score": 6.32,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-10b34d60ef4a5a8f1cbd": {
-      "score": 12.87,
+      "score": 13.51,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-143dd9c33d2d4783cda7": {
       "score": 4.28,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-153c426889a806878f49": {
       "score": 1.95,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-16c6a37876414ef12dbf": {
       "score": 1.65,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-18fec9ee52b2bfad8071": {
       "score": 1.74,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-1ceb3e00677a80a808ff": {
       "score": 1.77,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-1f4b26875bcee2e39cc3": {
       "score": 0.99,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-218242a9cd930220dac2": {
       "score": 16.93,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-21f7d4824afe44c077b0": {
       "score": 7.08,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-275cb3af75fb8f30b69b": {
       "score": 12.22,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-277e498cb740c2cab325": {
       "score": 6.21,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-284f9796f731bec657b4": {
       "score": 0.99,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-290e0461e5869c4146fe": {
       "score": 3.54,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-2a348928df768627b636": {
-      "score": 6.37,
+      "score": 7.07,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-2be30fda23278e335fda": {
-      "score": 14.6,
+      "score": 13.46,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-2d1db8d4e7c9b6737ed5": {
       "score": 15.03,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-2de2d373ceb02d710737": {
       "score": 1.82,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-2e9822f0adea70ef302d": {
       "score": 5.26,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-2ed164b4a669c4eea5b8": {
       "score": 1.52,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-30e9a0824a877a3a8e84": {
       "score": 1.52,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-31277758e15451c0d2c0": {
       "score": 0.0,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-33c546a4d1cef8e93a1a": {
-      "score": 6.49,
+      "score": 7.42,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-34cd6c2a7dc88fa4fb85": {
       "score": 7.99,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-34df8efa140f0be9b2a5": {
       "score": 5.91,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-364f66c0d7417aeb66c1": {
       "score": 1.27,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-367dcc12fca7439720d9": {
       "score": 0.97,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-3a9fde41d9e5dcff95c4": {
-      "score": 6.49,
+      "score": 7.42,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-3d03fcbaa170eb84aff6": {
       "score": 17.4,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-3eae154b0af2a376c1fe": {
       "score": 21.22,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-4075a57560830d6b5f89": {
       "score": 1.29,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-41e9f610d5c09a8b4cb4": {
       "score": 10.6,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-436d06d849f096b751ad": {
       "score": 1.67,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-4379496436a2e9c619cc": {
       "score": 17.43,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-453f91cdf22610c84df2": {
       "score": 8.45,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-4817f756aec21c6276aa": {
       "score": 1.29,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-50c2b19a5ebdc2f2ee65": {
       "score": 1.78,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-50f59e1f58ee8509a158": {
       "score": 3.86,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-55d2ef6c2edd6e78820d": {
       "score": 22.37,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-5acfa7d284755aa493b0": {
       "score": 1.25,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-5bb7ddf8fd6d2b6d7a2b": {
       "score": 22.2,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-5c599fd060f8cbf6c5e1": {
       "score": 3.85,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-5e78cb3d398ae1d21884": {
       "score": 8.18,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-5f67fe2bf5c8895b8fd1": {
       "score": 2.06,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-5fde5af6b8a5fab33f94": {
-      "score": 4.92,
+      "score": 4.35,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-62b88609bb6c985b4a84": {
       "score": 0.67,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-64ada8c42abe441d0264": {
       "score": 1.63,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-64f18e5c18eb6ebf4e08": {
-      "score": 16.53,
+      "score": 15.85,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-715fef44adfc7e3e2443": {
       "score": 0.2,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-74340d3089b701fbbc4a": {
-      "score": 16.43,
+      "score": 16.61,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-751388480f92b1739dd7": {
-      "score": 13.95,
+      "score": 17.59,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-75e764a8b5f3bac742b9": {
       "score": 15.87,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-76de9ff1f49a7b570409": {
-      "score": 3.1,
+      "score": 3.64,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-78401ccfa49277e71f78": {
       "score": 0.54,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-7eac24fb119f6c5ee908": {
       "score": 14.6,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-80ab72023d7f8d6eaf76": {
       "score": 16.45,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-819df6e454a22a88bd0a": {
       "score": 11.87,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-81a8be501c346f6c44b4": {
       "score": 1.76,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-82bb14307d46b142dc75": {
       "score": 1.94,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-82ddc460bc49f6ade6ed": {
       "score": 17.43,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-83c16ee36e16a8d5a61c": {
       "score": 6.57,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-857084946372822c0760": {
       "score": 2.65,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-86541dccbdca123d1372": {
       "score": 0.63,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-86a35a7cfef9cc1060d3": {
       "score": 22.1,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-87eecfe2d4db46025edd": {
       "score": 8.62,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-8a181ed9bb10700026fc": {
       "score": 14.73,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-8b2f0290d089fd0bd0d1": {
       "score": 0.47,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-8b3b1ebc38a7956fb73c": {
-      "score": 12.99,
+      "score": 12.21,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-8baa4f763c912f9e092a": {
       "score": 1.41,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-8cd112a254ef36f869f3": {
       "score": 0.0,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-8e32aa94f6b1b6ac1ac6": {
       "score": 13.18,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-9139cc28ff21fc1fc3dc": {
       "score": 1.67,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-9257c1e6e8aad73a0a82": {
       "score": 4.34,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-93741e08d7293a0349c0": {
       "score": 0.25,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-957b2cb822007458d9c4": {
-      "score": 16.65,
+      "score": 15.92,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-95832d038fbf7e6529e6": {
       "score": 0.0,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-95b29b65e1df161e3384": {
       "score": 17.97,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-98352068c6b959be884d": {
       "score": 12.87,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-9a7408288291e95f7a00": {
       "score": 4.53,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-9d6c1ff34fb282adfae0": {
       "score": 1.49,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-9da609258ab55b372664": {
-      "score": 16.68,
+      "score": 16.91,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-9e3c0b8359f0aa6f690a": {
       "score": 7.22,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-9ef3a42c7b327e6c7385": {
       "score": 0.0,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-9fb781bb9b95e345d385": {
       "score": 9.66,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-a0ddc7095998cad2c7cf": {
       "score": 9.27,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-a5a52ec98076660a156a": {
       "score": 4.65,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-a742777cbc0c8c74aa6d": {
       "score": 13.75,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-ad739df1f7a422d33c51": {
       "score": 0.99,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-af329af4b2827c242af6": {
       "score": 5.94,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-b3d557ccad6e9b11f365": {
       "score": 1.76,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-b5866ec7843f4a7bae73": {
       "score": 2.94,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-b70a7c4c8d36ee4e984f": {
       "score": 2.61,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-b8f11aa68ad68cf7a66b": {
-      "score": 6.25,
+      "score": 7.02,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-bb34be0621fc28d02e45": {
-      "score": 7.52,
+      "score": 8.66,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-bedd6481a0ae26db1281": {
       "score": 8.46,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-bfa3648cfc29e4473002": {
       "score": 1.11,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-c3478e3c0e960adea4e9": {
       "score": 4.91,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-c3c8f5fcd89693765096": {
       "score": 1.95,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-c5f749c477b79e41c9b3": {
-      "score": 9.18,
+      "score": 8.41,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-c7ec993479bb353f7ac4": {
       "score": 1.44,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-c9b40dbd11f5f511bd0f": {
       "score": 1.66,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-cbf888259f54cba9c019": {
       "score": 0.0,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-ccf049afb53cd93de4e1": {
       "score": 0.2,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-cee6d02a7743e138d4d6": {
       "score": 4.37,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-cf34c6c9a6ec21328593": {
-      "score": 7.11,
+      "score": 5.72,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-d1314b7ff8149020140b": {
       "score": 3.89,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-d26fad78c21127a6a04d": {
       "score": 0.37,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-d32ac7efb2fb6851aeab": {
       "score": 22.1,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-d62efc5ad2aa6d40d66d": {
       "score": 0.2,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-d69e40630bee49e72ec7": {
       "score": 21.04,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-dbb536cd147f934a2c18": {
       "score": 1.51,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-dee88e9ee0cc51d43b22": {
       "score": 2.71,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-dfaed3654cafef4bae0b": {
       "score": 4.91,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-e2801705402832b94ece": {
       "score": 4.39,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-eae1d70aa72867a7aa8c": {
       "score": 22.03,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-ec4f81fe1de280de7ed3": {
       "score": 16.18,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-ef56bcdaac91611bc349": {
-      "score": 6.49,
+      "score": 7.42,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-f6810d0869c7957cd69b": {
       "score": 4.76,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-f798f802d047a2248ce9": {
       "score": 0.0,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-fbc1f4ea2d610c9cbdd5": {
       "score": 2.47,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-fe7a3a0ebd874723fba0": {
       "score": 3.34,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     },
     "portfolio-ffbd7c4283d8983593d0": {
       "score": 5.51,
       "status": "E",
-      "updated_utc": "2026-08-10T05:11:46+00:00"
+      "updated_utc": "2026-08-11T05:15:25+00:00"
     }
   },
   "totals": {
@@ -741,7 +741,7 @@
     "automatic_promotions": 0,
     "automatic_retirements": 0,
     "automatic_rollbacks": 0,
-    "cycles": 1999
+    "cycles": 2095
   },
-  "updated_utc": "2026-08-10T05:11:46+00:00"
+  "updated_utc": "2026-08-11T05:15:25+00:00"
 }
