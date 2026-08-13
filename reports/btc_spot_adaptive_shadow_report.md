@@ -1,6 +1,6 @@
 # BTC Spot Adaptive Shadow — raccolta dati
 
-Generato: 2026-08-13T04:37:38+00:00
+Generato: 2026-08-13T08:37:35+00:00
 
 - Modalità: **SOLO PAPER / SHADOW**
 - Asset: **BTC spot**
