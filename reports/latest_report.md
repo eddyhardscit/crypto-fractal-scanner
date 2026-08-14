@@ -4548,3 +4548,25 @@ Il workflow può continuare, ma gli avvisi sopra vanno verificati.
 
 </details>
 <!-- COMPACT_SECTION_END:data_quality -->
+
+<!-- SOL_SPOT_ADAPTIVE_START -->
+# SOL Spot Adaptive Range — paper trading separato
+
+Generato: 2026-08-14T12:30:35+00:00
+
+- Modalità: **SOLO PAPER TRADING**
+- Asset: **SOL spot**
+- Leva: **nessuna (1x)**
+- Capitale iniziale separato: **€40.000,00**
+- Fonte mercato: **KUCOIN_PUBLIC_API**; nuove entrate: **CONSENTITE**
+
+| Equity | Cash | SOL | Prezzo | Rendimento | Realizzato | Commissioni | Max DD | Operazioni |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| €41.035,81 | €17.544,74 | 311.135932 | 75.5010 | +2.59% | €568,83 | €49,51 | 6.48% | 8 |
+
+**Ultima decisione:** HOLD — Prezzo dentro la fascia neutrale.
+
+Bande 4H: L2 71.3267 · L1 73.4581 · media 76.1224 · U1 78.7867 · U2 80.9181.
+
+> Questo portafoglio non condivide capitale, posizioni o statistiche con il paper trading da €10.000.
+<!-- SOL_SPOT_ADAPTIVE_END -->
