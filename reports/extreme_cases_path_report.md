@@ -1,6 +1,6 @@
 # Extreme cases path report
 
-Generato: 2026-08-11 05:21 UTC
+Generato: 2026-08-14 10:52 UTC
 
 Questo report si attiva quando i casi positivi o negativi sono almeno **80%**.
 
@@ -8,89 +8,11 @@ Ora misura anche il **rialzo massimo prima della discesa principale**, quindi di
 
 ## Trigger estremi
 
-| Asset   | Direzione            | Trigger   | Percentuale   | Motivo                           |   Match disponibili |
-|:--------|:---------------------|:----------|:--------------|:---------------------------------|--------------------:|
-| BTC     | POSITIVO / RIALZISTA | SI        | +80,00%       | Casi positivi 80.00% >= 80%      |                  40 |
-| SOL     | NESSUNO              | NO        | +72,50%       | Nessun lato sopra soglia estrema |                  40 |
-| DOGE    | NESSUNO              | NO        | +72,50%       | Nessun lato sopra soglia estrema |                  40 |
-
-## BTC — casi rialzisti
-
-- Trigger: **Casi positivi 80.00% >= 80%**
-- Casi usati nei grafici: **32**
-- Return mediano 7g: **+4,51%**
-- Return mediano 14g: **+9,08%**
-- Return mediano 30g: **+10,75%**
-- Drawdown mediano: **-0,73%**
-- Max gain mediano: **+21,18%**
-
-### Quanto salivano prima di scendere
-
-- Spike massimo mediano prima del minimo: **+0,00%**
-- Spike massimo medio prima del minimo: **+1,30%**
-- Spike p75 prima del minimo: **+1,08%**
-- Giorno mediano dello spike: **giorno 0**
-- Giorno mediano del minimo: **giorno 1**
-- Scarico mediano dal picco al minimo: **-2,49%**
-- Casi con almeno +5% prima del minimo: **+9,38%**
-- Casi con almeno +10% prima del minimo: **+3,12%**
-- Casi con almeno +15% prima del minimo: **+0,00%**
-- Discesa quasi immediata: **+65,62%**
-
-Un segnale ribassista a 30 giorni non significa necessariamente discesa immediata: alcuni casi fanno prima uno spike e poi scaricano.
-
-### Distribuzione 30 giorni
-
-| P10    | P25    | P50     | P75     | P90     |
-|:-------|:-------|:--------|:--------|:--------|
-| +5,33% | +7,65% | +10,75% | +21,58% | +39,87% |
-
-### Grafico pulito: bande + mediana
-
-![Extreme clean BTC](extreme_cases_BTC_positive_clean_bands.png)
-
-### Grafico asset per asset
-
-![Extreme asset medians BTC](extreme_cases_BTC_positive_asset_medians.png)
-
-### Spike massimo prima della discesa
-
-La sigla `g7` sopra una barra significa che il massimo rialzo è avvenuto al giorno 7.
-
-![Extreme spike before dump BTC](extreme_cases_BTC_positive_spike_before_dump.png)
-
-### Spike iniziale contro minimo successivo
-
-![Extreme spike vs low BTC](extreme_cases_BTC_positive_spike_vs_low.png)
-
-### Casi ordinati per risultato finale
-
-![Extreme ranked BTC](extreme_cases_BTC_positive_ranked_returns.png)
-
-### Casi con spike maggiore prima del dump
-
-| Asset storico   | End        | Similarity   | Spike prima del minimo   |   Giorno spike | Minimo 30g   |   Giorno minimo | Dump dal picco   | Return 30g   | Sequenza                |
-|:----------------|:-----------|:-------------|:-------------------------|---------------:|:-------------|----------------:|:-----------------|:-------------|:------------------------|
-| 1INCH-USD       | 2024-10-13 | +86,67%      | +13,39%                  |              7 | -11,35%      |              22 | -21,82%          | +19,12%      | SPIKE PRIMA DEL DUMP    |
-| LTC-USD         | 2020-05-15 | +85,21%      | +5,95%                   |              4 | -0,94%       |              11 | -6,50%           | +2,92%       | ECCEZIONE POSITIVA      |
-| QTUM-USD        | 2026-04-14 | +84,83%      | +5,91%                   |              3 | -4,42%       |              16 | -9,75%           | +9,08%       | ECCEZIONE POSITIVA      |
-| ALGO-USD        | 2020-05-19 | +85,63%      | +4,85%                   |              1 | -3,57%       |               2 | -8,04%           | +20,67%      | ECCEZIONE POSITIVA      |
-| BTC-USD         | 2026-04-14 | +85,53%      | +3,97%                   |              3 | -0,44%       |               5 | -4,24%           | +9,26%       | ECCEZIONE POSITIVA      |
-| THETA-USD       | 2022-07-18 | +84,48%      | +2,34%                   |              1 | -10,43%      |               7 | -12,48%          | +7,26%       | ECCEZIONE POSITIVA      |
-| XLM-USD         | 2020-11-11 | +90,41%      | +2,02%                   |              2 | -0,49%       |               4 | -2,46%           | +87,35%      | DISCESA QUASI IMMEDIATA |
-| BNB-USD         | 2019-01-26 | +84,50%      | +1,17%                   |              1 | -11,88%      |               4 | -12,89%          | +40,47%      | DISCESA QUASI IMMEDIATA |
-| LTC-USD         | 2026-04-09 | +85,17%      | +1,05%                   |              2 | -1,86%       |               3 | -2,87%           | +6,43%       | DISCESA QUASI IMMEDIATA |
-| ETC-USD         | 2020-11-11 | +86,62%      | +0,83%                   |              2 | -1,22%       |               4 | -2,03%           | +14,00%      | DISCESA QUASI IMMEDIATA |
-| XRP-USD         | 2023-10-22 | +89,65%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +11,10%      | DISCESA QUASI IMMEDIATA |
-| XRP-USD         | 2026-04-14 | +88,54%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +8,98%       | DISCESA QUASI IMMEDIATA |
-| BTC-USD         | 2019-01-26 | +88,22%      | +0,00%                   |              0 | -5,63%       |              12 | -5,63%           | +7,78%       | ECCEZIONE POSITIVA      |
-| LTC-USD         | 2023-10-22 | +88,05%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +1,94%       | DISCESA QUASI IMMEDIATA |
-| ETH-USD         | 2026-04-09 | +87,88%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +6,28%       | DISCESA QUASI IMMEDIATA |
-| DOGE-USD        | 2020-11-11 | +87,85%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +11,20%      | DISCESA QUASI IMMEDIATA |
-| ETC-USD         | 2023-10-22 | +87,82%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +14,66%      | DISCESA QUASI IMMEDIATA |
-| SOL-USD         | 2026-04-12 | +87,71%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +15,64%      | DISCESA QUASI IMMEDIATA |
-| MKR-USD         | 2020-05-21 | +87,18%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +63,16%      | DISCESA QUASI IMMEDIATA |
-| BNB-USD         | 2026-04-14 | +87,16%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +10,41%      | DISCESA QUASI IMMEDIATA |
+| Asset   | Direzione   | Trigger   | Percentuale   | Motivo                           |   Match disponibili |
+|:--------|:------------|:----------|:--------------|:---------------------------------|--------------------:|
+| BTC     | NESSUNO     | NO        | +72,50%       | Nessun lato sopra soglia estrema |                  40 |
+| SOL     | NESSUNO     | NO        | +75,00%       | Nessun lato sopra soglia estrema |                  40 |
+| DOGE    | NESSUNO     | NO        | +70,00%       | Nessun lato sopra soglia estrema |                  40 |
 
 ## Come leggerlo
 

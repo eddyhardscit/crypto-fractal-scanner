@@ -1,2 +1,1 @@
-asset,direction,trigger_pct,cases_used,median_spike_before_low_pct,mean_spike_before_low_pct,p75_spike_before_low_pct,median_spike_day,median_low_day,median_dump_from_peak_pct,spike_5_rate,spike_10_rate,spike_15_rate,immediate_drop_rate
-BTC,POSITIVO / RIALZISTA,80.0,32,0.0,1.2960572809097959,1.0750670604527002,0.0,1.0,-2.486415447555151,9.375,3.125,0.0,65.625
+
