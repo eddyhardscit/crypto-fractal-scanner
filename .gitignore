@@ -10,10 +10,13 @@
 # Automatic paper-trading persistent state (stored in GitHub Release asset)
 reports/paper_trading_state.json
 reports/paper_trading_trade_log.csv
+reports/paper_trading_trade_path.csv
 reports/paper_trading_signal_log.csv
 reports/paper_trading_equity.csv
 reports/paper_trading_open_positions.csv
 reports/paper_trading_shadow_metrics.csv
+reports/paper_trading_shadow_exit_events.csv
+reports/paper_trading_shadow_exit_results.csv
 reports/paper_trading_config_snapshot.json
 reports/paper_trading_market_cache.json
 reports/paper_trading_storage_status.json
