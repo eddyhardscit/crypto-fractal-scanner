@@ -436,6 +436,13 @@ def build_archive() -> bytes:
     return buffer.getvalue()
 
 
+def atomic_write_bytes(path: Path, payload: bytes) -> None:
+    """Replace a snapshot through its writable parent, even if the old file is read-only."""
+    temporary = path.with_name(f".{path.name}.tmp")
+    temporary.write_bytes(payload)
+    temporary.replace(path)
+
+
 def safe_extract(payload: bytes) -> list[str]:
     restored: list[str] = []
     allowed = {f"reports/{name}" for name in FILES}
@@ -446,7 +453,7 @@ def safe_extract(payload: bytes) -> list[str]:
                 continue
             target = Path(normalized)
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(archive.read(info))
+            atomic_write_bytes(target, archive.read(info))
             restored.append(normalized)
     return restored
 
