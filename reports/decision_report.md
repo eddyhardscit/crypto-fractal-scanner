@@ -1,6 +1,6 @@
 # Decisione operativa sintetica
 
-Generato: 2026-08-14 10:53 UTC
+Generato: 2026-08-14 11:04 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 
@@ -43,7 +43,7 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - Long leva: **NO LONG A LEVA**
 - Short leva: **NO SHORT**
 - Rischio: **MOLTO ALTO**
-- Conferme: conferma del doppio minimo sopra 83,81; nuova conferma tecnica sopra 77,62; milestone analogiche 79,14 / 89,87, valide soltanto se rientra anche il gap frattale.
+- Conferme: conferma del doppio minimo sopra 83,81; nuova conferma tecnica sopra 77,62; milestone analogiche 79,16 / 89,89, valide soltanto se rientra anche il gap frattale.
 - Invalidazioni: Allarmi sotto 69,65 / 70,69 / 62,19.
 
 ### DOGE

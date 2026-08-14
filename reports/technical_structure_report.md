@@ -1,6 +1,6 @@
 # Report struttura tecnica
 
-Generato: 2026-08-14 10:53 UTC
+Generato: 2026-08-14 11:03 UTC
 
 Questo report aggiunge al tuo scanner una lettura classica di analisi tecnica.
 
@@ -25,9 +25,9 @@ Regola anti-pattern-zombie: un pattern vecchio non resta indefinitamente conferm
 
 | Asset   | Prezzo   |   Punteggio | Verdetto         | Trend            | Momentum                  | Struttura                                             |   Pattern score | Fibonacci      | Pattern rialzista         | Pattern ribassista           | Supporto   | Resistenza   |
 |:--------|:---------|------------:|:-----------------|:-----------------|:--------------------------|:------------------------------------------------------|----------------:|:---------------|:--------------------------|:-----------------------------|:-----------|:-------------|
-| BTC | 62.760 $ | -6 | DEBOLE | Trend ribassista | Momentum debole | Compressione / triangolo | 0 | +1 / TENUTO | Doppio minimo / CANDIDATO | Doppio massimo / CANDIDATO | 62.227 | 65.402 |
-| SOL | 75,37 $ | -3 | DEBOLE | Trend misto | Momentum misto | Struttura ribassista con massimi e minimi decrescenti | 0 | 0 / NON ATTIVO | Doppio minimo / CANDIDATO | Doppio massimo / CANDIDATO | 70,69 | 77,62 |
-| DOGE | 0.06933 $ | 0 | NEUTRALE / MISTO | Trend ribassista | Momentum in miglioramento | Compressione / triangolo | 0 | 0 / NON ATTIVO | Doppio minimo / CANDIDATO | Adam and Eve Top / CANDIDATO | 0.06835 | 0.07117 |
+| BTC | 62.742 $ | -6 | DEBOLE | Trend ribassista | Momentum debole | Compressione / triangolo | 0 | +1 / TENUTO | Doppio minimo / CANDIDATO | Doppio massimo / CANDIDATO | 62.227 | 65.402 |
+| SOL | 75,39 $ | -3 | DEBOLE | Trend misto | Momentum misto | Struttura ribassista con massimi e minimi decrescenti | 0 | 0 / NON ATTIVO | Doppio minimo / CANDIDATO | Doppio massimo / CANDIDATO | 70,69 | 77,62 |
+| DOGE | 0.06931 $ | 0 | NEUTRALE / MISTO | Trend ribassista | Momentum in miglioramento | Compressione / triangolo | 0 | 0 / NON ATTIVO | Doppio minimo / CANDIDATO | Adam and Eve Top / CANDIDATO | 0.06835 | 0.07117 |
 
 ## Riepilogo ciclo di vita pattern
 
@@ -41,15 +41,15 @@ Regola anti-pattern-zombie: un pattern vecchio non resta indefinitamente conferm
 
 | Asset   |   RSI 14 |   Istogramma MACD | MA20    | MA50    | MA200   | Pendenza MA50 20g   | Pendenza MA200 60g   | Rendimento 30g   | Rendimento 90g   |
 |:--------|---------:|------------------:|:--------|:--------|:--------|:--------------------|:---------------------|:-----------------|:-----------------|
-| BTC | 41.48 | -151.867 | 63.933 | 63.446 | 69.501 | 0,29% | -10,20% | -1,61% | -18,95% |
-| SOL | 51.15 | 0.2796 | 74,47 | 75,90 | 82,29 | 2,61% | -16,90% | 0,13% | -11,51% |
-| DOGE | 43.84 | 0.00023 | 0.07016 | 0.07211 | 0.09072 | -6,84% | -16,70% | -4,16% | -36,26% |
+| BTC | 41.37 | -153.054 | 63.932 | 63.446 | 69.500 | 0,29% | -10,20% | -1,64% | -18,97% |
+| SOL | 51.23 | 0.28088 | 74,47 | 75,90 | 82,29 | 2,61% | -16,90% | 0,16% | -11,49% |
+| DOGE | 43.78 | 0.00023 | 0.07016 | 0.07211 | 0.09072 | -6,84% | -16,70% | -4,19% | -36,28% |
 
 ## Dettaglio asset
 
 ### BTC
 
-- Prezzo: **62.760 $**
+- Prezzo: **62.742 $**
 - Punteggio tecnico: **-6 / 12**
 - Verdetto: **DEBOLE**
 - Trend: **Trend ribassista** (-3)
@@ -59,7 +59,7 @@ Regola anti-pattern-zombie: un pattern vecchio non resta indefinitamente conferm
   - Dettaglio struttura: Ultimi minimi: 5.775e+04 -> 6.223e+04. Ultimi massimi: 6.691e+04 -> 6.54e+04.
 - Divergenza: **Nessuna** (0)
 - Fase Wyckoff candidata: **Possibile accumulazione** (1)
-  - Dettaglio Wyckoff: Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI 41.5.
+  - Dettaglio Wyckoff: Prezzo sotto MA200, vicino alla parte bassa del range a 120 giorni, RSI 41.4.
 - Fibonacci automatico: **TENUTO** (+1)
   - Swing UP 2026-07-01 57.748 -> 2026-08-09 65.402; livello più vicino 38.2% a 62.478; stato TENUTO; confluenza: supporto tecnico.
 - Punteggio pattern: **0**
@@ -71,26 +71,26 @@ Pattern classici e ciclo di vita:
 
 - Doppio minimo: **CANDIDATO** (0)
   - Due minimi simili vicino a 62.201 tra 2026-06-18 e 2026-08-03. Neckline stimata: 66.910. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 11 giorni.
-  - neckline 66.910; target 71.619; distanza dalla neckline 6,61%; prezzo sotto neckline.
+  - neckline 66.910; target 71.619; distanza dalla neckline 6,64%; prezzo sotto neckline.
 - Triplo minimo: **CANDIDATO** (0)
   - Tre minimi simili vicino a 62.201 dal 2026-03-29 al 2026-08-03. Neckline stimata: 82.792. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 11 giorni.
-  - neckline 82.792; target 103.383; distanza dalla neckline 31,92%; prezzo sotto neckline.
+  - neckline 82.792; target 103.383; distanza dalla neckline 31,96%; prezzo sotto neckline.
 - Adam and Eve Bottom: **CANDIDATO** (0)
   - Pattern Adam and Eve Bottom vicino a 59.109 dal 2026-06-05 al 2026-08-03. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 67.248. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 11 giorni.
-  - neckline 67.248; target 75.387; distanza dalla neckline 7,15%; prezzo sotto neckline.
+  - neckline 67.248; target 75.387; distanza dalla neckline 7,18%; prezzo sotto neckline.
 - Doppio massimo: **CANDIDATO** (0)
   - Due massimi simili vicino a 65.544 tra 2026-06-22 e 2026-08-09. Neckline ribassista stimata: 57.748. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 5 giorni.
-  - neckline 57.748; target 49.952; distanza dalla neckline 8,68%; prezzo sopra neckline.
+  - neckline 57.748; target 49.952; distanza dalla neckline 8,65%; prezzo sopra neckline.
 - Triplo massimo: **CANDIDATO** (0)
   - Tre massimi simili vicino a 65.544 dal 2026-06-22 al 2026-08-09. Neckline ribassista stimata: 57.748. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 5 giorni.
-  - neckline 57.748; target 49.952; distanza dalla neckline 8,68%; prezzo sopra neckline.
+  - neckline 57.748; target 49.952; distanza dalla neckline 8,65%; prezzo sopra neckline.
 - Adam and Eve Top: **CANDIDATO** (0)
   - Pattern Adam and Eve Top vicino a 67.248 dal 2026-06-15 al 2026-07-21. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 57.748. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 24 giorni.
-  - neckline 57.748; target 48.247; distanza dalla neckline 8,68%; prezzo sopra neckline.
+  - neckline 57.748; target 48.247; distanza dalla neckline 8,65%; prezzo sopra neckline.
 
 ### SOL
 
-- Prezzo: **75,37 $**
+- Prezzo: **75,39 $**
 - Punteggio tecnico: **-3 / 12**
 - Verdetto: **DEBOLE**
 - Trend: **Trend misto** (-1)
@@ -112,26 +112,26 @@ Pattern classici e ciclo di vita:
 
 - Doppio minimo: **CANDIDATO** (0)
   - Due minimi simili vicino a 67,92 tra 2026-06-19 e 2026-08-01. Neckline stimata: 83,81. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 13 giorni.
-  - neckline 83,81; target 99,70; distanza dalla neckline 11,20%; prezzo sotto neckline.
+  - neckline 83,81; target 99,70; distanza dalla neckline 11,17%; prezzo sotto neckline.
 - Triplo minimo: **CANDIDATO** (0)
   - Tre minimi simili vicino a 67,92 dal 2026-06-19 al 2026-08-01. Neckline stimata: 83,81. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 13 giorni.
-  - neckline 83,81; target 99,70; distanza dalla neckline 11,20%; prezzo sotto neckline.
+  - neckline 83,81; target 99,70; distanza dalla neckline 11,17%; prezzo sotto neckline.
 - Adam and Eve Bottom: **CANDIDATO** (0)
   - Pattern Adam and Eve Bottom vicino a 67,92 dal 2026-06-19 al 2026-08-01. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 83,81. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 13 giorni.
-  - neckline 83,81; target 99,70; distanza dalla neckline 11,20%; prezzo sotto neckline.
+  - neckline 83,81; target 99,70; distanza dalla neckline 11,17%; prezzo sotto neckline.
 - Doppio massimo: **CANDIDATO** (0)
   - Due massimi simili vicino a 77,62 tra 2026-06-22 e 2026-08-09. Neckline ribassista stimata: 64,42. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 5 giorni.
-  - neckline 64,42; target 51,22; distanza dalla neckline 17,00%; prezzo sopra neckline.
+  - neckline 64,42; target 51,22; distanza dalla neckline 17,03%; prezzo sopra neckline.
 - Triplo massimo: **CANDIDATO** (0)
   - Tre massimi simili vicino a 78,88 dal 2026-07-15 al 2026-08-09. Neckline ribassista stimata: 70,69. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 5 giorni.
-  - neckline 70,69; target 62,51; distanza dalla neckline 6,61%; prezzo sopra neckline.
+  - neckline 70,69; target 62,51; distanza dalla neckline 6,64%; prezzo sopra neckline.
 - Adam and Eve Top: **CANDIDATO** (0)
   - Pattern Adam and Eve Top vicino a 77,62 dal 2026-06-15 al 2026-08-09. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 64,42. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 5 giorni.
-  - neckline 64,42; target 51,22; distanza dalla neckline 17,00%; prezzo sopra neckline.
+  - neckline 64,42; target 51,22; distanza dalla neckline 17,03%; prezzo sopra neckline.
 
 ### DOGE
 
-- Prezzo: **0.06933 $**
+- Prezzo: **0.06931 $**
 - Punteggio tecnico: **0 / 12**
 - Verdetto: **NEUTRALE / MISTO**
 - Trend: **Trend ribassista** (-3)
@@ -153,18 +153,18 @@ Pattern classici e ciclo di vita:
 
 - Doppio minimo: **CANDIDATO** (0)
   - Due minimi simili vicino a 0.06829 tra 2026-07-24 e 2026-08-06. Neckline stimata: 0.07380. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 8 giorni.
-  - neckline 0.07380; target 0.07931; distanza dalla neckline 6,45%; prezzo sotto neckline.
+  - neckline 0.07380; target 0.07931; distanza dalla neckline 6,48%; prezzo sotto neckline.
 - Triplo minimo: **CANDIDATO** (0)
   - Tre minimi simili vicino a 0.06829 dal 2026-06-30 al 2026-08-06. Neckline stimata: 0.07923. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 8 giorni.
-  - neckline 0.07923; target 0.09017; distanza dalla neckline 14,29%; prezzo sotto neckline.
+  - neckline 0.07923; target 0.09017; distanza dalla neckline 14,32%; prezzo sotto neckline.
 - Adam and Eve Bottom: **CANDIDATO** (0)
   - Pattern Adam and Eve Bottom vicino a 0.06835 dal 2026-06-30 al 2026-08-06. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 0.07923. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 8 giorni.
-  - neckline 0.07923; target 0.09012; distanza dalla neckline 14,29%; prezzo sotto neckline.
+  - neckline 0.07923; target 0.09012; distanza dalla neckline 14,32%; prezzo sotto neckline.
 - Doppio massimo: **ASSENTE** (0)
 - Triplo massimo: **ASSENTE** (0)
 - Adam and Eve Top: **CANDIDATO** (0)
   - Pattern Adam and Eve Top vicino a 0.07923 dal 2026-07-04 al 2026-07-26. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 0.06829. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 19 giorni.
-  - neckline 0.06829; target 0.05735; distanza dalla neckline 1,52%; prezzo sopra neckline.
+  - neckline 0.06829; target 0.05735; distanza dalla neckline 1,49%; prezzo sopra neckline.
 
 ## Fibonacci automatico
 

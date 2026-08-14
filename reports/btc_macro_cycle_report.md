@@ -1,6 +1,6 @@
 # Bitcoin Macro Cycle — Power Law e Four-Year Spiral
 
-Generato: 2026-08-14 10:53 UTC
+Generato: 2026-08-14 11:04 UTC
 
 Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche, non autorizza leva e pesa **0** nel Global Confluence.
 
@@ -8,10 +8,10 @@ Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche
 
 | Voce | Valore | Lettura |
 | --- | --- | --- |
-| Prezzo BTC | 62.759 $ | prezzo corrente |
-| Power Law centrale | 123.523 $ | deviazione -49,19% |
+| Prezzo BTC | 62.784 $ | prezzo corrente |
+| Power Law centrale | 123.523 $ | deviazione -49,17% |
 | Banda p10-p90 | 76.543 $ / 311.045 $ | SOTTO LA BANDA P10 |
-| Percentile residuo | 0,25% | posizione storica nel corridoio |
+| Percentile residuo | 0,28% | posizione storica nel corridoio |
 | Esponente β | 5,8200 | R² log-log 91,94% |
 | Stabilità β | BASSA | range 1,3148 cambiando finestra |
 | Ultimo halving | 2024-04-19 | 847 giorni fa |
@@ -25,8 +25,8 @@ La Power Law viene trattata come regressione empirica, non come legge fisica. Il
 - Campione: 2014-09-17 → 2026-08-14 (4350 osservazioni)
 - Formula stimata: prezzo ≈ exp(-39.1907) × giorni^5.8200
 - Prezzo centrale oggi: **123.523 $**
-- Posizione corrente: **SOTTO LA BANDA P10**, percentile 0,25%
-- Scarto dal centro: **-49,19%**
+- Posizione corrente: **SOTTO LA BANDA P10**, percentile 0,28%
+- Scarto dal centro: **-49,17%**
 
 ![Bitcoin Power Law](btc_power_law_chart.png)
 
@@ -73,8 +73,8 @@ Campione molto piccolo: questi rendimenti sono contesto di ciclo, non probabilit
 
 | Asset | Coppia | Forza vs BTC | Score raw | Candidato | 30g | Peso Global |
 | --- | --- | --- | --- | --- | --- | --- |
-| SOL | SOL/BTC | SOVRAPERFORMA BTC | 4 | 1 | 0.5443829997751726 | 0 |
-| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -4 | -1 | -3.355091126867571 | 0 |
+| SOL | SOL/BTC | SOVRAPERFORMA BTC | 4 | 1 | 0.5025163844326386 | 0 |
+| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -4 | -1 | -3.3934959134604425 | 0 |
 
 ## Tracker live Power Law
 

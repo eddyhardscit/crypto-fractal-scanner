@@ -1,6 +1,6 @@
 # Calibrazione pesi Global Confluence
 
-Generato: 2026-08-14 10:53 UTC
+Generato: 2026-08-14 11:04 UTC
 
 Report completo: [global_weight_calibration_report.md](global_weight_calibration_report.md)
 

@@ -1,11 +1,11 @@
 # Accuratezza dati exchange e microstruttura
 
-Generato: 2026-08-14 10:53 UTC
+Generato: 2026-08-14 11:03 UTC
 
 Questo tracker verifica se il segnale candidato exchange ±1 anticipa correttamente la direzione del prezzo a 1/3/7/14/30 giorni.
 Il peso Global resta 0 finché l'orizzonte 7g non ha almeno 30 controlli, accuratezza almeno 55% e return corretto direzione positivo. L'overlay a 30g ha un gate separato.
 
-Controlli maturati completati in questa esecuzione: **39**.
+Controlli maturati completati in questa esecuzione: **0**.
 
 ## Ultime fotografie giornaliere
 

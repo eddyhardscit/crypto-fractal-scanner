@@ -1,6 +1,6 @@
 # Extreme cases path report
 
-Generato: 2026-08-14 10:52 UTC
+Generato: 2026-08-14 11:01 UTC
 
 Questo report si attiva quando i casi positivi o negativi sono almeno **80%**.
 
