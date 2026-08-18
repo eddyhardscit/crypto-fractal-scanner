@@ -1,23 +1,23 @@
 # Blocco 4 — Valutazione statistica Shadow
 
-Generato: 2026-08-17T05:06:24+00:00
+Generato: 2026-08-18T05:06:16+00:00
 
 > Modulo esclusivamente valutativo. Non modifica strategie, uscite, posizioni o capitale. Le candidature vengono consegnate al futuro Blocco 5, senza applicazione automatica.
 
 ## Stato
 
-- Risultati Block 3 disponibili: **219750**
-- Valutazioni prodotte: **19199**
-- Candidature al Blocco 5: **48**
+- Risultati Block 3 disponibili: **244280**
+- Valutazioni prodotte: **19356**
+- Candidature al Blocco 5: **47**
 - Mutazioni create automaticamente: **0**
 
 ## Classifica complessiva
 
 | Scenario | Campione pieno | Δ medio (R) | Mediana (R) | CI bootstrap basso | Migliora | Score | Stato |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| CH_TOP5BTC_GB20_R140 | 227 | 0,614 | 0,384 | 0,511 | 68,7% | 98,3 | ELIGIBLE_FOR_MUTATION |
-| GB20_R040 | 3843 | 0,246 | 0,143 | 0,212 | 54,7% | 87,7 | VALIDATING |
-| GB30_R040 | 3843 | 0,230 | 0,138 | 0,196 | 54,5% | 87,6 | VALIDATING |
+| CH_TOP5BTC_GB20_R140 | 290 | 0,446 | 0,309 | 0,342 | 63,1% | 91,6 | VALIDATING |
+| GB20_R040 | 4329 | 0,213 | 0,149 | 0,181 | 55,2% | 88,1 | ELIGIBLE_FOR_MUTATION |
+| GB30_R040 | 4329 | 0,199 | 0,140 | 0,168 | 55,0% | 88,0 | ELIGIBLE_FOR_MUTATION |
 | GB20_R050 | 41 | 3,520 | 4,831 | 2,865 | 85,4% | 87,5 | EARLY_SIGNAL |
 | GB30_R050 | 41 | 3,496 | 4,818 | 2,778 | 85,4% | 87,5 | EARLY_SIGNAL |
 | GB20_R075 | 41 | 3,451 | 4,831 | 2,743 | 85,4% | 87,5 | EARLY_SIGNAL |
