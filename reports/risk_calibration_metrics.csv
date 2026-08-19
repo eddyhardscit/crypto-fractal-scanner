@@ -1,4 +1,4 @@
 asset,snapshots_saved,checked_30d,pending,calibration_stage,stage_note,normal_drawdown_hit_rate_pct,bad_drawdown_hit_rate_pct,very_bad_drawdown_hit_rate_pct,normal_max_gain_hit_rate_pct,good_max_gain_hit_rate_pct,very_good_max_gain_hit_rate_pct,avg_actual_return_30d_pct,avg_actual_drawdown_pct,avg_actual_max_gain_pct,risk_calibration_bias,can_influence_decision,can_strongly_influence_decision
-BTC,39,11,28,RACCOLTA DATI,non applicare correzioni,0.0,0.0,0.0,100.0,100.0,100.0,14941.593947365041,14414.000316106143,15585.704944050092,RISCHIO FORSE TROPPO SEVERO,False,False
-SOL,39,11,28,RACCOLTA DATI,non applicare correzioni,9.090909090909092,0.0,0.0,0.0,0.0,0.0,-1.3678351375644822,-7.767670068497967,2.9929178781042993,RISCHIO FORSE TROPPO SEVERO,False,False
-DOGE,39,11,28,RACCOLTA DATI,non applicare correzioni,0.0,0.0,0.0,27.27272727272727,0.0,0.0,-1.3490596326527777,-3.9991681355160633,5.660649790585809,RISCHIO FORSE TROPPO SEVERO,False,False
+BTC,40,12,28,RACCOLTA DATI,non applicare correzioni,0.0,0.0,0.0,100.0,100.0,100.0,17265.419171808153,16666.84133074903,18001.49705892046,RISCHIO FORSE TROPPO SEVERO,False,False
+SOL,40,12,28,RACCOLTA DATI,non applicare correzioni,8.333333333333332,0.0,0.0,0.0,0.0,0.0,-1.149572143291894,-7.693970891382675,3.0515024512713076,RISCHIO FORSE TROPPO SEVERO,False,False
+DOGE,40,12,28,RACCOLTA DATI,non applicare correzioni,0.0,0.0,0.0,25.0,0.0,0.0,-1.2402098049365458,-3.907213315722496,5.641785942550211,RISCHIO FORSE TROPPO SEVERO,False,False
