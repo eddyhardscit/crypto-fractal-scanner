@@ -1,11 +1,11 @@
 {
-  "generated_utc": "2026-08-19T05:08:53+00:00",
+  "generated_utc": "2026-08-20T05:09:08+00:00",
   "phase": "WAITING",
-  "mark_price": 0.07003,
+  "mark_price": 0.07481,
   "equity_eur": 3600.0,
   "unrealized_pnl_eur": 0.0,
   "position_open": false,
-  "static_filters_ok": true,
+  "static_filters_ok": false,
   "rejection_accepted": false,
   "telegram": {
     "configured": true,
