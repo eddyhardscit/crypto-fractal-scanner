@@ -1,7 +1,7 @@
 # Storico previsioni scanner a 30 giorni
 
-Generato: **2026-08-21 07:33:13 CEST**  
-UTC: **2026-08-21 05:33:13 UTC**
+Generato: **2026-08-21 23:31:53 CEST**  
+UTC: **2026-08-21 21:31:53 UTC**
 
 Questo file salva, giorno per giorno, la previsione a 30 giorni dello scanner.
 
