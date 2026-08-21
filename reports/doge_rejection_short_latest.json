@@ -1,7 +1,7 @@
 {
-  "generated_utc": "2026-08-20T05:09:08+00:00",
-  "phase": "WAITING",
-  "mark_price": 0.07481,
+  "generated_utc": "2026-08-21T05:09:20+00:00",
+  "phase": "INVALIDATED",
+  "mark_price": 0.08217,
   "equity_eur": 3600.0,
   "unrealized_pnl_eur": 0.0,
   "position_open": false,

@@ -1,17 +1,17 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-13T07:47:54+00:00",
-  "updated_utc": "2026-08-20T05:09:08+00:00",
+  "updated_utc": "2026-08-21T05:09:20+00:00",
   "initial_capital_eur": 3600.0,
   "balance_eur": 3600.0,
   "peak_equity_eur": 3600.0,
   "max_drawdown_pct": 0.0,
-  "phase": "WAITING",
+  "phase": "INVALIDATED",
   "approach_id": 0,
   "last_candle_time": "",
   "last_prealert_approach": -1,
   "last_armed_approach": -1,
-  "last_invalidated_approach": -1,
+  "last_invalidated_approach": 0,
   "cooldown_until": "",
   "position": null,
   "closed_events": 0,
@@ -19,10 +19,18 @@
   "gross_profit_eur": 0.0,
   "gross_loss_eur": 0.0,
   "notifications": {
-    "pending": []
+    "pending": [
+      {
+        "id": "APPROACH:0:INVALIDATED",
+        "text": "⛔ DOGE SHORT — SETUP ANNULLATO\nLa candela 15m ha chiuso a 0.08021, sopra l’invalidazione 0,07966.\nNessuna posizione è stata aperta. Il bot aspetterà un nuovo riarmo.",
+        "created_utc": "2026-08-20T16:09:43+00:00",
+        "sent": true,
+        "sent_utc": "2026-08-20T16:09:43+00:00"
+      }
+    ]
   },
   "last_checks": {
-    "generated_utc": "2026-08-20T05:09:08+00:00",
+    "generated_utc": "2026-08-21T05:09:20+00:00",
     "static": {
       "checks": {
         "fresh_market": true,
@@ -36,37 +44,37 @@
         "candle_15m_fresh": true
       },
       "freshness_status": "FRESH",
-      "doge_mark": 0.07481,
-      "btc_mark": 69474.3,
+      "doge_mark": 0.08217,
+      "btc_mark": 74960.5,
       "global_score": -6.0,
       "classic_raw_score": -11.0,
       "relative_raw_score": -6.0,
       "bearish_pattern_status": "MATURO",
-      "candle_age_minutes": 24.146673566666667
+      "candle_age_minutes": 24.337264116666667
     },
     "rejection": {
       "accepted": false,
       "conditions": {
-        "trigger_touched": false,
-        "closed_back_below_trigger": true,
-        "close_below_invalidation": true,
+        "trigger_touched": true,
+        "closed_back_below_trigger": false,
+        "close_below_invalidation": false,
         "entry_not_chased": false,
-        "upper_wick": true,
+        "upper_wick": false,
         "bearish_confirmation": false,
         "volume_valid": true,
-        "stop_within_limit": true
+        "stop_within_limit": false
       },
-      "candle_time": "2026-08-20 04:45:00+00:00",
-      "open": 0.07468,
-      "high": 0.07492,
-      "low": 0.07468,
-      "close": 0.0748,
-      "previous_close": 0.07465,
-      "volume_ratio": 0.5677285502062034,
-      "upper_wick_ratio": 0.4999999999999711,
-      "close_location": 0.5000000000000289,
-      "stop_price": 0.0806,
-      "reason": "trigger_touched, entry_not_chased, bearish_confirmation"
+      "candle_time": "2026-08-21 04:45:00+00:00",
+      "open": 0.08212,
+      "high": 0.08241,
+      "low": 0.08204,
+      "close": 0.0823,
+      "previous_close": 0.08213,
+      "volume_ratio": 0.8283822401895867,
+      "upper_wick_ratio": 0.2972972972972983,
+      "close_location": 0.7027027027027017,
+      "stop_price": 0.08257482,
+      "reason": "closed_back_below_trigger, close_below_invalidation, entry_not_chased, upper_wick, bearish_confirmation, stop_within_limit"
     }
   }
 }
