@@ -274,6 +274,75 @@ def anomalies(rows: list[dict[str, str]]) -> list[dict[str, str]]:
     ]
 
 
+def health_status(
+    rows: list[dict[str, str]],
+    items: list[dict[str, str]],
+    current: datetime,
+    max_age_hours: float,
+) -> dict[str, Any]:
+    """Describe this report audit without claiming system-wide health.
+
+    The audit verifies report artifacts only.  It does not observe the complete
+    runtime, so ``operationally_proven`` must remain false unless a separate,
+    authoritative operational gate supplies that evidence.
+    """
+    valid_until = current + timedelta(hours=max_age_hours)
+    return {
+        "generated_at": iso(current),
+        "data_freshness": {
+            "state": "FRESH",
+            "max_age_hours": max_age_hours,
+            "valid_until": iso(valid_until),
+        },
+        "component_state": "ATTENTION" if items else "OK",
+        "operationally_proven": False,
+        "stale": False,
+        "status": "ATTENTION" if items else "REPORTS_HEALTHY_UNVERIFIED",
+        "checks_total": len(rows),
+    }
+
+
+def persisted_health_status(
+    payload: dict[str, Any],
+    current: datetime,
+    default_max_age_hours: float = 36.0,
+) -> dict[str, Any]:
+    """Return the effective status of a stored audit at ``current``.
+
+    This is deliberately fail-closed for old schema payloads which merely say
+    ``status=OK``: a missing or expired generation timestamp is always STALE.
+    """
+    result = dict(payload)
+    generated = parse_time(payload.get("generated_at") or payload.get("generated_utc"))
+    freshness = payload.get("data_freshness")
+    if not isinstance(freshness, dict):
+        freshness = {}
+    try:
+        max_age_hours = float(freshness.get("max_age_hours", default_max_age_hours))
+    except (TypeError, ValueError):
+        max_age_hours = default_max_age_hours
+    valid_until = parse_time(freshness.get("valid_until"))
+    if valid_until is None and generated is not None:
+        valid_until = generated + timedelta(hours=max_age_hours)
+    stale = generated is None or valid_until is None or current > valid_until
+    result["generated_at"] = iso(generated) if generated else None
+    result["data_freshness"] = {
+        "state": "STALE" if stale else "FRESH",
+        "max_age_hours": max_age_hours,
+        "valid_until": iso(valid_until) if valid_until else None,
+    }
+    result["stale"] = stale
+    if stale:
+        result["status"] = "STALE"
+        result["operationally_proven"] = False
+    else:
+        result.setdefault("operationally_proven", False)
+        if str(result.get("status", "")).upper() == "OK":
+            result["status"] = "REPORTS_HEALTHY_UNVERIFIED"
+    result.setdefault("component_state", "UNKNOWN")
+    return result
+
+
 def signature(items: list[dict[str, str]]) -> str:
     raw = json.dumps(
         sorted(items, key=lambda item: item["path"]),
@@ -352,6 +421,7 @@ def write_audit(
     items: list[dict[str, str]],
     current: datetime,
     telegram_sent: bool,
+    max_age_hours: float,
 ) -> None:
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     lines = [
@@ -374,21 +444,27 @@ def write_audit(
             f"`{item['path']}` | {item['status']} | {detail} |"
         )
     AUDIT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    save_json(
-        AUDIT_JSON,
+    payload = health_status(rows, items, current, max_age_hours)
+    payload.update(
         {
             "generated_utc": iso(current),
-            "status": "ATTENTION" if items else "OK",
+            "producer_root": str(Path.cwd().resolve()),
             "telegram_sent": telegram_sent,
             "checks": rows,
             "active_anomalies": items,
-        },
+        }
     )
+    save_json(AUDIT_JSON, payload)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--self-test", action="store_true")
+    parser.add_argument(
+        "--status-json",
+        type=Path,
+        help="Valuta in sola lettura la freshness di un audit persistito.",
+    )
     args = parser.parse_args()
 
     if args.self_test:
@@ -398,8 +474,20 @@ def main() -> int:
         print("Report health audit self-test OK")
         return 0
 
+    if args.status_json:
+        payload = load_json(args.status_json, {})
+        print(
+            json.dumps(
+                persisted_health_status(payload, now_utc()),
+                ensure_ascii=False,
+                sort_keys=True,
+            )
+        )
+        return 0
+
     config = load_json(CONFIG_PATH, {})
     current = now_utc()
+    audit_max_age_hours = float(config.get("audit_max_age_hours", 36))
     changed = changed_files()
     rows: list[dict[str, str]] = []
 
@@ -450,7 +538,7 @@ def main() -> int:
     if telegram_sent:
         state["last_alert_utc"] = iso(current)
     save_json(STATE_PATH, state)
-    write_audit(rows, items, current, telegram_sent)
+    write_audit(rows, items, current, telegram_sent, audit_max_age_hours)
 
     print(
         json.dumps(

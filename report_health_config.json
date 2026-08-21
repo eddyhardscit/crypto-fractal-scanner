@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "enabled": true,
+  "audit_max_age_hours": 36,
   "repeat_alert_hours": 168,
   "critical_reports": [
     {
