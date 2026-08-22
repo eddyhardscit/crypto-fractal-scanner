@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-08-21T21:31:54+00:00",
+  "generated_at": "2026-08-22T05:33:18+00:00",
   "data_freshness": {
     "state": "FRESH",
     "max_age_hours": 36.0,
-    "valid_until": "2026-08-23T09:31:54+00:00"
+    "valid_until": "2026-08-23T17:33:18+00:00"
   },
   "component_state": "OK",
   "operationally_proven": false,
   "stale": false,
   "status": "REPORTS_HEALTHY_UNVERIFIED",
   "checks_total": 8,
-  "generated_utc": "2026-08-21T21:31:54+00:00",
+  "generated_utc": "2026-08-22T05:33:18+00:00",
   "producer_root": "/opt/crypto-fractal-scanner-publisher",
   "telegram_sent": false,
   "checks": [
@@ -19,42 +19,42 @@
       "path": "reports/latest_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 16.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.0 ore fa; rigenerato in questo ciclo."
     },
     {
       "label": "Decisione operativa",
       "path": "reports/decision_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 16.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Global Confluence",
       "path": "reports/global_confluence_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 16.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Struttura tecnica",
       "path": "reports/technical_structure_report.md",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 16.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Snapshot mercato",
       "path": "reports/latest_market_snapshot.json",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 16.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Coerenza dati",
       "path": "reports/data_quality_coherence.json",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultimo dato 16.0 ore fa; dato interno ancora recente."
+      "detail": "Ultimo dato 0.0 ore fa; dato interno ancora recente."
     },
     {
       "label": "Storico forecast 30 giorni",
@@ -68,7 +68,7 @@
       "path": "reports/sol_btc_fractal_history.csv",
       "level": "OK",
       "status": "OK",
-      "detail": "Ultima riga utile 16.0 ore fa."
+      "detail": "Ultima riga utile 0.0 ore fa."
     }
   ],
   "active_anomalies": []
