@@ -1,4 +1,4 @@
 asset,evaluated_predictions,calibration_status,used_predictions,directional_accuracy_pct,reliability,return_bias_pct,drawdown_bias_pct,max_gain_bias_pct,avg_actual_return_pct,avg_actual_drawdown_pct,avg_actual_max_gain_pct
-BTC-USD,20,insufficient_data,0,,non ancora valutabile,,,,,,
-SOL-USD,20,insufficient_data,0,,non ancora valutabile,,,,,,
-DOGE-USD,20,insufficient_data,0,,non ancora valutabile,,,,,,
+BTC-USD,21,insufficient_data,0,,non ancora valutabile,,,,,,
+SOL-USD,21,insufficient_data,0,,non ancora valutabile,,,,,,
+DOGE-USD,21,insufficient_data,0,,non ancora valutabile,,,,,,
