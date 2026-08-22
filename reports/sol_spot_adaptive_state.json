@@ -1,30 +1,30 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-14T09:30:00+00:00",
-  "cash_eur": 43450.133824792996,
-  "sol_qty": 0.03159895177239079,
-  "cost_basis_eur": 2.3383261335025067,
-  "realized_pnl_eur": 3452.472150926486,
-  "fees_eur": 75.4398967697438,
-  "trades": 26,
+  "cash_eur": 43451.30910259239,
+  "sol_qty": 0.018959371063434476,
+  "cost_basis_eur": 1.402995680101504,
+  "realized_pnl_eur": 3452.7120982724787,
+  "fees_eur": 75.44107322399745,
+  "trades": 27,
   "peak_equity_eur": 43453.35421124801,
   "max_drawdown_pct": 6.4759347793257485,
-  "last_candle_time": "2026-08-22T08:00:00+00:00",
+  "last_candle_time": "2026-08-22T12:00:00+00:00",
   "last_action": "SELL_40_PERCENT",
   "bands": {
-    "mid": 83.93820000000001,
-    "lower1": 80.99849562451767,
-    "lower2": 78.64673212413182,
-    "upper1": 86.87790437548234,
-    "upper2": 89.2296678758682
+    "mid": 84.5054,
+    "lower1": 81.5291659565745,
+    "lower2": 79.1481787218341,
+    "upper1": 87.4816340434255,
+    "upper2": 89.86262127816589
   },
-  "updated_utc": "2026-08-22T12:30:34+00:00",
+  "updated_utc": "2026-08-22T16:30:34+00:00",
   "last_reason": "SOL sopra la seconda banda adattiva",
-  "last_price": 93.29,
-  "equity_eur": 43453.08169100384,
-  "return_pct": 8.632704227509613,
+  "last_price": 93.077,
+  "equity_eur": 43453.07378397286,
+  "return_pct": 8.63268445993215,
   "notifications": {
-    "telegram_last_sol_digest": "f4af89e541750f7825d04fc39bd4ab4484ad4d5a4d37d6b02c040a8b838fb1a3",
-    "telegram_last_sol_sent_utc": "2026-08-22T12:30:34+00:00"
+    "telegram_last_sol_digest": "7087d9f2e2b4ba5f1f2e6b707a6b4a9986c184adc69def3c267e764eab78c46c",
+    "telegram_last_sol_sent_utc": "2026-08-22T16:30:34+00:00"
   }
 }
