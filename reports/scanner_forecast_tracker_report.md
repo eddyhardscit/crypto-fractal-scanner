@@ -1,7 +1,7 @@
 <!-- SCANNER_FORECAST_TRACKER_START -->
 # Scanner forecast path / cono probabilistico
 
-Generato: 2026-08-22 05:31:40 UTC
+Generato: 2026-08-23 05:31:39 UTC
 
 Questo report trasforma i 40 casi simili dello scanner in un cono previsionale leggibile.
 
@@ -18,9 +18,9 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 | Asset   | Data       | Prezzo iniziale   | Direzione scanner   | Casi positivi   | P10 30g     | P25 30g     | P50 30g     | P75 30g     | P90 30g      |
 |:--------|:-----------|:------------------|:--------------------|:----------------|:------------|:------------|:------------|:------------|:-------------|
-| BTC | 2026-08-22 | 77.239 $ | INCERTO | 57,50% | 67.565,92 $ | 72.087,34 $ | 80.036,29 $ | 86.813,96 $ | 106.740,56 $ |
-| SOL | 2026-08-22 | 93,70 $ | INCERTO | 45,00% | 81,86 $ | 86,67 $ | 92,63 $ | 108,22 $ | 135,02 $ |
-| DOGE | 2026-08-22 | 0.09061 $ | INCERTO | 55,00% | 0.06234 $ | 0.07926 $ | 0.09231 $ | 0.09916 $ | 0.11994 $ |
+| BTC | 2026-08-23 | 76.328 $ | SALITA | 62,50% | 67.431,44 $ | 71.204,90 $ | 80.805,17 $ | 89.400,35 $ | 107.868,02 $ |
+| SOL | 2026-08-23 | 93,19 $ | INCERTO | 45,00% | 80,71 $ | 86,19 $ | 91,15 $ | 109,69 $ | 134,29 $ |
+| DOGE | 2026-08-23 | 0.09067 $ | SALITA | 60,00% | 0.06466 $ | 0.08255 $ | 0.09352 $ | 0.10283 $ | 0.13535 $ |
 
 ## Grafici
 
@@ -32,9 +32,9 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 ![Verifica storica cono BTC](scanner_forecast_history_BTC.png)
 
-- Cono congelato il **2026-07-23**; verificato fino al **2026-08-22**; stato **COMPLETO 30/30g**.
-- Reale **76.919,51 $**; p50 previsto **71.966,75 $**; scarto **6,88%**.
-- Errore medio assoluto **3,30%**; massimo **9,13%**; DENTRO p10-p90; DENTRO p25-p75.
+- Cono congelato il **2026-07-24**; verificato fino al **2026-08-23**; stato **COMPLETO 30/30g**.
+- Reale **76.223,78 $**; p50 previsto **71.440,83 $**; scarto **6,69%**.
+- Errore medio assoluto **3,65%**; massimo **16,13%**; DENTRO p10-p90; DENTRO p25-p75.
 
 ### SOL
 
@@ -44,9 +44,9 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 ![Verifica storica cono SOL](scanner_forecast_history_SOL.png)
 
-- Cono congelato il **2026-07-23**; verificato fino al **2026-08-22**; stato **COMPLETO 30/30g**.
-- Reale **92,96 $**; p50 previsto **80,03 $**; scarto **16,15%**.
-- Errore medio assoluto **4,28%**; massimo **17,65%**; DENTRO p10-p90; FUORI p25-p75.
+- Cono congelato il **2026-07-24**; verificato fino al **2026-08-23**; stato **COMPLETO 30/30g**.
+- Reale **92,98 $**; p50 previsto **79,46 $**; scarto **17,01%**.
+- Errore medio assoluto **4,09%**; massimo **19,31%**; DENTRO p10-p90; FUORI p25-p75.
 
 ### DOGE
 
@@ -56,29 +56,29 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 ![Verifica storica cono DOGE](scanner_forecast_history_DOGE.png)
 
-- Cono congelato il **2026-07-23**; verificato fino al **2026-08-22**; stato **COMPLETO 30/30g**.
-- Reale **0.08926 $**; p50 previsto **0.07155 $**; scarto **24,76%**.
-- Errore medio assoluto **4,63%**; massimo **28,64%**; DENTRO p10-p90; FUORI p25-p75.
+- Cono congelato il **2026-07-24**; verificato fino al **2026-08-23**; stato **COMPLETO 30/30g**.
+- Reale **0.09034 $**; p50 previsto **0.06832 $**; scarto **32,23%**.
+- Errore medio assoluto **7,25%**; massimo **39,28%**; FUORI p10-p90; FUORI p25-p75.
 
 ## Accuratezza percorso scanner
 
 | Asset   | Giorno   |   Controlli | Dentro p10-p90   | Dentro p25-p75   | Errore medio abs vs p50   | Errore medio vs p50   |
 |:--------|:---------|------------:|:-----------------|:-----------------|:--------------------------|:----------------------|
-| BTC | 1g | 41 | 92,68% | 58,54% | 2,29% | 0,77% |
-| BTC | 3g | 39 | 89,74% | 71,79% | 3,28% | 0,93% |
-| BTC | 7g | 35 | 100,00% | 80,00% | 3,80% | 0,73% |
-| BTC | 14g | 30 | 100,00% | 80,00% | 3,86% | 0,65% |
-| BTC | 30g | 14 | 100,00% | 92,86% | 6,29% | -3,14% |
-| SOL | 1g | 41 | 75,61% | 58,54% | 2,80% | 0,82% |
-| SOL | 3g | 39 | 89,74% | 71,79% | 3,53% | 0,75% |
-| SOL | 7g | 35 | 94,29% | 85,71% | 3,10% | 0,96% |
-| SOL | 14g | 30 | 93,33% | 80,00% | 4,36% | 3,12% |
-| SOL | 30g | 14 | 92,86% | 78,57% | 5,62% | 4,70% |
-| DOGE | 1g | 41 | 87,80% | 60,98% | 3,26% | 1,36% |
-| DOGE | 3g | 39 | 92,31% | 79,49% | 3,76% | 2,38% |
-| DOGE | 7g | 35 | 88,57% | 85,71% | 6,57% | 4,80% |
-| DOGE | 14g | 30 | 90,00% | 63,33% | 8,84% | 7,49% |
-| DOGE | 30g | 14 | 100,00% | 42,86% | 16,27% | 16,27% |
+| BTC | 1g | 42 | 92,86% | 59,52% | 2,31% | 0,73% |
+| BTC | 3g | 40 | 90,00% | 70,00% | 3,43% | 1,14% |
+| BTC | 7g | 36 | 97,22% | 77,78% | 4,27% | 1,28% |
+| BTC | 14g | 31 | 96,77% | 80,65% | 4,12% | 1,02% |
+| BTC | 30g | 15 | 100,00% | 93,33% | 6,43% | -2,37% |
+| SOL | 1g | 42 | 76,19% | 59,52% | 2,76% | 0,81% |
+| SOL | 3g | 40 | 90,00% | 70,00% | 3,65% | 0,94% |
+| SOL | 7g | 36 | 91,67% | 83,33% | 3,46% | 1,39% |
+| SOL | 14g | 31 | 93,55% | 77,42% | 4,79% | 3,60% |
+| SOL | 30g | 15 | 93,33% | 73,33% | 6,50% | 5,64% |
+| DOGE | 1g | 42 | 88,10% | 61,90% | 3,32% | 1,41% |
+| DOGE | 3g | 40 | 90,00% | 77,50% | 4,32% | 2,98% |
+| DOGE | 7g | 36 | 86,11% | 83,33% | 7,45% | 5,73% |
+| DOGE | 14g | 31 | 87,10% | 61,29% | 9,80% | 8,49% |
+| DOGE | 30g | 15 | 93,33% | 40,00% | 17,63% | 17,63% |
 
 ## Calibratore shadow
 

@@ -1,15 +1,15 @@
 # Blocco 10 — Regime Fitness e specializzazione
 
-Generato: 2026-08-22T05:11:36+00:00
+Generato: 2026-08-23T05:09:58+00:00
 
 > Paper-only e advisory. Il blocco misura quali strategie funzionano nei diversi regimi, ma non cambia automaticamente strategia o posizione.
 
 ## Stato
 
-- Regime corrente: **BULL_TREND**
+- Regime corrente: **BEAR_TREND**
 - Righe di performance: **1090**
-- Strategie preferite nel regime corrente: **20**
-- Strategie da evitare nel regime corrente: **0**
+- Strategie preferite nel regime corrente: **1**
+- Strategie da evitare nel regime corrente: **7**
 - Memorie contestuali: **520**
 - Routing automatico: **NO**
 
@@ -17,16 +17,16 @@ Generato: 2026-08-22T05:11:36+00:00
 
 | Rank | Portafoglio | Famiglia | Stato | Fitness | Trade | PF | Expectancy R | DD R |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| 1 | SHADOW_1H_FAST_V3_NO_ESPORTS_MFE_LOCK_V1 | shadow-1h-fast-v3-no-esports-mfe-lock-v1 | COMPATIBLE | 89.6 | 49 | 3.13 | 0.608 | 5.03 |
-| 2 | SHADOW_1H_FAST_SCORE_6_75_COST_AWARE_V1 | shadow-1h-fast-score-6-75-cost-aware-v1 | COMPATIBLE | 88.8 | 49 | 2.51 | 0.485 | 5.75 |
-| 3 | SHADOW_COMBO_ADAPTIVE_MFE_TRAIL | shadow-combo-adaptive-mfe-trail | SPECIALIST | 87.3 | 53 | 2.81 | 0.520 | 5.20 |
-| 4 | SHADOW_1H_FAST_V3_NO_ESPORTS_LONG_ONLY_V1 | shadow-1h-fast-v3-no-esports-long-only-v1 | SPECIALIST | 87.3 | 52 | 2.44 | 0.484 | 5.09 |
-| 5 | SHADOW_COMBO_ADAPTIVE | shadow-combo-adaptive | COMPATIBLE | 86.6 | 41 | 3.44 | 0.687 | 5.04 |
-| 6 | SHADOW_1H_FAST_NO_PEPE_V1 | shadow-1h-fast-no-pepe-v1 | SPECIALIST | 84.2 | 55 | 2.11 | 0.442 | 7.51 |
-| 7 | SHADOW_DONCHIAN_1H_GB20_120R_V1 | shadow-donchian-1h-gb20-120r-v1 | OBSERVING | 83.3 | 15 | 5.11 | 1.253 | 1.23 |
-| 8 | SHADOW_1H_BALANCED_V3 | shadow-1h-balanced-v3 | SPECIALIST | 81.6 | 50 | 2.08 | 0.428 | 7.93 |
-| 9 | SHADOW_DONCHIAN_1H | shadow-donchian-1h | OBSERVING | 81.2 | 29 | 2.85 | 0.707 | 3.40 |
-| 10 | SHADOW_SCANNER_TOP15_LONG | shadow-scanner-top15-long | COMPATIBLE | 80.7 | 45 | 3.06 | 0.617 | 8.96 |
+| 1 | SHADOW_RSI_SHORT_15X_10_RSI75 | shadow-rsi-short-15x-10-rsi75 | INSUFFICIENT | 81.2 | 3 | 99.00 | 0.742 | 0.00 |
+| 2 | SHADOW_RSI_SHORT_15X_50_RSI75 | shadow-rsi-short-15x-50-rsi75 | INSUFFICIENT | 81.2 | 3 | 99.00 | 0.742 | 0.00 |
+| 3 | SHADOW_RSI_SHORT_15X_10_RSI80 | shadow-rsi-short-15x-10-rsi80 | INSUFFICIENT | 80.4 | 1 | 99.00 | 0.583 | 0.00 |
+| 4 | SHADOW_RSI_SHORT_15X_50_RSI80 | shadow-rsi-short-15x-50-rsi80 | INSUFFICIENT | 80.4 | 1 | 99.00 | 0.583 | 0.00 |
+| 5 | SHADOW_RSI_SHORT_5X_RSI80 | shadow-rsi-short-5x-rsi80 | INSUFFICIENT | 80.4 | 1 | 99.00 | 0.498 | 0.00 |
+| 6 | SHADOW_BTC_ADAPTIVE_4H | shadow-btc-adaptive-4h | INSUFFICIENT | 80.4 | 1 | 99.00 | 2.423 | 0.00 |
+| 7 | SHADOW_BTC_EMA_4H | shadow-btc-ema-4h | INSUFFICIENT | 80.4 | 1 | 99.00 | 2.417 | 0.00 |
+| 8 | MAIN | main | INSUFFICIENT | 77.4 | 8 | 2.28 | 0.345 | 1.07 |
+| 9 | SHADOW_1H_FAST_V3_NOHIGH_REGIME_GUARD_V1 | shadow-1h-fast-v3-nohigh-regime-guard-v1 | OBSERVING | 76.3 | 10 | 2.44 | 0.391 | 1.53 |
+| 10 | SHADOW_RSI_LONG_15X_10_RSI25 | shadow-rsi-long-15x-10-rsi25 | INSUFFICIENT | 76.2 | 3 | 4.04 | 0.576 | 0.57 |
 
 ## Sicurezza
 

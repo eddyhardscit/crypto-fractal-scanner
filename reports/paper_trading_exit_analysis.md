@@ -1,34 +1,34 @@
 # Analisi uscite paper trading a leva
 
-Generato: 2026-08-22T05:11:40+00:00
+Generato: 2026-08-23T05:10:02+00:00
 
 > Analisi osservativa: non modifica ingressi, uscite o rischio del paper trading.
 
 ## Verifica del target +€50
 
-- Trade chiusi: **7921**
-- Trade con percorso cronologico utilizzabile: **7867**
-- Trade che hanno raggiunto almeno +€50: **3096**
-- Di questi, chiusi poi in perdita: **606**
+- Trade chiusi: **8198**
+- Trade con percorso cronologico utilizzabile: **8144**
+- Trade che hanno raggiunto almeno +€50: **3156**
+- Di questi, chiusi poi in perdita: **645**
 
 ## Confronto simulazioni
 
 | Posizione | Regola di uscita | P&L simulato | Differenza dall'attuale |
 | ---: | --- | ---: | ---: |
-| 1 | Stop loss fisso -€50 | +€35.260,17 | +€39.536,25 |
-| 2 | Protegge +€30 dopo +€50 | +€7.570,68 | +€11.846,76 |
-| 3 | Protegge +€20 dopo +€50 | +€3.279,62 | +€7.555,70 |
-| 4 | TP +€50 / SL -€50 | +€3.262,22 | +€7.538,30 |
-| 5 | Pareggio dopo +€50 | -€3.944,38 | +€331,70 |
-| 6 | Trailing 20% dopo +€50 | -€4.133,34 | +€142,73 |
-| 7 | Strategia attuale | -€4.276,08 | €0,00 |
-| 8 | Take profit fisso +€200 | -€4.276,08 | €0,00 |
-| 9 | Take profit fisso +€150 | -€4.286,27 | -€10,19 |
-| 10 | Chiude 50% a +€50 | -€4.564,03 | -€287,95 |
-| 11 | Take profit fisso +€100 | -€6.052,43 | -€1.776,36 |
-| 12 | Take profit fisso +€75 | -€19.263,69 | -€14.987,62 |
-| 13 | Take profit fisso +€50 | -€35.270,27 | -€30.994,20 |
-| 14 | Take profit fisso +€25 | -€43.690,09 | -€39.414,01 |
+| 1 | Stop loss fisso -€50 | +€27.574,11 | +€42.633,83 |
+| 2 | Protegge +€30 dopo +€50 | -€995,80 | +€14.063,93 |
+| 3 | TP +€50 / SL -€50 | -€1.458,00 | +€13.601,73 |
+| 4 | Protegge +€20 dopo +€50 | -€5.721,88 | +€9.337,85 |
+| 5 | Chiude 50% a +€50 | -€13.385,53 | +€1.674,19 |
+| 6 | Pareggio dopo +€50 | -€13.659,37 | +€1.400,36 |
+| 7 | Trailing 20% dopo +€50 | -€14.814,81 | +€244,92 |
+| 8 | Strategia attuale | -€15.059,72 | €0,00 |
+| 9 | Take profit fisso +€200 | -€15.059,72 | €0,00 |
+| 10 | Take profit fisso +€150 | -€15.069,91 | -€10,19 |
+| 11 | Take profit fisso +€100 | -€16.806,64 | -€1.746,92 |
+| 12 | Take profit fisso +€75 | -€28.858,63 | -€13.798,91 |
+| 13 | Take profit fisso +€50 | -€42.954,29 | -€27.894,57 |
+| 14 | Take profit fisso +€25 | -€50.913,85 | -€35.854,13 |
 
 ## Limiti metodologici
 

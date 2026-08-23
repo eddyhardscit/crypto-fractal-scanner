@@ -1,20 +1,22 @@
 # Blocco 4 — Valutazione statistica Shadow
 
-Generato: 2026-08-22T05:08:13+00:00
+Generato: 2026-08-23T05:06:21+00:00
 
 > Modulo esclusivamente valutativo. Non modifica strategie, uscite, posizioni o capitale. Le candidature vengono consegnate al futuro Blocco 5, senza applicazione automatica.
 
 ## Stato
 
-- Risultati Block 3 disponibili: **325794**
-- Valutazioni prodotte: **19807**
-- Candidature al Blocco 5: **26**
+- Risultati Block 3 disponibili: **345173**
+- Valutazioni prodotte: **19911**
+- Candidature al Blocco 5: **21**
 - Mutazioni create automaticamente: **0**
 
 ## Classifica complessiva
 
 | Scenario | Campione pieno | Δ medio (R) | Mediana (R) | CI bootstrap basso | Migliora | Score | Stato |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| CH_TOP5BTC_GB20_R140 | 572 | 0,294 | 0,149 | 0,194 | 59,1% | 87,9 | VALIDATING |
+| TP_R250 | 6341 | 0,270 | 0,149 | 0,241 | 55,1% | 87,7 | ELIGIBLE_FOR_MUTATION |
 | GB20_R050 | 41 | 3,520 | 4,831 | 2,865 | 85,4% | 87,5 | EARLY_SIGNAL |
 | GB30_R050 | 41 | 3,496 | 4,818 | 2,778 | 85,4% | 87,5 | EARLY_SIGNAL |
 | GB20_R075 | 41 | 3,451 | 4,831 | 2,743 | 85,4% | 87,5 | EARLY_SIGNAL |
@@ -24,7 +26,6 @@ Generato: 2026-08-22T05:08:13+00:00
 | GB50_R050 | 41 | 3,280 | 4,538 | 2,626 | 85,4% | 87,5 | EARLY_SIGNAL |
 | GB50_R075 | 41 | 3,219 | 4,538 | 2,439 | 85,4% | 87,5 | EARLY_SIGNAL |
 | ATR15_R050 | 41 | 2,910 | 4,115 | 2,282 | 85,4% | 87,5 | EARLY_SIGNAL |
-| TP_R250 | 6081 | 0,277 | 0,149 | 0,248 | 55,0% | 87,5 | VALIDATING |
 | GB30_R100 | 41 | 3,324 | 4,818 | 2,482 | 85,4% | 87,5 | EARLY_SIGNAL |
 | TP_R075 | 41 | 3,293 | 4,587 | 2,616 | 85,4% | 87,5 | EARLY_SIGNAL |
 | ATR10_R050 | 41 | 3,269 | 4,641 | 2,577 | 85,4% | 87,5 | EARLY_SIGNAL |
@@ -34,7 +35,6 @@ Generato: 2026-08-22T05:08:13+00:00
 | GB50_R100 | 41 | 3,117 | 4,538 | 2,303 | 85,4% | 87,5 | EARLY_SIGNAL |
 | TP_R040 | 41 | 3,071 | 4,238 | 2,505 | 85,4% | 87,5 | EARLY_SIGNAL |
 | TP_R035 | 41 | 3,027 | 4,188 | 2,449 | 85,4% | 87,5 | EARLY_SIGNAL |
-| GB20_R100 | 41 | 3,340 | 4,831 | 2,630 | 85,4% | 87,5 | EARLY_SIGNAL |
 
 ## Stati di evidenza
 
