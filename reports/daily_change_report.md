@@ -1,7 +1,7 @@
 # Mini report cambiamenti giornalieri
 
-Generato: **2026-08-23 07:31:33 CEST**  
-UTC: **2026-08-23 05:31:33 UTC**
+Generato: **2026-08-24 07:31:35 CEST**  
+UTC: **2026-08-24 05:31:35 UTC**
 
 Questo report confronta l'ultima previsione salvata con quella precedente, asset per asset.
 
@@ -9,9 +9,9 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 
 | Asset | Cambio | Tono | Verdetto oggi | Casi positivi oggi | Δ casi positivi | Δ return P50 | Δ drawdown P25 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | CAMBIAMENTO FORTE | miglioramento | RIALZISTA | +62.50% | +5.00 punti | +2.24 punti | +0.40 punti |
-| SOL | NESSUN CAMBIAMENTO FORTE | misto | NEUTRALE / INCERTO | +45.00% | 0.00 punti | -1.05 punti | -1.37 punti |
-| DOGE | CAMBIAMENTO FORTE | miglioramento | RIALZISTA | +60.00% | +5.00 punti | +1.27 punti | +4.58 punti |
+| BTC | NESSUN CAMBIAMENTO FORTE | peggioramento | RIALZISTA | +60.00% | -2.50 punti | 0.00 punti | -1.02 punti |
+| SOL | CAMBIAMENTO MEDIO | miglioramento | NEUTRALE / INCERTO | +52.50% | +7.50 punti | +3.82 punti | -0.42 punti |
+| DOGE | CAMBIAMENTO FORTE | peggioramento | NEUTRALE / INCERTO | +52.50% | -7.50 punti | -1.27 punti | -3.89 punti |
 
 ## Come leggerlo
 
@@ -28,46 +28,19 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 
 ### Sintesi
 
-**BTC: cambiamento importante in miglioramento rispetto a ieri.**
+**BTC: nessun cambiamento forte rispetto a ieri.**
 
 ### Confronto
 
 | Dato | Ieri | Oggi | Differenza |
 | --- | --- | --- | --- |
-| Data previsione | 2026-08-22 | 2026-08-23 | - |
-| Verdetto | NEUTRALE / INCERTO | RIALZISTA | cambio verdetto |
-| Prezzo attuale | $77,239 | $76,328 | -1.18% |
-| Casi positivi 30d | +57.50% | +62.50% | +5.00 punti |
-| Return 30d centrale P50 | +3.62% | +5.87% | +2.24 punti |
-| Drawdown brutto P25 | -12.68% | -12.28% | +0.40 punti |
-| Max gain buono P75 | +26.50% | +28.52% | +2.02 punti |
-
-### Perché
-
-- Verdetto cambiato: NEUTRALE / INCERTO → RIALZISTA
-- Casi positivi cambiati: +5.00 punti
-- Scenario centrale 30 giorni cambiato: +2.24 punti
-
----
-
-
-## Solana — SOL
-
-### Sintesi
-
-**SOL: nessun cambiamento forte rispetto a ieri.**
-
-### Confronto
-
-| Dato | Ieri | Oggi | Differenza |
-| --- | --- | --- | --- |
-| Data previsione | 2026-08-22 | 2026-08-23 | - |
-| Verdetto | NEUTRALE / INCERTO | NEUTRALE / INCERTO | uguale |
-| Prezzo attuale | $93.70 | $93.19 | -0.54% |
-| Casi positivi 30d | +45.00% | +45.00% | 0.00 punti |
-| Return 30d centrale P50 | -1.14% | -2.19% | -1.05 punti |
-| Drawdown brutto P25 | -12.65% | -14.03% | -1.37 punti |
-| Max gain buono P75 | +24.78% | +26.34% | +1.56 punti |
+| Data previsione | 2026-08-23 | 2026-08-24 | - |
+| Verdetto | RIALZISTA | RIALZISTA | uguale |
+| Prezzo attuale | $76,328 | $77,028 | +0.92% |
+| Casi positivi 30d | +62.50% | +60.00% | -2.50 punti |
+| Return 30d centrale P50 | +5.87% | +5.87% | 0.00 punti |
+| Drawdown brutto P25 | -12.28% | -13.30% | -1.02 punti |
+| Max gain buono P75 | +28.52% | +28.52% | 0.00 punti |
 
 ### Perché
 
@@ -76,28 +49,54 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 ---
 
 
-## Dogecoin — DOGE
+## Solana — SOL
 
 ### Sintesi
 
-**DOGE: cambiamento importante in miglioramento rispetto a ieri.**
+**SOL: cambiamento importante in miglioramento rispetto a ieri.**
 
 ### Confronto
 
 | Dato | Ieri | Oggi | Differenza |
 | --- | --- | --- | --- |
-| Data previsione | 2026-08-22 | 2026-08-23 | - |
-| Verdetto | NEUTRALE / INCERTO | RIALZISTA | cambio verdetto |
-| Prezzo attuale | $0.09061 | $0.09067 | +0.07% |
-| Casi positivi 30d | +55.00% | +60.00% | +5.00 punti |
-| Return 30d centrale P50 | +1.88% | +3.14% | +1.27 punti |
-| Drawdown brutto P25 | -17.46% | -12.87% | +4.58 punti |
-| Max gain buono P75 | +34.66% | +39.85% | +5.20 punti |
+| Data previsione | 2026-08-23 | 2026-08-24 | - |
+| Verdetto | NEUTRALE / INCERTO | NEUTRALE / INCERTO | uguale |
+| Prezzo attuale | $93.19 | $94.05 | +0.92% |
+| Casi positivi 30d | +45.00% | +52.50% | +7.50 punti |
+| Return 30d centrale P50 | -2.19% | +1.63% | +3.82 punti |
+| Drawdown brutto P25 | -14.03% | -14.45% | -0.42 punti |
+| Max gain buono P75 | +26.34% | +24.05% | -2.29 punti |
 
 ### Perché
 
-- Verdetto cambiato: NEUTRALE / INCERTO → RIALZISTA
-- Drawdown migliorato leggermente: +4.58 punti
-- Potenziale rialzo buono cambiato: +5.20 punti
+- Casi positivi cambiati: +7.50 punti
+- Scenario centrale 30 giorni cambiato: +3.82 punti
+
+---
+
+
+## Dogecoin — DOGE
+
+### Sintesi
+
+**DOGE: cambiamento importante in peggioramento rispetto a ieri.**
+
+### Confronto
+
+| Dato | Ieri | Oggi | Differenza |
+| --- | --- | --- | --- |
+| Data previsione | 2026-08-23 | 2026-08-24 | - |
+| Verdetto | RIALZISTA | NEUTRALE / INCERTO | cambio verdetto |
+| Prezzo attuale | $0.09067 | $0.09210 | +1.58% |
+| Casi positivi 30d | +60.00% | +52.50% | -7.50 punti |
+| Return 30d centrale P50 | +3.14% | +1.87% | -1.27 punti |
+| Drawdown brutto P25 | -12.87% | -16.76% | -3.89 punti |
+| Max gain buono P75 | +39.85% | +36.69% | -3.17 punti |
+
+### Perché
+
+- Verdetto cambiato: RIALZISTA → NEUTRALE / INCERTO
+- Casi positivi cambiati: -7.50 punti
+- Drawdown peggiorato leggermente: -3.89 punti
 
 ---
