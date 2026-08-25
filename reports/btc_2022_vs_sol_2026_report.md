@@ -1,9 +1,42 @@
 # Frattale mirato: BTC novembre 2022 vs SOL giugno 2026
 
-Generato: **2026-08-25 07:32:01 CEST**  
-UTC: **2026-08-25 05:32:01 UTC**
+Generato: **2026-08-25 08:00:28 CEST**
+UTC: **2026-08-25 06:00:28 UTC**
 
 Ultima candela SOL usata: **25 agosto 2026**
+
+## SOL PRICE CONTEXT
+
+| Voce | Valore | Provenienza / significato |
+| --- | --- | --- |
+| Anchor computazionale | 102,48 $ | 2026-08-25T05:30:22Z \| Yahoo Finance daily shared snapshot \| Close 1d |
+| Candela anchor completata | NO | Stato esplicito; il valore non viene sostituito dal prezzo pubblico. |
+| Riferimento pubblico corrente | 101,91 $ | 2026-08-25T06:00:00Z \| Yahoo Finance \| solo display |
+| Età anchor alla generazione | 0h 30m | WITHIN_DAILY_REPORT_CADENCE |
+| Gap corrente vs anchor | -0,57000 $ | -0,56% |
+| Validità input modello | REPRODUCIBLE_SHARED_SNAPSHOT | Non è una dichiarazione di validità del segnale/trading. |
+
+```text
+COMPUTATIONAL_ANCHOR_PRICE=102.4800033569336
+COMPUTATIONAL_ANCHOR_FIELD=Close
+COMPUTATIONAL_ANCHOR_TIMESTAMP=2026-08-25T05:30:22Z
+COMPUTATIONAL_ANCHOR_SYMBOL=SOL-USD
+COMPUTATIONAL_ANCHOR_PROVIDER=Yahoo Finance daily shared snapshot
+COMPUTATIONAL_ANCHOR_TIMEFRAME=1d
+COMPUTATIONAL_ANCHOR_COMPLETED=NO
+CURRENT_PUBLIC_REFERENCE_PRICE=101.91000366210938
+CURRENT_PUBLIC_REFERENCE_TIMESTAMP=2026-08-25T06:00:00Z
+CURRENT_PUBLIC_REFERENCE_ACQUIRED_AT=2026-08-25T06:00:28Z
+CURRENT_PUBLIC_REFERENCE_SYMBOL=SOL-USD
+CURRENT_PUBLIC_REFERENCE_PROVIDER=Yahoo Finance
+CURRENT_PUBLIC_REFERENCE_FIELD=Close
+CURRENT_PUBLIC_REFERENCE_TIMEFRAME=1m
+CURRENT_PUBLIC_REFERENCE_STATUS=AVAILABLE
+ANCHOR_AGE_SECONDS=1806.602413
+ANCHOR_AGE_HOURS=0.5018340036111111
+CURRENT_VS_ANCHOR_GAP_USD=-0.5699996948242188
+CURRENT_VS_ANCHOR_GAP_PCT=-0.5562057729827874
+```
 
 Correzione metodologica: questo report separa **somiglianza strutturale** e **aderenza reale del prezzo**.
 Un 70% di forma simile non significa che il prezzo sia vicino al percorso BTC scalato.
@@ -55,6 +88,19 @@ Un 70% di forma simile non significa che il prezzo sia vicino al percorso BTC sc
 
 Per tornare operativo non basta salire: il gap rispetto al BTC scalato deve rientrare circa entro ±12%. La prima conferma di prezzo è 116,62 $, mentre l'invalidazione soft è 94,82 $.
 
+### Metadata aderenza prezzo
+
+```text
+OPERATIONAL_VERDICT_REASON=ANALOGIA DEBOLE / SCENARIO SECONDARIO
+PRICE_ADHERENCE_FAILED=YES
+PRICE_ADHERENCE_LIVE_AVG_GAP_FAILED=NO
+PRICE_ADHERENCE_LAST_GAP_FAILED=YES
+PRICE_ADHERENCE_LIVE_AVG_GAP_THRESHOLD_PCT=15.0
+PRICE_ADHERENCE_LAST_GAP_THRESHOLD_PCT=18.0
+PRICE_ADHERENCE_OBSERVED_LIVE_AVG_GAP_PCT=14.465999213913786
+PRICE_ADHERENCE_OBSERVED_LAST_GAP_PCT=19.231703560210377
+```
+
 ## Somiglianza prima e dopo inizio programma
 
 Questa sezione separa la somiglianza della forma dall'aderenza reale del prezzo.
@@ -73,13 +119,13 @@ Nota: un frattale può avere una forma simile ma un prezzo distante. In quel cas
 
 ## Lettura operativa
 
-Il frattale non deve generare acquisti o leva adesso. La forma è un contesto, ma l'aderenza live del prezzo è insufficiente.
+Il frattale resta non operativo. Motivo effettivo: ANALOGIA DEBOLE / SCENARIO SECONDARIO.
 
 | Voce | Risposta | Perché |
 | --- | --- | --- |
-| Uso operativo | NO | Il frattale vale 0 punti operativi finché il prezzo resta non aderente. |
+| Uso operativo | NO | Peso 0 per il verdetto: ANALOGIA DEBOLE / SCENARIO SECONDARIO. |
 | Aderenza live | +71,07% | Errore medio live +14,47%. |
-| Gap corrente | +19,23% | Deve rientrare circa entro ±12%. |
+| Gap corrente | +19,23% | Prezzo non aderente: superata almeno una soglia canonica (15% medio / 18% ultimo). |
 | Prima conferma prezzo | 116,62 $ | Serve anche miglioramento del gap, non solo una candela sopra il livello. |
 | Seconda conferma | 139,27 $ | Rende più credibile il percorso, ma non sostituisce l'aderenza. |
 | Invalidazione soft | 94,82 $ | Sotto questa zona il quadro peggiora. |
@@ -105,13 +151,19 @@ Variazione strutturale -0,09%.
 
 ### Frattale sovrapposto
 
+**Scala:** indice normalizzato, base 100. I valori non sono prezzi USD.
+
 ![Frattale BTC 2022 vs SOL 2026](btc_2022_vs_sol_2026_fractal_chart.png)
 
 ### Proiezione condizionale SOL
 
+Blu e proiezioni usano l'anchor computazionale; l'eventuale riferimento pubblico è un marker separato, solo display.
+
 ![Proiezione SOL BTC 2022](btc_2022_vs_sol_2026_projection_chart.png)
 
 ### Ciclo base fino al top BTC 2025
+
+**Scenario analogico in USD: non è una previsione live e non è un segnale di trading.**
 
 ![Ciclo base SOL BTC 2025](btc_2022_vs_sol_2026_cycle_base_chart.png)
 
@@ -136,7 +188,7 @@ Variazione strutturale -0,09%.
 | Top BTC 2025 usato | 6 ottobre 2025 - 124.753 $ | Massimo close BTC nella finestra 2025. |
 | Data SOL equivalente | 21 aprile 2029 | Data analogica, non previsione certa. |
 | Target base dal bottom | 491,43 $ | Scenario base. |
-| Target base da oggi | 585,94 $ | Scenario condizionale dal prezzo corrente. |
+| Target base dall'anchor modello | 585,94 $ | Scenario condizionale dall'input computazionale, non dal riferimento live. |
 | Massimo percorso base | 585,94 $ (21 aprile 2029) | Massimo base nel percorso. |
 | Massimo beta | 1.077 $ (21 aprile 2029) | Scenario speculativo, non target principale. |
 
@@ -153,7 +205,7 @@ Variazione strutturale -0,09%.
 
 ## Proiezione standard a giorni fissi
 
-Queste proiezioni partono dal prezzo SOL attuale e replicano i movimenti futuri del BTC equivalente. Non dimostrano che il frattale sia valido.
+Queste proiezioni partono dall'anchor computazionale SOL e replicano i movimenti futuri del BTC equivalente. Il riferimento pubblico corrente è solo contesto e non modifica i percorsi.
 
 | Orizzonte | Data SOL | Data BTC eq. | BTC fece | SOL base | SOL beta | Min percorso | Max percorso |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -172,7 +224,7 @@ Queste proiezioni partono dal prezzo SOL attuale e replicano i movimenti futuri 
 | --- | --- | --- |
 | BTC bottom usato | 2022-11-21 | 15.787 $ |
 | SOL bottom usato | 2026-06-06 | 62,19 $ |
-| Prezzo SOL attuale | 102,48 $ | 102,48 $ |
+| Anchor computazionale SOL | 25 agosto 2026 | 102,48 $ |
 | Giorni SOL dal bottom | - | 80 |
 | Data BTC equivalente | 2023-02-09 | - |
 | BTC normalizzato equivalente | - | 138,21 |

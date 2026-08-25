@@ -114,6 +114,13 @@ def fmt_price(value):
     return f"{fmt_number(value, 5)} $"
 
 
+def fmt_chart_price(value):
+    value = safe_float(value)
+    if value is None:
+        return "n/d"
+    return f"{fmt_number(value, 2)} USD"
+
+
 def fmt_date(value):
     try:
         return pd.to_datetime(value).strftime("%Y-%m-%d")
@@ -1532,14 +1539,14 @@ def projection_chart_title(verdict, price_context=None):
     anchor = price_context.get("anchor", {})
     reference = price_context.get("current_reference", {})
     anchor_line = (
-        f"Anchor modello {fmt_price(anchor.get('price'))} — {anchor.get('timestamp') or 'timestamp n/d'}"
+        f"Anchor modello {fmt_chart_price(anchor.get('price'))} — {anchor.get('timestamp') or 'timestamp n/d'}"
         f" | {anchor.get('provider') or 'fonte n/d'} | Età {format_age(price_context.get('anchor_age_seconds'))}"
     )
     if reference.get("available"):
         reference_line = (
-            f"Riferimento pubblico {fmt_price(reference.get('price'))} — {reference.get('timestamp') or 'timestamp n/d'}"
+            f"Riferimento pubblico {fmt_chart_price(reference.get('price'))} — {reference.get('timestamp') or 'timestamp n/d'}"
             f" | {reference.get('provider') or 'fonte n/d'}"
-            f" | Gap {fmt_price(price_context.get('current_vs_anchor_gap_usd'))} / {fmt_pct(price_context.get('current_vs_anchor_gap_pct'))}"
+            f" | Gap {fmt_chart_price(price_context.get('current_vs_anchor_gap_usd'))} / {fmt_pct(price_context.get('current_vs_anchor_gap_pct'))}"
         )
     else:
         reference_line = "Riferimento pubblico corrente: UNAVAILABLE (anchor modello invariato)"
@@ -1833,7 +1840,7 @@ def build_report(
     lines = [
         "# Frattale mirato: BTC novembre 2022 vs SOL giugno 2026",
         "",
-        f"Generato: **{rome_now}**  ",
+        f"Generato: **{rome_now}**",
         f"UTC: **{utc_now}**",
         "",
         f"Ultima candela SOL usata: **{fmt_date_it(sol_current_date)}**",

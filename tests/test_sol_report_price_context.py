@@ -209,6 +209,8 @@ class SolReportPriceContextTests(unittest.TestCase):
         self.assertIn("Riferimento pubblico", title)
         self.assertIn("Yahoo Finance daily shared snapshot", title)
         self.assertIn("Età 24h 2m", title)
+        self.assertIn("94,05 USD", title)
+        self.assertNotIn("$", title)
         self.assertIn("ANALOGIA DEBOLE", title)
         self.assertNotIn("prezzo non aderente", title.lower())
 
@@ -350,6 +352,9 @@ class SolReportPriceContextTests(unittest.TestCase):
                 self.assertIn("CURRENT_PUBLIC_REFERENCE_PRICE=101.27", rendered)
                 self.assertIn("base 100", rendered)
                 self.assertIn("cenario analogico", rendered)
+                self.assertFalse(
+                    any(line.endswith((" ", "\t")) for line in rendered.splitlines())
+                )
             self.assertTrue((temp / "projection.png").is_file())
             self.assertTrue((temp / "fractal.png").is_file())
             self.assertTrue((temp / "cycle_base.png").is_file())
