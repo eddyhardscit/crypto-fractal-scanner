@@ -1,7 +1,7 @@
 # Stato calibrazione scanner
 
-Generato: **2026-08-24 07:32:54 CEST**  
-UTC: **2026-08-24 05:32:54 UTC**
+Generato: **2026-08-25 07:32:52 CEST**  
+UTC: **2026-08-25 05:32:52 UTC**
 
 La calibrazione non serve a prevedere direttamente il prezzo.  
 Serve a capire se lo scanner, col tempo, è stato troppo ottimista, troppo pessimista o abbastanza preciso.
@@ -10,9 +10,9 @@ Serve a capire se lo scanner, col tempo, è stato troppo ottimista, troppo pessi
 
 | Asset | Fatte | Controllate | Progresso | In attesa | Stato | Prossimo controllo |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 51 | 23 | 23/30 [████████░░] | 28 | RACCOLTA DATI | 2026-08-25 / tra 1 giorno |
-| SOL | 51 | 23 | 23/30 [████████░░] | 28 | RACCOLTA DATI | 2026-08-25 / tra 1 giorno |
-| DOGE | 51 | 23 | 23/30 [████████░░] | 28 | RACCOLTA DATI | 2026-08-25 / tra 1 giorno |
+| BTC | 52 | 24 | 24/30 [████████░░] | 28 | RACCOLTA DATI | 2026-08-26 / tra 1 giorno |
+| SOL | 52 | 24 | 24/30 [████████░░] | 28 | RACCOLTA DATI | 2026-08-26 / tra 1 giorno |
+| DOGE | 52 | 24 | 24/30 [████████░░] | 28 | RACCOLTA DATI | 2026-08-26 / tra 1 giorno |
 
 ## Regola semplice
 
@@ -26,33 +26,33 @@ Serve a capire se lo scanner, col tempo, è stato troppo ottimista, troppo pessi
 
 ## Bitcoin
 
-**Progresso calibrazione:** 23/30  
+**Progresso calibrazione:** 24/30  
 **Stato:** RACCOLTA DATI
 
-La calibrazione non è ancora attiva. Mancano ancora 7 previsioni controllate per arrivare a 30.
+La calibrazione non è ancora attiva. Mancano ancora 6 previsioni controllate per arrivare a 30.
 
-Servono ancora **7** previsioni controllate prima che la calibrazione inizi davvero a lavorare.
+Servono ancora **6** previsioni controllate prima che la calibrazione inizi davvero a lavorare.
 
 ---
 
 ## Solana
 
-**Progresso calibrazione:** 23/30  
+**Progresso calibrazione:** 24/30  
 **Stato:** RACCOLTA DATI
 
-La calibrazione non è ancora attiva. Mancano ancora 7 previsioni controllate per arrivare a 30.
+La calibrazione non è ancora attiva. Mancano ancora 6 previsioni controllate per arrivare a 30.
 
-Servono ancora **7** previsioni controllate prima che la calibrazione inizi davvero a lavorare.
+Servono ancora **6** previsioni controllate prima che la calibrazione inizi davvero a lavorare.
 
 ---
 
 ## Dogecoin
 
-**Progresso calibrazione:** 23/30  
+**Progresso calibrazione:** 24/30  
 **Stato:** RACCOLTA DATI
 
-La calibrazione non è ancora attiva. Mancano ancora 7 previsioni controllate per arrivare a 30.
+La calibrazione non è ancora attiva. Mancano ancora 6 previsioni controllate per arrivare a 30.
 
-Servono ancora **7** previsioni controllate prima che la calibrazione inizi davvero a lavorare.
+Servono ancora **6** previsioni controllate prima che la calibrazione inizi davvero a lavorare.
 
 ---
