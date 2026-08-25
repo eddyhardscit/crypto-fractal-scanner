@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import yfinance as yf
 
-from shared_market_snapshot import apply_snapshot_to_ohlcv, snapshot_source_label
+from shared_market_snapshot import apply_snapshot_to_ohlcv, snapshot_record
 
 try:
     import matplotlib
@@ -70,6 +70,9 @@ ACCEPTABLE_LIVE_AVG_GAP = 12.0
 MAX_OPERATIVE_LIVE_AVG_GAP = 15.0
 MAX_OPERATIVE_LAST_GAP = 18.0
 GAP_REENTRY_THRESHOLD = 12.0
+PUBLIC_REFERENCE_INTERVAL = "1m"
+PUBLIC_REFERENCE_PERIOD = "1d"
+DISPLAY_STALE_AFTER_HOURS = 24.0
 
 
 def safe_float(value):
@@ -157,6 +160,202 @@ def md_table(headers, rows):
     ]
     for row in rows:
         lines.append("| " + " | ".join(clean(cell) for cell in row) + " |")
+    return "\n".join(lines)
+
+
+def utc_timestamp(value):
+    """Return a timezone-aware UTC timestamp, or ``None`` for invalid input."""
+    try:
+        result = pd.Timestamp(value)
+        if pd.isna(result):
+            return None
+        if result.tzinfo is None:
+            return result.tz_localize("UTC")
+        return result.tz_convert("UTC")
+    except Exception:
+        return None
+
+
+def utc_iso(value):
+    value = utc_timestamp(value)
+    if value is None:
+        return None
+    return value.isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def _latest_close(frame):
+    if frame is None or frame.empty:
+        return None, None
+    if isinstance(frame.columns, pd.MultiIndex):
+        close_columns = [column for column in frame.columns if "Close" in column]
+        if not close_columns:
+            return None, None
+        series = frame[close_columns[0]]
+    elif "Close" in frame.columns:
+        series = frame["Close"]
+    else:
+        return None, None
+    valid = pd.to_numeric(series, errors="coerce").dropna()
+    if valid.empty:
+        return None, None
+    return safe_float(valid.iloc[-1]), valid.index[-1]
+
+
+def fetch_current_public_reference(*, downloader=None, acquired_at=None):
+    """Fetch a display-only public SOL reference without affecting model inputs."""
+    downloader = downloader or yf.download
+    acquired_at = utc_timestamp(acquired_at or datetime.now(timezone.utc))
+    base = {
+        "available": False,
+        "price": None,
+        "timestamp": None,
+        "acquired_at": utc_iso(acquired_at),
+        "symbol": SOL_TICKER,
+        "provider": "Yahoo Finance",
+        "field": "Close",
+        "timeframe": PUBLIC_REFERENCE_INTERVAL,
+        "purpose": "DISPLAY_ONLY",
+    }
+    try:
+        frame = downloader(
+            SOL_TICKER,
+            period=PUBLIC_REFERENCE_PERIOD,
+            interval=PUBLIC_REFERENCE_INTERVAL,
+            auto_adjust=True,
+            progress=False,
+            threads=False,
+            timeout=15,
+        )
+        price, timestamp = _latest_close(frame)
+        if price is None or timestamp is None:
+            return {**base, "status": "UNAVAILABLE", "reason": "empty public quote"}
+        return {
+            **base,
+            "available": True,
+            "price": price,
+            "timestamp": utc_iso(timestamp),
+            "status": "AVAILABLE",
+            "reason": None,
+        }
+    except Exception as exc:
+        return {
+            **base,
+            "status": "UNAVAILABLE",
+            "reason": f"public quote unavailable ({type(exc).__name__})",
+        }
+
+
+def build_computational_anchor(sol_current_price, sol_current_date):
+    """Describe the exact existing model boundary without changing its value."""
+    record = snapshot_record(SOL_TICKER)
+    record_price = safe_float(record.get("price") or record.get("close"))
+    record_date = utc_timestamp(record.get("candle_date_utc"))
+    model_date = utc_timestamp(sol_current_date)
+    matches_snapshot = (
+        record_price is not None
+        and sol_current_price is not None
+        and abs(record_price - sol_current_price) <= 1e-9
+        and record_date is not None
+        and model_date is not None
+        and record_date.normalize() == model_date.normalize()
+    )
+    observed_at = (utc_timestamp(record.get("generated_at_utc")) or model_date) if matches_snapshot else model_date
+    candle_open = model_date.normalize() if model_date is not None else None
+    candle_close = candle_open + pd.Timedelta(days=1) if candle_open is not None else None
+    completed = bool(observed_at is not None and candle_close is not None and observed_at >= candle_close)
+    return {
+        "price": safe_float(sol_current_price),
+        "timestamp": utc_iso(observed_at),
+        "candle_open_timestamp": utc_iso(candle_open),
+        "candle_close_timestamp": utc_iso(candle_close),
+        "symbol": record.get("ticker") or SOL_TICKER,
+        "provider": (
+            record.get("source") or "Yahoo Finance daily shared snapshot"
+            if matches_snapshot
+            else "Yahoo Finance daily historical download"
+        ),
+        "field": "Close",
+        "timeframe": "1d",
+        "completed": completed,
+        "reproducible": matches_snapshot,
+        "purpose": "MODEL_INPUT",
+    }
+
+
+def build_price_context(anchor, current_reference, *, report_generated_at=None):
+    generated_at = utc_timestamp(report_generated_at or datetime.now(timezone.utc))
+    anchor_timestamp = utc_timestamp(anchor.get("timestamp"))
+    age_seconds = None
+    if generated_at is not None and anchor_timestamp is not None:
+        age_seconds = max(0.0, (generated_at - anchor_timestamp).total_seconds())
+    anchor_price = safe_float(anchor.get("price"))
+    current_price = safe_float(current_reference.get("price")) if current_reference.get("available") else None
+    gap_usd = current_price - anchor_price if current_price is not None and anchor_price is not None else None
+    gap_pct = (current_price / anchor_price - 1.0) * 100 if current_price is not None and anchor_price not in (None, 0) else None
+    age_hours = age_seconds / 3600.0 if age_seconds is not None else None
+    display_freshness = "UNKNOWN"
+    if age_hours is not None:
+        display_freshness = "STALE_FOR_CURRENT_DISPLAY" if age_hours > DISPLAY_STALE_AFTER_HOURS else "WITHIN_DAILY_REPORT_CADENCE"
+    return {
+        "report_generated_at": utc_iso(generated_at),
+        "anchor": dict(anchor),
+        "current_reference": dict(current_reference),
+        "anchor_age_seconds": age_seconds,
+        "anchor_age_hours": age_hours,
+        "current_vs_anchor_gap_usd": gap_usd,
+        "current_vs_anchor_gap_pct": gap_pct,
+        "model_input_status": "REPRODUCIBLE_SHARED_SNAPSHOT" if anchor.get("reproducible") else "HISTORICAL_DAILY_INPUT",
+        "current_display_freshness": display_freshness,
+    }
+
+
+def format_age(seconds):
+    seconds = safe_float(seconds)
+    if seconds is None:
+        return "n/d"
+    total_minutes = max(0, int(seconds // 60))
+    hours, minutes = divmod(total_minutes, 60)
+    return f"{hours}h {minutes}m"
+
+
+def build_price_context_block(price_context, *, include_machine_metadata=True):
+    anchor = price_context.get("anchor", {})
+    reference = price_context.get("current_reference", {})
+    reference_price = fmt_price(reference.get("price")) if reference.get("available") else "UNAVAILABLE"
+    reference_timestamp = reference.get("timestamp") or "UNAVAILABLE"
+    reference_provider = reference.get("provider") or "UNAVAILABLE"
+    rows = [
+        ["Anchor computazionale", fmt_price(anchor.get("price")), f"{anchor.get('timestamp') or 'n/d'} | {anchor.get('provider') or 'n/d'} | Close 1d"],
+        ["Candela anchor completata", "YES" if anchor.get("completed") else "NO", "Stato esplicito; il valore non viene sostituito dal prezzo pubblico."],
+        ["Riferimento pubblico corrente", reference_price, f"{reference_timestamp} | {reference_provider} | solo display"],
+        ["Età anchor alla generazione", format_age(price_context.get("anchor_age_seconds")), price_context.get("current_display_freshness", "UNKNOWN")],
+        ["Gap corrente vs anchor", fmt_price(price_context.get("current_vs_anchor_gap_usd")), fmt_pct(price_context.get("current_vs_anchor_gap_pct"))],
+        ["Validità input modello", price_context.get("model_input_status", "UNKNOWN"), "Non è una dichiarazione di validità del segnale/trading."],
+    ]
+    lines = ["## SOL PRICE CONTEXT", "", md_table(["Voce", "Valore", "Provenienza / significato"], rows)]
+    if include_machine_metadata:
+        machine = [
+            f"COMPUTATIONAL_ANCHOR_PRICE={anchor.get('price') if anchor.get('price') is not None else 'UNAVAILABLE'}",
+            f"COMPUTATIONAL_ANCHOR_FIELD={anchor.get('field') or 'UNAVAILABLE'}",
+            f"COMPUTATIONAL_ANCHOR_TIMESTAMP={anchor.get('timestamp') or 'UNAVAILABLE'}",
+            f"COMPUTATIONAL_ANCHOR_SYMBOL={anchor.get('symbol') or 'UNAVAILABLE'}",
+            f"COMPUTATIONAL_ANCHOR_PROVIDER={anchor.get('provider') or 'UNAVAILABLE'}",
+            f"COMPUTATIONAL_ANCHOR_TIMEFRAME={anchor.get('timeframe') or 'UNAVAILABLE'}",
+            f"COMPUTATIONAL_ANCHOR_COMPLETED={'YES' if anchor.get('completed') else 'NO'}",
+            f"CURRENT_PUBLIC_REFERENCE_PRICE={reference.get('price') if reference.get('available') else 'UNAVAILABLE'}",
+            f"CURRENT_PUBLIC_REFERENCE_TIMESTAMP={reference_timestamp}",
+            f"CURRENT_PUBLIC_REFERENCE_ACQUIRED_AT={reference.get('acquired_at') or 'UNAVAILABLE'}",
+            f"CURRENT_PUBLIC_REFERENCE_SYMBOL={reference.get('symbol') or 'UNAVAILABLE'}",
+            f"CURRENT_PUBLIC_REFERENCE_PROVIDER={reference_provider}",
+            f"CURRENT_PUBLIC_REFERENCE_FIELD={reference.get('field') or 'UNAVAILABLE'}",
+            f"CURRENT_PUBLIC_REFERENCE_TIMEFRAME={reference.get('timeframe') or 'UNAVAILABLE'}",
+            f"CURRENT_PUBLIC_REFERENCE_STATUS={reference.get('status') or 'UNAVAILABLE'}",
+            f"ANCHOR_AGE_SECONDS={price_context.get('anchor_age_seconds') if price_context.get('anchor_age_seconds') is not None else 'UNAVAILABLE'}",
+            f"ANCHOR_AGE_HOURS={price_context.get('anchor_age_hours') if price_context.get('anchor_age_hours') is not None else 'UNAVAILABLE'}",
+            f"CURRENT_VS_ANCHOR_GAP_USD={price_context.get('current_vs_anchor_gap_usd') if price_context.get('current_vs_anchor_gap_usd') is not None else 'UNAVAILABLE'}",
+            f"CURRENT_VS_ANCHOR_GAP_PCT={price_context.get('current_vs_anchor_gap_pct') if price_context.get('current_vs_anchor_gap_pct') is not None else 'UNAVAILABLE'}",
+        ]
+        lines += ["", "```text", *machine, "```"]
     return "\n".join(lines)
 
 
@@ -691,6 +890,66 @@ def build_operational_verdict(structural, split_alignment, phase_gap_pct):
     }
 
 
+def price_adherence_failed(verdict):
+    """True only when explicit price-gap evidence (or its canonical label) failed."""
+    if "price_adherence_failed" in verdict:
+        return bool(verdict.get("price_adherence_failed"))
+    return verdict.get("label") == "STRUTTURA ANALOGA, PREZZO NON ADERENTE"
+
+
+def verdict_status_text(verdict):
+    label = str(verdict.get("label") or "MOTIVO NON DISPONIBILE")
+    if verdict.get("operational_weight", 0) == 0:
+        reasons = [label]
+        if price_adherence_failed(verdict) and "PREZZO NON ADERENTE" not in label:
+            reasons.append("PREZZO NON ADERENTE (soglia esplicita fallita)")
+        return "NON OPERATIVO: " + " | ".join(reasons)
+    return f"SCENARIO CONDIZIONALE: {label}"
+
+
+def projection_caveat(verdict):
+    if price_adherence_failed(verdict):
+        return "Nota: le proiezioni restano condizionali; il prezzo non è aderente secondo le soglie canoniche."
+    return f"Nota: le proiezioni restano condizionali. Motivo del verdetto: {verdict.get('label') or 'n/d'}."
+
+
+def build_verdict_metadata(verdict, split_alignment, phase_gap_pct):
+    live_avg_gap = safe_float(split_alignment.get("live_program", {}).get("avg_abs_gap_pct"))
+    last_gap = safe_float(phase_gap_pct)
+    live_avg_gap_failed = live_avg_gap is not None and live_avg_gap > MAX_OPERATIVE_LIVE_AVG_GAP
+    last_gap_failed = last_gap is not None and abs(last_gap) > MAX_OPERATIVE_LAST_GAP
+    return {
+        "verdict_label": verdict.get("label"),
+        "price_adherence_failed": live_avg_gap_failed or last_gap_failed,
+        "price_adherence_live_avg_gap_failed": live_avg_gap_failed,
+        "price_adherence_last_gap_failed": last_gap_failed,
+        "price_adherence_live_avg_gap_threshold_pct": MAX_OPERATIVE_LIVE_AVG_GAP,
+        "price_adherence_last_gap_threshold_pct": MAX_OPERATIVE_LAST_GAP,
+        "price_adherence_observed_live_avg_gap_pct": live_avg_gap,
+        "price_adherence_observed_last_gap_pct": last_gap,
+    }
+
+
+def build_verdict_metadata_block(verdict, split_alignment, phase_gap_pct):
+    metadata = build_verdict_metadata(verdict, split_alignment, phase_gap_pct)
+    return "\n".join(
+        [
+            "### Metadata aderenza prezzo",
+            "",
+            "```text",
+            f"OPERATIONAL_VERDICT_REASON={metadata.get('verdict_label') or 'UNAVAILABLE'}",
+            f"PRICE_ADHERENCE_FAILED={'YES' if metadata.get('price_adherence_failed') else 'NO'}",
+            f"PRICE_ADHERENCE_LIVE_AVG_GAP_FAILED={'YES' if metadata.get('price_adherence_live_avg_gap_failed') else 'NO'}",
+            f"PRICE_ADHERENCE_LAST_GAP_FAILED={'YES' if metadata.get('price_adherence_last_gap_failed') else 'NO'}",
+            f"PRICE_ADHERENCE_LIVE_AVG_GAP_THRESHOLD_PCT={metadata.get('price_adherence_live_avg_gap_threshold_pct')}",
+            f"PRICE_ADHERENCE_LAST_GAP_THRESHOLD_PCT={metadata.get('price_adherence_last_gap_threshold_pct')}",
+            f"PRICE_ADHERENCE_OBSERVED_LIVE_AVG_GAP_PCT={metadata.get('price_adherence_observed_live_avg_gap_pct')}",
+            f"PRICE_ADHERENCE_OBSERVED_LAST_GAP_PCT={metadata.get('price_adherence_observed_last_gap_pct')}",
+            "```",
+        ]
+    )
+
+
 def volatility_beta(btc_path, sol_path, compare_len):
     btc_ret = btc_path["log_return"].iloc[:compare_len].dropna()
     sol_ret = sol_path["log_return"].iloc[:compare_len].dropna()
@@ -935,18 +1194,19 @@ def build_operational_plan(sol_current_price, key_levels, verdict, phase, split_
     live_avg_gap = live.get("avg_abs_gap_pct")
 
     if verdict.get("operational_weight", 0) == 0:
-        summary = (
-            "Il frattale non deve generare acquisti o leva adesso. La forma è un contesto, ma l'aderenza live del prezzo è insufficiente."
-        )
+        actual_reason = verdict.get("label") or "MOTIVO NON DISPONIBILE"
+        summary = f"Il frattale resta non operativo. Motivo effettivo: {actual_reason}."
         rows = [
-            ["Uso operativo", "NO", "Il frattale vale 0 punti operativi finché il prezzo resta non aderente."],
+            ["Uso operativo", "NO", f"Peso 0 per il verdetto: {actual_reason}."],
             ["Aderenza live", fmt_pct(live_adherence), f"Errore medio live {fmt_pct(live_avg_gap)}."],
-            ["Gap corrente", fmt_pct(phase_gap_pct), f"Deve rientrare circa entro ±{GAP_REENTRY_THRESHOLD:.0f}%."],
+            ["Gap corrente", fmt_pct(phase_gap_pct), "Metrica separata dal motivo del verdetto."],
             ["Prima conferma prezzo", fmt_price(confirm_1), "Serve anche miglioramento del gap, non solo una candela sopra il livello."],
             ["Seconda conferma", fmt_price(confirm_2), "Rende più credibile il percorso, ma non sostituisce l'aderenza."],
             ["Invalidazione soft", fmt_price(soft_invalid), "Sotto questa zona il quadro peggiora."],
             ["Invalidazione forte", fmt_price(hard_invalid), "Sotto il bottom il paragone è quasi rotto."],
         ]
+        if price_adherence_failed(verdict):
+            rows[2][2] = f"Prezzo non aderente: superata almeno una soglia canonica ({MAX_OPERATIVE_LIVE_AVG_GAP:.0f}% medio / {MAX_OPERATIVE_LAST_GAP:.0f}% ultimo)."
         return summary, rows
 
     if "FASE ANTICIPATA" in phase.get("label", ""):
@@ -1218,7 +1478,7 @@ def build_cycle_table(cycle, verdict):
             ["Top BTC 2025 usato", f"{cycle.get('btc_top_date_it')} - {fmt_price(cycle.get('btc_top_price'))}", "Massimo close BTC nella finestra 2025."],
             ["Data SOL equivalente", cycle.get("sol_cycle_top_date_it"), "Data analogica, non previsione certa."],
             ["Target base dal bottom", fmt_price(cycle.get("target_from_bottom_base")), "Scenario base."],
-            ["Target base da oggi", fmt_price(cycle.get("target_from_current_base")), "Scenario condizionale dal prezzo corrente."],
+            ["Target base dall'anchor modello", fmt_price(cycle.get("target_from_current_base")), "Scenario condizionale dall'input computazionale, non dal riferimento live."],
             ["Massimo percorso base", f"{fmt_price(cycle.get('cycle_max_base_price'))} ({cycle.get('cycle_max_base_date_it')})", "Massimo base nel percorso."],
             ["Massimo beta", f"{fmt_price(cycle.get('cycle_max_beta_price'))} ({cycle.get('cycle_max_beta_date_it')})", "Scenario speculativo, non target principale."],
         ],
@@ -1247,13 +1507,13 @@ def generate_fractal_chart(btc_path, sol_path, sol_elapsed_days, split_alignment
         fig, ax = plt.subplots(figsize=(12, 6))
         ax.plot(np.arange(len(btc_chart)), btc_chart["norm"], label="BTC dal bottom 2022")
         ax.plot(np.arange(len(sol_actual)), sol_actual["norm"], label="SOL dal bottom 2026")
-        ax.plot(projection_x, projection_y, linestyle="--", label="Proiezione condizionale da oggi")
-        ax.axvline(sol_elapsed_days, linestyle=":", alpha=0.8, label="Oggi SOL")
+        ax.plot(projection_x, projection_y, linestyle="--", label="Proiezione condizionale dall'anchor")
+        ax.axvline(sol_elapsed_days, linestyle=":", alpha=0.8, label="Anchor SOL")
         live = split_alignment.get("live_program", {})
         subtitle = f"Struttura e prezzo separati | Aderenza live {fmt_pct(live.get('simple_alignment_score'))} | gap {fmt_pct(live.get('last_gap_pct'))}"
-        ax.set_title("Frattale BTC 2022 vs SOL 2026\n" + subtitle)
+        ax.set_title("Frattale BTC 2022 vs SOL 2026 — INDICE BASE 100, NON USD\n" + subtitle)
         ax.set_xlabel("Giorni dal bottom")
-        ax.set_ylabel("Prezzo normalizzato a 100")
+        ax.set_ylabel("Prezzo normalizzato a 100 (indice; non USD)")
         ax.grid(True, alpha=0.3)
         ax.legend()
         fig.tight_layout()
@@ -1265,19 +1525,47 @@ def generate_fractal_chart(btc_path, sol_path, sol_elapsed_days, split_alignment
         return False
 
 
-def generate_projection_chart(sol_path, projection_daily, key_levels, verdict):
+def projection_chart_title(verdict, price_context=None):
+    status = verdict_status_text(verdict)
+    if not price_context:
+        return f"Proiezione condizionale SOL — anchor modello\n{status}"
+    anchor = price_context.get("anchor", {})
+    reference = price_context.get("current_reference", {})
+    anchor_line = (
+        f"Anchor modello {fmt_price(anchor.get('price'))} — {anchor.get('timestamp') or 'timestamp n/d'}"
+        f" | {anchor.get('provider') or 'fonte n/d'} | Età {format_age(price_context.get('anchor_age_seconds'))}"
+    )
+    if reference.get("available"):
+        reference_line = (
+            f"Riferimento pubblico {fmt_price(reference.get('price'))} — {reference.get('timestamp') or 'timestamp n/d'}"
+            f" | {reference.get('provider') or 'fonte n/d'}"
+            f" | Gap {fmt_price(price_context.get('current_vs_anchor_gap_usd'))} / {fmt_pct(price_context.get('current_vs_anchor_gap_pct'))}"
+        )
+    else:
+        reference_line = "Riferimento pubblico corrente: UNAVAILABLE (anchor modello invariato)"
+    return f"Proiezione condizionale SOL — anchor modello invariato\n{anchor_line}\n{reference_line}\n{status}"
+
+
+def generate_projection_chart(sol_path, projection_daily, key_levels, verdict, price_context=None):
     if not CHARTS_AVAILABLE or sol_path.empty or projection_daily.empty:
         return False
     try:
         fig, ax = plt.subplots(figsize=(14, 8))
-        ax.plot(sol_path.index, sol_path["Close"], linewidth=2, label="SOL storico")
-        ax.plot(projection_daily["sol_date"], projection_daily["base_price"], linestyle="--", linewidth=2, label="Percorso base condizionale")
-        ax.plot(projection_daily["sol_date"], projection_daily["beta_price"], linestyle=":", linewidth=1.5, label="Percorso beta speculativo")
+        ax.plot(sol_path.index, sol_path["Close"], linewidth=2, label="SOL storico / input modello")
+        ax.plot(projection_daily["sol_date"], projection_daily["base_price"], linestyle="--", linewidth=2, label="Percorso base dall'anchor modello")
+        ax.plot(projection_daily["sol_date"], projection_daily["beta_price"], linestyle=":", linewidth=1.5, label="Percorso beta dall'anchor modello")
         current_date = sol_path.index[-1]
         current_price = safe_float(sol_path["Close"].iloc[-1])
         ax.axvline(current_date, linestyle=":", alpha=0.7)
         if current_price is not None:
-            ax.scatter([current_date], [current_price], s=55, zorder=5)
+            ax.scatter([current_date], [current_price], s=55, zorder=5, label="Anchor computazionale")
+        reference = (price_context or {}).get("current_reference", {})
+        reference_price = safe_float(reference.get("price")) if reference.get("available") else None
+        reference_date = utc_timestamp(reference.get("timestamp"))
+        if reference_price is not None:
+            ax.axhline(reference_price, color="purple", linestyle="-.", alpha=0.6, label="Riferimento pubblico (solo display)")
+            if reference_date is not None:
+                ax.scatter([reference_date.tz_localize(None)], [reference_price], color="purple", marker="D", s=48, zorder=6)
         for label, value in [
             ("Prima conferma", key_levels.get("confirm_1")),
             ("Seconda conferma", key_levels.get("confirm_2")),
@@ -1288,10 +1576,9 @@ def generate_projection_chart(sol_path, projection_daily, key_levels, verdict):
             if value is not None:
                 ax.axhline(value, linestyle="--", alpha=0.25)
                 ax.annotate(f"{label}: {fmt_price(value)}", xy=(1.005, value), xycoords=("axes fraction", "data"), fontsize=8, va="center")
-        status = "NON OPERATIVO: prezzo non aderente" if verdict.get("operational_weight", 0) == 0 else "SCENARIO CONDIZIONALE"
-        ax.set_title(f"Proiezione SOL dal prezzo corrente\n{status}")
+        ax.set_title(projection_chart_title(verdict, price_context), fontsize=11)
         ax.set_xlabel("Data")
-        ax.set_ylabel("Prezzo SOL")
+        ax.set_ylabel("Prezzo SOL (USD)")
         ax.grid(True, alpha=0.3)
         ax.legend(loc="upper left")
         fig.autofmt_xdate()
@@ -1311,20 +1598,20 @@ def generate_single_cycle_chart(sol_path, cycle_daily, cycle, output_path, mode=
     ax.plot(sol_path.index, sol_path["Close"], linewidth=2, label="SOL reale")
     if mode == "base":
         ax.plot(cycle_daily["sol_date"], cycle_daily["base_price"], linestyle="--", linewidth=2, label="Scenario base")
-        title = "Ciclo SOL base fino al top equivalente BTC 2025"
+        title = "SCENARIO ANALOGICO SOL base fino al top equivalente BTC 2025"
     elif mode == "beta":
         ax.plot(cycle_daily["sol_date"], cycle_daily["beta_price"], linestyle=":", linewidth=2, label="Scenario beta speculativo")
-        title = "Ciclo SOL beta speculativo"
+        title = "SCENARIO ANALOGICO SOL beta speculativo"
     else:
         ax.plot(cycle_daily["sol_date"], cycle_daily["base_price"], linestyle="--", linewidth=1.8, label="Scenario base")
         ax.plot(cycle_daily["sol_date"], cycle_daily["beta_price"], linestyle=":", linewidth=1.5, label="Scenario beta")
-        title = "Ciclo SOL base + beta"
+        title = "SCENARIO ANALOGICO SOL base + beta"
     if log_scale:
         ax.set_yscale("log")
         ax.set_ylabel("Prezzo SOL - scala log")
     else:
         ax.set_ylabel("Prezzo SOL")
-    ax.set_title(title + "\nContesto analogico, non segnale operativo")
+    ax.set_title(title + "\nNON è una previsione live — NON è un segnale di trading")
     ax.set_xlabel("Data SOL equivalente")
     ax.grid(True, alpha=0.3, which="both")
     ax.legend(loc="upper left")
@@ -1382,12 +1669,28 @@ def generate_tracking_chart(tracking_df):
 def build_chart_block(fractal_ok, projection_ok, cycle_ok, tracking_ok):
     lines = ["## Grafici", ""]
     if fractal_ok:
-        lines += ["### Frattale sovrapposto", "", f"![Frattale BTC 2022 vs SOL 2026]({FRACTAL_CHART_FILE})", ""]
+        lines += [
+            "### Frattale sovrapposto",
+            "",
+            "**Scala:** indice normalizzato, base 100. I valori non sono prezzi USD.",
+            "",
+            f"![Frattale BTC 2022 vs SOL 2026]({FRACTAL_CHART_FILE})",
+            "",
+        ]
     if projection_ok:
-        lines += ["### Proiezione condizionale SOL", "", f"![Proiezione SOL BTC 2022]({PROJECTION_CHART_FILE})", ""]
+        lines += [
+            "### Proiezione condizionale SOL",
+            "",
+            "Blu e proiezioni usano l'anchor computazionale; l'eventuale riferimento pubblico è un marker separato, solo display.",
+            "",
+            f"![Proiezione SOL BTC 2022]({PROJECTION_CHART_FILE})",
+            "",
+        ]
     if cycle_ok:
         lines += [
             "### Ciclo base fino al top BTC 2025",
+            "",
+            "**Scenario analogico in USD: non è una previsione live e non è un segnale di trading.**",
             "",
             f"![Ciclo base SOL BTC 2025]({CYCLE_BASE_CHART_FILE})",
             "",
@@ -1522,9 +1825,11 @@ def build_report(
     projection_chart_ok,
     cycle_chart_ok,
     tracking_chart_ok,
+    price_context=None,
 ):
-    rome_now = datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z")
-    utc_now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    generated_at = utc_timestamp((price_context or {}).get("report_generated_at") or datetime.now(timezone.utc))
+    rome_now = generated_at.tz_convert(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z")
+    utc_now = generated_at.strftime("%Y-%m-%d %H:%M:%S UTC")
     lines = [
         "# Frattale mirato: BTC novembre 2022 vs SOL giugno 2026",
         "",
@@ -1533,10 +1838,14 @@ def build_report(
         "",
         f"Ultima candela SOL usata: **{fmt_date_it(sol_current_date)}**",
         "",
+        build_price_context_block(price_context, include_machine_metadata=True) if price_context else "SOL PRICE CONTEXT non disponibile.",
+        "",
         "Correzione metodologica: questo report separa **somiglianza strutturale** e **aderenza reale del prezzo**.",
         "Un 70% di forma simile non significa che il prezzo sia vicino al percorso BTC scalato.",
         "",
         build_verdict_block(verdict, structural, split_alignment, key_levels, phase, phase_gap_pct, next_step_text),
+        "",
+        build_verdict_metadata_block(verdict, split_alignment, phase_gap_pct),
         "",
         "## Somiglianza prima e dopo inizio programma",
         "",
@@ -1562,7 +1871,7 @@ def build_report(
         "",
         "## Proiezione standard a giorni fissi",
         "",
-        "Queste proiezioni partono dal prezzo SOL attuale e replicano i movimenti futuri del BTC equivalente. Non dimostrano che il frattale sia valido.",
+        "Queste proiezioni partono dall'anchor computazionale SOL e replicano i movimenti futuri del BTC equivalente. Il riferimento pubblico corrente è solo contesto e non modifica i percorsi.",
         "",
         build_projection_table(projections),
         "",
@@ -1573,7 +1882,7 @@ def build_report(
             [
                 ["BTC bottom usato", str(btc_anchor_date.date()), fmt_price(btc_anchor_price)],
                 ["SOL bottom usato", str(sol_anchor_date.date()), fmt_price(sol_anchor_price)],
-                ["Prezzo SOL attuale", fmt_date_it(sol_current_date), fmt_price(sol_current_price)],
+                ["Anchor computazionale SOL", fmt_date_it(sol_current_date), fmt_price(sol_current_price)],
                 ["Giorni SOL dal bottom", "-", sol_elapsed_days],
                 ["Data BTC equivalente", str(btc_equiv_date.date()), "-"],
                 ["BTC normalizzato equivalente", "-", fmt_number(btc_norm_equiv, 2)],
@@ -1621,6 +1930,7 @@ def build_main_report_block(
     projection_chart_ok,
     cycle_chart_ok,
     tracking_chart_ok,
+    price_context=None,
 ):
     live = split_alignment.get("live_program", {})
     quick_projection_rows = []
@@ -1652,11 +1962,11 @@ def build_main_report_block(
 
     chart_lines = []
     if fractal_chart_ok:
-        chart_lines += ["### Grafico frattale sovrapposto", "", f"![Frattale BTC 2022 vs SOL 2026]({FRACTAL_CHART_FILE})", ""]
+        chart_lines += ["### Grafico frattale sovrapposto", "", "Scala normalizzata base 100; valori non USD.", "", f"![Frattale BTC 2022 vs SOL 2026]({FRACTAL_CHART_FILE})", ""]
     if projection_chart_ok:
-        chart_lines += ["### Grafico proiezione condizionale", "", f"![Proiezione SOL BTC 2022]({PROJECTION_CHART_FILE})", ""]
+        chart_lines += ["### Grafico proiezione condizionale", "", "Serie e proiezioni ancorate all'input computazionale; riferimento pubblico separato e solo display.", "", f"![Proiezione SOL BTC 2022]({PROJECTION_CHART_FILE})", ""]
     if cycle_chart_ok:
-        chart_lines += ["### Grafico ciclo base", "", f"![Ciclo base SOL BTC 2025]({CYCLE_BASE_CHART_FILE})", ""]
+        chart_lines += ["### Grafico ciclo base", "", "Scenario analogico in USD; non previsione live e non segnale di trading.", "", f"![Ciclo base SOL BTC 2025]({CYCLE_BASE_CHART_FILE})", ""]
     if tracking_chart_ok:
         chart_lines += ["### Grafico struttura vs aderenza", "", f"![Tracking frattale BTC SOL]({TRACKING_CHART_FILE})", ""]
 
@@ -1666,7 +1976,7 @@ def build_main_report_block(
             ["Stato", "CONTESTO / NON OPERATIVO" if verdict.get("operational_weight", 0) == 0 else "CONDIZIONALE"],
             ["Top BTC 2025", f"{cycle.get('btc_top_date_it')} - {fmt_price(cycle.get('btc_top_price'))}"],
             ["Data SOL equivalente", cycle.get("sol_cycle_top_date_it")],
-            ["Target ciclo base da oggi", fmt_price(cycle.get("target_from_current_base"))],
+            ["Target ciclo base dall'anchor modello", fmt_price(cycle.get("target_from_current_base"))],
             ["Massimo percorso base", f"{fmt_price(cycle.get('cycle_max_base_price'))} ({cycle.get('cycle_max_base_date_it')})"],
         ]
 
@@ -1681,6 +1991,8 @@ def build_main_report_block(
             "Report separato completo: [btc_2022_vs_sol_2026_report.md](btc_2022_vs_sol_2026_report.md)",
             "",
             f"Ultima candela SOL usata: **{fmt_date_it(sol_current_date)}**",
+            "",
+            build_price_context_block(price_context, include_machine_metadata=True) if price_context else "SOL PRICE CONTEXT non disponibile.",
             "",
             f"## Verdetto: {verdict['label']}",
             "",
@@ -1698,6 +2010,8 @@ def build_main_report_block(
             f"- **SOL è al giorno:** {sol_elapsed_days} dal bottom usato.",
             f"- **Giorno BTC equivalente:** {btc_equiv_date.date()}",
             f"- **Prossimo step:** {next_step_text}",
+            "",
+            build_verdict_metadata_block(verdict, split_alignment, phase_gap_pct),
             "",
             "## Somiglianza prima e dopo inizio programma",
             "",
@@ -1738,7 +2052,7 @@ def build_main_report_block(
             "",
             md_table(["Step", "Date SOL", "BTC fine", "SOL zona bassa", "SOL zona alta", "SOL fine base", "Lettura"], quick_stage_rows) if quick_stage_rows else "Dati insufficienti.",
             "",
-            "Nota: le proiezioni restano condizionali. La forma simile non compensa un prezzo non aderente.",
+            projection_caveat(verdict),
             "",
             "<!-- BTC_SOL_FRACTAL_END -->",
         ]
@@ -1857,6 +2171,10 @@ def main():
     beta_ratio = volatility_beta(btc_path, sol_path, compare_len)
     split_alignment = build_split_alignment(btc_path, sol_path, sol_anchor_date, sol_current_date)
     verdict = build_operational_verdict(structural, split_alignment, phase_gap_pct)
+    verdict_metadata = build_verdict_metadata(verdict, split_alignment, phase_gap_pct)
+    verdict["price_adherence_failed"] = verdict_metadata["price_adherence_failed"]
+    verdict["price_adherence_live_avg_gap_failed"] = verdict_metadata["price_adherence_live_avg_gap_failed"]
+    verdict["price_adherence_last_gap_failed"] = verdict_metadata["price_adherence_last_gap_failed"]
 
     projections = projection_from_btc(btc_path, sol_current_price, sol_current_date, sol_elapsed_days, beta_ratio)
     stages = build_stage_roadmap(btc_path, sol_current_price, sol_current_date, sol_elapsed_days, beta_ratio)
@@ -1892,6 +2210,18 @@ def main():
         sol_current_price,
         sol_elapsed_days,
         beta_ratio,
+    )
+
+    # Display context is deliberately collected only after every model, verdict,
+    # level and projection input has been computed from the canonical anchor.
+    # It must never flow back into those calculations.
+    current_public_reference = fetch_current_public_reference()
+    report_generated_at = datetime.now(timezone.utc)
+    computational_anchor = build_computational_anchor(sol_current_price, sol_current_date)
+    price_context = build_price_context(
+        computational_anchor,
+        current_public_reference,
+        report_generated_at=report_generated_at,
     )
 
     pre = split_alignment.get("pre_program", {})
@@ -1951,12 +2281,29 @@ def main():
         "all_avg_abs_gap_pct": all_period.get("avg_abs_gap_pct"),
         "all_last_gap_pct": all_period.get("last_gap_pct"),
         "all_status": all_period.get("status"),
+        "computational_anchor_price": computational_anchor.get("price"),
+        "computational_anchor_field": computational_anchor.get("field"),
+        "computational_anchor_timestamp": computational_anchor.get("timestamp"),
+        "computational_anchor_symbol": computational_anchor.get("symbol"),
+        "computational_anchor_provider": computational_anchor.get("provider"),
+        "computational_anchor_timeframe": computational_anchor.get("timeframe"),
+        "computational_anchor_completed": computational_anchor.get("completed"),
+        "current_public_reference_price": current_public_reference.get("price"),
+        "current_public_reference_timestamp": current_public_reference.get("timestamp"),
+        "current_public_reference_acquired_at": current_public_reference.get("acquired_at"),
+        "current_public_reference_symbol": current_public_reference.get("symbol"),
+        "current_public_reference_provider": current_public_reference.get("provider"),
+        "current_vs_anchor_gap_usd": price_context.get("current_vs_anchor_gap_usd"),
+        "current_vs_anchor_gap_pct": price_context.get("current_vs_anchor_gap_pct"),
+        "anchor_age_seconds": price_context.get("anchor_age_seconds"),
+        "anchor_age_hours": price_context.get("anchor_age_hours"),
+        **verdict_metadata,
     }
 
     tracking_df = update_tracking_log(summary)
     tracking_status = build_tracking_status(tracking_df)
     fractal_chart_ok = generate_fractal_chart(btc_path, sol_path, sol_elapsed_days, split_alignment)
-    projection_chart_ok = generate_projection_chart(sol_path, projection_daily, key_levels, verdict)
+    projection_chart_ok = generate_projection_chart(sol_path, projection_daily, key_levels, verdict, price_context)
     cycle_chart_ok = generate_cycle_chart(sol_path, cycle_daily, cycle)
     tracking_chart_ok = generate_tracking_chart(tracking_df)
 
@@ -1991,6 +2338,7 @@ def main():
         projection_chart_ok,
         cycle_chart_ok,
         tracking_chart_ok,
+        price_context,
     )
     with open(REPORT_PATH, "w", encoding="utf-8") as file:
         file.write(report)
@@ -2017,6 +2365,7 @@ def main():
         projection_chart_ok,
         cycle_chart_ok,
         tracking_chart_ok,
+        price_context,
     )
     inject_into_main_report(main_block)
 
@@ -2030,6 +2379,8 @@ def main():
     print(f"Live average gap: {fmt_pct(live.get('avg_abs_gap_pct'))}")
     print(f"Current gap: {fmt_pct(phase_gap_pct)}")
     print(f"Operational weight: {verdict.get('operational_weight', 0)}")
+    print(f"Computational anchor: {computational_anchor.get('price')} ({computational_anchor.get('timestamp')})")
+    print(f"Current public reference: {current_public_reference.get('price')} ({current_public_reference.get('timestamp')})")
 
 
 if __name__ == "__main__":
