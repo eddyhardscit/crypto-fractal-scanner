@@ -1,6 +1,6 @@
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import matplotlib
 matplotlib.use("Agg")
@@ -12,7 +12,7 @@ import yfinance as yf
 
 
 
-from shared_market_snapshot import snapshot_price
+from shared_market_snapshot import snapshot_price, snapshot_record
 from scanner_forecast_shadow_calibration import (
     SHADOW_LATEST_PATH,
     SHADOW_METRICS_PATH,
@@ -35,8 +35,21 @@ HISTORY_PATH = os.path.join(REPORTS_DIR, "scanner_forecast_history.csv")
 LATEST_PATH = os.path.join(REPORTS_DIR, "scanner_forecast_latest.csv")
 METRICS_PATH = os.path.join(REPORTS_DIR, "scanner_forecast_tracker_metrics.csv")
 REPORT_PATH = os.path.join(REPORTS_DIR, "scanner_forecast_tracker_report.md")
+REGIME_ADJUSTED_LATEST_PATH = os.path.join(
+    REPORTS_DIR,
+    "scanner_forecast_regime_adjusted_latest.csv",
+)
+TAIL_OUTLIER_AUDIT_PATH = os.path.join(
+    REPORTS_DIR,
+    "scanner_forecast_tail_outlier_audit.csv",
+)
+TAIL_OUTLIER_REPORT_PATH = os.path.join(
+    REPORTS_DIR,
+    "scanner_forecast_tail_outlier_audit.md",
+)
 
 FULL_MATCHES_PATH = os.path.join(REPORTS_DIR, "latest_scanner_matches.csv")
+REGIME_MATCHES_PATH = os.path.join(REPORTS_DIR, "market_regime_match_matches.csv")
 
 TARGETS = {
     "BTC-USD": "BTC",
@@ -47,6 +60,19 @@ TARGETS = {
 FORECAST_DAYS = 30
 MATCH_LIMIT = 40
 ACCURACY_HORIZONS = [1, 3, 7, 14, 30]
+
+
+def positive_int_env(name, default):
+    try:
+        return max(1, int(os.getenv(name, str(default))))
+    except (TypeError, ValueError):
+        return int(default)
+
+
+MIN_REGIME_ADJUSTED_MATCHES = positive_int_env(
+    "SCANNER_MIN_REGIME_ADJUSTED_MATCHES",
+    5,
+)
 
 
 def ensure_reports_dir():
@@ -106,6 +132,15 @@ def safe_read_csv(path):
         return pd.DataFrame()
 
 
+def df_to_markdown(df):
+    if df is None or df.empty:
+        return "_Nessun dato._"
+    try:
+        return df.to_markdown(index=False)
+    except ImportError:
+        return "```csv\n" + df.to_csv(index=False).rstrip() + "\n```"
+
+
 def load_matches_for_target(target):
     all_matches = safe_read_csv(FULL_MATCHES_PATH)
 
@@ -131,6 +166,177 @@ def load_matches_for_target(target):
         out = out.sort_values("similarity", ascending=False)
 
     return out.head(MATCH_LIMIT).reset_index(drop=True)
+
+
+def as_bool(value):
+    if isinstance(value, (bool, np.bool_)):
+        return bool(value)
+    if pd.isna(value):
+        return False
+    return str(value).strip().lower() in {"1", "true", "yes", "y"}
+
+
+def normalized_match_key(row):
+    def norm_date(value):
+        dt = pd.to_datetime(value, errors="coerce")
+        return "" if pd.isna(dt) else dt.date().isoformat()
+
+    return (
+        str(row.get("target", "")).strip(),
+        str(row.get("similar_asset", "")).strip(),
+        norm_date(row.get("start_date")),
+        norm_date(row.get("end_date")),
+    )
+
+
+def select_regime_adjusted_matches(
+    raw_matches,
+    regime_matches,
+    target,
+    min_matches=None,
+    expected_snapshot_date=None,
+):
+    """Select one non-mixed regime cohort using the documented hierarchy."""
+    threshold = (
+        MIN_REGIME_ADJUSTED_MATCHES
+        if min_matches is None
+        else max(1, int(min_matches))
+    )
+    base_status = {
+        "status": "UNAVAILABLE_REGIME_DATA",
+        "selected_regime_group": "NONE",
+        "full_regime_matches": 0,
+        "same_asset_regime_matches": 0,
+        "same_btc_regime_matches": 0,
+        "selected_sample_size": 0,
+        "minimum_required": threshold,
+        "fallback_level": "NONE",
+        "selection_reason": "REGIME_MATCH_FILE_MISSING_OR_INVALID",
+        "reason": "REGIME_MATCH_FILE_MISSING_OR_INVALID",
+        "matched_raw_rows": 0,
+    }
+
+    required = {
+        "target",
+        "similar_asset",
+        "start_date",
+        "end_date",
+        "same_full_regime_as_today",
+        "same_asset_regime_as_today",
+        "same_btc_regime_as_today",
+    }
+    if (
+        raw_matches is None
+        or raw_matches.empty
+        or regime_matches is None
+        or regime_matches.empty
+        or not required.issubset(regime_matches.columns)
+    ):
+        return pd.DataFrame(), base_status
+
+    raw = raw_matches.copy()
+    if "target" not in raw.columns:
+        raw["target"] = target
+    raw = raw[raw["target"].astype(str) == str(target)].copy()
+    regime = regime_matches[
+        regime_matches["target"].astype(str) == str(target)
+    ].copy()
+
+    if expected_snapshot_date and "target_regime_snapshot_date" in regime.columns:
+        regime_dates = pd.to_datetime(
+            regime["target_regime_snapshot_date"],
+            errors="coerce",
+        ).dropna()
+        expected_date = pd.to_datetime(expected_snapshot_date, errors="coerce")
+        if (
+            not pd.isna(expected_date)
+            and (
+                regime_dates.empty
+                or not (regime_dates.dt.normalize() == expected_date.normalize()).all()
+            )
+        ):
+            status = dict(base_status)
+            status["status"] = "STALE_REGIME_DATA"
+            status["selection_reason"] = (
+                "REGIME_SNAPSHOT_DOES_NOT_MATCH_PRICE_SNAPSHOT"
+            )
+            status["reason"] = status["selection_reason"]
+            return pd.DataFrame(), status
+
+    raw_keys = {normalized_match_key(row) for _, row in raw.iterrows()}
+    regime["_match_key"] = [
+        normalized_match_key(row) for _, row in regime.iterrows()
+    ]
+    regime = regime[regime["_match_key"].isin(raw_keys)].copy()
+    regime = regime.drop_duplicates(subset=["_match_key"], keep="first")
+
+    if regime.empty:
+        status = dict(base_status)
+        status["selection_reason"] = "NO_REGIME_ROWS_MATCH_CURRENT_RAW_COHORT"
+        status["reason"] = status["selection_reason"]
+        return pd.DataFrame(), status
+
+    regime["_same_full"] = regime["same_full_regime_as_today"].apply(as_bool)
+    regime["_same_asset"] = regime["same_asset_regime_as_today"].apply(as_bool)
+    regime["_same_btc"] = regime["same_btc_regime_as_today"].apply(as_bool)
+
+    full_count = int(regime["_same_full"].sum())
+    asset_count = int(regime["_same_asset"].sum())
+    btc_count = int(regime["_same_btc"].sum())
+
+    if full_count >= threshold:
+        selected_group = "SAME_BTC_AND_ASSET_REGIME"
+        selected_mask = regime["_same_full"]
+        fallback_level = "0_FULL_REGIME"
+        selection_reason = "FULL_REGIME_THRESHOLD_MET"
+    elif asset_count >= threshold:
+        selected_group = "SAME_ASSET_REGIME"
+        selected_mask = regime["_same_asset"]
+        fallback_level = "1_SAME_ASSET_FALLBACK"
+        selection_reason = "FALLBACK_TO_SAME_ASSET_REGIME"
+    elif btc_count >= threshold:
+        selected_group = "SAME_BTC_REGIME"
+        selected_mask = regime["_same_btc"]
+        fallback_level = "2_SAME_BTC_FALLBACK"
+        selection_reason = "FALLBACK_TO_SAME_BTC_REGIME"
+    else:
+        selected_group = "NONE"
+        selected_mask = pd.Series(False, index=regime.index)
+        fallback_level = "NONE"
+        selection_reason = "INSUFFICIENT_REGIME_MATCHES"
+
+    selected = regime[selected_mask].drop(
+        columns=["_match_key", "_same_full", "_same_asset", "_same_btc"],
+        errors="ignore",
+    )
+    selected_count = int(len(selected))
+    status = {
+        "status": (
+            "AVAILABLE"
+            if selected_group != "NONE"
+            else "INSUFFICIENT_REGIME_MATCHES"
+        ),
+        "selected_regime_group": selected_group,
+        "full_regime_matches": full_count,
+        "same_asset_regime_matches": asset_count,
+        "same_btc_regime_matches": btc_count,
+        "selected_sample_size": selected_count,
+        "minimum_required": threshold,
+        "fallback_level": fallback_level,
+        "selection_reason": selection_reason,
+        "reason": selection_reason,
+        "matched_raw_rows": int(len(regime)),
+    }
+    if selected_group == "NONE":
+        return selected.reset_index(drop=True), status
+
+    if "similarity" in selected.columns:
+        selected["similarity"] = pd.to_numeric(
+            selected["similarity"],
+            errors="coerce",
+        )
+        selected = selected.sort_values("similarity", ascending=False)
+    return selected.reset_index(drop=True), status
 
 
 def normalize_yfinance_df(raw, ticker):
@@ -250,6 +456,53 @@ def current_price_for_target(target, data):
     return np.nan
 
 
+def input_snapshot_context(target, matches, data):
+    record = snapshot_record(target)
+    price_date = pd.to_datetime(
+        record.get("candle_date_utc"),
+        errors="coerce",
+    )
+    if pd.isna(price_date) and target in data and not data[target].empty:
+        price_date = pd.Timestamp(data[target].index[-1])
+
+    generated_values = pd.Series(dtype="datetime64[ns]")
+    timestamp_source = matches
+    if (
+        timestamp_source is None
+        or timestamp_source.empty
+        or "generated_at_utc" not in timestamp_source.columns
+    ):
+        full_matches = safe_read_csv(FULL_MATCHES_PATH)
+        if "target_ticker" in full_matches.columns:
+            timestamp_source = full_matches[
+                full_matches["target_ticker"].astype(str) == str(target)
+            ]
+    if (
+        timestamp_source is not None
+        and not timestamp_source.empty
+        and "generated_at_utc" in timestamp_source.columns
+    ):
+        generated_values = pd.to_datetime(
+            timestamp_source["generated_at_utc"],
+            errors="coerce",
+        ).dropna()
+
+    return {
+        "price_snapshot_date": (
+            price_date.date().isoformat()
+            if not pd.isna(price_date)
+            else "UNKNOWN"
+        ),
+        "price_snapshot_generated_at_utc": record.get("generated_at_utc") or "UNKNOWN",
+        "price_snapshot_source": record.get("source") or "download fallback",
+        "match_snapshot_generated_at_utc": (
+            generated_values.max().strftime("%Y-%m-%d %H:%M:%S")
+            if not generated_values.empty
+            else "UNKNOWN"
+        ),
+    }
+
+
 def build_path_matrix(matches, data):
     rows = []
 
@@ -294,6 +547,12 @@ def build_path_matrix(matches, data):
             "end_date": row.get("end_date", ""),
             "similarity": pd.to_numeric(row.get("similarity", np.nan), errors="coerce"),
             "return_30d": pd.to_numeric(row.get("return_30d", np.nan), errors="coerce"),
+            "regime_alignment": row.get("regime_alignment", "RAW"),
+            "btc_regime_at_match": row.get("btc_regime_at_match", ""),
+            "similar_asset_regime_at_match": row.get(
+                "similar_asset_regime_at_match",
+                "",
+            ),
         }
 
         for d in range(FORECAST_DAYS + 1):
@@ -341,6 +600,114 @@ def add_price_levels(quantiles, current_price):
         q[f"{col}_price"] = current_price * (1 + q[f"{col}_pct"] / 100.0)
 
     return q
+
+
+def build_tail_outlier_audit(
+    target,
+    cohort,
+    paths,
+    cohort_status="AVAILABLE",
+    selected_regime_group=None,
+    fallback_level=None,
+):
+    """Explain terminal tail membership and leave-one-out quantile influence.
+
+    This is diagnostic only: flagged rows are never removed from either cone.
+    """
+    columns = [
+        "target_ticker",
+        "asset",
+        "cohort",
+        "cohort_status",
+        "selected_regime_group",
+        "fallback_level",
+        "cases_used",
+        "similar_asset",
+        "start_date",
+        "end_date",
+        "similarity",
+        "regime_alignment",
+        "return_30d_pct",
+        "tail_side",
+        "iqr_outlier",
+        "is_tail_or_outlier",
+        "p10_full_pct",
+        "p50_full_pct",
+        "p90_full_pct",
+        "p10_without_match_pct",
+        "p50_without_match_pct",
+        "p90_without_match_pct",
+        "p10_impact_pct_points",
+        "p50_impact_pct_points",
+        "p90_impact_pct_points",
+        "mean_impact_pct_points",
+    ]
+    if paths is None or paths.empty or f"day_{FORECAST_DAYS}" not in paths.columns:
+        return pd.DataFrame(columns=columns)
+
+    values = pd.to_numeric(paths[f"day_{FORECAST_DAYS}"], errors="coerce")
+    valid = paths.loc[values.notna()].copy().reset_index(drop=True)
+    values = pd.to_numeric(valid[f"day_{FORECAST_DAYS}"], errors="coerce").to_numpy(dtype=float)
+    if len(values) == 0:
+        return pd.DataFrame(columns=columns)
+
+    p10, p25, p50, p75, p90 = np.percentile(values, [10, 25, 50, 75, 90])
+    iqr = p75 - p25
+    lower_fence = p25 - 1.5 * iqr
+    upper_fence = p75 + 1.5 * iqr
+    full_mean = float(np.mean(values))
+    rows = []
+
+    for pos, (_, row) in enumerate(valid.iterrows()):
+        value = float(values[pos])
+        without = np.delete(values, pos)
+        if len(without):
+            loo_p10, loo_p50, loo_p90 = np.percentile(without, [10, 50, 90])
+            loo_mean = float(np.mean(without))
+        else:
+            loo_p10 = loo_p50 = loo_p90 = loo_mean = np.nan
+
+        if value >= p90:
+            tail_side = "UPPER_P90"
+        elif value <= p10:
+            tail_side = "LOWER_P10"
+        else:
+            tail_side = "CENTRAL"
+        iqr_outlier = bool(value < lower_fence or value > upper_fence)
+
+        rows.append({
+            "target_ticker": target,
+            "asset": asset_short(target),
+            "cohort": cohort,
+            "cohort_status": cohort_status,
+            "selected_regime_group": (
+                selected_regime_group
+                or ("ALL_MATCHES" if cohort == "RAW" else "NONE")
+            ),
+            "fallback_level": fallback_level or "NONE",
+            "cases_used": int(len(values)),
+            "similar_asset": row.get("similar_asset", ""),
+            "start_date": row.get("start_date", ""),
+            "end_date": row.get("end_date", ""),
+            "similarity": row.get("similarity", np.nan),
+            "regime_alignment": row.get("regime_alignment", "RAW"),
+            "return_30d_pct": value,
+            "tail_side": tail_side,
+            "iqr_outlier": iqr_outlier,
+            "is_tail_or_outlier": bool(tail_side != "CENTRAL" or iqr_outlier),
+            "p10_full_pct": p10,
+            "p50_full_pct": p50,
+            "p90_full_pct": p90,
+            "p10_without_match_pct": loo_p10,
+            "p50_without_match_pct": loo_p50,
+            "p90_without_match_pct": loo_p90,
+            "p10_impact_pct_points": p10 - loo_p10,
+            "p50_impact_pct_points": p50 - loo_p50,
+            "p90_impact_pct_points": p90 - loo_p90,
+            "mean_impact_pct_points": full_mean - loo_mean,
+        })
+
+    return pd.DataFrame(rows, columns=columns)
 
 
 def direction_from_matches(matches):
@@ -465,9 +832,100 @@ def plot_forecast_cone(target, quantiles_price, current_price, generated_date, d
     return out_path
 
 
-def build_snapshot_rows(target, quantiles_price, current_price, generated_at):
+def plot_regime_adjusted_cone(
+    target,
+    raw_quantiles_price,
+    adjusted_quantiles_price,
+    generated_date,
+    selected_regime_group,
+    fallback_level,
+):
+    if adjusted_quantiles_price is None or adjusted_quantiles_price.empty:
+        return None
+
+    short = asset_short(target)
+    out_path = os.path.join(
+        REPORTS_DIR,
+        f"scanner_forecast_{short}_regime_adjusted.png",
+    )
+    future_dates = [
+        generated_date + timedelta(days=int(d))
+        for d in adjusted_quantiles_price["day"].tolist()
+    ]
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    if raw_quantiles_price is not None and not raw_quantiles_price.empty:
+        raw_dates = [
+            generated_date + timedelta(days=int(d))
+            for d in raw_quantiles_price["day"].tolist()
+        ]
+        ax.fill_between(
+            raw_dates,
+            raw_quantiles_price["p10_price"],
+            raw_quantiles_price["p90_price"],
+            color="gray",
+            alpha=0.10,
+            label="Raw p10-p90",
+        )
+        ax.plot(
+            raw_dates,
+            raw_quantiles_price["p50_price"],
+            color="gray",
+            linestyle="--",
+            linewidth=1.5,
+            label="Raw p50",
+        )
+
+    ax.fill_between(
+        future_dates,
+        adjusted_quantiles_price["p10_price"],
+        adjusted_quantiles_price["p90_price"],
+        color="tab:green",
+        alpha=0.18,
+        label="Regime-adjusted p10-p90",
+    )
+    ax.fill_between(
+        future_dates,
+        adjusted_quantiles_price["p25_price"],
+        adjusted_quantiles_price["p75_price"],
+        color="tab:green",
+        alpha=0.30,
+        label="Regime-adjusted p25-p75",
+    )
+    ax.plot(
+        future_dates,
+        adjusted_quantiles_price["p50_price"],
+        color="tab:green",
+        linewidth=2.5,
+        marker="o",
+        markersize=3,
+        label="Regime-adjusted p50",
+    )
+    cases = int(adjusted_quantiles_price["count"].min())
+    ax.set_title(
+        f"{short} — cono regime-adjusted ({cases} casi)\n"
+        f"{selected_regime_group} | {fallback_level}"
+    )
+    ax.set_xlabel("Data")
+    ax.set_ylabel("Prezzo")
+    ax.grid(True, alpha=0.25)
+    ax.legend(loc="best")
+    fig.autofmt_xdate()
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=160)
+    plt.close(fig)
+    return out_path
+
+
+def build_snapshot_rows(
+    target,
+    quantiles_price,
+    current_price,
+    generated_at,
+    snapshot_date=None,
+):
     rows = []
-    snapshot_date = generated_at[:10]
+    snapshot_date = snapshot_date or generated_at[:10]
     generated_date = pd.to_datetime(snapshot_date)
 
     for _, row in quantiles_price.iterrows():
@@ -689,6 +1147,186 @@ def format_accuracy_table(metrics):
     return pd.DataFrame(rows)
 
 
+def format_regime_adjusted_table(latest_rows):
+    rows = []
+    for row in latest_rows:
+        raw_q30 = row.get("q30")
+        adjusted_q30 = row.get("regime_adjusted_q30")
+        status = row.get("regime_adjusted_status") or {}
+        target = row["target_ticker"]
+        rows.append({
+            "Asset": row["asset"],
+            "Stato adjusted": status.get("status", "UNAVAILABLE_REGIME_DATA"),
+            "selected_regime_group": status.get("selected_regime_group", "NONE"),
+            "full_regime_matches": status.get("full_regime_matches", 0),
+            "same_asset_regime_matches": status.get(
+                "same_asset_regime_matches",
+                0,
+            ),
+            "same_btc_regime_matches": status.get("same_btc_regime_matches", 0),
+            "selected_sample_size": status.get("selected_sample_size", 0),
+            "minimum_required": status.get(
+                "minimum_required",
+                MIN_REGIME_ADJUSTED_MATCHES,
+            ),
+            "fallback_level": status.get("fallback_level", "NONE"),
+            "selection_reason": status.get("selection_reason", status.get("reason", "")),
+            "Raw p50 30g": (
+                fmt_price(raw_q30.get("p50_price"), target)
+                if raw_q30 is not None
+                else "n/a"
+            ),
+            "Adjusted p50 30g": (
+                fmt_price(adjusted_q30.get("p50_price"), target)
+                if adjusted_q30 is not None
+                else "n/a"
+            ),
+            "Raw p90 30g": (
+                fmt_price(raw_q30.get("p90_price"), target)
+                if raw_q30 is not None
+                else "n/a"
+            ),
+            "Adjusted p90 30g": (
+                fmt_price(adjusted_q30.get("p90_price"), target)
+                if adjusted_q30 is not None
+                else "n/a"
+            ),
+        })
+    return pd.DataFrame(rows)
+
+
+def build_regime_adjusted_latest_frame(latest_rows):
+    rows = []
+    for row in latest_rows:
+        status = row.get("regime_adjusted_status") or {}
+        context = row.get("input_snapshot") or {}
+        q30 = row.get("regime_adjusted_q30")
+        out = {
+            "snapshot_date": row.get("snapshot_date"),
+            "asset": row.get("asset"),
+            "target_ticker": row.get("target_ticker"),
+            "current_price": row.get("current_price"),
+            "price_snapshot_generated_at_utc": context.get(
+                "price_snapshot_generated_at_utc"
+            ),
+            "match_snapshot_generated_at_utc": context.get(
+                "match_snapshot_generated_at_utc"
+            ),
+            "status": status.get("status"),
+            "reason": status.get("reason"),
+            "selected_regime_group": status.get("selected_regime_group", "NONE"),
+            "full_regime_matches": status.get("full_regime_matches", 0),
+            "same_asset_regime_matches": status.get(
+                "same_asset_regime_matches",
+                0,
+            ),
+            "same_btc_regime_matches": status.get("same_btc_regime_matches", 0),
+            "selected_sample_size": status.get("selected_sample_size", 0),
+            "usable_paths": status.get("usable_paths", 0),
+            "minimum_required": status.get(
+                "minimum_required",
+                MIN_REGIME_ADJUSTED_MATCHES,
+            ),
+            "fallback_level": status.get("fallback_level", "NONE"),
+            "selection_reason": status.get(
+                "selection_reason",
+                status.get("reason"),
+            ),
+            "chart_filename": row.get("regime_adjusted_chart_filename"),
+        }
+        if q30 is not None:
+            for percentile in ["p10", "p25", "p50", "p75", "p90"]:
+                out[f"{percentile}_30d_price"] = q30[f"{percentile}_price"]
+                out[f"{percentile}_30d_pct"] = q30[f"{percentile}_pct"]
+        rows.append(out)
+    return pd.DataFrame(rows)
+
+
+def build_tail_outlier_report(generated_at, latest_rows, audit):
+    lines = [
+        "# Scanner forecast tail / outlier audit",
+        "",
+        f"Generato: {generated_at} UTC",
+        "",
+        (
+            "Audit diagnostico dei percorsi a 30 giorni. I casi in coda o "
+            "outlier non vengono rimossi dal cono: l'impatto leave-one-out "
+            "mostra soltanto quanto ciascun analogo muove p10, p50, p90 e media."
+        ),
+        "",
+        "## Disponibilità coorti",
+        "",
+        df_to_markdown(format_regime_adjusted_table(latest_rows)),
+        "",
+    ]
+    for row in latest_rows:
+        status = row.get("regime_adjusted_status") or {}
+        if status.get("fallback_level") in {
+            "1_SAME_ASSET_FALLBACK",
+            "2_SAME_BTC_FALLBACK",
+        }:
+            lines.extend([
+                f"- WARNING {row['asset']}: {status.get('selected_regime_group')} "
+                "is a less stringent fallback than SAME_BTC_AND_ASSET_REGIME.",
+                "",
+            ])
+
+    for row in latest_rows:
+        asset = row["asset"]
+        lines.extend([f"## {asset}", ""])
+        if audit is None or audit.empty:
+            lines.extend(["Nessun percorso auditabile.", ""])
+            continue
+
+        target_rows = audit[audit["asset"].astype(str) == asset].copy()
+        notable = target_rows[target_rows["is_tail_or_outlier"].apply(as_bool)].copy()
+        if notable.empty:
+            lines.extend(["Nessun caso di coda/outlier disponibile.", ""])
+            continue
+
+        notable["_influence"] = notable[
+            [
+                "p10_impact_pct_points",
+                "p50_impact_pct_points",
+                "p90_impact_pct_points",
+                "mean_impact_pct_points",
+            ]
+        ].abs().max(axis=1)
+        notable = notable.sort_values(
+            ["cohort", "_influence"],
+            ascending=[True, False],
+        ).head(16)
+        display = notable[
+            [
+                "cohort",
+                "cohort_status",
+                "selected_regime_group",
+                "fallback_level",
+                "similar_asset",
+                "start_date",
+                "end_date",
+                "return_30d_pct",
+                "tail_side",
+                "iqr_outlier",
+                "p10_impact_pct_points",
+                "p50_impact_pct_points",
+                "p90_impact_pct_points",
+                "mean_impact_pct_points",
+            ]
+        ].copy()
+        for col in [
+            "return_30d_pct",
+            "p10_impact_pct_points",
+            "p50_impact_pct_points",
+            "p90_impact_pct_points",
+            "mean_impact_pct_points",
+        ]:
+            display[col] = display[col].apply(fmt_pct)
+        lines.extend([df_to_markdown(display), ""])
+
+    return "\n".join(lines).rstrip() + "\n"
+
+
 def build_report(generated_at, latest_rows, metrics, shadow_metrics):
     lines = []
 
@@ -696,6 +1334,31 @@ def build_report(generated_at, latest_rows, metrics, shadow_metrics):
     lines.append("# Scanner forecast path / cono probabilistico")
     lines.append("")
     lines.append(f"Generato: {generated_at} UTC")
+    lines.append("")
+    lines.append("## Snapshot effettivamente usato")
+    lines.append("")
+    snapshot_rows = []
+    for row in latest_rows:
+        context = row.get("input_snapshot") or {}
+        snapshot_rows.append({
+            "Asset": row["asset"],
+            "Snapshot prezzo": context.get("price_snapshot_date", "UNKNOWN"),
+            "Generazione snapshot prezzo": context.get(
+                "price_snapshot_generated_at_utc",
+                "UNKNOWN",
+            ),
+            "Snapshot match scanner": context.get(
+                "match_snapshot_generated_at_utc",
+                "UNKNOWN",
+            ),
+        })
+    lines.append(df_to_markdown(pd.DataFrame(snapshot_rows)))
+    lines.append("")
+    lines.append(
+        "La data di generazione del report non sostituisce la data degli input: "
+        "se gli snapshot locali sono più vecchi, i valori restano riferiti agli "
+        "snapshot indicati in tabella."
+    )
     lines.append("")
     lines.append(
         "Questo report trasforma i 40 casi simili dello scanner in un cono previsionale leggibile."
@@ -722,7 +1385,20 @@ def build_report(generated_at, latest_rows, metrics, shadow_metrics):
     if latest_table.empty:
         lines.append("Nessun cono disponibile.")
     else:
-        lines.append(latest_table.to_markdown(index=False))
+        lines.append(df_to_markdown(latest_table))
+
+    lines.append("")
+    lines.append("## Confronto raw / regime-adjusted")
+    lines.append("")
+    lines.append(
+        "Il cono raw continua a usare i 40 casi dello scanner. Il cono "
+        "regime-adjusted sceglie una sola coorte nella gerarchia "
+        "SAME_BTC_AND_ASSET_REGIME → SAME_ASSET_REGIME → SAME_BTC_REGIME. "
+        f"Ogni livello richiede almeno {MIN_REGIME_ADJUSTED_MATCHES} match; "
+        "le coorti non vengono mai combinate e ogni fallback è dichiarato."
+    )
+    lines.append("")
+    lines.append(df_to_markdown(format_regime_adjusted_table(latest_rows)))
 
     lines.append("")
     lines.append("## Grafici")
@@ -800,13 +1476,59 @@ def build_report(generated_at, latest_rows, metrics, shadow_metrics):
                 f"![Cono calibrato shadow {asset}]({shadow_img})"
             )
 
+        adjusted_img = row.get("regime_adjusted_chart_filename")
+        adjusted_status = row.get("regime_adjusted_status") or {}
+        lines.append("")
+        lines.append("#### Cono regime-adjusted")
+        lines.append("")
+        lines.append(
+            f"Gruppo selezionato: **{adjusted_status.get('selected_regime_group', 'NONE')}**; "
+            f"fallback: **{adjusted_status.get('fallback_level', 'NONE')}**; "
+            f"motivo: **{adjusted_status.get('selection_reason', adjusted_status.get('reason', 'UNKNOWN'))}**."
+        )
+        lines.append("")
+        if adjusted_status.get("fallback_level") in {
+            "1_SAME_ASSET_FALLBACK",
+            "2_SAME_BTC_FALLBACK",
+        }:
+            lines.append(
+                "**WARNING:** coorte fallback meno stringente rispetto a "
+                "SAME_BTC_AND_ASSET_REGIME."
+            )
+            lines.append("")
+        if adjusted_img:
+            lines.append(
+                f"![Scanner forecast regime-adjusted {asset}]({adjusted_img})"
+            )
+        else:
+            lines.append(
+                "Non disponibile: "
+                f"{adjusted_status.get('selection_reason', adjusted_status.get('reason', 'REGIME_DATA_UNAVAILABLE'))} "
+                f"(campione selezionato {adjusted_status.get('selected_sample_size', 0)}/"
+                f"{adjusted_status.get('minimum_required', MIN_REGIME_ADJUSTED_MATCHES)} match)."
+            )
+
         lines.append("")
 
     lines.append("## Accuratezza percorso scanner")
     lines.append("")
 
     accuracy_table = format_accuracy_table(metrics)
-    lines.append(accuracy_table.to_markdown(index=False))
+    lines.append(df_to_markdown(accuracy_table))
+    lines.append("")
+
+    lines.append("## Tail / outlier audit")
+    lines.append("")
+    lines.append(
+        "I casi di coda restano nel calcolo. L'audit leave-one-out quantifica "
+        "la sensibilità dei percentili senza trasformare l'analisi in un filtro discrezionale."
+    )
+    lines.append("")
+    lines.append(
+        "Dettaglio completo: "
+        "[scanner_forecast_tail_outlier_audit.md]"
+        "(scanner_forecast_tail_outlier_audit.md)."
+    )
     lines.append("")
 
     lines.append("## Calibratore shadow")
@@ -904,7 +1626,7 @@ def update_latest_report(block):
 def main():
     ensure_reports_dir()
 
-    generated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     snapshot_date = generated_at[:10]
     generated_date = pd.to_datetime(snapshot_date)
 
@@ -923,31 +1645,85 @@ def main():
     # Only forecasts already saved before today's run can calibrate today's
     # shadow cone. The official raw cone remains untouched.
     prior_history = safe_read_csv(HISTORY_PATH)
+    regime_matches = safe_read_csv(REGIME_MATCHES_PATH)
 
     latest_rows = []
     snapshot_rows = []
     shadow_snapshot_rows = []
+    audit_frames = []
 
     for target, matches in matches_by_target.items():
         short = asset_short(target)
         print(f"Costruzione cono {short}...")
 
         current_price = current_price_for_target(target, data)
+        input_snapshot = input_snapshot_context(target, matches, data)
+        target_snapshot_date = input_snapshot["price_snapshot_date"]
+        if target_snapshot_date == "UNKNOWN":
+            target_snapshot_date = snapshot_date
+        target_generated_date = pd.to_datetime(target_snapshot_date)
         direction, positive_cases = direction_from_matches(matches)
 
         paths = build_path_matrix(matches, data)
         quant = quantile_paths(paths)
 
+        regime_cohort, regime_status = select_regime_adjusted_matches(
+            raw_matches=matches,
+            regime_matches=regime_matches,
+            target=target,
+            expected_snapshot_date=target_snapshot_date,
+        )
+        regime_paths = build_path_matrix(regime_cohort, data)
+        usable_regime_paths = int(len(regime_paths))
+        regime_status["usable_paths"] = usable_regime_paths
+        if (
+            regime_status["status"] == "AVAILABLE"
+            and usable_regime_paths < MIN_REGIME_ADJUSTED_MATCHES
+        ):
+            regime_status["status"] = "INSUFFICIENT_PATHS"
+            regime_status["selection_reason"] = (
+                "INSUFFICIENT_USABLE_SELECTED_REGIME_PATHS"
+            )
+            regime_status["reason"] = regime_status["selection_reason"]
+
+        audit_frames.append(
+            build_tail_outlier_audit(
+                target,
+                "RAW",
+                paths,
+                cohort_status="AVAILABLE" if not paths.empty else "NO_PATHS",
+                selected_regime_group="ALL_MATCHES",
+                fallback_level="NONE",
+            )
+        )
+        if not regime_paths.empty:
+            audit_frames.append(
+                build_tail_outlier_audit(
+                    target,
+                    "REGIME_ADJUSTED",
+                    regime_paths,
+                    cohort_status=regime_status["status"],
+                    selected_regime_group=regime_status[
+                        "selected_regime_group"
+                    ],
+                    fallback_level=regime_status["fallback_level"],
+                )
+            )
+
         if quant.empty or pd.isna(current_price):
             latest_rows.append({
                 "target_ticker": target,
                 "asset": short,
-                "snapshot_date": snapshot_date,
+                "snapshot_date": target_snapshot_date,
                 "current_price": current_price,
                 "direction": direction,
                 "positive_cases": positive_cases,
                 "q30": None,
                 "chart_filename": None,
+                "regime_adjusted_q30": None,
+                "regime_adjusted_chart_filename": None,
+                "regime_adjusted_status": regime_status,
+                "input_snapshot": input_snapshot,
             })
             continue
 
@@ -969,12 +1745,37 @@ def main():
             if shadow_chart_path
             else None
         )
+        regime_quant_price = pd.DataFrame()
+        regime_q30 = None
+        regime_chart_path = None
+        if regime_status["status"] == "AVAILABLE":
+            regime_quant = quantile_paths(regime_paths)
+            if not regime_quant.empty:
+                regime_quant_price = add_price_levels(regime_quant, current_price)
+                q30_rows = regime_quant_price[
+                    regime_quant_price["day"] == FORECAST_DAYS
+                ]
+                regime_q30 = (
+                    q30_rows.iloc[0].to_dict()
+                    if not q30_rows.empty
+                    else None
+                )
+                regime_chart_path = plot_regime_adjusted_cone(
+                    target=target,
+                    raw_quantiles_price=quant_price,
+                    adjusted_quantiles_price=regime_quant_price,
+                    generated_date=target_generated_date,
+                    selected_regime_group=regime_status[
+                        "selected_regime_group"
+                    ],
+                    fallback_level=regime_status["fallback_level"],
+                )
 
         chart_path = plot_forecast_cone(
             target=target,
             quantiles_price=quant_price,
             current_price=current_price,
-            generated_date=generated_date,
+            generated_date=target_generated_date,
             data=data,
         )
 
@@ -986,7 +1787,7 @@ def main():
         latest_rows.append({
             "target_ticker": target,
             "asset": short,
-            "snapshot_date": snapshot_date,
+            "snapshot_date": target_snapshot_date,
             "current_price": current_price,
             "direction": direction,
             "positive_cases": positive_cases,
@@ -994,6 +1795,14 @@ def main():
             "chart_filename": chart_filename,
             "shadow_chart_filename": shadow_chart_filename,
             "shadow_status": shadow_status,
+            "regime_adjusted_q30": regime_q30,
+            "regime_adjusted_chart_filename": (
+                os.path.basename(regime_chart_path)
+                if regime_chart_path
+                else None
+            ),
+            "regime_adjusted_status": regime_status,
+            "input_snapshot": input_snapshot,
         })
 
         asset_snapshot_rows = build_snapshot_rows(
@@ -1001,6 +1810,7 @@ def main():
             quantiles_price=quant_price,
             current_price=current_price,
             generated_at=generated_at,
+            snapshot_date=target_snapshot_date,
         )
         snapshot_rows.extend(asset_snapshot_rows)
         shadow_snapshot_rows.extend(
@@ -1040,6 +1850,19 @@ def main():
 
     shadow_latest = current_shadow_status_table(latest_rows)
     shadow_latest.to_csv(SHADOW_LATEST_PATH, index=False)
+    adjusted_latest_df = build_regime_adjusted_latest_frame(latest_rows)
+    adjusted_latest_df.to_csv(REGIME_ADJUSTED_LATEST_PATH, index=False)
+
+    nonempty_audits = [frame for frame in audit_frames if not frame.empty]
+    audit = (
+        pd.concat(nonempty_audits, ignore_index=True)
+        if nonempty_audits
+        else build_tail_outlier_audit("", "RAW", pd.DataFrame())
+    )
+    audit.to_csv(TAIL_OUTLIER_AUDIT_PATH, index=False)
+    tail_report = build_tail_outlier_report(generated_at, latest_rows, audit)
+    with open(TAIL_OUTLIER_REPORT_PATH, "w", encoding="utf-8") as f:
+        f.write(tail_report)
 
     history = update_forecast_history(snapshot_rows)
 
@@ -1084,6 +1907,8 @@ def main():
     print(f"Latest salvato in {LATEST_PATH}")
     print(f"History salvata in {HISTORY_PATH}")
     print(f"Metrics salvate in {METRICS_PATH}")
+    print(f"Regime-adjusted latest salvato in {REGIME_ADJUSTED_LATEST_PATH}")
+    print(f"Tail/outlier audit salvato in {TAIL_OUTLIER_AUDIT_PATH}")
 
 
 if __name__ == "__main__":

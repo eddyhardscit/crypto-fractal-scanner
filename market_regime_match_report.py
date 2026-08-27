@@ -1,11 +1,15 @@
 import os
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 import numpy as np
 import pandas as pd
 import yfinance as yf
 
+from shared_market_snapshot import (
+    snapshot_date as shared_snapshot_date,
+    snapshot_price as shared_snapshot_price,
+)
 
 REPORTS_DIR = Path("reports")
 
@@ -19,6 +23,22 @@ START_MARKER = "<!-- MARKET_REGIME_MATCH_START -->"
 END_MARKER = "<!-- MARKET_REGIME_MATCH_END -->"
 
 BTC_TICKER = "BTC-USD"
+
+
+def positive_int_env(name, default):
+    try:
+        return max(1, int(os.getenv(name, str(default))))
+    except (TypeError, ValueError):
+        return int(default)
+
+
+# A full BTC + asset regime cohort is descriptive below this size.  The value
+# is explicit and configurable because there was no canonical applied
+# threshold before the regime-adjusted cone was introduced.
+MIN_REGIME_ADJUSTED_MATCHES = positive_int_env(
+    "SCANNER_MIN_REGIME_ADJUSTED_MATCHES",
+    5,
+)
 
 REQUIRED_MATCH_COLUMNS = [
     "target",
@@ -453,6 +473,100 @@ def classify_outcome(row):
     return "MIXED"
 
 
+def annotate_regime_adjusted_selection(enriched, min_matches=None):
+    """Select exactly one regime cohort using the documented hierarchy."""
+    threshold = (
+        MIN_REGIME_ADJUSTED_MATCHES
+        if min_matches is None
+        else max(1, int(min_matches))
+    )
+    out = enriched.copy()
+
+    if out.empty:
+        empty_columns = {
+            "selected_regime_group": "object",
+            "full_regime_matches": "int64",
+            "same_asset_regime_matches": "int64",
+            "same_btc_regime_matches": "int64",
+            "selected_sample_size": "int64",
+            "minimum_required": "int64",
+            "fallback_level": "object",
+            "selection_reason": "object",
+            "regime_adjusted_cohort_size": "int64",
+            "regime_adjusted_min_matches": "int64",
+            "regime_adjusted_eligible": "bool",
+            "regime_adjusted_selected": "bool",
+        }
+        for column, dtype in empty_columns.items():
+            out[column] = pd.Series(dtype=dtype)
+        return out
+
+    def flag(column):
+        values = out.get(column, pd.Series(False, index=out.index))
+        return values.apply(
+            lambda value: bool(value)
+            if isinstance(value, (bool, np.bool_))
+            else str(value).strip().lower() in {"1", "true", "yes", "y"}
+        )
+
+    target_keys = out["target"].astype(str)
+    same_full = flag("same_full_regime_as_today")
+    same_asset = flag("same_asset_regime_as_today")
+    same_btc = flag("same_btc_regime_as_today")
+
+    full_counts = same_full.groupby(target_keys).transform("sum").astype(int)
+    asset_counts = same_asset.groupby(target_keys).transform("sum").astype(int)
+    btc_counts = same_btc.groupby(target_keys).transform("sum").astype(int)
+
+    selected_group = pd.Series("NONE", index=out.index, dtype="object")
+    selected_size = pd.Series(0, index=out.index, dtype="int64")
+    fallback_level = pd.Series("NONE", index=out.index, dtype="object")
+    selection_reason = pd.Series(
+        "INSUFFICIENT_REGIME_MATCHES",
+        index=out.index,
+        dtype="object",
+    )
+
+    full_ok = full_counts >= threshold
+    asset_ok = (~full_ok) & (asset_counts >= threshold)
+    btc_ok = (~full_ok) & (~asset_ok) & (btc_counts >= threshold)
+
+    selected_group.loc[full_ok] = "SAME_BTC_AND_ASSET_REGIME"
+    selected_size.loc[full_ok] = full_counts.loc[full_ok]
+    fallback_level.loc[full_ok] = "0_FULL_REGIME"
+    selection_reason.loc[full_ok] = "FULL_REGIME_THRESHOLD_MET"
+
+    selected_group.loc[asset_ok] = "SAME_ASSET_REGIME"
+    selected_size.loc[asset_ok] = asset_counts.loc[asset_ok]
+    fallback_level.loc[asset_ok] = "1_SAME_ASSET_FALLBACK"
+    selection_reason.loc[asset_ok] = "FALLBACK_TO_SAME_ASSET_REGIME"
+
+    selected_group.loc[btc_ok] = "SAME_BTC_REGIME"
+    selected_size.loc[btc_ok] = btc_counts.loc[btc_ok]
+    fallback_level.loc[btc_ok] = "2_SAME_BTC_FALLBACK"
+    selection_reason.loc[btc_ok] = "FALLBACK_TO_SAME_BTC_REGIME"
+
+    selected = (
+        ((selected_group == "SAME_BTC_AND_ASSET_REGIME") & same_full)
+        | ((selected_group == "SAME_ASSET_REGIME") & same_asset)
+        | ((selected_group == "SAME_BTC_REGIME") & same_btc)
+    )
+
+    out["selected_regime_group"] = selected_group
+    out["full_regime_matches"] = full_counts
+    out["same_asset_regime_matches"] = asset_counts
+    out["same_btc_regime_matches"] = btc_counts
+    out["selected_sample_size"] = selected_size
+    out["minimum_required"] = threshold
+    out["fallback_level"] = fallback_level
+    out["selection_reason"] = selection_reason
+    out["regime_adjusted_cohort_size"] = selected_size
+    out["regime_adjusted_min_matches"] = threshold
+    out["regime_adjusted_eligible"] = (selected_group != "NONE")
+    out["regime_adjusted_selected"] = selected.astype(bool)
+    return out
+
+
 def build_regime_report(matches):
     if matches.empty:
         md = "# Market Regime Match Report\n\nNo valid match CSV files found in reports/.\n"
@@ -471,16 +585,27 @@ def build_regime_report(matches):
     histories = {}
     for ticker in sorted(tickers):
         close = download_close(ticker)
+        frozen_date = shared_snapshot_date(ticker)
+        frozen_price = shared_snapshot_price(ticker, None)
+        if not close.empty and frozen_date is not None and frozen_price is not None:
+            close = close[close.index <= frozen_date].copy()
+            close.loc[frozen_date] = float(frozen_price)
         histories[ticker] = build_history(close)
 
     btc_hist = histories.get(BTC_TICKER)
 
-    current_btc_metrics = metrics_at_date(btc_hist, None)
+    current_btc_metrics = metrics_at_date(
+        btc_hist,
+        shared_snapshot_date(BTC_TICKER),
+    )
     current_btc_regime = current_btc_metrics["regime"]
 
     current_target_metrics = {}
     for target in sorted(matches["target"].dropna().astype(str).unique()):
-        current_target_metrics[target] = metrics_at_date(histories.get(target), None)
+        current_target_metrics[target] = metrics_at_date(
+            histories.get(target),
+            shared_snapshot_date(target),
+        )
 
     enriched_rows = []
 
@@ -518,12 +643,14 @@ def build_regime_report(matches):
         out = row.to_dict()
 
         out["btc_regime_today"] = current_btc_regime
+        out["btc_regime_snapshot_date"] = current_btc_metrics["date_used"]
         out["btc_price_today"] = current_btc_metrics["price"]
         out["btc_above_ma200_today"] = current_btc_metrics["above_ma200"]
         out["btc_return_90d_today"] = current_btc_metrics["return_90d"]
         out["btc_ma200_slope_60d_today"] = current_btc_metrics["ma200_slope_60d"]
 
         out["target_regime_today"] = target_today["regime"]
+        out["target_regime_snapshot_date"] = target_today["date_used"]
         out["target_price_today"] = target_today["price"]
         out["target_above_ma200_today"] = target_today["above_ma200"]
         out["target_return_90d_today"] = target_today["return_90d"]
@@ -550,6 +677,9 @@ def build_regime_report(matches):
         enriched_rows.append(out)
 
     enriched = pd.DataFrame(enriched_rows)
+    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    enriched = annotate_regime_adjusted_selection(enriched)
+    enriched["regime_report_generated_at_utc"] = generated_at
 
     enriched = enriched.sort_values(
         ["target", "same_full_regime_as_today", "same_btc_regime_as_today", "similarity"],
@@ -569,6 +699,25 @@ def build_regime_report(matches):
 
         same_full = g[g["same_full_regime_as_today"] == True]
         summary_rows.append({"target": target, **summarize(same_full, "SAME_BTC_AND_ASSET_REGIME")})
+
+        selected = g[g["regime_adjusted_selected"] == True]
+        selected_summary = summarize(selected, "REGIME_ADJUSTED_CONE")
+        selection = g.iloc[0]
+        for column in [
+            "selected_regime_group",
+            "full_regime_matches",
+            "same_asset_regime_matches",
+            "same_btc_regime_matches",
+            "selected_sample_size",
+            "minimum_required",
+            "fallback_level",
+            "selection_reason",
+        ]:
+            selected_summary[column] = selection[column]
+        selected_summary["eligible_for_regime_adjusted_cone"] = bool(
+            selection["selected_regime_group"] != "NONE"
+        )
+        summary_rows.append({"target": target, **selected_summary})
 
         for regime, rg in g.groupby("btc_regime_at_match"):
             summary_rows.append({"target": target, **summarize(rg, f"HISTORICAL_BTC_{regime}")})
@@ -592,7 +741,7 @@ def build_regime_report(matches):
 
 
 def render_markdown_report(enriched, summary, current_btc_metrics, current_target_metrics):
-    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     lines = []
     lines.append("# Market Regime Match Report")
@@ -616,6 +765,7 @@ def render_markdown_report(enriched, summary, current_btc_metrics, current_targe
     for target, m in current_target_metrics.items():
         current_rows.append({
             "target": target,
+            "snapshot_date": m["date_used"],
             "target_regime_today": m["regime"],
             "target_price": fmt_num(m["price"]),
             "target_above_ma200": m["above_ma200"],
@@ -738,8 +888,47 @@ def render_markdown_report(enriched, summary, current_btc_metrics, current_targe
 
     lines.append("## Top regime-adjusted matches")
     lines.append("")
-    lines.append("The table below shows the top matches separately for each target, so BTC does not hide SOL and DOGE.")
+    lines.append(
+        "A single cohort is selected deterministically: "
+        "SAME_BTC_AND_ASSET_REGIME, otherwise SAME_ASSET_REGIME, otherwise "
+        "SAME_BTC_REGIME. Each level must have at least "
+        f"{MIN_REGIME_ADJUSTED_MATCHES} matches; cohorts are never combined."
+    )
     lines.append("")
+
+    availability_rows = []
+    for target, g in enriched.groupby("target", sort=True):
+        selection = g.iloc[0]
+        availability_rows.append({
+            "target": target,
+            "selected_regime_group": selection["selected_regime_group"],
+            "full_regime_matches": int(selection["full_regime_matches"]),
+            "same_asset_regime_matches": int(selection["same_asset_regime_matches"]),
+            "same_btc_regime_matches": int(selection["same_btc_regime_matches"]),
+            "selected_sample_size": int(selection["selected_sample_size"]),
+            "minimum_required": int(selection["minimum_required"]),
+            "fallback_level": selection["fallback_level"],
+            "selection_reason": selection["selection_reason"],
+        })
+    lines.append(df_to_markdown(pd.DataFrame(availability_rows)))
+    lines.append("")
+    for item in availability_rows:
+        if item["fallback_level"] in {
+            "1_SAME_ASSET_FALLBACK",
+            "2_SAME_BTC_FALLBACK",
+        }:
+            lines.append(
+                f"- WARNING {item['target']}: {item['selected_regime_group']} "
+                "is a less stringent fallback than SAME_BTC_AND_ASSET_REGIME."
+            )
+    if any(
+        item["fallback_level"] in {
+            "1_SAME_ASSET_FALLBACK",
+            "2_SAME_BTC_FALLBACK",
+        }
+        for item in availability_rows
+    ):
+        lines.append("")
 
     top_cols = [
         "target",
@@ -761,15 +950,8 @@ def render_markdown_report(enriched, summary, current_btc_metrics, current_targe
     top_frames = []
 
     for target, g in enriched.groupby("target", sort=True):
-        g = g.sort_values(
-            [
-                "same_full_regime_as_today",
-                "same_btc_regime_as_today",
-                "same_asset_regime_as_today",
-                "similarity",
-            ],
-            ascending=[False, False, False, False],
-        ).head(10)
+        g = g[g["regime_adjusted_selected"] == True]
+        g = g.sort_values("similarity", ascending=False).head(10)
 
         top_frames.append(g[top_cols].copy())
 
@@ -800,8 +982,13 @@ def render_markdown_report(enriched, summary, current_btc_metrics, current_targe
     lines.append("- ALL_MATCHES is the raw view. It can mix bull, bear, recovery and distribution phases.")
     lines.append("- SAME_BTC_REGIME is cleaner because BTC had a similar macro background.")
     lines.append("- SAME_ASSET_REGIME is cleaner because the matched altcoin had a similar local trend.")
-    lines.append("- SAME_BTC_AND_ASSET_REGIME is the cleanest filter, but it needs enough matches to matter.")
-    lines.append("- If SAME_BTC_AND_ASSET_REGIME has fewer than 5 matches, treat it as useful context, not a strong statistic.")
+    lines.append("- SAME_BTC_AND_ASSET_REGIME is the preferred and most stringent filter.")
+    lines.append(
+        f"- Below {MIN_REGIME_ADJUSTED_MATCHES} full-regime matches, the selector "
+        "falls back first to SAME_ASSET_REGIME and then to SAME_BTC_REGIME."
+    )
+    lines.append("- A fallback is always labelled as less stringent; groups are never combined.")
+    lines.append("- If every group is below threshold, the result is INSUFFICIENT_REGIME_MATCHES.")
     lines.append("- If ALL_MATCHES is bullish but SAME_BTC_AND_ASSET_REGIME is bearish, the bullish read is weaker.")
     lines.append("- If ALL_MATCHES is uncertain but SAME_BTC_AND_ASSET_REGIME improves, the setup is more interesting.")
     lines.append("")

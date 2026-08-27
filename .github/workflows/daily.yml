@@ -61,14 +61,14 @@ jobs:
       - name: Run bounce after drawdown report
         run: python bounce_after_drawdown_report.py
 
+      - name: Run market regime match report
+        run: python market_regime_match_report.py
+
       - name: Run scanner forecast tracker
         run: python scanner_forecast_tracker.py
 
       - name: Run extreme cases path report
         run: python extreme_cases_path_report.py
-
-      - name: Run market regime match report
-        run: python market_regime_match_report.py
 
       - name: Run classic technical confirmation report
         run: python classic_technical_confirmation_report.py
