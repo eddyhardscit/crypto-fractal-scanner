@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-13T07:47:54+00:00",
-  "updated_utc": "2026-08-26T05:12:45+00:00",
+  "updated_utc": "2026-08-27T05:14:17+00:00",
   "initial_capital_eur": 3600.0,
   "balance_eur": 3600.0,
   "peak_equity_eur": 3600.0,
@@ -30,7 +30,7 @@
     ]
   },
   "last_checks": {
-    "generated_utc": "2026-08-26T05:12:45+00:00",
+    "generated_utc": "2026-08-27T05:14:17+00:00",
     "static": {
       "checks": {
         "fresh_market": true,
@@ -44,13 +44,13 @@
         "candle_15m_fresh": true
       },
       "freshness_status": "FRESH",
-      "doge_mark": 0.0862,
-      "btc_mark": 78742.2,
+      "doge_mark": 0.08649,
+      "btc_mark": 78648.03,
       "global_score": -6.0,
       "classic_raw_score": -11.0,
       "relative_raw_score": -6.0,
       "bearish_pattern_status": "MATURO",
-      "candle_age_minutes": 27.7594572
+      "candle_age_minutes": 29.28390691666667
     },
     "rejection": {
       "accepted": false,
@@ -61,20 +61,20 @@
         "entry_not_chased": false,
         "upper_wick": false,
         "bearish_confirmation": true,
-        "volume_valid": true,
+        "volume_valid": false,
         "stop_within_limit": false
       },
-      "candle_time": "2026-08-26 04:45:00+00:00",
-      "open": 0.08663,
-      "high": 0.08663,
-      "low": 0.08619,
-      "close": 0.08626,
-      "previous_close": 0.08668,
-      "volume_ratio": 0.5494677975363473,
+      "candle_time": "2026-08-27 04:45:00+00:00",
+      "open": 0.08677,
+      "high": 0.08677,
+      "low": 0.0864,
+      "close": 0.08662,
+      "previous_close": 0.08676,
+      "volume_ratio": 3.067789641553393,
       "upper_wick_ratio": 0.0,
-      "close_location": 0.15909090909091195,
-      "stop_price": 0.08680326,
-      "reason": "closed_back_below_trigger, close_below_invalidation, entry_not_chased, upper_wick, stop_within_limit"
+      "close_location": 0.5945945945945966,
+      "stop_price": 0.08694354,
+      "reason": "closed_back_below_trigger, close_below_invalidation, entry_not_chased, upper_wick, volume_valid, stop_within_limit"
     }
   }
 }
