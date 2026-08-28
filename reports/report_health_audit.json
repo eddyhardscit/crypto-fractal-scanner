@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-08-27T05:33:46+00:00",
+  "generated_at": "2026-08-28T08:03:19+00:00",
   "data_freshness": {
     "state": "FRESH",
     "max_age_hours": 36.0,
-    "valid_until": "2026-08-28T17:33:46+00:00"
+    "valid_until": "2026-08-29T20:03:19+00:00"
   },
   "component_state": "OK",
   "operationally_proven": false,
   "stale": false,
   "status": "REPORTS_HEALTHY_UNVERIFIED",
   "checks_total": 8,
-  "generated_utc": "2026-08-27T05:33:46+00:00",
+  "generated_utc": "2026-08-28T08:03:19+00:00",
   "producer_root": "/opt/crypto-fractal-scanner-publisher",
   "telegram_sent": false,
   "checks": [
