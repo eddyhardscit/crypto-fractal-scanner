@@ -1,7 +1,7 @@
 # Report accuratezza scanner
 
-Generato: **2026-08-29 07:33:16 CEST**  
-UTC: **2026-08-29 05:33:16 UTC**
+Generato: **2026-08-30 07:33:11 CEST**  
+UTC: **2026-08-30 05:33:11 UTC**
 
 Questo report spiega se lo scanner ha già abbastanza previsioni vecchie da controllare.
 
@@ -9,9 +9,9 @@ Questo report spiega se lo scanner ha già abbastanza previsioni vecchie da cont
 
 | Asset | Previsioni fatte | Previsioni controllate | Progresso verso calibrazione | Previsioni in attesa | Stato | Prossimo controllo |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 56 | 28 | 28/30 [█████████░] | 28 | RACCOLTA DATI | 2026-08-30 / tra 1 giorno |
-| SOL | 56 | 28 | 28/30 [█████████░] | 28 | RACCOLTA DATI | 2026-08-30 / tra 1 giorno |
-| DOGE | 56 | 28 | 28/30 [█████████░] | 28 | RACCOLTA DATI | 2026-08-30 / tra 1 giorno |
+| BTC | 57 | 29 | 29/30 [██████████] | 28 | RACCOLTA DATI | 2026-08-31 / tra 1 giorno |
+| SOL | 57 | 29 | 29/30 [██████████] | 28 | RACCOLTA DATI | 2026-08-31 / tra 1 giorno |
+| DOGE | 57 | 29 | 29/30 [██████████] | 28 | RACCOLTA DATI | 2026-08-31 / tra 1 giorno |
 
 ## Come leggere questi numeri
 
@@ -28,25 +28,25 @@ Questo report spiega se lo scanner ha già abbastanza previsioni vecchie da cont
 
 ### Stato
 
-- Previsioni fatte: **56**
-- Previsioni controllate: **28/30**
-- Barra progresso: **[█████████░]**
+- Previsioni fatte: **57**
+- Previsioni controllate: **29/30**
+- Barra progresso: **[██████████]**
 - Previsioni in attesa: **28**
 - Previsioni già mature ma non ancora valutate: **0**
 - Prima previsione salvata: **2026-07-03**
-- Ultima previsione salvata: **2026-08-29**
-- Prossimo controllo previsto: **2026-08-30 / tra 1 giorno**
+- Ultima previsione salvata: **2026-08-30**
+- Prossimo controllo previsto: **2026-08-31 / tra 1 giorno**
 - Stato calibrazione: **RACCOLTA DATI**
 
 ### Accuratezza, quando disponibile
 
-- Direzione corretta: **85,71%**
-- Errore medio scenario centrale: **6,56%**
+- Direzione corretta: **86,36%**
+- Errore medio scenario centrale: **6,84%**
 - Zona rischio toccata: **0,00%**
 
 ### Traduzione semplice
 
-La calibrazione non è ancora attiva. Mancano ancora 2 previsioni controllate per arrivare a 30.
+La calibrazione non è ancora attiva. Mancano ancora 1 previsioni controllate per arrivare a 30.
 
 ---
 
@@ -54,25 +54,25 @@ La calibrazione non è ancora attiva. Mancano ancora 2 previsioni controllate pe
 
 ### Stato
 
-- Previsioni fatte: **56**
-- Previsioni controllate: **28/30**
-- Barra progresso: **[█████████░]**
+- Previsioni fatte: **57**
+- Previsioni controllate: **29/30**
+- Barra progresso: **[██████████]**
 - Previsioni in attesa: **28**
 - Previsioni già mature ma non ancora valutate: **0**
 - Prima previsione salvata: **2026-07-03**
-- Ultima previsione salvata: **2026-08-29**
-- Prossimo controllo previsto: **2026-08-30 / tra 1 giorno**
+- Ultima previsione salvata: **2026-08-30**
+- Prossimo controllo previsto: **2026-08-31 / tra 1 giorno**
 - Stato calibrazione: **RACCOLTA DATI**
 
 ### Accuratezza, quando disponibile
 
 - Direzione corretta: **100,00%**
-- Errore medio scenario centrale: **10,67%**
-- Zona rischio toccata: **7,14%**
+- Errore medio scenario centrale: **11,54%**
+- Zona rischio toccata: **6,90%**
 
 ### Traduzione semplice
 
-La calibrazione non è ancora attiva. Mancano ancora 2 previsioni controllate per arrivare a 30.
+La calibrazione non è ancora attiva. Mancano ancora 1 previsioni controllate per arrivare a 30.
 
 ---
 
@@ -80,24 +80,24 @@ La calibrazione non è ancora attiva. Mancano ancora 2 previsioni controllate pe
 
 ### Stato
 
-- Previsioni fatte: **56**
-- Previsioni controllate: **28/30**
-- Barra progresso: **[█████████░]**
+- Previsioni fatte: **57**
+- Previsioni controllate: **29/30**
+- Barra progresso: **[██████████]**
 - Previsioni in attesa: **28**
 - Previsioni già mature ma non ancora valutate: **0**
 - Prima previsione salvata: **2026-07-03**
-- Ultima previsione salvata: **2026-08-29**
-- Prossimo controllo previsto: **2026-08-30 / tra 1 giorno**
+- Ultima previsione salvata: **2026-08-30**
+- Prossimo controllo previsto: **2026-08-31 / tra 1 giorno**
 - Stato calibrazione: **RACCOLTA DATI**
 
 ### Accuratezza, quando disponibile
 
-- Direzione corretta: **92,00%**
-- Errore medio scenario centrale: **15,33%**
+- Direzione corretta: **92,31%**
+- Errore medio scenario centrale: **15,29%**
 - Zona rischio toccata: **0,00%**
 
 ### Traduzione semplice
 
-La calibrazione non è ancora attiva. Mancano ancora 2 previsioni controllate per arrivare a 30.
+La calibrazione non è ancora attiva. Mancano ancora 1 previsioni controllate per arrivare a 30.
 
 ---

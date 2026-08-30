@@ -1,6 +1,6 @@
 # Decisione operativa sintetica
 
-Generato: 2026-08-29 05:33 UTC
+Generato: 2026-08-30 05:33 UTC
 
 Report separato completo: [decision_report.md](decision_report.md)
 
@@ -30,7 +30,7 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - Long leva: **LONG PRUDENTE**
 - Short leva: **NO SHORT**
 - Rischio: **MEDIO**
-- Conferme: Prima resistenza sopra 77.991; conferma del doppio minimo sopra 66.910.
+- Conferme: Prima resistenza sopra 82.792; conferma del doppio minimo sopra 66.910.
 - Invalidazioni: Sotto 62.488 il quadro tecnico peggiora.
 
 ### SOL
@@ -43,8 +43,8 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - Long leva: **NO LONG A LEVA**
 - Short leva: **NO SHORT**
 - Rischio: **MOLTO ALTO**
-- Conferme: Doppio minimo target raggiunto finché mantiene 78,73; nuova conferma tecnica sopra 127,97; milestone analogiche 118,45 / 145,44, valide soltanto se rientra anche il gap frattale.
-- Invalidazioni: Allarmi sotto 96,31 / 74,20 / 62,19.
+- Conferme: Doppio minimo target raggiunto finché mantiene 78,73; nuova conferma tecnica sopra 127,97; milestone analogiche 117,39 / 144,14, valide soltanto se rientra anche il gap frattale.
+- Invalidazioni: Allarmi sotto 95,45 / 74,20 / 62,19.
 
 ### DOGE
 
@@ -65,6 +65,6 @@ Sintesi automatica dello scanner: l'azione spot viene copiata direttamente dal G
 - **Zona alta storica** = zona dove non inseguire troppo; può essere zona da prendere profitto.
 - **Zona bassa storica** = zona di rischio; con leva la liquidazione non dovrebbe stare lì vicino.
 - **BTC leva** = nessun long a leva finché il prezzo snapshot non supera **67.248 $**; sotto quella soglia resta solo l'azione spot indicata dal Global.
-- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 2; EMA200 circa 111,41 $; upside verso EMA200 +7,08%. Non autorizza leva e non aggiunge punti automatici.
+- **Lifecycle EMA200** = per SOL resta solo contesto, peso Global 0; score interno 2; EMA200 circa 111,42 $; upside verso EMA200 +6,07%. Non autorizza leva e non aggiunge punti automatici.
 - **NO LONG** non significa automaticamente **SHORT**. Lo short ha senso solo se il quadro è bearish o se lo spike viene spesso scaricato.
 - Per SOL, se il Global è da **+3 in su**, la decisione non deve diventare bearish solo perché lo scanner grezzo a 30 giorni è incerto.

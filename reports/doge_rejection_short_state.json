@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-13T07:47:54+00:00",
-  "updated_utc": "2026-08-29T05:14:40+00:00",
+  "updated_utc": "2026-08-30T05:15:30+00:00",
   "initial_capital_eur": 3600.0,
   "balance_eur": 3600.0,
   "peak_equity_eur": 3600.0,
@@ -30,7 +30,7 @@
     ]
   },
   "last_checks": {
-    "generated_utc": "2026-08-29T05:14:40+00:00",
+    "generated_utc": "2026-08-30T05:15:30+00:00",
     "static": {
       "checks": {
         "fresh_market": true,
@@ -44,13 +44,13 @@
         "candle_15m_fresh": true
       },
       "freshness_status": "FRESH",
-      "doge_mark": 0.08516,
-      "btc_mark": 77638.9,
+      "doge_mark": 0.08512,
+      "btc_mark": 78176.68,
       "global_score": -6.0,
       "classic_raw_score": -11.0,
       "relative_raw_score": -6.0,
       "bearish_pattern_status": "MATURO",
-      "candle_age_minutes": 29.677821633333334
+      "candle_age_minutes": 30.5063207
     },
     "rejection": {
       "accepted": false,
@@ -61,20 +61,20 @@
         "entry_not_chased": false,
         "upper_wick": false,
         "bearish_confirmation": false,
-        "volume_valid": true,
+        "volume_valid": false,
         "stop_within_limit": false
       },
-      "candle_time": "2026-08-29 04:45:00+00:00",
-      "open": 0.08498,
-      "high": 0.08512,
-      "low": 0.08496,
-      "close": 0.08512,
-      "previous_close": 0.08498,
-      "volume_ratio": 1.22986872377859,
+      "candle_time": "2026-08-30 04:45:00+00:00",
+      "open": 0.08475,
+      "high": 0.08484,
+      "low": 0.08453,
+      "close": 0.08484,
+      "previous_close": 0.08475,
+      "volume_ratio": 2.04758111126732,
       "upper_wick_ratio": 0.0,
       "close_location": 1.0,
-      "stop_price": 0.08529024,
-      "reason": "closed_back_below_trigger, close_below_invalidation, entry_not_chased, upper_wick, bearish_confirmation, stop_within_limit"
+      "stop_price": 0.08500968,
+      "reason": "closed_back_below_trigger, close_below_invalidation, entry_not_chased, upper_wick, bearish_confirmation, volume_valid, stop_within_limit"
     }
   }
 }
