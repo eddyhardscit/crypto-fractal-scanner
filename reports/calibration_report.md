@@ -1,7 +1,7 @@
 # Stato calibrazione scanner
 
-Generato: **2026-08-30 07:33:11 CEST**  
-UTC: **2026-08-30 05:33:11 UTC**
+Generato: **2026-08-31 07:33:16 CEST**  
+UTC: **2026-08-31 05:33:16 UTC**
 
 La calibrazione non serve a prevedere direttamente il prezzo.  
 Serve a capire se lo scanner, col tempo, è stato troppo ottimista, troppo pessimista o abbastanza preciso.
@@ -10,9 +10,9 @@ Serve a capire se lo scanner, col tempo, è stato troppo ottimista, troppo pessi
 
 | Asset | Fatte | Controllate | Progresso | In attesa | Stato | Prossimo controllo |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 57 | 29 | 29/30 [██████████] | 28 | RACCOLTA DATI | 2026-08-31 / tra 1 giorno |
-| SOL | 57 | 29 | 29/30 [██████████] | 28 | RACCOLTA DATI | 2026-08-31 / tra 1 giorno |
-| DOGE | 57 | 29 | 29/30 [██████████] | 28 | RACCOLTA DATI | 2026-08-31 / tra 1 giorno |
+| BTC | 58 | 30 | 30/30 [██████████] | 28 | ATTIVA | 2026-09-01 / tra 1 giorno |
+| SOL | 58 | 30 | 30/30 [██████████] | 28 | ATTIVA | 2026-09-01 / tra 1 giorno |
+| DOGE | 58 | 30 | 30/30 [██████████] | 28 | ATTIVA | 2026-09-01 / tra 1 giorno |
 
 ## Regola semplice
 
@@ -26,33 +26,33 @@ Serve a capire se lo scanner, col tempo, è stato troppo ottimista, troppo pessi
 
 ## Bitcoin
 
-**Progresso calibrazione:** 29/30  
-**Stato:** RACCOLTA DATI
+**Progresso calibrazione:** 30/30  
+**Stato:** ATTIVA
 
-La calibrazione non è ancora attiva. Mancano ancora 1 previsioni controllate per arrivare a 30.
+La calibrazione è attiva. Lo scanner ha abbastanza previsioni controllate per iniziare a correggere i propri errori.
 
-Servono ancora **1** previsioni controllate prima che la calibrazione inizi davvero a lavorare.
+La calibrazione può iniziare a correggere la previsione grezza usando gli errori passati dello scanner.
 
 ---
 
 ## Solana
 
-**Progresso calibrazione:** 29/30  
-**Stato:** RACCOLTA DATI
+**Progresso calibrazione:** 30/30  
+**Stato:** ATTIVA
 
-La calibrazione non è ancora attiva. Mancano ancora 1 previsioni controllate per arrivare a 30.
+La calibrazione è attiva. Lo scanner ha abbastanza previsioni controllate per iniziare a correggere i propri errori.
 
-Servono ancora **1** previsioni controllate prima che la calibrazione inizi davvero a lavorare.
+La calibrazione può iniziare a correggere la previsione grezza usando gli errori passati dello scanner.
 
 ---
 
 ## Dogecoin
 
-**Progresso calibrazione:** 29/30  
-**Stato:** RACCOLTA DATI
+**Progresso calibrazione:** 30/30  
+**Stato:** ATTIVA
 
-La calibrazione non è ancora attiva. Mancano ancora 1 previsioni controllate per arrivare a 30.
+La calibrazione è attiva. Lo scanner ha abbastanza previsioni controllate per iniziare a correggere i propri errori.
 
-Servono ancora **1** previsioni controllate prima che la calibrazione inizi davvero a lavorare.
+La calibrazione può iniziare a correggere la previsione grezza usando gli errori passati dello scanner.
 
 ---
