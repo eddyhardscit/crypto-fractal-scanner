@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 import pandas as pd
+from forecast_provenance import REPO_ROOT, append_csv_idempotent_atomic, canonical_json
 
 
 REPORT_DIR = "reports"
@@ -11,6 +12,7 @@ MAIN_REPORT_PATH = "reports/latest_report.md"
 
 HISTORY_CSV_PATH = "reports/forecast_30d_history.csv"
 HISTORY_MD_PATH = "reports/forecast_30d_history.md"
+VERSIONS_CSV_PATH = str(REPO_ROOT / "reports" / "forecast_provenance" / "forecast_30d_versions.csv")
 
 START_MARKER = "<!-- FORECAST_30D_HISTORY_START -->"
 END_MARKER = "<!-- FORECAST_30D_HISTORY_END -->"
@@ -398,6 +400,25 @@ def update_history(rows):
             new_df[col] = None
 
     new_df = new_df[COLUMNS]
+
+    # Append-only primary evidence for new 30d forecast exports.  The legacy
+    # history below remains a latest-daily materialized view for compatibility.
+    versions = new_df.copy()
+    versions["forecast_id"] = versions.apply(
+        lambda row: "forecast30d:" + __import__("hashlib").sha256(
+            f"{row['forecast_date']}|{row['asset']}|{row['generated_at_utc']}".encode()
+        ).hexdigest(), axis=1,
+    )
+    versions["run_id"] = versions["generated_at_utc"].astype(str)
+    versions["record_sha256"] = versions.apply(
+        lambda row: __import__("hashlib").sha256(canonical_json({
+            key: value for key, value in row.to_dict().items()
+            if key != "record_sha256"
+        })).hexdigest(), axis=1,
+    )
+    append_csv_idempotent_atomic(
+        VERSIONS_CSV_PATH, versions, key="forecast_id", hash_field="record_sha256"
+    )
 
     # Evita doppioni se lanci il workflow più volte nello stesso giorno.
     # Tiene l'ultima lettura del giorno per ogni asset.

@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import math
 import os
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 import matplotlib
@@ -16,6 +18,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from forecast_provenance import (
+    LEGACY_SHADOW_BASELINE, REPO_ROOT, append_csv_atomic, append_evaluation,
+    code_version, find_evaluation, freeze_legacy_aggregate_baseline, load_frozen_ohlc,
+)
 
 
 REPORTS_DIR = "reports"
@@ -486,6 +492,8 @@ def update_shadow_history(new_rows: list[dict[str, Any]]) -> pd.DataFrame:
     old = _safe_read_csv(SHADOW_HISTORY_PATH)
     if new_frame.empty:
         return old
+    versions_path = REPO_ROOT / "reports" / "forecast_provenance" / "scanner_shadow_versions.csv"
+    append_csv_atomic(versions_path, new_frame)
     history = (
         new_frame.copy()
         if old.empty
@@ -498,9 +506,75 @@ def update_shadow_history(new_rows: list[dict[str, Any]]) -> pd.DataFrame:
     return history
 
 
+def _finite(value: Any, default: float = 0.0) -> float:
+    number = _safe_float(value, default)
+    return number if math.isfinite(number) else default
+
+
+def freeze_shadow_legacy_baseline(metrics_path=SHADOW_METRICS_PATH,
+                                  baseline_path=LEGACY_SHADOW_BASELINE):
+    published = _safe_read_csv(metrics_path)
+    rows = []
+    for _, row in published.iterrows():
+        controls = int(_finite(row.get("active_out_of_sample_controls")))
+        def hits(column):
+            return int(round(_finite(row.get(column)) * controls / 100.0))
+        rows.append({
+            "asset": row.get("asset"), "target_ticker": row.get("target_ticker"),
+            "horizon": row.get("horizon"), "horizon_day": int(row.get("horizon_day")),
+            "controls": controls,
+            "sum_raw_abs_error": _finite(row.get("raw_mae_pct")) * controls,
+            "sum_shadow_abs_error": _finite(row.get("shadow_mae_pct")) * controls,
+            "shadow_win_hits": hits("shadow_win_rate_pct"),
+            "raw_wide_hits": hits("raw_p10_p90_coverage_pct"),
+            "shadow_wide_hits": hits("shadow_p10_p90_coverage_pct"),
+            "raw_central_hits": hits("raw_p25_p75_coverage_pct"),
+            "shadow_central_hits": hits("shadow_p25_p75_coverage_pct"),
+            "published_metrics": row.to_dict(),
+        })
+    return freeze_legacy_aggregate_baseline(
+        metrics_path, Path(baseline_path), kind="SCANNER_FORECAST_SHADOW", rows=rows
+    )
+
+
+def combine_shadow_metrics_with_legacy_baseline(metrics, baseline):
+    new_by_key = {
+        (str(row.get("target_ticker")), int(row.get("horizon_day"))): row
+        for _, row in metrics.iterrows()
+    } if not metrics.empty else {}
+    combined = []
+    rate_columns = {
+        "shadow_win_rate_pct": "shadow_win_hits",
+        "raw_p10_p90_coverage_pct": "raw_wide_hits",
+        "shadow_p10_p90_coverage_pct": "shadow_wide_hits",
+        "raw_p25_p75_coverage_pct": "raw_central_hits",
+        "shadow_p25_p75_coverage_pct": "shadow_central_hits",
+    }
+    for base in baseline.get("rows", []):
+        key = (str(base["target_ticker"]), int(base["horizon_day"]))
+        new = new_by_key.pop(key, None)
+        new_n = int(new.get("active_out_of_sample_controls", 0)) if new is not None else 0
+        if new_n == 0:
+            combined.append(dict(base["published_metrics"])); continue
+        total = int(base["controls"]) + new_n
+        raw_sum = float(base["sum_raw_abs_error"]) + _finite(new.get("raw_mae_pct")) * new_n
+        shadow_sum = float(base["sum_shadow_abs_error"]) + _finite(new.get("shadow_mae_pct")) * new_n
+        out = {**base["published_metrics"], "active_out_of_sample_controls": total,
+               "raw_mae_pct": raw_sum / total, "shadow_mae_pct": shadow_sum / total}
+        out["mae_improvement_pct"] = (1 - out["shadow_mae_pct"] / out["raw_mae_pct"]) * 100 if out["raw_mae_pct"] > 0 else np.nan
+        for column, hit_field in rate_columns.items():
+            hits = int(base[hit_field]) + int(round(_finite(new.get(column)) * new_n / 100.0))
+            out[column] = hits / total * 100.0
+        combined.append(out)
+    combined.extend(row.to_dict() for row in new_by_key.values())
+    return pd.DataFrame(combined)
+
+
 def evaluate_shadow_history(
     shadow_history: pd.DataFrame,
     data: dict[str, pd.DataFrame],
+    evaluation_snapshot_ids: dict[str, str] | None = None,
+    *, certified_replay: bool = False,
 ) -> pd.DataFrame:
     if shadow_history.empty:
         return pd.DataFrame()
@@ -522,17 +596,15 @@ def evaluate_shadow_history(
     ).fillna(0)
 
     output: list[dict[str, Any]] = []
+    replay_unfrozen = 0
+    replay_not_due = 0
+    replay_today = pd.Timestamp.now(tz="UTC").tz_localize(None).normalize()
     for target in sorted(history["target_ticker"].dropna().astype(str).unique()):
-        prices = _price_frame(data, target)
-        if prices.empty:
-            continue
-        latest = prices.index.max().normalize()
         for horizon in KEY_HORIZONS:
             rows = history[
                 (history["target_ticker"].astype(str) == target)
                 & (history["horizon_day_num"] == horizon)
                 & history["target_date_dt"].notna()
-                & (history["target_date_dt"] <= latest)
                 & (history["calibration_active_num"] > 0)
             ].copy()
 
@@ -545,7 +617,32 @@ def evaluate_shadow_history(
             shadow_wins: list[bool] = []
 
             for _, row in rows.iterrows():
-                actual = _close_on_or_after(prices, row["target_date_dt"])
+                forecast_id = row.get("forecast_id")
+                snapshot_id = (evaluation_snapshot_ids or {}).get(target)
+                if pd.isna(forecast_id) or not str(forecast_id).strip():
+                    if certified_replay:
+                        if row["target_date_dt"] > replay_today:
+                            replay_not_due += 1
+                        else:
+                            replay_unfrozen += 1
+                    continue
+                existing = find_evaluation(str(forecast_id), int(horizon), row["target_date_dt"].date().isoformat())
+                if existing is not None:
+                    actual = _safe_float(existing.get("actual_close"))
+                    frozen_prices = None
+                else:
+                    if not snapshot_id:
+                        if certified_replay:
+                            if row["target_date_dt"] > replay_today:
+                                replay_not_due += 1
+                            else:
+                                replay_unfrozen += 1
+                        continue
+                    try:
+                        frozen_prices = _price_frame({target: load_frozen_ohlc(str(snapshot_id))}, target)
+                    except RuntimeError:
+                        continue
+                    actual = _close_on_or_after(frozen_prices, row["target_date_dt"])
                 raw_p50 = _safe_float(row.get("raw_p50_price"))
                 shadow_p50 = _safe_float(row.get("shadow_p50_price"))
                 raw_p10 = _safe_float(row.get("raw_p10_price"))
@@ -576,6 +673,43 @@ def evaluate_shadow_history(
                 shadow_central.append(
                     shadow_p25 <= actual <= shadow_p75
                 )
+                if existing is None:
+                    actual_date = frozen_prices.index[frozen_prices.index >= row["target_date_dt"]][0]
+                    current = _safe_float(row.get("current_price"))
+                    start = pd.to_datetime(row.get("snapshot_date"), errors="coerce")
+                    path = frozen_prices.loc[(frozen_prices.index >= start) & (frozen_prices.index <= actual_date), "Close"]
+                    append_evaluation({
+                        "forecast_id": str(forecast_id), "asset": target,
+                        "forecast_generated_at_utc": row.get("generated_at_utc"),
+                        "forecast_date": pd.to_datetime(row.get("snapshot_date")).date().isoformat(),
+                        "horizon_days": int(horizon),
+                        "requested_target_date": row["target_date_dt"].date().isoformat(),
+                        "actual_candle_date": pd.Timestamp(actual_date).date().isoformat(),
+                        "on_or_after_shift_days": int((pd.Timestamp(actual_date).normalize() - row["target_date_dt"]).days),
+                        "actual_close": actual, "raw_market_snapshot_id": snapshot_id,
+                        "raw_market_snapshot_sha256": str(snapshot_id).split(":", 1)[-1],
+                        "p10": (shadow_p10 / current - 1) * 100,
+                        "p25": (shadow_p25 / current - 1) * 100,
+                        "p50": (shadow_p50 / current - 1) * 100,
+                        "p75": (shadow_p75 / current - 1) * 100,
+                        "p90": (shadow_p90 / current - 1) * 100,
+                        "inside_p10_p90": shadow_p10 <= actual <= shadow_p90,
+                        "inside_p25_p75": shadow_p25 <= actual <= shadow_p75,
+                        "direction_forecast": "UP" if shadow_p50 >= current else "DOWN",
+                        "direction_result": "UP" if actual >= current else "DOWN",
+                        "drawdown": (float(path.min()) / current - 1) * 100,
+                        "max_gain": (float(path.max()) / current - 1) * 100,
+                        "drawdown_classifications": {
+                            "classification_status": "NOT_AVAILABLE",
+                            "reason": "SHADOW_FORECAST_HAS_NO_DRAWDOWN_BANDS",
+                        },
+                        "max_gain_classifications": {
+                            "classification_status": "NOT_AVAILABLE",
+                            "reason": "SHADOW_FORECAST_HAS_NO_MAX_GAIN_BANDS",
+                        },
+                        "evaluation_generated_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                        "code_version": code_version(), "path_price_semantics": "CLOSE_ONLY_LEGACY_COMPATIBLE",
+                    })
 
             controls = len(raw_errors)
             output.append(
@@ -632,7 +766,14 @@ def evaluate_shadow_history(
                     ),
                 }
             )
-    return pd.DataFrame(output)
+    result = pd.DataFrame(output)
+    result.attrs["replay_status"] = (
+        "HISTORICAL_RAW_DATA_NOT_FROZEN" if replay_unfrozen
+        else "NO_CONTROL_DUE" if replay_not_due else "REPRODUCIBLE"
+    )
+    result.attrs["legacy_unfrozen_rows"] = replay_unfrozen
+    result.attrs["not_due_rows"] = replay_not_due
+    return result
 
 
 def plot_shadow_cone(

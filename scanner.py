@@ -15,6 +15,16 @@ from market_snapshot import (
     load_market_snapshot,
     write_snapshot_from_asset_data,
 )
+from forecast_provenance import (
+    append_evaluation,
+    append_forecast,
+    code_version,
+    find_evaluation,
+    freeze_cohort,
+    freeze_ohlc,
+    load_frozen_ohlc,
+    new_run_id,
+)
 
 
 WINDOW = 100
@@ -148,7 +158,7 @@ def future_stats(df, end_idx):
     return results
 
 
-def download_data():
+def download_data(*, run_id=None, downloaded_at_utc=None):
     print("Downloading data...")
 
     raw = yf.download(
@@ -162,10 +172,23 @@ def download_data():
     )
 
     asset_data = {}
+    raw_snapshot_ids = {}
 
     for ticker in CRYPTO_TICKERS:
         try:
             df = raw[ticker].dropna().copy()
+
+            if run_id and downloaded_at_utc:
+                raw_snapshot_ids[ticker] = freeze_ohlc(
+                    df,
+                    ticker=ticker,
+                    source="Yahoo Finance/yfinance",
+                    downloaded_at_utc=downloaded_at_utc,
+                    requested_interval="1d",
+                    requested_range="period=10y",
+                    run_id=run_id,
+                    purpose="forecast_generation_and_evaluation",
+                )
 
             if len(df) > 300:
                 processed = add_indicators(df)
@@ -180,7 +203,7 @@ def download_data():
         except Exception as e:
             print(f"{ticker}: skipped ({e})")
 
-    return asset_data
+    return asset_data, raw_snapshot_ids
 
 
 def find_similar_patterns(target_ticker, data_with_indicators):
@@ -521,7 +544,7 @@ def percentile_value(percentiles, metric, q, column):
     return float(row[column].iloc[0])
 
 
-def update_prediction_log(log, all_results, generated_at):
+def update_prediction_log(log, all_results, generated_at, run_id=None, raw_snapshot_ids=None):
     prediction_date = generated_at[:10]
 
     for target, result in all_results.items():
@@ -531,6 +554,7 @@ def update_prediction_log(log, all_results, generated_at):
 
         row = {
             "prediction_date": prediction_date,
+            "forecast_date": prediction_date,
             "generated_at_utc": generated_at,
             "asset": target,
             "verdict": result["verdict"],
@@ -562,6 +586,20 @@ def update_prediction_log(log, all_results, generated_at):
             "max_gain_within_p10_p90": np.nan,
         }
 
+        if run_id:
+            forecast_id = f"{run_id}:{target}"
+            row.update({
+                "forecast_id": forecast_id,
+                "run_id": run_id,
+                "official_daily": True,
+                "official_daily_version": generated_at,
+                "cohort_id": result.get("cohort_id"),
+                "cohort_manifest_sha256": result.get("cohort_manifest_sha256"),
+                "raw_market_snapshot_id": (raw_snapshot_ids or {}).get(target),
+                "price_market_snapshot_id": result.get("price_market_snapshot_id"),
+                "code_version": code_version(),
+            })
+
         for metric, prefix in [
             ("return_30d", "return"),
             ("drawdown_30d", "drawdown"),
@@ -575,6 +613,11 @@ def update_prediction_log(log, all_results, generated_at):
                     percentiles, metric, q, "price_level"
                 )
 
+        if run_id:
+            append_forecast(dict(row))
+
+        # prediction_log.csv remains the backward-compatible latest-daily view.
+        # The immutable source of truth for new runs is forecast_versions.jsonl.
         if not log.empty and {"prediction_date", "asset"}.issubset(log.columns):
             duplicate_mask = (
                 (log["prediction_date"].astype(str) == prediction_date) &
@@ -598,7 +641,7 @@ def bool_is_true(value):
     return str(value).lower() in ["true", "1", "yes"]
 
 
-def evaluate_prediction_log(log, data):
+def evaluate_prediction_log(log, data, raw_snapshot_ids=None, *, certified_replay=False):
     if log.empty:
         return log
 
@@ -611,17 +654,63 @@ def evaluate_prediction_log(log, data):
 
         asset = row.get("asset")
 
-        if asset not in data:
-            continue
-
         prediction_date = pd.to_datetime(row.get("prediction_date"), errors="coerce")
 
         if pd.isna(prediction_date):
             continue
 
-        due_date = prediction_date + pd.Timedelta(days=30)
+        due_date = prediction_date + pd.Timedelta(30, unit="D")
 
-        df = data[asset].copy()
+        forecast_id = row.get("forecast_id")
+        generation_snapshot_id = row.get("raw_market_snapshot_id")
+        evaluation_snapshot_id = (raw_snapshot_ids or {}).get(asset)
+        if pd.isna(forecast_id) or not str(forecast_id).strip():
+            if certified_replay:
+                if due_date.normalize() > pd.Timestamp.now(tz="UTC").tz_localize(None).normalize():
+                    continue
+                raise RuntimeError("HISTORICAL_RAW_DATA_NOT_FROZEN")
+            continue
+
+        existing = find_evaluation(str(forecast_id), 30, due_date.date().isoformat())
+        if existing is not None:
+            actual_close = to_float(existing.get("actual_close"))
+            actual_return = to_float(existing.get("actual_return_pct"))
+            actual_drawdown = to_float(existing.get("drawdown"))
+            actual_max_gain = to_float(existing.get("max_gain"))
+            drawdown_classes = existing.get("drawdown_classifications") or {}
+            max_gain_classes = existing.get("max_gain_classifications") or {}
+            log.at[idx, "evaluated"] = True
+            log.at[idx, "evaluation_date"] = existing["actual_candle_date"]
+            log.at[idx, "actual_30d_price"] = actual_close
+            log.at[idx, "actual_30d_return_pct"] = actual_return
+            log.at[idx, "actual_drawdown_pct"] = actual_drawdown
+            log.at[idx, "actual_max_gain_pct"] = actual_max_gain
+            current = to_float(row.get("current_price"))
+            log.at[idx, "actual_min_price_30d"] = current * (1 + actual_drawdown / 100)
+            log.at[idx, "actual_max_price_30d"] = current * (1 + actual_max_gain / 100)
+            expected_direction = {"RIALZISTA": "UP", "RIBASSISTA": "DOWN"}.get(existing.get("direction_forecast"))
+            log.at[idx, "directional_correct"] = (
+                expected_direction == existing.get("direction_result")
+                if expected_direction is not None else np.nan
+            )
+            median = to_float(row.get("scenario_median_30d"))
+            log.at[idx, "central_error_pct"] = abs(actual_close - median) / current * 100
+            log.at[idx, "risk_zone_touched"] = drawdown_classes.get("risk_zone_touched")
+            log.at[idx, "upside_zone_touched"] = max_gain_classes.get("upside_zone_touched")
+            log.at[idx, "return_within_p10_p90"] = existing.get("inside_p10_p90")
+            log.at[idx, "drawdown_within_p10_p90"] = drawdown_classes.get("inside_p10_p90")
+            log.at[idx, "max_gain_within_p10_p90"] = max_gain_classes.get("inside_p10_p90")
+            continue
+
+        if not evaluation_snapshot_id:
+            if certified_replay or not generation_snapshot_id:
+                raise RuntimeError("HISTORICAL_RAW_DATA_NOT_FROZEN")
+            continue
+
+        # The normal daily path freezes the newly acquired evaluation dataset
+        # before reaching this point. Certified replay never consults a vendor.
+        df = load_frozen_ohlc(str(evaluation_snapshot_id))
+
         df_index = pd.DatetimeIndex(df.index)
 
         if df_index.tz is not None:
@@ -731,6 +820,39 @@ def evaluate_prediction_log(log, data):
         log.at[idx, "return_within_p10_p90"] = return_within
         log.at[idx, "drawdown_within_p10_p90"] = drawdown_within
         log.at[idx, "max_gain_within_p10_p90"] = max_gain_within
+
+        append_evaluation({
+                "forecast_id": str(forecast_id),
+                "asset": asset,
+                "forecast_generated_at_utc": row.get("generated_at_utc"),
+                "forecast_date": prediction_date.date().isoformat(),
+                "horizon_days": 30,
+                "requested_target_date": due_date.date().isoformat(),
+                "actual_candle_date": actual_date.date().isoformat(),
+                "on_or_after_shift_days": int((actual_date.normalize() - due_date.normalize()).days),
+                "actual_close": actual_price,
+                "raw_market_snapshot_id": evaluation_snapshot_id,
+                "raw_market_snapshot_sha256": str(evaluation_snapshot_id).split(":", 1)[-1],
+                "p10": return_p10, "p25": to_float(row.get("return_p25_pct")),
+                "p50": to_float(row.get("return_p50_pct")),
+                "p75": to_float(row.get("return_p75_pct")), "p90": return_p90,
+                "inside_p10_p90": return_within,
+                "inside_p25_p75": (
+                    to_float(row.get("return_p25_pct")) <= actual_return <= to_float(row.get("return_p75_pct"))
+                    if not np.isnan(to_float(row.get("return_p25_pct"))) and not np.isnan(to_float(row.get("return_p75_pct")))
+                    else np.nan
+                ),
+                "direction_forecast": verdict_value,
+                "direction_result": "UP" if actual_return > 0 else "DOWN" if actual_return < 0 else "FLAT",
+                "actual_return_pct": actual_return,
+                "drawdown": actual_drawdown,
+                "max_gain": actual_max_gain,
+                "drawdown_classifications": {"inside_p10_p90": drawdown_within, "risk_zone_touched": risk_zone_touched},
+                "max_gain_classifications": {"inside_p10_p90": max_gain_within, "upside_zone_touched": upside_zone_touched},
+                "evaluation_generated_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                "code_version": code_version(),
+                "path_price_semantics": "CLOSE_ONLY_LEGACY_COMPATIBLE",
+            })
 
     return log
 
@@ -1831,7 +1953,10 @@ def main():
     generated_at_iso = generated_at.replace(" ", "T") + "Z"
     os.makedirs("reports", exist_ok=True)
 
-    data = download_data()
+    run_id = new_run_id(generated_at_iso)
+    data, raw_snapshot_ids = download_data(
+        run_id=run_id, downloaded_at_utc=generated_at_iso
+    )
 
     # Preferisce lo snapshot già creato dal workflow. Se manca o è vecchio,
     # lo ricrea usando esattamente i dati appena scaricati dallo scanner.
@@ -1840,6 +1965,25 @@ def main():
     if not snapshot or not required_assets.issubset(set(snapshot.get("assets", {}))):
         snapshot = write_snapshot_from_asset_data(
             data, generated_at_utc=generated_at_iso
+        )
+
+    price_snapshot_ids = {}
+    for record in (snapshot.get("assets", {}) if snapshot else {}).values():
+        ticker = record.get("ticker")
+        candle_date = record.get("candle_date_utc")
+        if not ticker or not candle_date:
+            continue
+        snapshot_frame = pd.DataFrame([{
+            "Open": record.get("open"), "High": record.get("high"),
+            "Low": record.get("low"), "Close": record.get("close"),
+            "Volume": record.get("volume"),
+        }], index=pd.DatetimeIndex([pd.Timestamp(candle_date, tz="UTC")]))
+        price_snapshot_ids[ticker] = freeze_ohlc(
+            snapshot_frame, ticker=ticker,
+            source=str(snapshot.get("source", "shared market snapshot")),
+            downloaded_at_utc=str(snapshot.get("generated_at_utc", generated_at_iso)),
+            requested_interval="1d", requested_range=f"candle={candle_date}",
+            run_id=run_id, purpose="forecast_current_price",
         )
 
     all_results = {}
@@ -1852,6 +1996,10 @@ def main():
 
         matches_raw = find_similar_patterns(target, data)
         matches_clean = deoverlap_matches(matches_raw)
+        cohort_id, cohort_sha = freeze_cohort(
+            matches_clean, target=target, run_id=run_id,
+            generated_at_utc=generated_at_iso,
+        )
 
         current_price = get_snapshot_price(snapshot, target)
         if current_price is None:
@@ -1863,6 +2011,9 @@ def main():
             "prices": price_scenarios(matches_clean, current_price),
             "percentiles": percentile_report(matches_clean, current_price),
             "verdict": verdict(matches_clean),
+            "cohort_id": cohort_id,
+            "cohort_manifest_sha256": cohort_sha,
+            "price_market_snapshot_id": price_snapshot_ids.get(target),
         }
 
         safe_target = target.replace("-USD", "")
@@ -1886,8 +2037,10 @@ def main():
     )
 
     prediction_log = load_prediction_log()
-    prediction_log = update_prediction_log(prediction_log, all_results, generated_at)
-    prediction_log = evaluate_prediction_log(prediction_log, data)
+    prediction_log = update_prediction_log(
+        prediction_log, all_results, generated_at, run_id, raw_snapshot_ids
+    )
+    prediction_log = evaluate_prediction_log(prediction_log, data, raw_snapshot_ids)
     prediction_log.to_csv(PREDICTION_LOG_PATH, index=False, encoding="utf-8", lineterminator="\n")
 
     accuracy = accuracy_summary(prediction_log)

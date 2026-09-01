@@ -337,7 +337,10 @@ def summarize_sequence(asset, matches, data, current_price, sequence_type, first
         first_hits += 1
         first_days.append(first_day)
 
-        after_first = path.iloc[first_day:]
+        # Strict temporal order: the second event must occur on a later candle.
+        # With the published opposite Close-only thresholds this is equivalent
+        # to the legacy result, but makes the ordering invariant explicit.
+        after_first = path.iloc[first_day + 1:]
 
         second_day_partial = first_touch_day(
             path=after_first,
@@ -348,7 +351,7 @@ def summarize_sequence(asset, matches, data, current_price, sequence_type, first
 
         if second_day_partial is not None:
             second_hits_after_first += 1
-            second_days.append(first_day + second_day_partial)
+            second_days.append(first_day + 1 + second_day_partial)
 
     first_rate = (first_hits / total_valid * 100) if total_valid else np.nan
     second_rate = (second_hits_after_first / first_hits * 100) if first_hits else np.nan

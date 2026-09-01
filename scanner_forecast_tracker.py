@@ -1,6 +1,7 @@
 import os
 import re
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
@@ -9,6 +10,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import yfinance as yf
+
+from forecast_provenance import (
+    LEGACY_TRACKER_BASELINE, REPO_ROOT, append_csv_atomic, append_evaluation,
+    code_version, find_evaluation, freeze_legacy_aggregate_baseline, freeze_ohlc,
+    load_frozen_ohlc, new_run_id,
+)
 
 
 
@@ -20,6 +27,8 @@ from scanner_forecast_shadow_calibration import (
     build_shadow_snapshot_rows,
     current_shadow_status_table,
     evaluate_shadow_history,
+    freeze_shadow_legacy_baseline,
+    combine_shadow_metrics_with_legacy_baseline,
     plot_frozen_cone_review,
     plot_shadow_cone,
     shadow_metrics_table,
@@ -34,6 +43,8 @@ END_MARKER = "<!-- SCANNER_FORECAST_TRACKER_END -->"
 HISTORY_PATH = os.path.join(REPORTS_DIR, "scanner_forecast_history.csv")
 LATEST_PATH = os.path.join(REPORTS_DIR, "scanner_forecast_latest.csv")
 METRICS_PATH = os.path.join(REPORTS_DIR, "scanner_forecast_tracker_metrics.csv")
+VERSIONS_PATH = str(REPO_ROOT / "reports" / "forecast_provenance" / "scanner_forecast_versions.csv")
+REPLAY_STATUS_PATH = str(REPO_ROOT / "reports" / "forecast_provenance" / "tracker_replay_status.csv")
 REPORT_PATH = os.path.join(REPORTS_DIR, "scanner_forecast_tracker_report.md")
 REGIME_ADJUSTED_LATEST_PATH = os.path.join(
     REPORTS_DIR,
@@ -370,7 +381,7 @@ def normalize_yfinance_df(raw, ticker):
         return pd.DataFrame()
 
 
-def download_price_data(tickers):
+def download_price_data(tickers, *, run_id=None, downloaded_at_utc=None):
     tickers = sorted(set([t for t in tickers if isinstance(t, str) and t.strip()]))
 
     if not tickers:
@@ -389,17 +400,25 @@ def download_price_data(tickers):
     )
 
     data = {}
+    snapshot_ids = {}
 
     for ticker in tickers:
         df = normalize_yfinance_df(raw, ticker)
 
         if not df.empty and len(df) > FORECAST_DAYS + 5:
             data[ticker] = df
+            if run_id and downloaded_at_utc:
+                snapshot_ids[ticker] = freeze_ohlc(
+                    df, ticker=ticker, source="Yahoo Finance/yfinance",
+                    downloaded_at_utc=downloaded_at_utc,
+                    requested_interval="1d", requested_range="period=10y",
+                    run_id=run_id, purpose="tracker_generation_and_evaluation",
+                )
             print(f"{ticker}: OK {df.index[0].date()} -> {df.index[-1].date()}")
         else:
             print(f"{ticker}: dati insufficienti")
 
-    return data
+    return data, snapshot_ids
 
 
 def position_on_or_after(df, date_value):
@@ -964,6 +983,10 @@ def update_forecast_history(new_rows):
     if new_df.empty:
         return new_df
 
+    # Immutable primary history for new tracker forecasts.  HISTORY_PATH remains
+    # the backward-compatible latest-per-day materialized view.
+    append_csv_atomic(VERSIONS_PATH, new_df)
+
     old = safe_read_csv(HISTORY_PATH)
 
     if old.empty:
@@ -980,7 +1003,58 @@ def update_forecast_history(new_rows):
     return history
 
 
-def evaluate_forecast_history(history, data):
+def freeze_tracker_legacy_baseline(metrics_path=METRICS_PATH, baseline_path=LEGACY_TRACKER_BASELINE):
+    published = safe_read_csv(metrics_path)
+    rows = []
+    for _, row in published.iterrows():
+        controls = int(pd.to_numeric(row.get("controls"), errors="coerce") or 0)
+        wide = float(pd.to_numeric(row.get("inside_p10_p90_pct"), errors="coerce"))
+        central = float(pd.to_numeric(row.get("inside_p25_p75_pct"), errors="coerce"))
+        abs_mean = float(pd.to_numeric(row.get("avg_abs_error_vs_p50_pct"), errors="coerce"))
+        signed_mean = float(pd.to_numeric(row.get("avg_error_vs_p50_pct"), errors="coerce"))
+        rows.append({
+            "asset": row.get("asset"), "target_ticker": row.get("target_ticker"),
+            "horizon": row.get("horizon"), "horizon_day": int(row.get("horizon_day")),
+            "controls": controls,
+            "inside_p10_p90_hits": int(round(wide * controls / 100.0)),
+            "inside_p25_p75_hits": int(round(central * controls / 100.0)),
+            "sum_abs_error_vs_p50": abs_mean * controls,
+            "sum_signed_error_vs_p50": signed_mean * controls,
+            "published_metrics": row.to_dict(),
+        })
+    return freeze_legacy_aggregate_baseline(
+        metrics_path, Path(baseline_path), kind="SCANNER_FORECAST_TRACKER", rows=rows
+    )
+
+
+def combine_tracker_metrics_with_legacy_baseline(metrics, baseline):
+    new_by_key = {
+        (str(row.get("target_ticker")), int(row.get("horizon_day"))): row
+        for _, row in metrics.iterrows()
+    } if not metrics.empty else {}
+    combined = []
+    for base in baseline.get("rows", []):
+        key = (str(base["target_ticker"]), int(base["horizon_day"]))
+        new = new_by_key.pop(key, None)
+        new_n = int(new.get("controls", 0)) if new is not None else 0
+        if new_n == 0:
+            combined.append(dict(base["published_metrics"])); continue
+        total = int(base["controls"]) + new_n
+        wide_hits = int(base["inside_p10_p90_hits"]) + int(round(float(new["inside_p10_p90_pct"]) * new_n / 100.0))
+        central_hits = int(base["inside_p25_p75_hits"]) + int(round(float(new["inside_p25_p75_pct"]) * new_n / 100.0))
+        abs_sum = float(base["sum_abs_error_vs_p50"]) + float(new["avg_abs_error_vs_p50_pct"]) * new_n
+        signed_sum = float(base["sum_signed_error_vs_p50"]) + float(new["avg_error_vs_p50_pct"]) * new_n
+        combined.append({**base["published_metrics"], "controls": total,
+            "inside_p10_p90_pct": wide_hits / total * 100.0,
+            "inside_p25_p75_pct": central_hits / total * 100.0,
+            "avg_abs_error_vs_p50_pct": abs_sum / total,
+            "avg_error_vs_p50_pct": signed_sum / total})
+    combined.extend(row.to_dict() for row in new_by_key.values())
+    return pd.DataFrame(combined)
+
+
+def evaluate_forecast_history(history, data, evaluation_snapshot_ids=None, frozen_data=None,
+                              *, certified_replay=False):
     if history.empty:
         return pd.DataFrame()
 
@@ -1008,25 +1082,15 @@ def evaluate_forecast_history(history, data):
     hist["target_date_dt"] = pd.to_datetime(hist["target_date"], errors="coerce")
     hist["snapshot_date_dt"] = pd.to_datetime(hist["snapshot_date"], errors="coerce")
 
+    replay_unfrozen = 0
+    replay_not_due = 0
+    replay_today = pd.Timestamp.now(tz="UTC").tz_localize(None).normalize()
     for target in TARGETS:
-        if target not in data or data[target].empty:
-            continue
-
-        target_df = data[target].copy()
-        idx = pd.DatetimeIndex(target_df.index)
-
-        if idx.tz is not None:
-            idx = idx.tz_convert(None)
-
-        target_df.index = idx.normalize()
-        last_available_date = target_df.index.max().normalize()
-
         for horizon in ACCURACY_HORIZONS:
             hrows = hist[
                 (hist["target_ticker"].astype(str) == target) &
                 (hist["horizon_day"] == horizon) &
-                (hist["target_date_dt"].notna()) &
-                (hist["target_date_dt"].dt.normalize() <= last_available_date)
+                (hist["target_date_dt"].notna())
             ].copy()
 
             inside_p10_p90 = []
@@ -1035,7 +1099,38 @@ def evaluate_forecast_history(history, data):
             signed_errors = []
 
             for _, row in hrows.iterrows():
-                actual_price = close_on_or_after(target_df, row["target_date_dt"])
+                forecast_id = row.get("forecast_id")
+                snapshot_id = (evaluation_snapshot_ids or {}).get(target)
+                if pd.isna(forecast_id) or not str(forecast_id).strip():
+                    # Never replace missing historical evidence with a fresh
+                    # vendor query. Legacy rows remain published evidence only.
+                    if certified_replay:
+                        if row["target_date_dt"].normalize() > replay_today:
+                            replay_not_due += 1
+                        else:
+                            replay_unfrozen += 1
+                    continue
+                existing = find_evaluation(
+                    str(forecast_id), int(horizon), row["target_date_dt"].date().isoformat()
+                )
+                try:
+                    if existing is not None:
+                        actual_price = existing["actual_close"]
+                        frozen = None
+                    else:
+                        if not snapshot_id:
+                            if certified_replay:
+                                if row["target_date_dt"].normalize() > replay_today:
+                                    replay_not_due += 1
+                                else:
+                                    replay_unfrozen += 1
+                            continue
+                        frozen = (frozen_data or {}).get(str(snapshot_id))
+                        if frozen is None:
+                            frozen = load_frozen_ohlc(str(snapshot_id))
+                        actual_price = close_on_or_after(frozen, row["target_date_dt"])
+                except RuntimeError:
+                    continue
 
                 if pd.isna(actual_price):
                     continue
@@ -1060,6 +1155,49 @@ def evaluate_forecast_history(history, data):
                     signed_error = (actual_price - p50) / current_price * 100.0
                     signed_errors.append(signed_error)
                     abs_errors.append(abs(signed_error))
+                    if existing is not None:
+                        continue
+                    actual_date = frozen.index[frozen.index >= row["target_date_dt"].normalize()][0]
+                    start_date = pd.to_datetime(row.get("snapshot_date"), errors="coerce")
+                    path = frozen.loc[(frozen.index >= start_date) & (frozen.index <= actual_date), "Close"]
+                    drawdown = (float(path.min()) / current_price - 1) * 100.0
+                    max_gain = (float(path.max()) / current_price - 1) * 100.0
+                    p10_pct = (p10 / current_price - 1) * 100.0
+                    p25_pct = (p25 / current_price - 1) * 100.0
+                    p50_pct = (p50 / current_price - 1) * 100.0
+                    p75_pct = (p75 / current_price - 1) * 100.0
+                    p90_pct = (p90 / current_price - 1) * 100.0
+                    append_evaluation({
+                        "forecast_id": str(forecast_id),
+                        "asset": target,
+                        "forecast_generated_at_utc": row.get("generated_at_utc"),
+                        "forecast_date": pd.to_datetime(row.get("snapshot_date")).date().isoformat(),
+                        "horizon_days": int(horizon),
+                        "requested_target_date": row["target_date_dt"].date().isoformat(),
+                        "actual_candle_date": pd.Timestamp(actual_date).date().isoformat(),
+                        "on_or_after_shift_days": int((pd.Timestamp(actual_date).normalize() - row["target_date_dt"].normalize()).days),
+                        "actual_close": actual_price,
+                        "raw_market_snapshot_id": snapshot_id,
+                        "raw_market_snapshot_sha256": str(snapshot_id).split(":", 1)[-1],
+                        "p10": p10_pct, "p25": p25_pct, "p50": p50_pct, "p75": p75_pct, "p90": p90_pct,
+                        "inside_p10_p90": p10 <= actual_price <= p90,
+                        "inside_p25_p75": p25 <= actual_price <= p75,
+                        "direction_forecast": "UP" if p50 >= current_price else "DOWN",
+                        "direction_result": "UP" if actual_price >= current_price else "DOWN",
+                        "drawdown": drawdown,
+                        "max_gain": max_gain,
+                        "drawdown_classifications": {
+                            "classification_status": "NOT_AVAILABLE",
+                            "reason": "TRACKER_FORECAST_HAS_NO_DRAWDOWN_BANDS",
+                        },
+                        "max_gain_classifications": {
+                            "classification_status": "NOT_AVAILABLE",
+                            "reason": "TRACKER_FORECAST_HAS_NO_MAX_GAIN_BANDS",
+                        },
+                        "evaluation_generated_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                        "code_version": code_version(),
+                        "path_price_semantics": "CLOSE_ONLY_LEGACY_COMPATIBLE",
+                    })
 
             count = len(abs_errors)
 
@@ -1075,7 +1213,14 @@ def evaluate_forecast_history(history, data):
                 "avg_error_vs_p50_pct": np.mean(signed_errors) if signed_errors else np.nan,
             })
 
-    return pd.DataFrame(rows)
+    result = pd.DataFrame(rows)
+    result.attrs["replay_status"] = (
+        "HISTORICAL_RAW_DATA_NOT_FROZEN" if replay_unfrozen
+        else "NO_CONTROL_DUE" if replay_not_due else "REPRODUCIBLE"
+    )
+    result.attrs["legacy_unfrozen_rows"] = replay_unfrozen
+    result.attrs["not_due_rows"] = replay_not_due
+    return result
 
 
 def format_latest_table(latest_rows):
@@ -1627,6 +1772,8 @@ def main():
     ensure_reports_dir()
 
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    generated_at_iso = generated_at.replace(" ", "T") + "Z"
+    run_id = new_run_id(generated_at_iso)
     snapshot_date = generated_at[:10]
     generated_date = pd.to_datetime(snapshot_date)
 
@@ -1640,7 +1787,9 @@ def main():
         if not matches.empty and "similar_asset" in matches.columns:
             all_tickers.update(matches["similar_asset"].dropna().astype(str).tolist())
 
-    data = download_price_data(all_tickers)
+    data, raw_snapshot_ids = download_price_data(
+        all_tickers, run_id=run_id, downloaded_at_utc=generated_at_iso
+    )
     # SHADOW_CALIBRATION_NO_LEAKAGE_V1
     # Only forecasts already saved before today's run can calibrate today's
     # shadow cone. The official raw cone remains untouched.
@@ -1812,15 +1961,22 @@ def main():
             generated_at=generated_at,
             snapshot_date=target_snapshot_date,
         )
+        for item in asset_snapshot_rows:
+            item["forecast_id"] = f"{run_id}:{target}:{item['horizon_day']}"
+            item["run_id"] = run_id
+            item["raw_market_snapshot_id"] = raw_snapshot_ids.get(target)
         snapshot_rows.extend(asset_snapshot_rows)
-        shadow_snapshot_rows.extend(
-            build_shadow_snapshot_rows(
+        new_shadow_rows = build_shadow_snapshot_rows(
                 target=target,
                 shadow_quantiles=shadow_quant,
                 current_price=current_price,
                 generated_at=generated_at,
             )
-        )
+        for item in new_shadow_rows:
+            item["forecast_id"] = f"{run_id}:shadow:{target}:{item['horizon_day']}"
+            item["run_id"] = run_id
+            item["raw_market_snapshot_id"] = raw_snapshot_ids.get(target)
+        shadow_snapshot_rows.extend(new_shadow_rows)
 
     latest_df = pd.DataFrame([
         {
@@ -1880,13 +2036,30 @@ def main():
         )
         row["historical_review"] = historical_review
 
-    metrics = evaluate_forecast_history(history, data)
+    baseline = freeze_tracker_legacy_baseline()
+    new_metrics = evaluate_forecast_history(
+        history, data, evaluation_snapshot_ids=raw_snapshot_ids
+    )
+    metrics = combine_tracker_metrics_with_legacy_baseline(new_metrics, baseline)
+    os.makedirs(os.path.dirname(REPLAY_STATUS_PATH), exist_ok=True)
+    legacy_missing = int(history.get("raw_market_snapshot_id", pd.Series(index=history.index, dtype=object)).isna().sum())
+    pd.DataFrame([{
+        "generated_at_utc": generated_at,
+        "status": "HISTORICAL_RAW_DATA_NOT_FROZEN" if legacy_missing else "REPRODUCIBLE",
+        "legacy_rows_without_snapshot": legacy_missing,
+        "evaluated_frozen_rows": int(new_metrics["controls"].sum()) if not new_metrics.empty else 0,
+    }]).to_csv(REPLAY_STATUS_PATH, index=False)
     metrics.to_csv(METRICS_PATH, index=False)
 
     shadow_history = update_shadow_history(shadow_snapshot_rows)
-    shadow_metrics = evaluate_shadow_history(
+    shadow_baseline = freeze_shadow_legacy_baseline()
+    new_shadow_metrics = evaluate_shadow_history(
         shadow_history,
         data,
+        evaluation_snapshot_ids=raw_snapshot_ids,
+    )
+    shadow_metrics = combine_shadow_metrics_with_legacy_baseline(
+        new_shadow_metrics, shadow_baseline
     )
     shadow_metrics.to_csv(SHADOW_METRICS_PATH, index=False)
 
