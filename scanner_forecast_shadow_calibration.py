@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 from forecast_provenance import (
     LEGACY_SHADOW_BASELINE, REPO_ROOT, append_csv_atomic, append_evaluation,
-    code_version, find_evaluation, freeze_legacy_aggregate_baseline, load_frozen_ohlc,
+    code_provenance, find_evaluation, freeze_legacy_aggregate_baseline, load_frozen_ohlc,
 )
 
 
@@ -708,7 +708,7 @@ def evaluate_shadow_history(
                             "reason": "SHADOW_FORECAST_HAS_NO_MAX_GAIN_BANDS",
                         },
                         "evaluation_generated_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-                        "code_version": code_version(), "path_price_semantics": "CLOSE_ONLY_LEGACY_COMPATIBLE",
+                        **code_provenance(), "path_price_semantics": "CLOSE_ONLY_LEGACY_COMPATIBLE",
                     })
 
             controls = len(raw_errors)

@@ -1,5 +1,6 @@
 import os
 import re
+from enum import Enum
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -13,7 +14,7 @@ import yfinance as yf
 
 from forecast_provenance import (
     LEGACY_TRACKER_BASELINE, REPO_ROOT, append_csv_atomic, append_evaluation,
-    code_version, find_evaluation, freeze_legacy_aggregate_baseline, freeze_ohlc,
+    code_provenance, find_evaluation, freeze_legacy_aggregate_baseline, freeze_ohlc,
     load_frozen_ohlc, new_run_id,
 )
 
@@ -71,6 +72,38 @@ TARGETS = {
 FORECAST_DAYS = 30
 MATCH_LIMIT = 40
 ACCURACY_HORIZONS = [1, 3, 7, 14, 30]
+
+
+class TrackerRunMode(str, Enum):
+    NORMAL_DAILY = "NORMAL_DAILY"
+    CERTIFIED_REPLAY = "CERTIFIED_REPLAY"
+
+
+def tracker_replay_status_row(*, generated_at_utc, mode, legacy_rows_without_snapshot,
+                              evaluated_frozen_rows, replay_status=None):
+    mode = TrackerRunMode(mode)
+    if mode is TrackerRunMode.NORMAL_DAILY:
+        status = "NORMAL_DAILY"
+    else:
+        status = replay_status or (
+            "HISTORICAL_RAW_DATA_NOT_FROZEN"
+            if legacy_rows_without_snapshot else "REPRODUCIBLE"
+        )
+    return {
+        "generated_at_utc": generated_at_utc,
+        "mode": mode.value,
+        "status": status,
+        "legacy_baseline_used": "YES",
+        "legacy_rows_without_snapshot": int(legacy_rows_without_snapshot),
+        "certified_replay_requested": (
+            "YES" if mode is TrackerRunMode.CERTIFIED_REPLAY else "NO"
+        ),
+        "evaluated_frozen_rows": int(evaluated_frozen_rows),
+    }
+
+
+def write_tracker_replay_status(path, **kwargs):
+    pd.DataFrame([tracker_replay_status_row(**kwargs)]).to_csv(path, index=False)
 
 
 def positive_int_env(name, default):
@@ -1195,7 +1228,7 @@ def evaluate_forecast_history(history, data, evaluation_snapshot_ids=None, froze
                             "reason": "TRACKER_FORECAST_HAS_NO_MAX_GAIN_BANDS",
                         },
                         "evaluation_generated_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-                        "code_version": code_version(),
+                        **code_provenance(),
                         "path_price_semantics": "CLOSE_ONLY_LEGACY_COMPATIBLE",
                     })
 
@@ -2043,12 +2076,15 @@ def main():
     metrics = combine_tracker_metrics_with_legacy_baseline(new_metrics, baseline)
     os.makedirs(os.path.dirname(REPLAY_STATUS_PATH), exist_ok=True)
     legacy_missing = int(history.get("raw_market_snapshot_id", pd.Series(index=history.index, dtype=object)).isna().sum())
-    pd.DataFrame([{
-        "generated_at_utc": generated_at,
-        "status": "HISTORICAL_RAW_DATA_NOT_FROZEN" if legacy_missing else "REPRODUCIBLE",
-        "legacy_rows_without_snapshot": legacy_missing,
-        "evaluated_frozen_rows": int(new_metrics["controls"].sum()) if not new_metrics.empty else 0,
-    }]).to_csv(REPLAY_STATUS_PATH, index=False)
+    write_tracker_replay_status(
+        REPLAY_STATUS_PATH,
+        generated_at_utc=generated_at,
+        mode=TrackerRunMode.NORMAL_DAILY,
+        legacy_rows_without_snapshot=legacy_missing,
+        evaluated_frozen_rows=(
+            int(new_metrics["controls"].sum()) if not new_metrics.empty else 0
+        ),
+    )
     metrics.to_csv(METRICS_PATH, index=False)
 
     shadow_history = update_shadow_history(shadow_snapshot_rows)

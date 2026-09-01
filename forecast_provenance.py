@@ -30,25 +30,40 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def code_version() -> str:
+def source_worktree_dirty() -> bool:
+    """Report whether tracked/untracked source or config differs from HEAD.
+
+    Runtime products under reports/ are deliberately excluded: they are
+    expected to change before provenance records are emitted by a daily run.
+    """
     try:
         git = ["git", "-c", f"safe.directory={REPO_ROOT}", "-C", str(REPO_ROOT)]
-        head = subprocess.check_output([*git, "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
-        dirty = subprocess.check_output([*git, "status", "--porcelain", "--untracked-files=all"], text=True, stderr=subprocess.DEVNULL)
-        if not dirty.strip():
-            return head
-        relevant = [REPO_ROOT / name for name in (
-            "forecast_provenance.py", "scanner.py", "forecast_30d_history_report.py",
-            "scanner_forecast_tracker.py", "scanner_forecast_shadow_calibration.py",
-            "bounce_after_drawdown_report.py",
-        )]
-        digest = hashlib.sha256()
-        for path in relevant:
-            if path.exists():
-                digest.update(path.name.encode()); digest.update(path.read_bytes())
-        return f"{head}-dirty:{digest.hexdigest()}"
+        status = subprocess.check_output([
+            *git, "status", "--porcelain", "--untracked-files=all", "--", ".",
+            ":(exclude)reports/**", ":(exclude)**/__pycache__/**",
+            ":(exclude)**/*.pyc",
+        ], text=True, stderr=subprocess.DEVNULL)
+        return bool(status.strip())
+    except Exception:
+        return True
+
+
+def code_version() -> str:
+    """Return the exact source commit; dirtiness is a separate provenance fact."""
+    try:
+        git = ["git", "-c", f"safe.directory={REPO_ROOT}", "-C", str(REPO_ROOT)]
+        return subprocess.check_output(
+            [*git, "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL
+        ).strip()
     except Exception:
         return "UNKNOWN"
+
+
+def code_provenance() -> dict:
+    return {
+        "code_version": code_version(),
+        "source_worktree_dirty": source_worktree_dirty(),
+    }
 
 
 def new_run_id(generated_at_utc: str) -> str:
@@ -274,7 +289,8 @@ def freeze_cohort(matches: pd.DataFrame, *, target: str, run_id: str,
     body = {"schema_version": SCHEMA_VERSION, "target": target, "cases_used": len(rows), "matches": rows}
     digest = hashlib.sha256(canonical_json(body)).hexdigest(); cohort_id = f"sha256:{digest}"
     manifest = {**body, "cohort_id": cohort_id, "manifest_sha256": digest,
-                "run_id": run_id, "generated_at_utc": generated_at_utc, "code_version": code_version()}
+                "run_id": run_id, "generated_at_utc": generated_at_utc,
+                **code_provenance()}
     payload = canonical_json(manifest)
     path = COHORT_DIR / f"{digest}.json"
     if path.exists():
@@ -354,6 +370,7 @@ def append_evaluation(record: dict) -> dict:
         left = dict(existing); right = dict(candidate)
         for item in (left, right):
             item.pop("evaluation_manifest_sha256", None); item.pop("evaluation_generated_at_utc", None); item.pop("code_version", None)
+            item.pop("source_worktree_dirty", None)
         if canonical_json(left) != canonical_json(right):
             raise RuntimeError("EVALUATION_KEY_COLLISION")
         return existing

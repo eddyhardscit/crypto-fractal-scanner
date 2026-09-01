@@ -3,6 +3,7 @@ import json
 import tempfile
 import unittest
 import os
+import subprocess
 from pathlib import Path
 from unittest.mock import patch
 
@@ -14,7 +15,8 @@ import bounce_after_drawdown_report as bounce
 from bounce_after_drawdown_report import first_touch_day
 from scanner_forecast_tracker import (
     combine_tracker_metrics_with_legacy_baseline, evaluate_forecast_history,
-    freeze_tracker_legacy_baseline,
+    freeze_tracker_legacy_baseline, tracker_replay_status_row,
+    write_tracker_replay_status, TrackerRunMode,
 )
 from scanner_forecast_shadow_calibration import (
     combine_shadow_metrics_with_legacy_baseline, evaluate_shadow_history,
@@ -26,6 +28,8 @@ import forecast_30d_history_report as history_30d
 
 
 class ForecastProvenanceTests(unittest.TestCase):
+    DEPLOYED_HARDENING_COMMIT = "1e3d164aca274d521775949826a504652a056418"
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         root = Path(self.temp.name) / "provenance"
@@ -206,6 +210,71 @@ class ForecastProvenanceTests(unittest.TestCase):
         self.assertEqual(result.attrs["replay_status"], "HISTORICAL_RAW_DATA_NOT_FROZEN")
         self.assertEqual(result.attrs["legacy_unfrozen_rows"], 1)
 
+    def test_normal_daily_status_uses_baseline_without_replay_error(self):
+        with tempfile.TemporaryDirectory() as directory:
+            status_path = Path(directory) / "tracker_replay_status.csv"
+            write_tracker_replay_status(
+                status_path, generated_at_utc="2026-01-01T00:00:00Z",
+                mode=TrackerRunMode.NORMAL_DAILY,
+                legacy_rows_without_snapshot=4743, evaluated_frozen_rows=0,
+            )
+            row = pd.read_csv(status_path).iloc[0]
+        self.assertEqual(row.status, "NORMAL_DAILY")
+        self.assertEqual(row.legacy_baseline_used, "YES")
+        self.assertEqual(row.certified_replay_requested, "NO")
+        self.assertEqual(int(row.legacy_rows_without_snapshot), 4743)
+        self.assertNotEqual(row.status, "HISTORICAL_RAW_DATA_NOT_FROZEN")
+
+    def test_certified_replay_status_is_fail_closed_and_mode_specific(self):
+        row = tracker_replay_status_row(
+            generated_at_utc="2026-01-01T00:00:00Z",
+            mode=TrackerRunMode.CERTIFIED_REPLAY,
+            legacy_rows_without_snapshot=4743, evaluated_frozen_rows=0,
+        )
+        self.assertEqual(row["status"], "HISTORICAL_RAW_DATA_NOT_FROZEN")
+        self.assertEqual(row["certified_replay_requested"], "YES")
+
+    def test_normal_daily_vendor_acquisition_freezes_new_evaluation_then_replays(self):
+        index = pd.date_range("2026-01-01", periods=45, tz="UTC")
+        frame = pd.DataFrame({"Open": np.arange(45) + 100.0,
+                              "High": np.arange(45) + 101.0,
+                              "Low": np.arange(45) + 99.0,
+                              "Close": np.arange(45) + 100.0,
+                              "Volume": [10] * 45}, index=index)
+        with patch("scanner_forecast_tracker.yf.download", return_value=frame) as vendor:
+            _, snapshots = tracker_module.download_price_data(
+                ["BTC-USD"], run_id="normal-run",
+                downloaded_at_utc="2026-02-15T00:00:00Z",
+            )
+        self.assertGreaterEqual(vendor.call_count, 1)
+        snapshot = snapshots["BTC-USD"]
+        history = pd.DataFrame([{
+            "forecast_id": "normal:new:1", "generated_at_utc": "2026-01-01T00:00:00Z",
+            "target_ticker": "BTC-USD", "asset": "BTC", "snapshot_date": "2026-01-01",
+            "target_date": "2026-01-02", "horizon_day": 1, "current_price": 100.0,
+            "p10_price": 90.0, "p25_price": 95.0, "p50_price": 100.0,
+            "p75_price": 105.0, "p90_price": 110.0,
+        }])
+        first = evaluate_forecast_history(
+            history, {}, evaluation_snapshot_ids={"BTC-USD": snapshot}
+        )
+        self.assertEqual(int(first.iloc[0].controls), 1)
+        with patch("scanner_forecast_tracker.yf.download") as replay_vendor:
+            replay = evaluate_forecast_history(history, {}, certified_replay=True)
+        self.assertEqual(replay_vendor.call_count, 0)
+        self.assertEqual(int(replay.iloc[0].controls), 1)
+
+    def test_normal_daily_legacy_rows_never_query_vendor_or_emit_replay_error(self):
+        legacy = pd.DataFrame([{"target_ticker": "BTC-USD", "asset": "BTC",
+            "snapshot_date": "2026-01-01", "target_date": "2026-01-02", "horizon_day": 1,
+            "current_price": 100.0, "p10_price": 90.0, "p25_price": 95.0,
+            "p50_price": 100.0, "p75_price": 105.0, "p90_price": 110.0}])
+        with patch("scanner_forecast_tracker.yf.download") as vendor:
+            result = evaluate_forecast_history(legacy, {}, certified_replay=False)
+        self.assertEqual(vendor.call_count, 0)
+        self.assertEqual(int(result.iloc[0].controls), 0)
+        self.assertEqual(result.attrs["replay_status"], "REPRODUCIBLE")
+
     def test_frozen_tracker_replay_needs_no_current_vendor_data(self):
         snapshot = self.freeze(self.sample_ohlc())
         history = pd.DataFrame([{"forecast_id": "frozen:1", "generated_at_utc": "2026-01-01T00:00:00Z",
@@ -340,13 +409,32 @@ class ForecastProvenanceTests(unittest.TestCase):
         self.assertTrue((pd.to_datetime(matches.end_date) <= latest_safe_end).all())
 
     def test_published_sol_sequence_values_unchanged(self):
-        metrics = pd.read_csv("reports/bounce_after_drawdown_metrics.csv")
+        payload = subprocess.check_output([
+            "git", "-c", f"safe.directory={Path.cwd()}", "show",
+            f"{self.DEPLOYED_HARDENING_COMMIT}:reports/bounce_after_drawdown_metrics.csv",
+        ], text=True)
+        metrics = pd.read_csv(__import__("io").StringIO(payload))
         expected = {("bounce", -5, 10): 62.857142857142854, ("bounce", -5, 20): 40.0,
                     ("dump", 5, -5): 40.625, ("dump", 10, -5): 25.806451612903224}
         for (sequence, first, second), value in expected.items():
             row = metrics[(metrics.asset == "SOL-USD") & (metrics.sequence_type == sequence)
                           & (metrics.first_pct == first) & (metrics.second_pct == second)]
             self.assertEqual(len(row), 1); self.assertTrue(np.isclose(row.iloc[0].second_rate_after_first, value))
+
+    def test_deployed_forecast_accuracy_invariants_unchanged(self):
+        payload = subprocess.check_output([
+            "git", "-c", f"safe.directory={Path.cwd()}", "show",
+            f"{self.DEPLOYED_HARDENING_COMMIT}:reports/accuracy_report.csv",
+        ], text=True)
+        metrics = pd.read_csv(__import__("io").StringIO(payload)).set_index("asset")
+        expected = {
+            "BTC-USD": (86.95652173913044, 100.0),
+            "SOL-USD": (100.0, 100.0),
+            "DOGE-USD": (92.5925925925926, 93.33333333333333),
+        }
+        for asset, (direction, coverage) in expected.items():
+            self.assertTrue(np.isclose(metrics.at[asset, "directional_accuracy_pct"], direction))
+            self.assertTrue(np.isclose(metrics.at[asset, "return_inside_p10_p90_pct"], coverage))
 
     def test_legacy_paths_and_existing_columns_remain_compatible(self):
         self.assertEqual(scanner_module.PREDICTION_LOG_PATH, "reports/prediction_log.csv")
@@ -381,6 +469,26 @@ class ForecastProvenanceTests(unittest.TestCase):
         self.assertIn("OnSuccess=crypto-report-health.service", daily_override)
         self.assertIn("ExecStart=/usr/local/sbin/crypto-report-health-cycle", health_service)
         self.assertIn('"$PYTHON" forecast_30d_history_report.py', health_cycle)
+
+    def test_code_version_separates_commit_from_source_dirty_state(self):
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "test"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=repo, check=True)
+            (repo / "reports").mkdir(); (repo / "scanner.py").write_text("VALUE = 1\n")
+            (repo / "reports" / "runtime.csv").write_text("value\n1\n")
+            subprocess.run(["git", "add", "."], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "fixture"], cwd=repo, check=True)
+            head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
+            with patch.object(fp, "REPO_ROOT", repo):
+                self.assertEqual(fp.code_version(), head)
+                (repo / "reports" / "runtime.csv").write_text("value\n2\n")
+                self.assertFalse(fp.source_worktree_dirty())
+                self.assertEqual(fp.code_version(), head)
+                (repo / "scanner.py").write_text("VALUE = 2\n")
+                self.assertTrue(fp.source_worktree_dirty())
+                self.assertEqual(fp.code_version(), head)
 
 
 if __name__ == "__main__": unittest.main()

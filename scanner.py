@@ -18,7 +18,7 @@ from market_snapshot import (
 from forecast_provenance import (
     append_evaluation,
     append_forecast,
-    code_version,
+    code_provenance,
     find_evaluation,
     freeze_cohort,
     freeze_ohlc,
@@ -597,7 +597,7 @@ def update_prediction_log(log, all_results, generated_at, run_id=None, raw_snaps
                 "cohort_manifest_sha256": result.get("cohort_manifest_sha256"),
                 "raw_market_snapshot_id": (raw_snapshot_ids or {}).get(target),
                 "price_market_snapshot_id": result.get("price_market_snapshot_id"),
-                "code_version": code_version(),
+                **code_provenance(),
             })
 
         for metric, prefix in [
@@ -850,7 +850,7 @@ def evaluate_prediction_log(log, data, raw_snapshot_ids=None, *, certified_repla
                 "drawdown_classifications": {"inside_p10_p90": drawdown_within, "risk_zone_touched": risk_zone_touched},
                 "max_gain_classifications": {"inside_p10_p90": max_gain_within, "upside_zone_touched": upside_zone_touched},
                 "evaluation_generated_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-                "code_version": code_version(),
+                **code_provenance(),
                 "path_price_semantics": "CLOSE_ONLY_LEGACY_COMPATIBLE",
             })
 
