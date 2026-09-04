@@ -1,6 +1,6 @@
 # Divergenze RSI multi-timeframe — diagnostica
 
-Generato: 2026-09-03 05:32 UTC
+Generato: 2026-09-04 05:32 UTC
 
 Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Riconosce divergenze regolari e nascoste, segnali in formazione, invalidazioni e semplice conferma del momentum.
 
@@ -18,12 +18,12 @@ Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Ric
 
 | Asset   | TF   | Tipo                                                 | Stato      | Prezzo / RSI      | Pivot confrontati                                                   | Δ prezzo contesto   | Δ RSI contesto   |   Peso |
 |:--------|:-----|:-----------------------------------------------------|:-----------|:------------------|:--------------------------------------------------------------------|:--------------------|:-----------------|-------:|
-| BTC     | 1D   | Hidden bullish                                       | CONFERMATA | 77.271 $ / 65,08  | 2026-08-03 62.227 $ / RSI 47,40 → 2026-08-14 62.488 $ / RSI 42,71   | n/a                 | n/a              |      0 |
-| BTC     | 1W   | Conferma rialzista                                   | CONTESTO   | 77.271 $ / 56,04  | n/a                                                                 | +18,26%             | 15,38            |      0 |
-| SOL     | 1D   | Momentum in indebolimento, divergenza non confermata | CONTESTO   | 100,12 $ / 63,50  | n/a                                                                 | +17,27%             | -11,61           |      0 |
-| SOL     | 1W   | Hidden bearish                                       | CONFERMATA | 100,12 $ / 56,70  | 2026-05-17 98,27 $ / RSI 38,29 → 2026-07-05 83,81 $ / RSI 42,25     | n/a                 | n/a              |      0 |
-| DOGE    | 1D   | Momentum in indebolimento, divergenza non confermata | CONTESTO   | 0.08236 $ / 53,80 | n/a                                                                 | +9,85%              | -9,91            |      0 |
-| DOGE    | 1W   | Hidden bearish                                       | CONFERMATA | 0.08236 $ / 44,18 | 2026-05-17 0.11825 $ / RSI 44,25 → 2026-08-23 0.09998 $ / RSI 49,72 | n/a                 | n/a              |      0 |
+| BTC     | 1D   | Hidden bullish                                       | CONFERMATA | 80.940 $ / 72,49  | 2026-08-03 62.227 $ / RSI 47,40 → 2026-08-14 62.488 $ / RSI 42,71   | n/a                 | n/a              |      0 |
+| BTC     | 1W   | Conferma rialzista                                   | CONTESTO   | 80.940 $ / 59,53  | n/a                                                                 | +23,87%             | 18,88            |      0 |
+| SOL     | 1D   | Momentum in indebolimento, divergenza non confermata | CONTESTO   | 103,62 $ / 67,19  | n/a                                                                 | +18,24%             | -10,61           |      0 |
+| SOL     | 1W   | Hidden bearish                                       | CONFERMATA | 103,62 $ / 58,86  | 2026-05-17 98,27 $ / RSI 38,29 → 2026-07-05 83,81 $ / RSI 42,25     | n/a                 | n/a              |      0 |
+| DOGE    | 1D   | Momentum in indebolimento, divergenza non confermata | CONTESTO   | 0.08692 $ / 60,98 | n/a                                                                 | +8,08%              | -12,72           |      0 |
+| DOGE    | 1W   | Hidden bearish                                       | CONFERMATA | 0.08692 $ / 46,82 | 2026-05-17 0.11825 $ / RSI 44,25 → 2026-08-23 0.09998 $ / RSI 49,72 | n/a                 | n/a              |      0 |
 
 ### BTC
 
