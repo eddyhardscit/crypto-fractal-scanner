@@ -1,7 +1,7 @@
 # Storico frattale SOL/BTC
 
-Generato: **2026-09-03 07:33:43 CEST**  
-UTC: **2026-09-03 05:33:43 UTC**
+Generato: **2026-09-04 07:34:06 CEST**  
+UTC: **2026-09-04 05:34:06 UTC**
 
 Questo file salva giorno per giorno la lettura del frattale **BTC novembre 2022 vs SOL giugno 2026**.
 
@@ -14,25 +14,25 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | Voce | Valore |
 | --- | --- |
 | Prima rilevazione salvata | 2026-07-08 |
-| Ultima rilevazione salvata | 2026-09-03 |
-| Righe salvate | 55 |
+| Ultima rilevazione salvata | 2026-09-04 |
+| Righe salvate | 56 |
 
 ## Ultima lettura
 
 | Voce | Valore |
 | --- | --- |
-| Data lettura | 2026-09-03 |
-| Prezzo SOL | 99,93 $ |
-| BTC scalato | 97,07 $ |
-| Gap SOL vs BTC-scalato | +2,95% |
-| Somiglianza totale | +66,25% |
+| Data lettura | 2026-09-04 |
+| Prezzo SOL | 103,67 $ |
+| BTC scalato | 95,83 $ |
+| Gap SOL vs BTC-scalato | +8,18% |
+| Somiglianza totale | +66,88% |
 | Fase | FRATTALE SOLO DI CONTESTO |
 | Tracking | STRUTTURA STABILE |
-| Errore medio da inizio programma | +14,39% |
+| Errore medio da inizio programma | +14,30% |
 | Errore ultimo giorno | n/a |
-| Conferma 1 | 104,93 $ |
-| Conferma 2 | 123,63 $ |
-| Invalidazione soft | 81,87 $ |
+| Conferma 1 | 108,85 $ |
+| Conferma 2 | 129,91 $ |
+| Invalidazione soft | 86,03 $ |
 | Invalidazione forte | 62,19 $ |
 | Target ciclo base da oggi | n/a |
 
@@ -93,6 +93,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | 2026-09-01 | 103,93 $ | 93,06 $ | +11,68% | +65,04% | FRATTALE SOLO DI CONTESTO | STRUTTURA STABILE | +14,80% | n/a | 118,63 $ | 129,54 $ | 88,81 $ | 109,23 $ | n/a |
 | 2026-09-02 | 100,24 $ | 96,77 $ | +3,59% | +65,97% | FRATTALE SOLO DI CONTESTO | STRUTTURA STABILE | +14,63% | n/a | 114,41 $ | 124,04 $ | 82,37 $ | 105,25 $ | n/a |
 | 2026-09-03 | 99,93 $ | 97,07 $ | +2,95% | +66,25% | FRATTALE SOLO DI CONTESTO | STRUTTURA STABILE | +14,39% | n/a | 112,61 $ | 116,89 $ | 81,87 $ | 104,93 $ | n/a |
+| 2026-09-04 | 103,67 $ | 95,83 $ | +8,18% | +66,88% | FRATTALE SOLO DI CONTESTO | STRUTTURA STABILE | +14,30% | n/a | 120,07 $ | 120,37 $ | 86,03 $ | 108,85 $ | n/a |
 | nan | 77,58 $ | 70,55 $ | +9,96% | +73,80% | nan | nan | +21,83% | +9,96% | 105,65 $ | 111,43 $ | 73,73 $ | 105,65 $ | 574,68 $ |
 | nan | 77,58 $ | 70,55 $ | +9,96% | +73,79% | nan | nan | +21,83% | +9,96% | 105,70 $ | 111,48 $ | 73,77 $ | 105,70 $ | 574,97 $ |
 
@@ -153,6 +154,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | 2026-09-01 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +70,39% | +14,80% | DEVIAZIONE MODERATA | +75,78% | +12,11% | DEVIAZIONE MODERATA |
 | 2026-09-02 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +70,75% | +14,63% | DEVIAZIONE MODERATA | +75,97% | +12,02% | DEVIAZIONE MODERATA |
 | 2026-09-03 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +71,23% | +14,39% | DEVIAZIONE MODERATA | +76,25% | +11,88% | DEVIAZIONE MODERATA |
+| 2026-09-04 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +71,40% | +14,30% | DEVIAZIONE MODERATA | +76,31% | +11,85% | DEVIAZIONE MODERATA |
 | nan | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +56,35% | +21,83% | STACCATO / MOLTO IN ANTICIPO | +81,44% | +9,28% | ABBASTANZA ALLINEATO |
 | nan | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +56,33% | +21,83% | STACCATO / MOLTO IN ANTICIPO | +81,44% | +9,28% | ABBASTANZA ALLINEATO |
 
@@ -213,6 +215,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | 2026-09-01 | 105,36 $ | 103,28 $ | 118,63 $ | 129,54 $ | 120,54 $ | 115,83 $ | 88,81 $ | 120,65 $ | n/a |
 | 2026-09-02 | 94,66 $ | 91,25 $ | 114,41 $ | 124,04 $ | 109,49 $ | 108,18 $ | 82,37 $ | 114,41 $ | n/a |
 | 2026-09-03 | 93,99 $ | 90,65 $ | 112,61 $ | 116,89 $ | 109,05 $ | 106,80 $ | 81,87 $ | 113,71 $ | n/a |
+| 2026-09-04 | 100,40 $ | 95,61 $ | 120,07 $ | 120,37 $ | 115,61 $ | 114,42 $ | 86,03 $ | 120,07 $ | n/a |
 | nan | 76,23 $ | 78,10 $ | 105,65 $ | 111,43 $ | 126,65 $ | 127,10 $ | 76,23 $ | 105,65 $ | 574,68 $ |
 | nan | 76,27 $ | 78,14 $ | 105,70 $ | 111,48 $ | 126,71 $ | 127,17 $ | 76,27 $ | 105,70 $ | 574,97 $ |
 
