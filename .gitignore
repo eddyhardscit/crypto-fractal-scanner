@@ -62,3 +62,6 @@ reports/*.bak-*
 # leaves local point-in-time provenance outside the legacy publication commit.
 /reports/forecast_provenance/forecast_30d_versions.csv
 # === END EVOLUTION SYNC SAFETY ===
+
+# Runtime Paper state: stored by Paper Release, never publish through Git
+/reports/paper_trading_shadow_exit_state.json
