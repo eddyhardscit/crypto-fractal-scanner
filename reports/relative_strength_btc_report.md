@@ -1,6 +1,6 @@
 # Forza relativa SOL/BTC e DOGE/BTC
 
-Generato: 2026-09-04 05:32 UTC
+Generato: 2026-09-05 08:22 UTC
 
 Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salita in USD accompagnata da una coppia ALT/BTC ribassista è spesso soltanto trascinamento di BTC.
 
@@ -10,8 +10,8 @@ Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salit
 
 | Asset | Coppia | Prezzo | Score raw | Candidato | Peso Global | Forza vs BTC | Confidenza | 30g | Tecnico USD | Lettura combinata |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| SOL | SOL/BTC | 0.00128120 | +4 | +1 | 0 | SOVRAPERFORMA BTC | BASSA | +11,31% | RIALZISTA | CONFERMA FORTE: sale in USD e batte BTC |
-| DOGE | DOGE/BTC | 0.00000107 | -6 | -1 | 0 | SOTTOPERFORMA BTC | MEDIA | -1,79% | RIALZISTA | SALE SOLO IN USD: BTC resta più forte |
+| SOL | SOL/BTC | 0.00128430 | +2 | 0 | 0 | RELATIVA MISTA / NON CONFERMATA | BASSA | +13,76% | RIALZISTA | QUADRO MISTO / NESSUNA CONFERMA RELATIVA |
+| DOGE | DOGE/BTC | 0.00000107 | -6 | -1 | 0 | SOTTOPERFORMA BTC | MEDIA | +0,10% | RIALZISTA | SALE SOLO IN USD: BTC resta più forte |
 
 ## Matrice di lettura
 
@@ -24,18 +24,18 @@ Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salit
 
 ## SOL/BTC
 
-- **Verdetto relativo:** SOVRAPERFORMA BTC (+4)
-- **Candidato futuro:** +1; **peso attuale Global: 0**
-- **Lettura combinata USD/BTC:** CONFERMA FORTE: sale in USD e batte BTC
+- **Verdetto relativo:** RELATIVA MISTA / NON CONFERMATA (+2)
+- **Candidato futuro:** 0; **peso attuale Global: 0**
+- **Lettura combinata USD/BTC:** QUADRO MISTO / NESSUNA CONFERMA RELATIVA
 - **Struttura:** MASSIMI E MINIMI CRESCENTI
-- **Rendimenti relativi:** 7g -5,86%; 30g +11,31%; 90g +23,19%; 180g +3,57%
-- **Daily:** RSI 55.82; MA50 0.00120300; MA200 0.00118116
-- **Weekly:** MA30 0.00118497; RSI 54.66
+- **Rendimenti relativi:** 7g -4,87%; 30g +13,76%; 90g +22,66%; 180g +3,49%
+- **Daily:** RSI 56.35; MA50 0.00120717; MA200 0.00118138
+- **Weekly:** MA30 0.00118508; RSI 54.95
 - **Livelli:** supporto 0.00122200; resistenza 0.00129400; breakout 60g 0.00136900; breakdown 60g 0.00112700
 - **Pattern:** DOPPIO MINIMO / TARGET RAGGIUNTO; neckline 0.00120200; target 0.00125350
 - **Fibonacci:** VICINO — 23.6% a 0.00128404
 - **Fonte:** Yahoo Finance SOL-BTC (coppia diretta)
-- **Motivi score:** prezzo sopra MA50 daily; prezzo sopra MA200 daily; prezzo sopra MA30 weekly; MA30 weekly in discesa; struttura con massimi/minimi crescenti; MACD relativo positivo
+- **Motivi score:** prezzo sopra MA50 daily; prezzo sopra MA200 daily; prezzo sopra MA30 weekly; MA30 weekly in discesa; struttura con massimi/minimi crescenti; MACD relativo negativo
 
 ![Grafico SOL/BTC](relative_strength_SOLBTC.png)
 
@@ -45,9 +45,9 @@ Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salit
 - **Candidato futuro:** -1; **peso attuale Global: 0**
 - **Lettura combinata USD/BTC:** SALE SOLO IN USD: BTC resta più forte
 - **Struttura:** VOLATILITÀ IN ESPANSIONE
-- **Rendimenti relativi:** 7g -3,31%; 30g -1,79%; 90g -19,58%; 180g -19,67%
-- **Daily:** RSI 44.22; MA50 0.00000110; MA200 0.00000127
-- **Weekly:** MA30 0.00000127; RSI 36.26
+- **Rendimenti relativi:** 7g -1,41%; 30g +0,10%; 90g -21,06%; 180g -18,68%
+- **Daily:** RSI 45.19; MA50 0.00000110; MA200 0.00000127
+- **Weekly:** MA30 0.00000127; RSI 36.32
 - **Livelli:** supporto 0.00000105; resistenza 0.00000114; breakout 60g 0.00000131; breakdown 60g 0.00000100
 - **Pattern:** DOPPIO MINIMO / TARGET RAGGIUNTO; neckline 0.00000115; target 0.00000128
 - **Fibonacci:** NON ATTIVO — 23.6% a 0.00000112
@@ -62,27 +62,27 @@ Il backtest usa soltanto indicatori disponibili alla data del segnale e campiona
 
 | Asset | Orizzonte | Controlli | Accuratezza | Return corretto direzione | Return futuro mediano |
 | --- | --- | --- | --- | --- | --- |
-| SOL | 7g | 206 | 52,43% | +1,98% | -1,06% |
+| SOL | 7g | 207 | 52,17% | +1,95% | -1,06% |
 | SOL | 30g | 204 | 47,06% | +4,50% | +0,44% |
-| SOL | 90g | 198 | 53,03% | +10,08% | +2,72% |
+| SOL | 90g | 199 | 52,76% | +9,91% | +3,03% |
 | DOGE | 7g | 294 | 55,78% | +1,84% | -1,68% |
-| DOGE | 30g | 293 | 53,24% | +1,99% | -3,49% |
+| DOGE | 30g | 294 | 53,06% | +1,99% | -3,49% |
 | DOGE | 90g | 286 | 53,85% | +6,84% | -8,85% |
 
 ## Tracker live e gate futuro
 
 | Asset | Orizzonte | Controlli | Accuratezza | Return corretto | Stato | Peso Global |
 | --- | --- | --- | --- | --- | --- | --- |
-| SOL | 1g | 31 | 58,06% | +0,21% | LOCKED / RACCOLTA LIVE | 0 |
-| SOL | 3g | 29 | 51,72% | +0,46% | LOCKED / RACCOLTA LIVE | 0 |
-| SOL | 7g | 25 | 52,00% | +1,04% | LOCKED / RACCOLTA LIVE | 0 |
-| SOL | 14g | 18 | 22,22% | -1,43% | LOCKED / RACCOLTA LIVE | 0 |
-| SOL | 30g | 12 | 0,00% | -12,06% | LOCKED / RACCOLTA LIVE | 0 |
-| DOGE | 1g | 44 | 68,18% | +0,11% | LOCKED / RACCOLTA LIVE | 0 |
-| DOGE | 3g | 42 | 61,90% | +0,46% | LOCKED / RACCOLTA LIVE | 0 |
-| DOGE | 7g | 38 | 65,79% | +0,58% | ELIGIBILE FUTURO ±1 | 0 |
-| DOGE | 14g | 35 | 68,57% | +0,21% | LOCKED / RACCOLTA LIVE | 0 |
-| DOGE | 30g | 26 | 76,92% | +1,16% | LOCKED / RACCOLTA LIVE | 0 |
+| SOL | 1g | 32 | 59,38% | +0,21% | LOCKED / RACCOLTA LIVE | 0 |
+| SOL | 3g | 30 | 50,00% | +0,43% | LOCKED / RACCOLTA LIVE | 0 |
+| SOL | 7g | 26 | 50,00% | +0,83% | LOCKED / RACCOLTA LIVE | 0 |
+| SOL | 14g | 19 | 26,32% | -1,05% | LOCKED / RACCOLTA LIVE | 0 |
+| SOL | 30g | 13 | 0,00% | -12,06% | LOCKED / RACCOLTA LIVE | 0 |
+| DOGE | 1g | 45 | 68,89% | +0,12% | LOCKED / RACCOLTA LIVE | 0 |
+| DOGE | 3g | 43 | 60,47% | +0,41% | LOCKED / RACCOLTA LIVE | 0 |
+| DOGE | 7g | 39 | 66,67% | +0,63% | ELIGIBILE FUTURO ±1 | 0 |
+| DOGE | 14g | 35 | 68,57% | +0,20% | LOCKED / RACCOLTA LIVE | 0 |
+| DOGE | 30g | 27 | 77,78% | +1,15% | LOCKED / RACCOLTA LIVE | 0 |
 
 Gate prudente: almeno 30 controlli live a 7 giorni, accuratezza almeno 55% e return corretto direzione positivo. Anche dopo il gate, il contributo futuro non dovrà superare ±1 e dovrà restare dentro la famiglia tecnica.
 

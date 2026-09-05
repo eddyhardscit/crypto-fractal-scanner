@@ -1,6 +1,6 @@
 # Calibrazione pesi Global Confluence
 
-Generato: 2026-09-04 05:33 UTC
+Generato: 2026-09-05 08:22 UTC
 
 Report completo: [global_weight_calibration_report.md](global_weight_calibration_report.md)
 
@@ -21,207 +21,207 @@ Il file continua a produrre solo raccomandazioni: **non modifica automaticamente
 
 | Asset | Segnali salvati | Stato | Controlli max | Righe 30+ | Righe 60+ | Righe 100+ | Miglior modulo calibrabile | Orizzonte | Accuratezza | Return corretto direzione | Lettura |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 56 | PRIMA CALIBRAZIONE | 55 | 16 | 0 | 0 | Famiglia statistica | 1g | 54,55% | +0,47% | prima calibrazione possibile, solo modifiche leggere |
-| SOL | 56 | PRIMA CALIBRAZIONE | 52 | 21 | 0 | 0 | Tecnico | 1g | 51,92% | +0,36% | prima calibrazione possibile, solo modifiche leggere |
-| DOGE | 56 | PRIMA CALIBRAZIONE | 54 | 22 | 0 | 0 | Famiglia statistica | 1g | 57,41% | +0,54% | prima calibrazione possibile, solo modifiche leggere |
+| BTC | 57 | PRIMA CALIBRAZIONE | 56 | 16 | 0 | 0 | Famiglia statistica | 1g | 53,57% | +0,43% | prima calibrazione possibile, solo modifiche leggere |
+| SOL | 57 | PRIMA CALIBRAZIONE | 53 | 21 | 0 | 0 | Tecnico | 1g | 50,94% | +0,33% | prima calibrazione possibile, solo modifiche leggere |
+| DOGE | 57 | PRIMA CALIBRAZIONE | 55 | 22 | 0 | 0 | Famiglia statistica | 1g | 58,18% | +0,56% | prima calibrazione possibile, solo modifiche leggere |
 
 ## Raccomandazioni per moduli calibrabili
 
 | Asset | Orizzonte | Famiglia | Modulo | Controlli | Accuratezza | Return corretto direzione | Return medio | Drawdown medio | Max gain medio | Raccomandazione | Δ peso suggerito | Confidenza |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 1g | BREVE | Classic technical | 23 | 39,13% | +0,46% | +0,92% | +0,22% | +1,45% | OSSERVA | 0,0 | BASSA |
-| BTC | 1g | BREVE | Famiglia statistica | 55 | 54,55% | +0,47% | +0,47% | +0,02% | +1,01% | NON AUMENTARE | 0,0 | MEDIA |
-| BTC | 1g | BREVE | Microstruttura exchange | 3 | 66,67% | +0,27% | +0,27% | -0,26% | +0,74% | OSSERVA | 0,0 | BASSA |
-| BTC | 1g | BREVE | Tecnico | 50 | 40,00% | +0,20% | +0,61% | +0,14% | +1,16% | NON AUMENTARE | 0,0 | MEDIA |
-| BTC | 2g | BREVE | Classic technical | 22 | 40,91% | +0,52% | +1,21% | +0,63% | +1,86% | OSSERVA | 0,0 | BASSA |
-| BTC | 2g | BREVE | Famiglia statistica | 54 | 55,56% | +0,90% | +0,90% | +0,32% | +1,56% | PESO OK | 0,0 | MEDIA |
+| BTC | 1g | BREVE | Classic technical | 24 | 37,50% | +0,37% | +0,81% | +0,13% | +1,33% | OSSERVA | 0,0 | BASSA |
+| BTC | 1g | BREVE | Famiglia statistica | 56 | 53,57% | +0,43% | +0,43% | -0,01% | +0,97% | NON AUMENTARE | 0,0 | MEDIA |
+| BTC | 1g | BREVE | Microstruttura exchange | 4 | 50,00% | -0,20% | -0,20% | -0,66% | +0,18% | OSSERVA | 0,0 | BASSA |
+| BTC | 1g | BREVE | Tecnico | 51 | 39,22% | +0,16% | +0,57% | +0,10% | +1,10% | NON AUMENTARE | 0,0 | MEDIA |
+| BTC | 2g | BREVE | Classic technical | 23 | 43,48% | +0,63% | +1,29% | +0,68% | +2,02% | OSSERVA | 0,0 | BASSA |
+| BTC | 2g | BREVE | Famiglia statistica | 55 | 56,36% | +0,94% | +0,94% | +0,34% | +1,63% | PESO OK | 0,0 | MEDIA |
 | BTC | 2g | BREVE | Microstruttura exchange | 3 | 66,67% | +2,14% | +2,14% | +1,22% | +2,65% | OSSERVA | 0,0 | BASSA |
-| BTC | 2g | BREVE | Tecnico | 49 | 44,90% | +0,25% | +1,09% | +0,51% | +1,76% | NON AUMENTARE | 0,0 | MEDIA |
-| BTC | 3g | BREVE | Classic technical | 21 | 38,10% | +0,02% | +1,85% | -0,61% | +3,28% | OSSERVA | 0,0 | BASSA |
-| BTC | 3g | BREVE | Famiglia statistica | 53 | 56,60% | +1,30% | +1,30% | -0,96% | +2,88% | PESO OK | 0,0 | MEDIA |
+| BTC | 2g | BREVE | Tecnico | 50 | 46,00% | +0,31% | +1,13% | +0,53% | +1,83% | NON AUMENTARE | 0,0 | MEDIA |
+| BTC | 3g | BREVE | Classic technical | 22 | 40,91% | +0,13% | +1,88% | -0,63% | +3,40% | OSSERVA | 0,0 | BASSA |
+| BTC | 3g | BREVE | Famiglia statistica | 54 | 57,41% | +1,33% | +1,33% | -0,96% | +2,93% | PESO OK | 0,0 | MEDIA |
 | BTC | 3g | BREVE | Microstruttura exchange | 3 | 66,67% | +1,42% | +1,42% | -0,64% | +3,18% | OSSERVA | 0,0 | BASSA |
-| BTC | 3g | BREVE | Tecnico | 48 | 37,50% | -0,11% | +1,65% | -0,77% | +3,18% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
-| BTC | 5g | SETTIMANALE | Classic technical | 19 | 42,11% | -1,73% | +4,39% | -0,88% | +6,44% | OSSERVA | 0,0 | BASSA |
-| BTC | 5g | SETTIMANALE | Famiglia statistica | 51 | 50,98% | +2,25% | +2,25% | -1,48% | +4,48% | NON AUMENTARE | 0,0 | MEDIA |
+| BTC | 3g | BREVE | Tecnico | 49 | 38,78% | -0,06% | +1,66% | -0,77% | +3,23% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
+| BTC | 5g | SETTIMANALE | Classic technical | 20 | 45,00% | -1,53% | +4,27% | -0,94% | +6,39% | OSSERVA | 0,0 | BASSA |
+| BTC | 5g | SETTIMANALE | Famiglia statistica | 52 | 51,92% | +2,25% | +2,25% | -1,49% | +4,50% | NON AUMENTARE | 0,0 | MEDIA |
 | BTC | 5g | SETTIMANALE | Microstruttura exchange | 3 | 33,33% | +0,36% | +0,36% | -1,24% | +3,59% | OSSERVA | 0,0 | BASSA |
-| BTC | 5g | SETTIMANALE | Tecnico | 46 | 41,30% | -1,07% | +2,62% | -1,26% | +4,89% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
-| BTC | 7g | SETTIMANALE | Classic technical | 17 | 35,29% | -4,27% | +6,57% | -0,94% | +9,46% | OSSERVA | 0,0 | BASSA |
-| BTC | 7g | SETTIMANALE | Famiglia statistica | 49 | 59,18% | +3,09% | +3,09% | -1,71% | +5,71% | PESO OK | 0,0 | MEDIA |
+| BTC | 5g | SETTIMANALE | Tecnico | 47 | 42,55% | -1,00% | +2,60% | -1,28% | +4,90% | NON AUMENTARE | 0,0 | MEDIA |
+| BTC | 7g | SETTIMANALE | Classic technical | 18 | 38,89% | -3,89% | +6,35% | -0,99% | +9,27% | OSSERVA | 0,0 | BASSA |
+| BTC | 7g | SETTIMANALE | Famiglia statistica | 50 | 60,00% | +3,08% | +3,08% | -1,72% | +5,71% | PESO OK | 0,0 | MEDIA |
 | BTC | 7g | SETTIMANALE | Microstruttura exchange | 3 | 66,67% | +0,68% | +0,68% | -1,68% | +3,81% | OSSERVA | 0,0 | BASSA |
-| BTC | 7g | SETTIMANALE | Tecnico | 44 | 38,64% | -2,10% | +3,69% | -1,48% | +6,23% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
-| BTC | 10g | SETTIMANALE | Classic technical | 14 | 42,86% | -6,02% | +9,05% | -0,58% | +11,93% | OSSERVA | 0,0 | BASSA |
-| BTC | 10g | SETTIMANALE | Famiglia statistica | 46 | 63,04% | +4,17% | +4,17% | -1,88% | +6,98% | PESO OK | 0,0 | MEDIA |
+| BTC | 7g | SETTIMANALE | Tecnico | 45 | 40,00% | -2,00% | +3,67% | -1,48% | +6,22% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
+| BTC | 10g | SETTIMANALE | Classic technical | 15 | 46,67% | -5,57% | +8,49% | -0,79% | +11,40% | OSSERVA | 0,0 | BASSA |
+| BTC | 10g | SETTIMANALE | Famiglia statistica | 47 | 63,83% | +4,10% | +4,10% | -1,92% | +6,92% | PESO OK | 0,0 | MEDIA |
 | BTC | 10g | SETTIMANALE | Microstruttura exchange | 3 | 66,67% | +0,54% | +0,54% | -2,46% | +3,88% | OSSERVA | 0,0 | BASSA |
-| BTC | 10g | SETTIMANALE | Tecnico | 41 | 41,46% | -1,67% | +4,82% | -1,60% | +7,68% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
-| BTC | 14g | SWING | Classic technical | 10 | 40,00% | -7,93% | +11,72% | -0,10% | +15,43% | OSSERVA | 0,0 | BASSA |
-| BTC | 14g | SWING | Famiglia statistica | 42 | 64,29% | +6,27% | +6,27% | -2,06% | +9,62% | PESO OK | 0,0 | MEDIA |
+| BTC | 10g | SETTIMANALE | Tecnico | 42 | 42,86% | -1,61% | +4,72% | -1,65% | +7,60% | NON AUMENTARE | 0,0 | MEDIA |
+| BTC | 14g | SWING | Classic technical | 11 | 45,45% | -6,91% | +10,96% | -0,26% | +14,63% | OSSERVA | 0,0 | BASSA |
+| BTC | 14g | SWING | Famiglia statistica | 43 | 65,12% | +6,20% | +6,20% | -2,06% | +9,55% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
 | BTC | 14g | SWING | Microstruttura exchange | 1 | 0,00% | -2,25% | -2,25% | -3,05% | +4,24% | OSSERVA | 0,0 | BASSA |
-| BTC | 14g | SWING | Tecnico | 37 | 59,46% | +0,74% | +7,29% | -1,74% | +10,69% | PESO OK | 0,0 | MEDIA |
-| BTC | 21g | SWING | Classic technical | 5 | 0,00% | -15,15% | +15,15% | -1,27% | +17,36% | OSSERVA | 0,0 | BASSA |
-| BTC | 21g | SWING | Famiglia statistica | 35 | 65,71% | +8,19% | +8,19% | -2,92% | +11,76% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
+| BTC | 14g | SWING | Tecnico | 38 | 60,53% | +0,80% | +7,18% | -1,74% | +10,59% | PESO OK | 0,0 | MEDIA |
+| BTC | 21g | SWING | Classic technical | 6 | 0,00% | -17,01% | +17,01% | -1,17% | +19,54% | OSSERVA | 0,0 | BASSA |
+| BTC | 21g | SWING | Famiglia statistica | 36 | 66,67% | +8,69% | +8,69% | -2,85% | +12,28% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
 | BTC | 21g | SWING | Microstruttura exchange | 1 | 100,00% | +1,21% | +1,21% | -3,06% | +4,24% | OSSERVA | 0,0 | BASSA |
-| BTC | 21g | SWING | Tecnico | 30 | 36,67% | +0,89% | +9,29% | -2,66% | +12,92% | NON AUMENTARE | 0,0 | MEDIA |
+| BTC | 21g | SWING | Tecnico | 31 | 35,48% | +0,01% | +9,84% | -2,59% | +13,48% | NON AUMENTARE | 0,0 | MEDIA |
 | BTC | 30g | MEDIO | Classic technical | 4 | 0,00% | -24,06% | +24,06% | -1,55% | +28,48% | OSSERVA | 0,0 | BASSA |
-| BTC | 30g | MEDIO | Famiglia statistica | 28 | 82,14% | +11,90% | +11,90% | -2,94% | +15,85% | OSSERVA | 0,0 | BASSA |
+| BTC | 30g | MEDIO | Famiglia statistica | 29 | 82,76% | +12,27% | +12,27% | -2,97% | +16,23% | OSSERVA | 0,0 | BASSA |
 | BTC | 30g | MEDIO | Microstruttura exchange | 1 | 100,00% | +0,16% | +0,16% | -3,06% | +4,24% | OSSERVA | 0,0 | BASSA |
-| BTC | 30g | MEDIO | Tecnico | 23 | 30,43% | -7,90% | +11,72% | -2,61% | +16,07% | OSSERVA | 0,0 | BASSA |
-| BTC | 45g | MEDIO | Famiglia statistica | 13 | 100,00% | +22,82% | +22,82% | -2,84% | +26,60% | OSSERVA | 0,0 | BASSA |
+| BTC | 30g | MEDIO | Tecnico | 24 | 33,33% | -6,62% | +12,18% | -2,65% | +16,52% | OSSERVA | 0,0 | BASSA |
+| BTC | 45g | MEDIO | Famiglia statistica | 14 | 100,00% | +22,63% | +22,63% | -3,07% | +26,43% | OSSERVA | 0,0 | BASSA |
 | BTC | 45g | MEDIO | Microstruttura exchange | 1 | 100,00% | +20,42% | +20,42% | -3,06% | +26,73% | OSSERVA | 0,0 | BASSA |
 | BTC | 45g | MEDIO | Tecnico | 11 | 36,36% | -6,68% | +22,95% | -2,60% | +27,01% | OSSERVA | 0,0 | BASSA |
 | DOGE | 1g | BREVE | Classic technical | 31 | 41,94% | -0,51% | +0,27% | -0,38% | +0,97% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
-| DOGE | 1g | BREVE | Famiglia statistica | 54 | 57,41% | +0,54% | +0,36% | -0,29% | +1,31% | PESO OK | 0,0 | MEDIA |
+| DOGE | 1g | BREVE | Famiglia statistica | 55 | 58,18% | +0,56% | +0,32% | -0,33% | +1,26% | PESO OK | 0,0 | MEDIA |
 | DOGE | 1g | BREVE | Microstruttura exchange | 8 | 62,50% | +2,09% | +2,48% | +0,94% | +3,13% | OSSERVA | 0,0 | BASSA |
-| DOGE | 1g | BREVE | Tecnico | 48 | 54,17% | +0,44% | +0,26% | -0,41% | +1,20% | NON AUMENTARE | 0,0 | MEDIA |
+| DOGE | 1g | BREVE | Tecnico | 49 | 53,06% | +0,40% | +0,22% | -0,45% | +1,15% | NON AUMENTARE | 0,0 | MEDIA |
 | DOGE | 2g | BREVE | Classic technical | 31 | 45,16% | -1,20% | +0,67% | -0,10% | +1,65% | NON AUMENTARE | 0,0 | MEDIA |
-| DOGE | 2g | BREVE | Famiglia statistica | 53 | 56,60% | +1,00% | +0,63% | -0,12% | +1,83% | PESO OK | 0,0 | MEDIA |
+| DOGE | 2g | BREVE | Famiglia statistica | 54 | 55,56% | +0,91% | +0,69% | -0,08% | +1,92% | PESO OK | 0,0 | MEDIA |
 | DOGE | 2g | BREVE | Microstruttura exchange | 8 | 50,00% | +3,05% | +3,38% | +2,44% | +5,44% | OSSERVA | 0,0 | BASSA |
-| DOGE | 2g | BREVE | Tecnico | 47 | 55,32% | +0,58% | +0,19% | -0,54% | +1,36% | PESO OK | 0,0 | MEDIA |
+| DOGE | 2g | BREVE | Tecnico | 48 | 56,25% | +0,65% | +0,27% | -0,49% | +1,48% | PESO OK | 0,0 | MEDIA |
 | DOGE | 3g | BREVE | Classic technical | 31 | 32,26% | -2,13% | +1,30% | -1,89% | +4,20% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
-| DOGE | 3g | BREVE | Famiglia statistica | 52 | 55,77% | +1,54% | +0,96% | -1,83% | +3,64% | PESO OK | 0,0 | MEDIA |
+| DOGE | 3g | BREVE | Famiglia statistica | 53 | 54,72% | +1,43% | +1,02% | -1,81% | +3,75% | NON AUMENTARE | 0,0 | MEDIA |
 | DOGE | 3g | BREVE | Microstruttura exchange | 8 | 50,00% | +2,64% | +2,90% | -0,79% | +6,76% | OSSERVA | 0,0 | BASSA |
-| DOGE | 3g | BREVE | Tecnico | 46 | 43,48% | +0,37% | +0,00% | -2,15% | +2,55% | NON AUMENTARE | 0,0 | MEDIA |
+| DOGE | 3g | BREVE | Tecnico | 47 | 44,68% | +0,46% | +0,10% | -2,12% | +2,70% | NON AUMENTARE | 0,0 | MEDIA |
 | DOGE | 5g | SETTIMANALE | Classic technical | 31 | 38,71% | -3,99% | +2,48% | -2,71% | +6,71% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
-| DOGE | 5g | SETTIMANALE | Famiglia statistica | 50 | 54,00% | +2,70% | +1,76% | -2,63% | +5,92% | NON AUMENTARE | 0,0 | MEDIA |
+| DOGE | 5g | SETTIMANALE | Famiglia statistica | 51 | 52,94% | +2,58% | +1,79% | -2,64% | +5,97% | NON AUMENTARE | 0,0 | MEDIA |
 | DOGE | 5g | SETTIMANALE | Microstruttura exchange | 8 | 37,50% | +1,34% | +1,54% | -1,56% | +8,05% | OSSERVA | 0,0 | BASSA |
-| DOGE | 5g | SETTIMANALE | Tecnico | 44 | 54,55% | +0,22% | +0,51% | -3,15% | +4,68% | NON AUMENTARE | 0,0 | MEDIA |
+| DOGE | 5g | SETTIMANALE | Tecnico | 45 | 55,56% | +0,29% | +0,57% | -3,15% | +4,77% | PESO OK | 0,0 | MEDIA |
 | DOGE | 7g | SETTIMANALE | Classic technical | 31 | 38,71% | -4,80% | +2,76% | -3,30% | +8,15% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
-| DOGE | 7g | SETTIMANALE | Famiglia statistica | 48 | 60,42% | +3,59% | +2,48% | -3,01% | +7,90% | PESO OK | 0,0 | MEDIA |
-| DOGE | 7g | SETTIMANALE | Microstruttura exchange | 7 | 42,86% | +0,24% | +0,39% | -1,74% | +8,98% | OSSERVA | 0,0 | BASSA |
-| DOGE | 7g | SETTIMANALE | Tecnico | 42 | 54,76% | +0,91% | +0,88% | -3,64% | +6,22% | NON AUMENTARE | 0,0 | MEDIA |
+| DOGE | 7g | SETTIMANALE | Famiglia statistica | 49 | 59,18% | +3,51% | +2,44% | -3,07% | +7,85% | PESO OK | 0,0 | MEDIA |
+| DOGE | 7g | SETTIMANALE | Microstruttura exchange | 8 | 50,00% | +0,28% | +0,41% | -2,23% | +8,54% | OSSERVA | 0,0 | BASSA |
+| DOGE | 7g | SETTIMANALE | Tecnico | 43 | 55,81% | +0,90% | +0,88% | -3,69% | +6,20% | PESO OK | 0,0 | MEDIA |
 | DOGE | 10g | SETTIMANALE | Classic technical | 31 | 41,94% | -4,39% | +2,22% | -3,95% | +9,25% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
 | DOGE | 10g | SETTIMANALE | Famiglia statistica | 46 | 58,70% | +4,05% | +2,67% | -3,42% | +9,45% | PESO OK | 0,0 | MEDIA |
 | DOGE | 10g | SETTIMANALE | Microstruttura exchange | 7 | 57,14% | -0,43% | +0,00% | -2,75% | +8,98% | OSSERVA | 0,0 | BASSA |
-| DOGE | 10g | SETTIMANALE | Tecnico | 39 | 61,54% | +1,45% | +0,48% | -4,06% | +6,89% | PESO OK | 0,0 | MEDIA |
-| DOGE | 14g | SWING | Classic technical | 27 | 51,85% | -4,09% | +4,09% | -3,41% | +12,32% | OSSERVA | 0,0 | BASSA |
-| DOGE | 14g | SWING | Famiglia statistica | 42 | 76,19% | +7,74% | +5,51% | -3,07% | +13,93% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
-| DOGE | 14g | SWING | Microstruttura exchange | 5 | 80,00% | +4,21% | +12,07% | +0,53% | +20,35% | OSSERVA | 0,0 | BASSA |
-| DOGE | 14g | SWING | Tecnico | 35 | 68,57% | +1,44% | +1,94% | -3,72% | +9,28% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
+| DOGE | 10g | SETTIMANALE | Tecnico | 40 | 60,00% | +1,38% | +0,43% | -4,15% | +6,82% | PESO OK | 0,0 | MEDIA |
+| DOGE | 14g | SWING | Classic technical | 28 | 50,00% | -4,13% | +3,76% | -3,68% | +12,04% | OSSERVA | 0,0 | BASSA |
+| DOGE | 14g | SWING | Famiglia statistica | 43 | 74,42% | +7,44% | +5,26% | -3,26% | +13,71% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
+| DOGE | 14g | SWING | Microstruttura exchange | 6 | 66,67% | +2,65% | +9,19% | -1,41% | +17,72% | OSSERVA | 0,0 | BASSA |
+| DOGE | 14g | SWING | Tecnico | 36 | 66,67% | +1,26% | +1,74% | -3,92% | +9,15% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
 | DOGE | 21g | SWING | Classic technical | 23 | 65,22% | -3,23% | +3,23% | -4,58% | +10,96% | OSSERVA | 0,0 | BASSA |
-| DOGE | 21g | SWING | Famiglia statistica | 35 | 85,71% | +10,77% | +7,39% | -4,19% | +16,86% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
+| DOGE | 21g | SWING | Famiglia statistica | 36 | 86,11% | +11,08% | +7,79% | -4,11% | +17,58% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
 | DOGE | 21g | SWING | Microstruttura exchange | 4 | 75,00% | -0,95% | +12,49% | -1,31% | +25,23% | OSSERVA | 0,0 | BASSA |
-| DOGE | 21g | SWING | Tecnico | 30 | 63,33% | -5,01% | +5,01% | -4,70% | +12,46% | NON AUMENTARE | 0,0 | MEDIA |
+| DOGE | 21g | SWING | Tecnico | 31 | 64,52% | -4,14% | +5,56% | -4,59% | +13,43% | NON AUMENTARE | 0,0 | MEDIA |
 | DOGE | 30g | MEDIO | Classic technical | 20 | 55,00% | -7,30% | +7,30% | -5,27% | +16,83% | OSSERVA | 0,0 | BASSA |
-| DOGE | 30g | MEDIO | Famiglia statistica | 28 | 85,71% | +8,63% | +10,27% | -5,04% | +22,25% | OSSERVA | 0,0 | BASSA |
+| DOGE | 30g | MEDIO | Famiglia statistica | 29 | 86,21% | +9,11% | +10,68% | -4,92% | +22,96% | OSSERVA | 0,0 | BASSA |
 | DOGE | 30g | MEDIO | Microstruttura exchange | 2 | 100,00% | +31,53% | +31,53% | -1,85% | +40,20% | OSSERVA | 0,0 | BASSA |
 | DOGE | 30g | MEDIO | Tecnico | 28 | 42,86% | -10,27% | +10,27% | -5,04% | +22,25% | OSSERVA | 0,0 | BASSA |
-| DOGE | 45g | MEDIO | Classic technical | 12 | 0,00% | -18,98% | +18,98% | -6,50% | +36,87% | OSSERVA | 0,0 | BASSA |
-| DOGE | 45g | MEDIO | Famiglia statistica | 13 | 0,00% | -18,68% | +18,68% | -6,62% | +36,75% | OSSERVA | 0,0 | BASSA |
-| DOGE | 45g | MEDIO | Tecnico | 13 | 0,00% | -18,68% | +18,68% | -6,62% | +36,75% | OSSERVA | 0,0 | BASSA |
-| SOL | 1g | BREVE | Classic technical | 36 | 52,78% | +0,57% | +0,61% | -0,16% | +1,57% | NON AUMENTARE | 0,0 | MEDIA |
-| SOL | 1g | BREVE | Famiglia statistica | 50 | 58,00% | +0,37% | +0,39% | -0,22% | +1,28% | PESO OK | 0,0 | MEDIA |
+| DOGE | 45g | MEDIO | Classic technical | 13 | 0,00% | -18,83% | +18,83% | -6,54% | +36,85% | OSSERVA | 0,0 | BASSA |
+| DOGE | 45g | MEDIO | Famiglia statistica | 14 | 0,00% | -18,56% | +18,56% | -6,65% | +36,74% | OSSERVA | 0,0 | BASSA |
+| DOGE | 45g | MEDIO | Tecnico | 14 | 0,00% | -18,56% | +18,56% | -6,65% | +36,74% | OSSERVA | 0,0 | BASSA |
+| SOL | 1g | BREVE | Classic technical | 37 | 51,35% | +0,51% | +0,56% | -0,20% | +1,49% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 1g | BREVE | Famiglia statistica | 51 | 56,86% | +0,34% | +0,35% | -0,25% | +1,23% | PESO OK | 0,0 | MEDIA |
 | SOL | 1g | BREVE | Frattale SOL | 1 | 0,00% | -0,10% | -0,10% | -0,21% | +0,02% | OSSERVA | 0,0 | BASSA |
 | SOL | 1g | BREVE | Microstruttura exchange | 5 | 60,00% | +0,64% | +0,64% | +0,16% | +3,12% | OSSERVA | 0,0 | BASSA |
-| SOL | 1g | BREVE | Tecnico | 52 | 51,92% | +0,36% | +0,39% | -0,26% | +1,24% | NON AUMENTARE | 0,0 | MEDIA |
-| SOL | 2g | BREVE | Classic technical | 35 | 51,43% | +0,93% | +0,95% | +0,09% | +1,92% | NON AUMENTARE | 0,0 | MEDIA |
-| SOL | 2g | BREVE | Famiglia statistica | 49 | 46,94% | +0,45% | +0,94% | +0,02% | +1,75% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 1g | BREVE | Tecnico | 53 | 50,94% | +0,33% | +0,35% | -0,29% | +1,19% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 2g | BREVE | Classic technical | 36 | 52,78% | +0,96% | +0,99% | +0,10% | +1,99% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 2g | BREVE | Famiglia statistica | 50 | 48,00% | +0,48% | +0,96% | +0,03% | +1,80% | NON AUMENTARE | 0,0 | MEDIA |
 | SOL | 2g | BREVE | Frattale SOL | 1 | 0,00% | -0,28% | -0,28% | -0,31% | +0,05% | OSSERVA | 0,0 | BASSA |
 | SOL | 2g | BREVE | Microstruttura exchange | 5 | 40,00% | +2,12% | +2,12% | +0,59% | +4,38% | OSSERVA | 0,0 | BASSA |
-| SOL | 2g | BREVE | Tecnico | 51 | 43,14% | +0,23% | +0,83% | -0,02% | +1,92% | NON AUMENTARE | 0,0 | MEDIA |
-| SOL | 3g | BREVE | Classic technical | 34 | 52,94% | +1,10% | +1,26% | -1,70% | +3,45% | NON AUMENTARE | 0,0 | MEDIA |
-| SOL | 3g | BREVE | Famiglia statistica | 48 | 47,92% | +0,96% | +1,57% | -1,67% | +3,82% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 2g | BREVE | Tecnico | 52 | 44,23% | +0,27% | +0,86% | -0,01% | +1,97% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 3g | BREVE | Classic technical | 35 | 54,29% | +1,13% | +1,28% | -1,68% | +3,50% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 3g | BREVE | Famiglia statistica | 49 | 48,98% | +0,98% | +1,58% | -1,65% | +3,85% | NON AUMENTARE | 0,0 | MEDIA |
 | SOL | 3g | BREVE | Frattale SOL | 1 | 0,00% | -1,97% | -1,97% | -2,74% | +1,96% | OSSERVA | 0,0 | BASSA |
 | SOL | 3g | BREVE | Microstruttura exchange | 5 | 60,00% | +2,46% | +2,46% | -1,34% | +7,31% | OSSERVA | 0,0 | BASSA |
-| SOL | 3g | BREVE | Tecnico | 50 | 48,00% | +0,03% | +1,34% | -1,73% | +3,51% | NON AUMENTARE | 0,0 | MEDIA |
-| SOL | 5g | SETTIMANALE | Classic technical | 32 | 59,38% | +1,87% | +2,05% | -2,26% | +5,26% | PESO OK | 0,0 | MEDIA |
-| SOL | 5g | SETTIMANALE | Famiglia statistica | 46 | 54,35% | +1,75% | +2,93% | -2,21% | +6,35% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 3g | BREVE | Tecnico | 51 | 49,02% | +0,07% | +1,35% | -1,71% | +3,55% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 5g | SETTIMANALE | Classic technical | 33 | 57,58% | +1,81% | +1,98% | -2,35% | +5,19% | PESO OK | 0,0 | MEDIA |
+| SOL | 5g | SETTIMANALE | Famiglia statistica | 47 | 53,19% | +1,70% | +2,86% | -2,27% | +6,27% | NON AUMENTARE | 0,0 | MEDIA |
 | SOL | 5g | SETTIMANALE | Frattale SOL | 1 | 0,00% | -3,96% | -3,96% | -4,95% | +1,96% | OSSERVA | 0,0 | BASSA |
 | SOL | 5g | SETTIMANALE | Microstruttura exchange | 5 | 60,00% | +2,38% | +2,38% | -1,81% | +7,31% | OSSERVA | 0,0 | BASSA |
-| SOL | 5g | SETTIMANALE | Tecnico | 48 | 47,92% | -0,52% | +2,80% | -2,36% | +6,09% | NON AUMENTARE | 0,0 | MEDIA |
-| SOL | 7g | SETTIMANALE | Classic technical | 30 | 53,33% | +2,46% | +2,40% | -2,57% | +6,46% | NON AUMENTARE | 0,0 | MEDIA |
-| SOL | 7g | SETTIMANALE | Famiglia statistica | 44 | 61,36% | +2,98% | +4,42% | -2,44% | +8,48% | PESO OK | 0,0 | MEDIA |
+| SOL | 5g | SETTIMANALE | Tecnico | 49 | 46,94% | -0,52% | +2,73% | -2,42% | +6,02% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 7g | SETTIMANALE | Classic technical | 31 | 51,61% | +2,33% | +2,27% | -2,69% | +6,36% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 7g | SETTIMANALE | Famiglia statistica | 45 | 60,00% | +2,87% | +4,28% | -2,53% | +8,37% | PESO OK | 0,0 | MEDIA |
 | SOL | 7g | SETTIMANALE | Frattale SOL | 1 | 0,00% | -2,59% | -2,59% | -4,95% | +1,96% | OSSERVA | 0,0 | BASSA |
 | SOL | 7g | SETTIMANALE | Microstruttura exchange | 5 | 60,00% | +3,38% | +3,38% | -2,33% | +9,16% | OSSERVA | 0,0 | BASSA |
-| SOL | 7g | SETTIMANALE | Tecnico | 46 | 41,30% | -1,36% | +4,09% | -2,64% | +8,13% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
-| SOL | 10g | SETTIMANALE | Classic technical | 27 | 62,96% | +2,49% | +2,36% | -2,97% | +7,06% | OSSERVA | 0,0 | BASSA |
-| SOL | 10g | SETTIMANALE | Famiglia statistica | 41 | 65,85% | +5,38% | +6,49% | -2,74% | +10,62% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
+| SOL | 7g | SETTIMANALE | Tecnico | 47 | 40,43% | -1,37% | +3,97% | -2,72% | +8,02% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
+| SOL | 10g | SETTIMANALE | Classic technical | 28 | 64,29% | +2,59% | +2,47% | -2,85% | +7,29% | OSSERVA | 0,0 | BASSA |
+| SOL | 10g | SETTIMANALE | Famiglia statistica | 42 | 66,67% | +5,38% | +6,47% | -2,66% | +10,69% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
 | SOL | 10g | SETTIMANALE | Frattale SOL | 1 | 0,00% | -2,54% | -2,54% | -5,92% | +1,96% | OSSERVA | 0,0 | BASSA |
-| SOL | 10g | SETTIMANALE | Microstruttura exchange | 4 | 75,00% | +2,90% | +2,90% | -3,71% | +8,09% | OSSERVA | 0,0 | BASSA |
-| SOL | 10g | SETTIMANALE | Tecnico | 43 | 48,84% | -2,45% | +5,37% | -3,01% | +9,70% | NON AUMENTARE | 0,0 | MEDIA |
-| SOL | 14g | SWING | Classic technical | 23 | 43,48% | +0,38% | +2,55% | -3,66% | +6,91% | OSSERVA | 0,0 | BASSA |
-| SOL | 14g | SWING | Famiglia statistica | 37 | 83,78% | +10,26% | +10,09% | -3,14% | +14,92% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
+| SOL | 10g | SETTIMANALE | Microstruttura exchange | 5 | 80,00% | +3,41% | +3,41% | -2,87% | +9,17% | OSSERVA | 0,0 | BASSA |
+| SOL | 10g | SETTIMANALE | Tecnico | 44 | 50,00% | -2,27% | +5,38% | -2,93% | +9,78% | NON AUMENTARE | 0,0 | MEDIA |
+| SOL | 14g | SWING | Classic technical | 24 | 45,83% | +0,76% | +2,84% | -3,58% | +7,36% | OSSERVA | 0,0 | BASSA |
+| SOL | 14g | SWING | Famiglia statistica | 38 | 81,58% | +9,74% | +10,08% | -3,10% | +15,00% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
 | SOL | 14g | SWING | Frattale SOL | 1 | 0,00% | -1,13% | -1,13% | -5,92% | +1,96% | OSSERVA | 0,0 | BASSA |
 | SOL | 14g | SWING | Microstruttura exchange | 3 | 66,67% | +10,82% | +10,82% | -3,34% | +16,86% | OSSERVA | 0,0 | BASSA |
-| SOL | 14g | SWING | Tecnico | 39 | 33,33% | -6,23% | +7,43% | -3,51% | +12,61% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
+| SOL | 14g | SWING | Tecnico | 40 | 35,00% | -5,83% | +7,48% | -3,46% | +12,74% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
 | SOL | 21g | SWING | Classic technical | 21 | 38,10% | -11,18% | +11,18% | -4,64% | +15,32% | OSSERVA | 0,0 | BASSA |
-| SOL | 21g | SWING | Famiglia statistica | 31 | 83,87% | +15,68% | +13,88% | -4,60% | +19,06% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
+| SOL | 21g | SWING | Famiglia statistica | 32 | 84,38% | +16,31% | +14,56% | -4,50% | +19,90% | POSSIBILE AUMENTO LEGGERO | +0,25 | MEDIA |
 | SOL | 21g | SWING | Frattale SOL | 1 | 0,00% | -5,86% | -5,86% | -7,23% | +1,96% | OSSERVA | 0,0 | BASSA |
 | SOL | 21g | SWING | Microstruttura exchange | 2 | 50,00% | +17,59% | +17,59% | -5,94% | +22,78% | OSSERVA | 0,0 | BASSA |
-| SOL | 21g | SWING | Tecnico | 33 | 36,36% | -11,76% | +10,52% | -4,96% | +15,64% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
+| SOL | 21g | SWING | Tecnico | 34 | 35,29% | -12,47% | +11,26% | -4,86% | +16,53% | POSSIBILE RIDUZIONE LEGGERA | -0,25 | MEDIA |
 | SOL | 30g | MEDIO | Classic technical | 20 | 10,00% | -25,57% | +25,57% | -4,94% | +31,98% | OSSERVA | 0,0 | BASSA |
-| SOL | 30g | MEDIO | Famiglia statistica | 24 | 87,50% | +20,66% | +21,10% | -5,75% | +27,16% | OSSERVA | 0,0 | BASSA |
+| SOL | 30g | MEDIO | Famiglia statistica | 25 | 88,00% | +21,36% | +21,78% | -5,61% | +28,01% | OSSERVA | 0,0 | BASSA |
 | SOL | 30g | MEDIO | Frattale SOL | 1 | 0,00% | -4,50% | -4,50% | -9,39% | +1,96% | OSSERVA | 0,0 | BASSA |
 | SOL | 30g | MEDIO | Microstruttura exchange | 1 | 100,00% | +8,54% | +8,54% | -9,62% | +9,47% | OSSERVA | 0,0 | BASSA |
-| SOL | 30g | MEDIO | Tecnico | 28 | 14,29% | -18,82% | +18,15% | -5,91% | +23,83% | OSSERVA | 0,0 | BASSA |
-| SOL | 45g | MEDIO | Classic technical | 5 | 0,00% | -35,45% | +35,45% | -6,51% | +45,53% | OSSERVA | 0,0 | BASSA |
-| SOL | 45g | MEDIO | Famiglia statistica | 9 | 22,22% | -15,43% | +30,22% | -7,97% | +37,85% | OSSERVA | 0,0 | BASSA |
+| SOL | 30g | MEDIO | Tecnico | 29 | 13,79% | -19,48% | +18,84% | -5,78% | +24,67% | OSSERVA | 0,0 | BASSA |
+| SOL | 45g | MEDIO | Classic technical | 6 | 0,00% | -34,78% | +34,78% | -6,95% | +44,84% | OSSERVA | 0,0 | BASSA |
+| SOL | 45g | MEDIO | Famiglia statistica | 10 | 20,00% | -17,03% | +30,34% | -8,09% | +38,20% | OSSERVA | 0,0 | BASSA |
 | SOL | 45g | MEDIO | Frattale SOL | 1 | 100,00% | +19,26% | +19,26% | -9,39% | +23,73% | OSSERVA | 0,0 | BASSA |
 | SOL | 45g | MEDIO | Microstruttura exchange | 1 | 100,00% | +32,54% | +32,54% | -9,62% | +40,68% | OSSERVA | 0,0 | BASSA |
-| SOL | 45g | MEDIO | Tecnico | 13 | 30,77% | -16,90% | +32,04% | -7,63% | +39,27% | OSSERVA | 0,0 | BASSA |
+| SOL | 45g | MEDIO | Tecnico | 14 | 28,57% | -17,93% | +31,99% | -7,74% | +39,42% | OSSERVA | 0,0 | BASSA |
 
 ## Moduli esclusi dalle proposte di peso
 
 | Modulo | Ruolo | Famiglia madre | Controlli max | Motivo esclusione |
 | --- | --- | --- | --- | --- |
-| Global confluence | BENCHMARK | nessuna | 52 | Risultato finale del Global: benchmark, non peso interno. |
+| Global confluence | BENCHMARK | nessuna | 53 | Risultato finale del Global: benchmark, non peso interno. |
 | Market regime grezzo | DIAGNOSTICO | statistical_family | 38 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
-| Scanner grezzo | DIAGNOSTICO | statistical_family | 55 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
+| Scanner grezzo | DIAGNOSTICO | statistical_family | 56 | Già incluso in statistical_family; nessuna proposta di peso autonoma. |
 
 ## Sintesi per famiglia temporale
 
 | Asset | Famiglia | Modulo calibrabile | Controlli totali | Accuratezza media ponderata | Return corretto direzione |
 | --- | --- | --- | --- | --- | --- |
-| BTC | BREVE | Classic technical | 66 | 39,39% | +0,34% |
-| BTC | BREVE | Famiglia statistica | 162 | 55,56% | +0,88% |
-| BTC | BREVE | Microstruttura exchange | 9 | 66,67% | +1,28% |
-| BTC | BREVE | Tecnico | 147 | 40,82% | +0,11% |
-| BTC | SETTIMANALE | Classic technical | 50 | 40,00% | -3,79% |
-| BTC | SETTIMANALE | Famiglia statistica | 146 | 57,53% | +3,14% |
+| BTC | BREVE | Classic technical | 69 | 40,58% | +0,38% |
+| BTC | BREVE | Famiglia statistica | 165 | 55,76% | +0,89% |
+| BTC | BREVE | Microstruttura exchange | 10 | 60,00% | +0,99% |
+| BTC | BREVE | Tecnico | 150 | 41,33% | +0,14% |
+| BTC | SETTIMANALE | Classic technical | 53 | 43,40% | -3,48% |
+| BTC | SETTIMANALE | Famiglia statistica | 149 | 58,39% | +3,11% |
 | BTC | SETTIMANALE | Microstruttura exchange | 9 | 55,56% | +0,53% |
-| BTC | SETTIMANALE | Tecnico | 131 | 40,46% | -1,60% |
-| BTC | SWING | Classic technical | 15 | 26,67% | -10,34% |
-| BTC | SWING | Famiglia statistica | 77 | 64,94% | +7,14% |
+| BTC | SETTIMANALE | Tecnico | 134 | 41,79% | -1,53% |
+| BTC | SWING | Classic technical | 17 | 29,41% | -10,48% |
+| BTC | SWING | Famiglia statistica | 79 | 65,82% | +7,33% |
 | BTC | SWING | Microstruttura exchange | 2 | 50,00% | -0,52% |
-| BTC | SWING | Tecnico | 67 | 49,25% | +0,80% |
+| BTC | SWING | Tecnico | 69 | 49,28% | +0,45% |
 | BTC | MEDIO | Classic technical | 4 | 0,00% | -24,06% |
-| BTC | MEDIO | Famiglia statistica | 41 | 87,80% | +15,36% |
+| BTC | MEDIO | Famiglia statistica | 43 | 88,37% | +15,65% |
 | BTC | MEDIO | Microstruttura exchange | 2 | 100,00% | +10,29% |
-| BTC | MEDIO | Tecnico | 34 | 32,35% | -7,51% |
+| BTC | MEDIO | Tecnico | 35 | 34,29% | -6,64% |
 | DOGE | BREVE | Classic technical | 93 | 39,78% | -1,28% |
-| DOGE | BREVE | Famiglia statistica | 159 | 56,60% | +1,02% |
+| DOGE | BREVE | Famiglia statistica | 162 | 56,17% | +0,96% |
 | DOGE | BREVE | Microstruttura exchange | 24 | 54,17% | +2,59% |
-| DOGE | BREVE | Tecnico | 141 | 51,06% | +0,46% |
+| DOGE | BREVE | Tecnico | 144 | 51,39% | +0,50% |
 | DOGE | SETTIMANALE | Classic technical | 93 | 39,78% | -4,39% |
-| DOGE | SETTIMANALE | Famiglia statistica | 144 | 57,64% | +3,43% |
-| DOGE | SETTIMANALE | Microstruttura exchange | 22 | 45,45% | +0,43% |
-| DOGE | SETTIMANALE | Tecnico | 125 | 56,80% | +0,84% |
-| DOGE | SWING | Classic technical | 50 | 58,00% | -3,70% |
-| DOGE | SWING | Famiglia statistica | 77 | 80,52% | +9,12% |
-| DOGE | SWING | Microstruttura exchange | 9 | 77,78% | +1,92% |
-| DOGE | SWING | Tecnico | 65 | 66,15% | -1,54% |
-| DOGE | MEDIO | Classic technical | 32 | 34,38% | -11,68% |
-| DOGE | MEDIO | Famiglia statistica | 41 | 58,54% | -0,03% |
+| DOGE | SETTIMANALE | Famiglia statistica | 146 | 56,85% | +3,35% |
+| DOGE | SETTIMANALE | Microstruttura exchange | 23 | 47,83% | +0,43% |
+| DOGE | SETTIMANALE | Tecnico | 128 | 57,03% | +0,84% |
+| DOGE | SWING | Classic technical | 51 | 56,86% | -3,72% |
+| DOGE | SWING | Famiglia statistica | 79 | 79,75% | +9,10% |
+| DOGE | SWING | Microstruttura exchange | 10 | 70,00% | +1,21% |
+| DOGE | SWING | Tecnico | 67 | 65,67% | -1,24% |
+| DOGE | MEDIO | Classic technical | 33 | 33,33% | -11,84% |
+| DOGE | MEDIO | Famiglia statistica | 43 | 58,14% | +0,10% |
 | DOGE | MEDIO | Microstruttura exchange | 2 | 100,00% | +31,53% |
-| DOGE | MEDIO | Tecnico | 41 | 29,27% | -12,94% |
-| SOL | BREVE | Classic technical | 105 | 52,38% | +0,86% |
-| SOL | BREVE | Famiglia statistica | 147 | 51,02% | +0,59% |
+| DOGE | MEDIO | Tecnico | 42 | 28,57% | -13,03% |
+| SOL | BREVE | Classic technical | 108 | 52,78% | +0,86% |
+| SOL | BREVE | Famiglia statistica | 150 | 51,33% | +0,60% |
 | SOL | BREVE | Frattale SOL | 3 | 0,00% | -0,79% |
 | SOL | BREVE | Microstruttura exchange | 15 | 53,33% | +1,74% |
-| SOL | BREVE | Tecnico | 153 | 47,71% | +0,21% |
-| SOL | SETTIMANALE | Classic technical | 89 | 58,43% | +2,26% |
-| SOL | SETTIMANALE | Famiglia statistica | 131 | 60,31% | +3,30% |
+| SOL | BREVE | Tecnico | 156 | 48,08% | +0,22% |
+| SOL | SETTIMANALE | Classic technical | 92 | 57,61% | +2,22% |
+| SOL | SETTIMANALE | Famiglia statistica | 134 | 59,70% | +3,25% |
 | SOL | SETTIMANALE | Frattale SOL | 3 | 0,00% | -3,03% |
-| SOL | SETTIMANALE | Microstruttura exchange | 14 | 64,29% | +2,88% |
-| SOL | SETTIMANALE | Tecnico | 137 | 45,99% | -1,41% |
-| SOL | SWING | Classic technical | 44 | 40,91% | -5,14% |
-| SOL | SWING | Famiglia statistica | 68 | 83,82% | +12,73% |
+| SOL | SETTIMANALE | Microstruttura exchange | 15 | 66,67% | +3,06% |
+| SOL | SETTIMANALE | Tecnico | 140 | 45,71% | -1,35% |
+| SOL | SWING | Classic technical | 45 | 42,22% | -4,81% |
+| SOL | SWING | Famiglia statistica | 70 | 82,86% | +12,74% |
 | SOL | SWING | Frattale SOL | 2 | 0,00% | -3,49% |
 | SOL | SWING | Microstruttura exchange | 5 | 60,00% | +13,52% |
-| SOL | SWING | Tecnico | 72 | 34,72% | -8,76% |
-| SOL | MEDIO | Classic technical | 25 | 8,00% | -27,54% |
-| SOL | MEDIO | Famiglia statistica | 33 | 69,70% | +10,82% |
+| SOL | SWING | Tecnico | 74 | 35,14% | -8,88% |
+| SOL | MEDIO | Classic technical | 26 | 7,69% | -27,69% |
+| SOL | MEDIO | Famiglia statistica | 35 | 68,57% | +10,39% |
 | SOL | MEDIO | Frattale SOL | 2 | 50,00% | +7,38% |
 | SOL | MEDIO | Microstruttura exchange | 2 | 100,00% | +20,54% |
-| SOL | MEDIO | Tecnico | 41 | 19,51% | -18,21% |
+| SOL | MEDIO | Tecnico | 43 | 18,60% | -18,98% |
 
 ## Aree ancora in attesa
 
