@@ -2671,6 +2671,26 @@ Il cono ufficiale resta grezzo e invariato. Il calibratore usa soltanto previsio
 Nota: servono almeno 5 controlli prima di dare un peso minimo al cono. Sotto 5 controlli resta solo osservazione.
 <!-- SCANNER_FORECAST_TRACKER_END -->
 
+<!-- FORECAST_30D_HISTORY_START -->
+
+---
+
+# Storico previsioni 30 giorni
+
+Report separato completo: [forecast_30d_history.md](forecast_30d_history.md)
+
+Righe salvate nello storico: **165**.
+
+Questa sezione tiene un diario delle previsioni giornaliere a 30 giorni, senza appesantire il report principale.
+
+| Data | Asset | Prezzo | Direzione | Casi positivi | Return p50 | Drawdown p50 | Max gain p50 | Controllo 30g |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-09-07 | BTC | 79.818 $ | SALITA | 85,00% | 94.260 $ | 71.836 $ | 99.621 $ | 2026-10-07 |
+| 2026-09-07 | DOGE | 0,09000 $ | DISCESA | 30,00% | 0,08000 $ | 0,07000 $ | 0,10000 $ | 2026-10-07 |
+| 2026-09-07 | SOL | 105,54 $ | SALITA | 65,00% | 126,54 $ | 91,99 $ | 133,00 $ | 2026-10-07 |
+
+<!-- FORECAST_30D_HISTORY_END -->
+
 </details>
 <!-- COMPACT_SECTION_END:scanner_forecast -->
 
@@ -4180,6 +4200,22 @@ La colonna **Percorso ancorato** continua la scala dal bottom. La colonna **Scen
 - Lo scenario riancorato non dimostra che il frattale sia valido.
 - Prima di pesare il modulo servono milestone maturate e un errore ancorato accettabile.
 <!-- FRACTAL_PATH_TRACKER_END -->
+
+<!-- SOL_BTC_FRACTAL_HISTORY_START -->
+
+---
+
+# Storico frattale SOL/BTC
+
+Per vedere la tabella giorno per giorno devi aprire/cliccare questo file:
+
+**[sol_btc_fractal_history.md](sol_btc_fractal_history.md)**
+
+Ultima lettura salvata: **2026-09-07** — SOL 105,54 $, gap +10,76%, somiglianza +68,14%.
+
+Nel report principale lascio solo il link, così non diventa troppo lungo.
+
+<!-- SOL_BTC_FRACTAL_HISTORY_END -->
 
 </details>
 <!-- COMPACT_SECTION_END:fractal_path -->
