@@ -1,6 +1,6 @@
 # Extreme cases path report
 
-Generato: 2026-09-06 05:32 UTC
+Generato: 2026-09-07 05:32 UTC
 
 Questo report si attiva quando i casi positivi o negativi sono almeno **80%**.
 
@@ -10,32 +10,32 @@ Ora misura anche il **rialzo massimo prima della discesa principale**, quindi di
 
 | Asset   | Direzione            | Trigger   | Percentuale   | Motivo                           |   Match disponibili |
 |:--------|:---------------------|:----------|:--------------|:---------------------------------|--------------------:|
-| BTC     | POSITIVO / RIALZISTA | SI        | +87,50%       | Casi positivi 87.50% >= 80%      |                  40 |
+| BTC     | POSITIVO / RIALZISTA | SI        | +85,00%       | Casi positivi 85.00% >= 80%      |                  40 |
 | SOL     | NESSUNO              | NO        | +65,00%       | Nessun lato sopra soglia estrema |                  40 |
-| DOGE    | NESSUNO              | NO        | +65,00%       | Nessun lato sopra soglia estrema |                  40 |
+| DOGE    | NESSUNO              | NO        | +70,00%       | Nessun lato sopra soglia estrema |                  40 |
 
 ## BTC — casi rialzisti
 
-- Trigger: **Casi positivi 87.50% >= 80%**
-- Casi usati nei grafici: **35**
-- Return mediano 7g: **-1,94%**
-- Return mediano 14g: **+1,11%**
-- Return mediano 30g: **+17,65%**
-- Drawdown mediano: **-10,09%**
-- Max gain mediano: **+25,86%**
+- Trigger: **Casi positivi 85.00% >= 80%**
+- Casi usati nei grafici: **34**
+- Return mediano 7g: **-0,66%**
+- Return mediano 14g: **+6,92%**
+- Return mediano 30g: **+21,64%**
+- Drawdown mediano: **-8,26%**
+- Max gain mediano: **+26,53%**
 
 ### Quanto salivano prima di scendere
 
-- Spike massimo mediano prima del minimo: **+0,95%**
-- Spike massimo medio prima del minimo: **+4,88%**
-- Spike p75 prima del minimo: **+4,68%**
-- Giorno mediano dello spike: **giorno 1**
-- Giorno mediano del minimo: **giorno 5**
-- Scarico mediano dal picco al minimo: **-11,60%**
-- Casi con almeno +5% prima del minimo: **+22,86%**
-- Casi con almeno +10% prima del minimo: **+2,86%**
-- Casi con almeno +15% prima del minimo: **+2,86%**
-- Discesa quasi immediata: **+54,29%**
+- Spike massimo mediano prima del minimo: **+0,00%**
+- Spike massimo medio prima del minimo: **+4,18%**
+- Spike p75 prima del minimo: **+1,92%**
+- Giorno mediano dello spike: **giorno 0**
+- Giorno mediano del minimo: **giorno 1**
+- Scarico mediano dal picco al minimo: **-9,52%**
+- Casi con almeno +5% prima del minimo: **+14,71%**
+- Casi con almeno +10% prima del minimo: **+2,94%**
+- Casi con almeno +15% prima del minimo: **+2,94%**
+- Discesa quasi immediata: **+67,65%**
 
 Un segnale ribassista a 30 giorni non significa necessariamente discesa immediata: alcuni casi fanno prima uno spike e poi scaricano.
 
@@ -43,7 +43,7 @@ Un segnale ribassista a 30 giorni non significa necessariamente discesa immediat
 
 | P10    | P25     | P50     | P75     | P90     |
 |:-------|:--------|:--------|:--------|:--------|
-| +2,98% | +11,24% | +17,65% | +39,51% | +63,10% |
+| +7,55% | +12,82% | +21,64% | +39,40% | +75,41% |
 
 ### Grafico pulito: bande + mediana
 
@@ -71,26 +71,26 @@ La sigla `g7` sopra una barra significa che il massimo rialzo è avvenuto al gio
 
 | Asset storico   | End        | Similarity   | Spike prima del minimo   |   Giorno spike | Minimo 30g   |   Giorno minimo | Dump dal picco   | Return 30g   | Sequenza                      |
 |:----------------|:-----------|:-------------|:-------------------------|---------------:|:-------------|----------------:|:-----------------|:-------------|:------------------------------|
-| UNI-USD         | 2023-07-10 | +83,63%      | +100,00%                 |             10 | -2,12%       |              14 | -51,06%          | +297,17%     | ECCEZIONE POSITIVA            |
-| XLM-USD         | 2020-12-06 | +88,71%      | +8,98%                   |             10 | -27,99%      |              17 | -33,92%          | +10,93%      | SPIKE PRIMA DEL DUMP          |
-| EGLD-USD        | 2023-11-16 | +84,04%      | +6,62%                   |              3 | -7,93%       |               5 | -13,65%          | +39,98%      | ECCEZIONE POSITIVA            |
-| BTC-USD         | 2019-04-17 | +82,37%      | +6,10%                   |              6 | -0,79%       |               8 | -6,49%           | +39,83%      | ECCEZIONE POSITIVA            |
-| ADA-USD         | 2020-12-06 | +86,01%      | +5,49%                   |             10 | -14,15%      |              17 | -18,61%          | +62,60%      | RIALZO MODESTO PRIMA DEL DUMP |
-| INJ-USD         | 2023-11-08 | +86,48%      | +5,31%                   |              2 | -15,83%      |              13 | -20,08%          | +13,46%      | RIALZO MODESTO PRIMA DEL DUMP |
-| LTC-USD         | 2019-02-21 | +83,86%      | +5,15%                   |              2 | -9,10%       |               3 | -13,55%          | +24,82%      | ECCEZIONE POSITIVA            |
-| ETC-USD         | 2020-12-06 | +82,69%      | +5,13%                   |             11 | -17,56%      |              17 | -21,59%          | +17,65%      | RIALZO MODESTO PRIMA DEL DUMP |
-| AVAX-USD        | 2021-09-03 | +83,02%      | +4,94%                   |              2 | -19,30%      |               5 | -23,10%          | +49,67%      | RIALZO MODESTO PRIMA DEL DUMP |
-| 1INCH-USD       | 2023-11-18 | +87,95%      | +4,43%                   |              1 | -7,24%       |               3 | -11,18%          | +2,85%       | ECCEZIONE POSITIVA            |
-| DOGE-USD        | 2019-04-16 | +83,52%      | +3,92%                   |              2 | -13,02%      |              13 | -16,29%          | +11,75%      | RIALZO MODESTO PRIMA DEL DUMP |
-| ADA-USD         | 2023-11-16 | +84,72%      | +3,43%                   |              3 | -3,53%       |               5 | -6,73%           | +63,44%      | ECCEZIONE POSITIVA            |
-| AVAX-USD        | 2023-11-22 | +82,87%      | +2,55%                   |              3 | -2,11%       |               5 | -4,54%           | +118,51%     | DISCESA QUASI IMMEDIATA       |
-| XTZ-USD         | 2023-11-16 | +83,15%      | +2,51%                   |              3 | -8,26%       |               5 | -10,51%          | +12,21%      | DISCESA QUASI IMMEDIATA       |
-| XRP-USD         | 2023-11-16 | +85,41%      | +2,50%                   |              3 | -5,18%       |               5 | -7,50%           | +1,25%       | DISCESA QUASI IMMEDIATA       |
-| ETC-USD         | 2023-11-16 | +85,25%      | +1,67%                   |              3 | -5,91%       |               5 | -7,46%           | +7,43%       | DISCESA QUASI IMMEDIATA       |
-| ZEC-USD         | 2019-04-16 | +84,48%      | +1,02%                   |              2 | -18,90%      |              23 | -19,72%          | +7,69%       | ECCEZIONE POSITIVA            |
-| ZIL-USD         | 2023-11-18 | +85,77%      | +0,95%                   |              1 | -10,75%      |               3 | -11,60%          | +2,26%       | DISCESA QUASI IMMEDIATA       |
-| MANA-USD        | 2023-11-16 | +84,95%      | +0,00%                   |              3 | -12,25%      |               5 | -12,26%          | +16,43%      | DISCESA QUASI IMMEDIATA       |
-| THETA-USD       | 2023-11-20 | +87,82%      | +0,00%                   |              0 | -10,09%      |               1 | -10,09%          | +12,61%      | DISCESA QUASI IMMEDIATA       |
+| UNI-USD         | 2023-07-10 | +83,40%      | +100,00%                 |             10 | -2,12%       |              14 | -51,06%          | +297,17%     | ECCEZIONE POSITIVA            |
+| XLM-USD         | 2020-12-06 | +86,68%      | +8,98%                   |             10 | -27,99%      |              17 | -33,92%          | +10,93%      | SPIKE PRIMA DEL DUMP          |
+| ADA-USD         | 2020-12-06 | +85,43%      | +5,49%                   |             10 | -14,15%      |              17 | -18,61%          | +62,60%      | RIALZO MODESTO PRIMA DEL DUMP |
+| INJ-USD         | 2023-11-08 | +86,59%      | +5,31%                   |              2 | -15,83%      |              13 | -20,08%          | +13,46%      | RIALZO MODESTO PRIMA DEL DUMP |
+| BTC-USD         | 2019-04-18 | +83,35%      | +5,17%                   |              5 | -1,66%       |               7 | -6,49%           | +37,23%      | ECCEZIONE POSITIVA            |
+| AVAX-USD        | 2021-09-03 | +84,12%      | +4,94%                   |              2 | -19,30%      |               5 | -23,10%          | +49,67%      | RIALZO MODESTO PRIMA DEL DUMP |
+| 1INCH-USD       | 2023-11-18 | +88,24%      | +4,43%                   |              1 | -7,24%       |               3 | -11,18%          | +2,85%       | ECCEZIONE POSITIVA            |
+| LTC-USD         | 2019-02-22 | +84,25%      | +3,77%                   |              1 | -10,29%      |               2 | -13,55%          | +20,92%      | RIALZO MODESTO PRIMA DEL DUMP |
+| DASH-USD        | 2019-04-16 | +82,68%      | +2,21%                   |              2 | -11,06%      |              13 | -12,99%          | +22,36%      | ECCEZIONE POSITIVA            |
+| ZEC-USD         | 2019-04-16 | +84,50%      | +1,02%                   |              2 | -18,90%      |              23 | -19,72%          | +7,69%       | ECCEZIONE POSITIVA            |
+| ZIL-USD         | 2023-11-18 | +86,19%      | +0,95%                   |              1 | -10,75%      |               3 | -11,60%          | +2,26%       | DISCESA QUASI IMMEDIATA       |
+| MANA-USD        | 2023-11-16 | +84,03%      | +0,00%                   |              3 | -12,25%      |               5 | -12,26%          | +16,43%      | DISCESA QUASI IMMEDIATA       |
+| THETA-USD       | 2023-11-20 | +88,88%      | +0,00%                   |              0 | -10,09%      |               1 | -10,09%          | +12,61%      | DISCESA QUASI IMMEDIATA       |
+| BNB-USD         | 2019-02-25 | +86,85%      | +0,00%                   |              0 | -3,26%       |               1 | -3,26%           | +70,51%      | DISCESA QUASI IMMEDIATA       |
+| THETA-USD       | 2019-02-24 | +86,56%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +25,99%      | DISCESA QUASI IMMEDIATA       |
+| MATIC-USD       | 2023-11-21 | +86,41%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +11,56%      | DISCESA QUASI IMMEDIATA       |
+| ALGO-USD        | 2023-11-20 | +86,07%      | +0,00%                   |              0 | -12,15%      |               1 | -12,15%          | +39,80%      | DISCESA QUASI IMMEDIATA       |
+| FIL-USD         | 2023-11-20 | +86,02%      | +0,00%                   |              0 | -9,91%       |               1 | -9,91%           | +13,56%      | DISCESA QUASI IMMEDIATA       |
+| EGLD-USD        | 2023-11-21 | +85,59%      | +0,00%                   |              0 | +0,00%       |               0 | +0,00%           | +55,32%      | DISCESA QUASI IMMEDIATA       |
+| SAND-USD        | 2023-11-20 | +85,45%      | +0,00%                   |              0 | -10,70%      |               1 | -10,70%          | +25,39%      | DISCESA QUASI IMMEDIATA       |
 
 ## Come leggerlo
 
