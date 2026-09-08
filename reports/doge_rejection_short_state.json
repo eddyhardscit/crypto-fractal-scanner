@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-13T07:47:54+00:00",
-  "updated_utc": "2026-09-07T05:16:31+00:00",
+  "updated_utc": "2026-09-08T05:16:58+00:00",
   "initial_capital_eur": 3600.0,
   "balance_eur": 3600.0,
   "peak_equity_eur": 3600.0,
@@ -30,7 +30,7 @@
     ]
   },
   "last_checks": {
-    "generated_utc": "2026-09-07T05:16:31+00:00",
+    "generated_utc": "2026-09-08T05:16:58+00:00",
     "static": {
       "checks": {
         "fresh_market": true,
@@ -44,13 +44,13 @@
         "candle_15m_fresh": true
       },
       "freshness_status": "FRESH",
-      "doge_mark": 0.08996,
-      "btc_mark": 79715.87,
+      "doge_mark": 0.08964,
+      "btc_mark": 78614.6,
       "global_score": -6.0,
       "classic_raw_score": -11.0,
       "relative_raw_score": -6.0,
       "bearish_pattern_status": "MATURO",
-      "candle_age_minutes": 31.527368583333335
+      "candle_age_minutes": 31.97222886666667
     },
     "rejection": {
       "accepted": false,
@@ -59,22 +59,22 @@
         "closed_back_below_trigger": false,
         "close_below_invalidation": false,
         "entry_not_chased": false,
-        "upper_wick": false,
-        "bearish_confirmation": false,
+        "upper_wick": true,
+        "bearish_confirmation": true,
         "volume_valid": true,
         "stop_within_limit": false
       },
-      "candle_time": "2026-09-07 04:45:00+00:00",
-      "open": 0.08962,
-      "high": 0.08974,
-      "low": 0.08945,
-      "close": 0.08969,
-      "previous_close": 0.0896,
-      "volume_ratio": 0.5077233531788511,
-      "upper_wick_ratio": 0.17241379310343014,
-      "close_location": 0.8275862068965699,
-      "stop_price": 0.08991948,
-      "reason": "closed_back_below_trigger, close_below_invalidation, entry_not_chased, upper_wick, bearish_confirmation, stop_within_limit"
+      "candle_time": "2026-09-08 04:45:00+00:00",
+      "open": 0.08981,
+      "high": 0.08991,
+      "low": 0.08958,
+      "close": 0.08964,
+      "previous_close": 0.08981,
+      "volume_ratio": 0.3384689931175579,
+      "upper_wick_ratio": 0.3030303030303145,
+      "close_location": 0.18181818181815507,
+      "stop_price": 0.09008982,
+      "reason": "closed_back_below_trigger, close_below_invalidation, entry_not_chased, stop_within_limit"
     }
   }
 }

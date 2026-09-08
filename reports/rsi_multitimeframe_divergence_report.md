@@ -1,6 +1,6 @@
 # Divergenze RSI multi-timeframe — diagnostica
 
-Generato: 2026-09-07 05:32 UTC
+Generato: 2026-09-08 05:32 UTC
 
 Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Riconosce divergenze regolari e nascoste, segnali in formazione, invalidazioni e semplice conferma del momentum.
 
@@ -8,36 +8,36 @@ Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Ric
 
 ## Sintesi corrente
 
-| Asset   | Daily                                                | Stato D    | Weekly                    | Stato W    | Lettura weekly                                                                                                              |   Peso |
-|:--------|:-----------------------------------------------------|:-----------|:--------------------------|:-----------|:----------------------------------------------------------------------------------------------------------------------------|-------:|
-| BTC     | Hidden bullish invalidata                            | INVALIDATA | Conferma rialzista        | CONTESTO   | Prezzo e RSI stanno salendo insieme: momentum rialzista confermato.                                                         |      0 |
-| SOL     | Momentum in indebolimento, divergenza non confermata | CONTESTO   | Hidden bearish invalidata | INVALIDATA | La precedente hidden bearish non è più sostenuta dalla relazione corrente tra pivot di prezzo e RSI.                        |      0 |
-| DOGE    | Conferma ribassista                                  | CONTESTO   | Hidden bearish            | CONFERMATA | Hidden bearish confermata sui due pivot del prezzo e dell'RSI. Contesto diagnostico: nessun punto operativo viene aggiunto. |      0 |
+| Asset   | Daily                                                | Stato D       | Weekly             | Stato W       | Lettura weekly                                                                                                              |   Peso |
+|:--------|:-----------------------------------------------------|:--------------|:-------------------|:--------------|:----------------------------------------------------------------------------------------------------------------------------|-------:|
+| BTC     | Hidden bullish                                       | IN_FORMAZIONE | Conferma rialzista | CONTESTO      | Prezzo e RSI stanno salendo insieme: momentum rialzista confermato.                                                         |      0 |
+| SOL     | Momentum in indebolimento, divergenza non confermata | CONTESTO      | Hidden bearish     | IN_FORMAZIONE | Hidden bearish in formazione: il secondo estremo non è ancora un pivot confermato. Peso operativo sempre 0.                 |      0 |
+| DOGE    | Momentum in indebolimento, divergenza non confermata | CONTESTO      | Hidden bearish     | CONFERMATA    | Hidden bearish confermata sui due pivot del prezzo e dell'RSI. Contesto diagnostico: nessun punto operativo viene aggiunto. |      0 |
 
 ## Dettaglio dei pivot
 
-| Asset   | TF   | Tipo                                                 | Stato      | Prezzo / RSI      | Pivot confrontati                                                   | Δ prezzo contesto   | Δ RSI contesto   |   Peso |
-|:--------|:-----|:-----------------------------------------------------|:-----------|:------------------|:--------------------------------------------------------------------|:--------------------|:-----------------|-------:|
-| BTC     | 1D   | Hidden bullish invalidata                            | INVALIDATA | 79.830 $ / 66,85  | n/a                                                                 | +2,67%              | -14,09           |      0 |
-| BTC     | 1W   | Conferma rialzista                                   | CONTESTO   | 79.830 $ / 58,57  | n/a                                                                 | +25,75%             | 19,73            |      0 |
-| SOL     | 1D   | Momentum in indebolimento, divergenza non confermata | CONTESTO   | 105,58 $ / 67,43  | n/a                                                                 | +10,62%             | -16,88           |      0 |
-| SOL     | 1W   | Hidden bearish invalidata                            | INVALIDATA | 105,58 $ / 59,92  | n/a                                                                 | +43,75%             | 21,56            |      0 |
-| DOGE    | 1D   | Conferma ribassista                                  | CONTESTO   | 0.09031 $ / 63,22 | n/a                                                                 | -3,33%              | -21,50           |      0 |
-| DOGE    | 1W   | Hidden bearish                                       | CONFERMATA | 0.09031 $ / 48,64 | 2026-05-17 0.11825 $ / RSI 44,25 → 2026-08-23 0.09998 $ / RSI 49,72 | n/a                 | n/a              |      0 |
+| Asset   | TF   | Tipo                                                 | Stato         | Prezzo / RSI      | Pivot confrontati                                                   | Δ prezzo contesto   | Δ RSI contesto   |   Peso |
+|:--------|:-----|:-----------------------------------------------------|:--------------|:------------------|:--------------------------------------------------------------------|:--------------------|:-----------------|-------:|
+| BTC     | 1D   | Hidden bullish                                       | IN_FORMAZIONE | 78.727 $ / 61,31  | 2026-09-02 76.248 $ / RSI 65,21 → 2026-09-08 78.632 $ / RSI 61,31   | n/a                 | n/a              |      0 |
+| BTC     | 1W   | Conferma rialzista                                   | CONTESTO      | 78.727 $ / 56,91  | n/a                                                                 | +24,01%             | 18,07            |      0 |
+| SOL     | 1D   | Momentum in indebolimento, divergenza non confermata | CONTESTO      | 103,29 $ / 62,06  | n/a                                                                 | +4,80%              | -24,19           |      0 |
+| SOL     | 1W   | Hidden bearish                                       | IN_FORMAZIONE | 103,29 $ / 57,90  | 2026-08-30 110,04 $ / RSI 57,95 → 2026-09-06 107,12 $ / RSI 60,25   | n/a                 | n/a              |      0 |
+| DOGE    | 1D   | Momentum in indebolimento, divergenza non confermata | CONTESTO      | 0.09003 $ / 62,17 | n/a                                                                 | +0,13%              | -12,24           |      0 |
+| DOGE    | 1W   | Hidden bearish                                       | CONFERMATA    | 0.09003 $ / 48,47 | 2026-05-17 0.11825 $ / RSI 44,25 → 2026-08-23 0.09998 $ / RSI 49,72 | n/a                 | n/a              |      0 |
 
 ### BTC
 
-- **1D — Hidden bullish invalidata / INVALIDATA**: La precedente hidden bullish non è più sostenuta dalla relazione corrente tra pivot di prezzo e RSI.
+- **1D — Hidden bullish / IN_FORMAZIONE**: Hidden bullish in formazione: il secondo estremo non è ancora un pivot confermato. Peso operativo sempre 0.
 - **1W — Conferma rialzista / CONTESTO**: Prezzo e RSI stanno salendo insieme: momentum rialzista confermato.
 
 ### SOL
 
 - **1D — Momentum in indebolimento, divergenza non confermata / CONTESTO**: Momentum in indebolimento, divergenza non confermata. Non esiste una divergenza confermata sugli ultimi pivot.
-- **1W — Hidden bearish invalidata / INVALIDATA**: La precedente hidden bearish non è più sostenuta dalla relazione corrente tra pivot di prezzo e RSI.
+- **1W — Hidden bearish / IN_FORMAZIONE**: Hidden bearish in formazione: il secondo estremo non è ancora un pivot confermato. Peso operativo sempre 0.
 
 ### DOGE
 
-- **1D — Conferma ribassista / CONTESTO**: Prezzo e RSI stanno scendendo insieme: momentum ribassista confermato, nessuna bullish divergence attiva.
+- **1D — Momentum in indebolimento, divergenza non confermata / CONTESTO**: Momentum in indebolimento, divergenza non confermata. Non esiste una divergenza confermata sugli ultimi pivot.
 - **1W — Hidden bearish / CONFERMATA**: Hidden bearish confermata sui due pivot del prezzo e dell'RSI. Contesto diagnostico: nessun punto operativo viene aggiunto.
 
 ## Tracker live delle divergenze confermate
