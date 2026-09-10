@@ -1,6 +1,6 @@
 # Blocco 9 — Hall of Fame e memoria genetica
 
-Generato: 2026-09-09T05:17:31+00:00
+Generato: 2026-09-10T05:17:03+00:00
 
 > Paper-only. La memoria può bloccare soltanto una futura proposta Block 5 classificata AVOID; non modifica strategie esistenti.
 
@@ -16,16 +16,16 @@ Generato: 2026-09-09T05:17:31+00:00
 
 | Rank | Strategia | Stato | Score | Grade | Trade | PF | Expectancy R | DD R |
 | ---: | --- | --- | ---: | --- | ---: | ---: | ---: | ---: |
-| 1 | MAIN_SIDE_REGIME_GUARD_V1 | BASELINE | 24.3 | E | 51 | 2.21 | 0.480 | 4.71 |
+| 1 | MAIN_SIDE_REGIME_GUARD_V1 | BASELINE | 24.1 | E | 53 | 2.13 | 0.453 | 4.71 |
 | 2 | SHADOW_COMBO_TREND_SIDE_REGIME_GUARD_V1 | BASELINE | 23.0 | E | 155 | 1.43 | 0.214 | 23.36 |
-| 3 | SHADOW_COMBO_ADAPTIVE | BASELINE | 20.5 | E | 207 | 1.26 | 0.124 | 23.82 |
-| 4 | SHADOW_1H_FAST_SCORE_6_75_COST_AWARE_V1 | BASELINE | 20.2 | E | 197 | 1.20 | 0.099 | 24.60 |
-| 5 | SHADOW_DONCHIAN_1H | BASELINE | 19.8 | E | 143 | 1.25 | 0.149 | 18.83 |
-| 6 | SHADOW_1H_FAST_V3_NOHIGH_REGIME_GUARD_V1 | BASELINE | 19.6 | E | 143 | 1.22 | 0.102 | 14.92 |
+| 3 | SHADOW_COMBO_ADAPTIVE | BASELINE | 20.4 | E | 210 | 1.25 | 0.118 | 23.82 |
+| 4 | SHADOW_1H_FAST_SCORE_6_75_COST_AWARE_V1 | BASELINE | 20.3 | E | 201 | 1.20 | 0.100 | 24.60 |
+| 5 | SHADOW_1H_FAST_V3_NOHIGH_REGIME_GUARD_V1 | BASELINE | 20.1 | E | 149 | 1.20 | 0.098 | 14.92 |
+| 6 | SHADOW_DONCHIAN_1H | BASELINE | 19.6 | E | 144 | 1.23 | 0.140 | 18.83 |
 | 7 | SHADOW_1H_FAST_V3_NO_ESPORTS_MFE_LOCK_V1 | BASELINE | 19.4 | E | 217 | 1.13 | 0.064 | 30.08 |
-| 8 | SHADOW_1H_FAST_V3_NO_ESPORTS_STRESS_GUARD_V1 | BASELINE | 19.1 | E | 135 | 1.11 | 0.054 | 10.40 |
-| 9 | SHADOW_1H_FAST_V3_NOHIGH_V1 | BASELINE | 18.7 | E | 176 | 1.10 | 0.051 | 14.78 |
-| 10 | SHADOW_1H_FAST_V3 | BASELINE | 18.6 | E | 261 | 1.11 | 0.055 | 29.54 |
+| 8 | SHADOW_1H_FAST_V3_NO_ESPORTS_STRESS_GUARD_V1 | BASELINE | 19.1 | E | 143 | 1.07 | 0.033 | 10.66 |
+| 9 | SHADOW_1H_FAST_V3 | BASELINE | 18.6 | E | 261 | 1.11 | 0.055 | 29.54 |
+| 10 | SHADOW_1H_FAST_NO_PEPE_V1 | BASELINE | 18.4 | E | 275 | 1.10 | 0.048 | 32.84 |
 
 ## Memoria genetica
 
