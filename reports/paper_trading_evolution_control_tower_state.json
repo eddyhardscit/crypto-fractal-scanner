@@ -1,17 +1,17 @@
 {
   "audit_chain_valid": true,
-  "audit_last_hash": "8bfa63dd2db9905ac23ee02a39a538c58a958633a278011f362ec4567800491f",
+  "audit_last_hash": "ac2467ba39071776a22cf6e5959366c60e8292966053c73a232563d9921a6cdf",
   "automatic_actions": 0,
   "created_utc": "2026-07-20T08:20:33+00:00",
-  "cycles": 2923,
+  "cycles": 2947,
   "engine_version": "block12-evolution-control-tower-v1",
-  "health": "DEGRADED",
+  "health": "CRITICAL",
   "live_locked": true,
   "live_modified": false,
   "orders_sent": false,
-  "pipeline_complete": true,
-  "recovery_status": "READY",
+  "pipeline_complete": false,
+  "recovery_status": "BLOCKED",
   "schema_version": 1,
   "storage_complete": true,
-  "updated_utc": "2026-09-10T05:05:52+00:00"
+  "updated_utc": "2026-09-11T05:06:28+00:00"
 }

@@ -1,6 +1,6 @@
 # Calibrazione rischio spot / leva
 
-Generato: **2026-09-10 05:33 UTC**
+Generato: **2026-09-11 05:33 UTC**
 
 Questo report controlla se le zone di rischio previste dallo scanner vengono davvero toccate nei 30 giorni successivi.
 
@@ -24,17 +24,17 @@ Questo file **non modifica ancora il Decision Report**. Per ora salva dati e mis
 
 | Asset   | Prezzo    | Direzione scanner                    | Drawdown normale    | Drawdown brutto     | Max gain normale   | Rischio spot   | Rischio leva   |
 |:--------|:----------|:-------------------------------------|:--------------------|:--------------------|:-------------------|:---------------|:---------------|
-| BTC     | 456,64 $  | Direzione più probabile a 30 giorni: | 155,39 $ / -2,93%   | 99,65 $ / -9,38%    | 884,63 $ / 41,33%  | BASSO          | MEDIO          |
-| SOL     | 102,02 $  | Direzione più probabile a 30 giorni: | 92,18 $ / -9,65%    | 75,25 $ / -26,24%   | 141,22 $ / 38,43%  | ALTO           | MOLTO ALTO     |
-| DOGE    | 0.09000 $ | Direzione più probabile a 30 giorni: | 0.07000 $ / -16,34% | 0.06000 $ / -29,11% | 0.09000 $ / 10,18% | ALTO           | MOLTO ALTO     |
+| BTC     | 59,01 $   | Direzione più probabile a 30 giorni: | 795,42 $ / -4,24%   | 770,53 $ / -10,76%  | 909,33 $ / 41,33%  | BASSO          | ALTO           |
+| SOL     | 99,61 $   | Direzione più probabile a 30 giorni: | 93,11 $ / -6,52%    | 74,26 $ / -25,45%   | 137,89 $ / 38,43%  | ALTO           | MOLTO ALTO     |
+| DOGE    | 0.08000 $ | Direzione più probabile a 30 giorni: | 0.07000 $ / -17,86% | 0.06000 $ / -28,99% | 0.09000 $ / 12,49% | ALTO           | MOLTO ALTO     |
 
 ## Stato calibrazione rischio
 
 | Asset   |   Snapshot |   Controlli 30g |   In attesa | Stato            | DD normale hit   | DD brutto hit   | DD molto brutto hit   | Bias rischio                |
 |:--------|-----------:|----------------:|------------:|:-----------------|:-----------------|:----------------|:----------------------|:----------------------------|
-| BTC     |         62 |              34 |          28 | OSSERVAZIONE 30+ | 0,00%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
-| SOL     |         62 |              34 |          28 | OSSERVAZIONE 30+ | 2,94%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
-| DOGE    |         62 |              34 |          28 | OSSERVAZIONE 30+ | 5,88%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
+| BTC     |         63 |              34 |          29 | OSSERVAZIONE 30+ | 0,00%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
+| SOL     |         63 |              34 |          29 | OSSERVAZIONE 30+ | 2,94%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
+| DOGE    |         63 |              34 |          29 | OSSERVAZIONE 30+ | 5,88%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
 
 ## Ultimi controlli completati
 

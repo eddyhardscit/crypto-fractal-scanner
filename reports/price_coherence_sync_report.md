@@ -1,14 +1,14 @@
 # Sincronizzazione prezzo condiviso
 
-Generato: 2026-09-10T05:32:51+00:00
+Generato: 2026-09-11T05:32:50+00:00
 
 Riferimento unico: `reports/latest_market_snapshot.json`.
 
 | Asset | Prezzo snapshot |
 | --- | --- |
-| BTC | 78.457 $ |
-| SOL | 102,02 $ |
-| DOGE | 0.08593 $ |
+| BTC | 77.059 $ |
+| SOL | 99,61 $ |
+| DOGE | 0.08393 $ |
 
 Campi controllati: **79**; già allineati: **16**; sincronizzati: **63**.
 

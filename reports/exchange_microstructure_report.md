@@ -1,6 +1,6 @@
 # Dati exchange, liquidità e leva
 
-Generato: 2026-09-10 05:32 UTC
+Generato: 2026-09-11 05:32 UTC
 
 Questo modulo legge Kraken Futures, Bitget Futures e KuCoin Futures come nucleo derivati. OKX e Coinbase vengono raccolti come fonti ausiliarie non pesate.
 Non modifica la formula matematica di RSI, Fibonacci o Wyckoff: controlla se quei segnali sono sostenuti da acquisti, vendite, OI, funding e liquidità.
@@ -13,9 +13,9 @@ Diagnostica completa: [exchange_source_diagnostics.md](exchange_source_diagnosti
 
 | Asset | Prezzo | Exchange | Segnale candidato | Peso Global | Bias exchange | Confidenza | Copertura | Funding 8h eq. | OI 24h | Taker flow (campione/4h) | Book 0,5% | Liq long campione | Liq short campione |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 78.268 $ | 3 | 0 | 0 | LEGGERMENTE POSITIVA / NON PESATA | BASSA | 100% | +0,0084% | -0,81% | 1,15 | -0,66% | 0 $ | 0 $ |
-| SOL | 101,73 $ | 3 | 0 | 0 | LEGGERMENTE POSITIVA / NON PESATA | BASSA | 100% | -0,0038% | -3,76% | 1,58 | -6,27% | 0 $ | 0 $ |
-| DOGE | 0.08551 $ | 3 | 0 | 0 | LEGGERMENTE POSITIVA / NON PESATA | BASSA | 100% | +0,0075% | -5,38% | 1,69 | +2,33% | 0 $ | 0 $ |
+| BTC | 77.057 $ | 3 | 0 | 0 | LEGGERMENTE POSITIVA / NON PESATA | MEDIA | 100% | +0,0093% | -0,21% | 2,04 | -2,41% | 0 $ | 0 $ |
+| SOL | 99,66 $ | 3 | 0 | 0 | LEGGERMENTE POSITIVA / NON PESATA | BASSA | 100% | -0,0036% | -3,07% | 2,37 | +8,26% | 0 $ | 0 $ |
+| DOGE | 0.08400 $ | 3 | 0 | 0 | LEGGERMENTE POSITIVA / NON PESATA | MEDIA | 100% | +0,0088% | +0,38% | 1,48 | +4,35% | 0 $ | 0 $ |
 
 Il segnale candidato è limitato a **±1**, ma il peso nel Global resta **0** finché il tracker a 7 giorni non raggiunge 30 controlli, almeno 55% di accuratezza e return corretto direzione positivo. Un singolo muro o funding non basta.
 
@@ -25,15 +25,15 @@ La colonna taker usa un campione recente nel primo run. Dopo almeno 3 fotografie
 
 | Asset | Exchange | Stato | Funding 8h eq. | Open interest | Taker flow | Book 0,5% |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | Kraken | OK | +0,0148% | 165,44 mln $ | 0,31 | -5,54% |
-| BTC | Bitget | OK | +0,0100% | 2,79 mld $ | 0,09 | +27,08% |
-| BTC | Kucoin | OK | +0,0050% | 1,08 mld $ | 1,45 | +2,89% |
-| SOL | Kraken | OK | +0,0031% | 29,63 mln $ | 36,23 | -13,90% |
-| SOL | Bitget | OK | -0,0037% | 460,55 mln $ | 0,08 | +62,13% |
-| SOL | Kucoin | OK | -0,0079% | 179,27 mln $ | 5,72 | -20,36% |
-| DOGE | Kraken | OK | -0,0007% | 4,33 mln $ | 2,42 | +2,11% |
-| DOGE | Bitget | OK | +0,0077% | 109,64 mln $ | 0,46 | +25,69% |
-| DOGE | Kucoin | OK | +0,0094% | 70,68 mln $ | 0,86 | +1,52% |
+| BTC | Kraken | OK | +0,0009% | 152,09 mln $ | 0,97 | -3,35% |
+| BTC | Bitget | OK | +0,0100% | 2,87 mld $ | 2,07 | +58,62% |
+| BTC | Kucoin | OK | +0,0076% | 1,01 mld $ | 0,37 | +3,45% |
+| SOL | Kraken | OK | +0,0298% | 26,38 mln $ | 0,41 | +6,60% |
+| SOL | Bitget | OK | -0,0005% | 442,15 mln $ | 0,51 | +3,58% |
+| SOL | Kucoin | OK | +0,0023% | 182,30 mln $ | 0,42 | -11,72% |
+| DOGE | Kraken | OK | -0,0116% | 3,94 mln $ | 0,63 | -1,21% |
+| DOGE | Bitget | OK | +0,0100% | 111,79 mln $ | 0,25 | +7,39% |
+| DOGE | Kucoin | OK | +0,0100% | 70,13 mln $ | 1,08 | +8,49% |
 
 Kraken, Bitget e KuCoin contribuiscono a funding normalizzato, open interest, trade aggressivi e order book. Non viene inventato un long/short ratio pubblico né un feed completo delle liquidazioni.
 
@@ -41,19 +41,19 @@ Kraken, Bitget e KuCoin contribuiscono a funding normalizzato, open interest, tr
 
 ### BTC
 
-- Score grezzo exchange: **+1,75**; candidato: **0**; peso Global: **0**.
-- Attivazione Global: **LOCKED / RACCOLTA 7G** — controlli 7g 3, accuratezza +66,67%.
+- Score grezzo exchange: **+2,25**; candidato: **0**; peso Global: **0**.
+- Attivazione Global: **LOCKED / RACCOLTA 7G** — controlli 7g 4, accuratezza +50,00%.
 - Fonti disponibili: Kraken **SI**, Bitget **SI**, KuCoin **SI**.
-- Consenso multi-exchange: bull 0, bear 2, divergenze 1.
+- Consenso multi-exchange: bull 0, bear 0, divergenze 1.
 - Flusso taker/order book: **+1,75**.
 - OI/funding/basis: **+0,00**.
 - Affollamento long/short: **+0,00**.
 - Liquidazioni: **NON PESATE / FEED COMPLETO NON ASSUNTO DISPONIBILE**.
 - **Wyckoff:** Fase Wyckoff non abbastanza chiara per una conferma exchange.
-- **Fibonacci:** Fibonacci in_avvicinamento; nessuna conferma exchange netta. Confluenza tecnica dichiarata: supporto tecnico.
+- **Fibonacci:** Fibonacci tenuto con acquisti/assorbimento coerenti: conferma positiva. Confluenza tecnica dichiarata: supporto tecnico.
 - **RSI:** RSI in zona non estrema o flusso exchange non abbastanza netto.
 - **Pattern:** I pattern candidati restano non operativi: i dati exchange possono solo preparare la conferma.
-- **Breakout/breakdown:** Prezzo non abbastanza vicino a un livello chiave o flusso non netto.
+- **Breakout/breakdown:** Supporto vicino con assorbimento/acquisti: tenuta più credibile.
 - **Mappa liquidità attuale:** muro bid: n/a; muro ask: n/a
 
 ![Microstruttura exchange BTC](exchange_microstructure_BTC.png)
@@ -63,13 +63,13 @@ Kraken, Bitget e KuCoin contribuiscono a funding normalizzato, open interest, tr
 - Score grezzo exchange: **+2,50**; candidato: **0**; peso Global: **0**.
 - Attivazione Global: **LOCKED / RACCOLTA 7G** — controlli 7g 5, accuratezza +60,00%.
 - Fonti disponibili: Kraken **SI**, Bitget **SI**, KuCoin **SI**.
-- Consenso multi-exchange: bull 1, bear 1, divergenze 0.
-- Flusso taker/order book: **+1,75**.
+- Consenso multi-exchange: bull 0, bear 1, divergenze 1.
+- Flusso taker/order book: **+2,00**.
 - OI/funding/basis: **+0,50**.
 - Affollamento long/short: **+0,00**.
 - Liquidazioni: **NON PESATE / FEED COMPLETO NON ASSUNTO DISPONIBILE**.
 - **Wyckoff:** Fase Wyckoff non abbastanza chiara per una conferma exchange.
-- **Fibonacci:** Fibonacci tenuto con acquisti/assorbimento coerenti: conferma positiva. Confluenza tecnica dichiarata: supporto tecnico.
+- **Fibonacci:** Fibonacci in_avvicinamento; nessuna conferma exchange netta. Confluenza tecnica dichiarata: supporto tecnico, neckline ribassista.
 - **RSI:** RSI in zona non estrema o flusso exchange non abbastanza netto.
 - **Pattern:** I pattern candidati restano non operativi: i dati exchange possono solo preparare la conferma.
 - **Breakout/breakdown:** Prezzo non abbastanza vicino a un livello chiave o flusso non netto.
@@ -79,16 +79,16 @@ Kraken, Bitget e KuCoin contribuiscono a funding normalizzato, open interest, tr
 
 ### DOGE
 
-- Score grezzo exchange: **+2,50**; candidato: **0**; peso Global: **0**.
+- Score grezzo exchange: **+2,12**; candidato: **0**; peso Global: **0**.
 - Attivazione Global: **LOCKED / RACCOLTA 7G** — controlli 7g 8, accuratezza +50,00%.
 - Fonti disponibili: Kraken **SI**, Bitget **SI**, KuCoin **SI**.
-- Consenso multi-exchange: bull 0, bear 1, divergenze 0.
+- Consenso multi-exchange: bull 1, bear 2, divergenze 0.
 - Flusso taker/order book: **+1,75**.
-- OI/funding/basis: **+0,50**.
+- OI/funding/basis: **+0,00**.
 - Affollamento long/short: **+0,00**.
 - Liquidazioni: **NON PESATE / FEED COMPLETO NON ASSUNTO DISPONIBILE**.
-- **Wyckoff:** Fase Wyckoff non abbastanza chiara per una conferma exchange.
-- **Fibonacci:** Fibonacci tenuto con acquisti/assorbimento coerenti: conferma positiva.
+- **Wyckoff:** Possibile accumulazione/spring sostenuto da pressione compratrice o assorbimento.
+- **Fibonacci:** Livello Fibonacci soltanto testato: order book e taker flow non bastano ancora per dichiararlo tenuto o perso.
 - **RSI:** RSI in zona non estrema o flusso exchange non abbastanza netto.
 - **Pattern:** I pattern candidati restano non operativi: i dati exchange possono solo preparare la conferma.
 - **Breakout/breakdown:** Prezzo non abbastanza vicino a un livello chiave o flusso non netto.
@@ -102,9 +102,9 @@ La previsione storica grezza dello scanner resta intatta. L'overlay exchange pu�
 
 | Asset | Prob. grezza salita | Return p50 grezzo | Controlli 30g | Accuratezza exchange | Stato overlay | Peso | Prob. corretta | Return corretto |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | +87,50% | +37,26% | 1 | +0,00% | RACCOLTA DATI | 0,00 | +87,50% | +37,26% |
-| SOL | +62,50% | +28,93% | 2 | +100,00% | RACCOLTA DATI | 0,00 | +62,50% | +28,93% |
-| DOGE | +32,50% | -11,41% | 4 | +75,00% | RACCOLTA DATI | 0,00 | +32,50% | -11,41% |
+| BTC | +85,00% | +38,71% | 1 | +0,00% | RACCOLTA DATI | 0,00 | +85,00% | +38,71% |
+| SOL | +62,50% | +27,94% | 2 | +100,00% | RACCOLTA DATI | 0,00 | +62,50% | +27,94% |
+| DOGE | +30,00% | -14,08% | 4 | +75,00% | RACCOLTA DATI | 0,00 | +30,00% | -14,08% |
 
 ## Dati salvati
 
