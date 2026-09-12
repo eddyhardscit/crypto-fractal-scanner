@@ -1,34 +1,14 @@
 {
   "automatic_actions": 0,
-  "generated_utc": "2026-09-11T05:06:28+00:00",
-  "health": "CRITICAL",
+  "generated_utc": "2026-09-12T05:05:51+00:00",
+  "health": "DEGRADED",
   "incidents": [
-    {
-      "category": "PIPELINE",
-      "check_id": "BLOCK3_SHADOW_EXIT",
-      "detail": "Il blocco ha dichiarato un errore operativo.",
-      "expected": "NOT ERROR",
-      "generated_utc": "2026-09-11T05:06:28+00:00",
-      "observed": "ERROR",
-      "severity": "CRITICAL",
-      "status": "FAIL"
-    },
-    {
-      "category": "PIPELINE",
-      "check_id": "BLOCK4_SHADOW_EVALUATION",
-      "detail": "Il blocco ha dichiarato un errore operativo.",
-      "expected": "NOT ERROR",
-      "generated_utc": "2026-09-11T05:06:28+00:00",
-      "observed": "ERROR",
-      "severity": "CRITICAL",
-      "status": "FAIL"
-    },
     {
       "category": "SYSTEMD",
       "check_id": "sol_live_timer",
       "detail": "Osservazione read-only: nessun servizio viene riavviato o modificato.",
       "expected": "OBSERVABLE; TIMERS ENABLED",
-      "generated_utc": "2026-09-11T05:06:28+00:00",
+      "generated_utc": "2026-09-12T05:05:51+00:00",
       "observed": "{\"ActiveState\": \"inactive\", \"SubState\": \"dead\", \"UnitFileState\": \"disabled\", \"available\": \"true\"}",
       "severity": "WARN",
       "status": "WARN"

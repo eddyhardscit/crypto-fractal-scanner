@@ -2,12 +2,12 @@
   "audit_chain_valid": true,
   "automatic_restore": false,
   "automatic_rollback": false,
-  "generated_utc": "2026-09-11T05:06:28+00:00",
+  "generated_utc": "2026-09-12T05:05:51+00:00",
   "live_locked": true,
   "manual_recovery_required": true,
-  "pipeline_complete": false,
+  "pipeline_complete": true,
   "reports_writable": true,
   "schema_version": 1,
-  "status": "BLOCKED",
+  "status": "READY",
   "storage_complete": true
 }

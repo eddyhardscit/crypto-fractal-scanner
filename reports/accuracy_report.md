@@ -1,7 +1,7 @@
 # Report accuratezza scanner
 
-Generato: **2026-09-11 07:33:07 CEST**  
-UTC: **2026-09-11 05:33:07 UTC**
+Generato: **2026-09-12 07:32:59 CEST**  
+UTC: **2026-09-12 05:32:59 UTC**
 
 Questo report spiega se lo scanner ha già abbastanza previsioni vecchie da controllare.
 
@@ -9,9 +9,9 @@ Questo report spiega se lo scanner ha già abbastanza previsioni vecchie da cont
 
 | Asset | Previsioni fatte | Previsioni controllate | Progresso verso calibrazione | Previsioni in attesa | Stato | Prossimo controllo |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 69 | 30 | 30/30 [██████████] | 39 | ATTIVA | 2026-09-13 / tra 2 giorni |
-| SOL | 69 | 30 | 30/30 [██████████] | 39 | ATTIVA | 2026-09-13 / tra 2 giorni |
-| DOGE | 69 | 30 | 30/30 [██████████] | 39 | ATTIVA | 2026-09-13 / tra 2 giorni |
+| BTC | 70 | 30 | 30/30 [██████████] | 40 | ATTIVA | 2026-09-13 / tra 1 giorno |
+| SOL | 70 | 30 | 30/30 [██████████] | 40 | ATTIVA | 2026-09-13 / tra 1 giorno |
+| DOGE | 70 | 30 | 30/30 [██████████] | 40 | ATTIVA | 2026-09-13 / tra 1 giorno |
 
 ## Come leggere questi numeri
 
@@ -28,14 +28,14 @@ Questo report spiega se lo scanner ha già abbastanza previsioni vecchie da cont
 
 ### Stato
 
-- Previsioni fatte: **69**
+- Previsioni fatte: **70**
 - Previsioni controllate: **30/30**
 - Barra progresso: **[██████████]**
-- Previsioni in attesa: **39**
+- Previsioni in attesa: **40**
 - Previsioni già mature ma non ancora valutate: **10**
 - Prima previsione salvata: **2026-07-03**
-- Ultima previsione salvata: **2026-09-11**
-- Prossimo controllo previsto: **2026-09-13 / tra 2 giorni**
+- Ultima previsione salvata: **2026-09-12**
+- Prossimo controllo previsto: **2026-09-13 / tra 1 giorno**
 - Stato calibrazione: **ATTIVA**
 
 ### Accuratezza, quando disponibile
@@ -54,14 +54,14 @@ La calibrazione è attiva. Lo scanner ha abbastanza previsioni controllate per i
 
 ### Stato
 
-- Previsioni fatte: **69**
+- Previsioni fatte: **70**
 - Previsioni controllate: **30/30**
 - Barra progresso: **[██████████]**
-- Previsioni in attesa: **39**
+- Previsioni in attesa: **40**
 - Previsioni già mature ma non ancora valutate: **10**
 - Prima previsione salvata: **2026-07-03**
-- Ultima previsione salvata: **2026-09-11**
-- Prossimo controllo previsto: **2026-09-13 / tra 2 giorni**
+- Ultima previsione salvata: **2026-09-12**
+- Prossimo controllo previsto: **2026-09-13 / tra 1 giorno**
 - Stato calibrazione: **ATTIVA**
 
 ### Accuratezza, quando disponibile
@@ -80,14 +80,14 @@ La calibrazione è attiva. Lo scanner ha abbastanza previsioni controllate per i
 
 ### Stato
 
-- Previsioni fatte: **69**
+- Previsioni fatte: **70**
 - Previsioni controllate: **30/30**
 - Barra progresso: **[██████████]**
-- Previsioni in attesa: **39**
+- Previsioni in attesa: **40**
 - Previsioni già mature ma non ancora valutate: **10**
 - Prima previsione salvata: **2026-07-03**
-- Ultima previsione salvata: **2026-09-11**
-- Prossimo controllo previsto: **2026-09-13 / tra 2 giorni**
+- Ultima previsione salvata: **2026-09-12**
+- Prossimo controllo previsto: **2026-09-13 / tra 1 giorno**
 - Stato calibrazione: **ATTIVA**
 
 ### Accuratezza, quando disponibile

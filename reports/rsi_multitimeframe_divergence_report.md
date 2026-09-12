@@ -1,6 +1,6 @@
 # Divergenze RSI multi-timeframe — diagnostica
 
-Generato: 2026-09-11 05:32 UTC
+Generato: 2026-09-12 05:32 UTC
 
 Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Riconosce divergenze regolari e nascoste, segnali in formazione, invalidazioni e semplice conferma del momentum.
 
@@ -18,12 +18,12 @@ Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Ric
 
 | Asset   | TF   | Tipo               | Stato         | Prezzo / RSI      | Pivot confrontati                                                   | Δ prezzo contesto   | Δ RSI contesto   |   Peso |
 |:--------|:-----|:-------------------|:--------------|:------------------|:--------------------------------------------------------------------|:--------------------|:-----------------|-------:|
-| BTC     | 1D   | Hidden bullish     | IN_FORMAZIONE | 77.099 $ / 54,76  | 2026-09-02 76.248 $ / RSI 65,21 → 2026-09-11 76.536 $ / RSI 54,76   | n/a                 | n/a              |      0 |
-| BTC     | 1W   | Conferma rialzista | CONTESTO      | 77.099 $ / 54,93  | n/a                                                                 | +21,45%             | 16,09            |      0 |
-| SOL     | 1D   | Hidden bullish     | IN_FORMAZIONE | 99,73 $ / 55,17   | 2026-09-02 97,45 $ / RSI 63,79 → 2026-09-11 98,68 $ / RSI 55,17     | n/a                 | n/a              |      0 |
-| SOL     | 1W   | Hidden bearish     | IN_FORMAZIONE | 99,73 $ / 55,46   | 2026-08-30 110,04 $ / RSI 57,95 → 2026-09-06 107,12 $ / RSI 60,25   | n/a                 | n/a              |      0 |
-| DOGE    | 1D   | Hidden bullish     | IN_FORMAZIONE | 0.08403 $ / 50,50 | 2026-09-02 0.08028 $ / RSI 52,52 → 2026-09-11 0.08291 $ / RSI 50,50 | n/a                 | n/a              |      0 |
-| DOGE    | 1W   | Hidden bearish     | CONFERMATA    | 0.08403 $ / 45,56 | 2026-05-17 0.11825 $ / RSI 44,25 → 2026-08-23 0.09998 $ / RSI 49,72 | n/a                 | n/a              |      0 |
+| BTC     | 1D   | Hidden bullish     | IN_FORMAZIONE | 77.204 $ / 54,88  | 2026-09-02 76.248 $ / RSI 65,21 → 2026-09-10 76.471 $ / RSI 52,89   | n/a                 | n/a              |      0 |
+| BTC     | 1W   | Conferma rialzista | CONTESTO      | 77.204 $ / 55,05  | n/a                                                                 | +21,62%             | 16,21            |      0 |
+| SOL     | 1D   | Hidden bullish     | IN_FORMAZIONE | 101,53 $ / 57,42  | 2026-09-02 97,45 $ / RSI 63,79 → 2026-09-10 98,69 $ / RSI 53,40     | n/a                 | n/a              |      0 |
+| SOL     | 1W   | Hidden bearish     | IN_FORMAZIONE | 101,53 $ / 56,67  | 2026-08-30 110,04 $ / RSI 57,95 → 2026-09-06 107,12 $ / RSI 60,25   | n/a                 | n/a              |      0 |
+| DOGE    | 1D   | Hidden bullish     | IN_FORMAZIONE | 0.08434 $ / 51,09 | 2026-09-02 0.08028 $ / RSI 52,52 → 2026-09-10 0.08285 $ / RSI 48,72 | n/a                 | n/a              |      0 |
+| DOGE    | 1W   | Hidden bearish     | CONFERMATA    | 0.08434 $ / 45,71 | 2026-05-17 0.11825 $ / RSI 44,25 → 2026-08-23 0.09998 $ / RSI 49,72 | n/a                 | n/a              |      0 |
 
 ### BTC
 
@@ -52,6 +52,7 @@ Viene salvato un solo evento per combinazione di asset, timeframe, tipo e coppia
 |:--------|:-----|:-----------------|------------:|------------:|:--------------|:------------------|:--------------|-------:|
 | BTC     | 1D   | Bullish regolare |          30 |           1 | 0,00%         | -1,52%            | RACCOLTA DATI |      0 |
 | BTC     | 1D   | Hidden bearish   |          30 |           1 | 0,00%         | -1,37%            | RACCOLTA DATI |      0 |
+| BTC     | 1D   | Hidden bearish   |          60 |           1 | 0,00%         | -23,44%           | RACCOLTA DATI |      0 |
 | BTC     | 1W   | Bullish regolare |          30 |           1 | +100,00%      | +1,03%            | RACCOLTA DATI |      0 |
 | BTC     | 1W   | Bullish regolare |          60 |           1 | +100,00%      | +22,85%           | RACCOLTA DATI |      0 |
 | DOGE    | 1D   | Bullish regolare |          30 |           1 | +100,00%      | +22,35%           | RACCOLTA DATI |      0 |
