@@ -3,7 +3,7 @@
 Simulazione separata **paper only**: capitale/margine iniziale **€3.600**, leva **5x**, esposizione iniziale **€18.000**. Non modifica i conti paper da €10.000 e non invia ordini reali.
 
 - Stato: **INVALIDATED**
-- Prezzo DOGE: **0.08431**
+- Prezzo DOGE: **0.0847**
 - Pre-allarme: **0.0765**; zona armata: **0.0775**; trigger rejection: **0.078**
 - Invalidazione prima dell’entrata: chiusura 15m sopra **0.07966**
 
@@ -21,12 +21,12 @@ Simulazione separata **paper only**: capitale/margine iniziale **€3.600**, lev
 | Classic raw | -11.0 | OK |
 | DOGE/BTC raw | -6.0 | OK |
 | Pattern ribassista | MATURO | OK |
-| BTC sotto filtro | 77165.9 | NO |
+| BTC sotto filtro | 77184.7 | NO |
 
 ### Ultima candela 15m valutata
 
-- Rejection accettata: **NO**; motivo: **closed_back_below_trigger, close_below_invalidation, entry_not_chased, upper_wick, stop_within_limit**
-- High **0.08437**; close **0.08433**; wick alta **27.3%**; volume **x0.33**
+- Rejection accettata: **NO**; motivo: **closed_back_below_trigger, close_below_invalidation, entry_not_chased, bearish_confirmation, stop_within_limit**
+- High **0.0847**; close **0.08466**; wick alta **44.4%**; volume **x0.90**
 
 ### Gestione
 

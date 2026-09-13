@@ -1,6 +1,6 @@
 # Sintesi finale di confluenza
 
-Generato: 2026-09-12 05:32 UTC
+Generato: 2026-09-13 05:33 UTC
 
 Questo report mette insieme i moduli principali dello scanner e controlla se si confermano o si contraddicono.
 
@@ -30,16 +30,16 @@ Nota exchange: **candidato massimo ±1, peso iniziale 0** e più conferme indipe
 
 | Asset | Punteggio | Confluenza | Bias | Affidabilità | Azione coerente | Conferme | Invalidazioni |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | +3 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA | ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE | Prima resistenza sopra 82.262; conferma del doppio minimo sopra 65.402. | Sotto 76.248 il quadro tecnico peggiora. |
-| SOL | +4 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA | HOLD / TRANCHE PICCOLE, NO LEVA | Doppio minimo target raggiunto finché mantiene 78,73; nuova conferma tecnica sopra 107,12; milestone analogiche 106,63 / 131,61, valide soltanto se rientra anche il gap frattale. | Allarmi sotto 87,15 / 97,45 / 62,19. |
+| BTC | +6 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA | ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE | Prima resistenza sopra 82.262; conferma del doppio minimo sopra 65.402. | Sotto 76.248 il quadro tecnico peggiora. |
+| SOL | +4 | MODERATAMENTE POSITIVA | Costruttivo prudente | MEDIA | HOLD / TRANCHE PICCOLE, NO LEVA | Doppio minimo target raggiunto finché mantiene 78,73; nuova conferma tecnica sopra 107,12; milestone analogiche 108,90 / 134,15, valide soltanto se rientra anche il gap frattale. | Allarmi sotto 88,83 / 97,45 / 62,19. |
 | DOGE | -5 | NEGATIVA | Ribassista | MEDIA | STAI FUORI / VENDI PARZIALE; SHORT SOLO DOPO SPIKE | Sopra 0.09421 migliora; sopra 0.06933 viene invalidato il pattern ribassista dominante. | Sotto 0.08028 il rischio ribassista aumenta. |
 
 ## Punteggi per modulo
 
 | Asset | Scanner grezzo | Market grezzo | Famiglia statistica | Scanner path | Tecnico | Classic tech | Frattale SOL | Fractal path | RSI top-cycle | Lifecycle EMA | Exchange flow | Futures | Daily change | Totale |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | +3 | 0 | +3 | 0 | +1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | -1 | +3 |
-| SOL | +3 | 0 | +3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | +1 | +4 |
+| BTC | +3 | 0 | +3 | 0 | +2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | +1 | +6 |
+| SOL | +3 | 0 | +3 | 0 | +1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | +4 |
 | DOGE | -2 | 0 | -2 | 0 | -2 | -1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | -5 |
 
 Le colonne **Scanner grezzo** e **Market grezzo** sono diagnostiche: nel totale entra soltanto la colonna **Famiglia statistica**.
@@ -50,7 +50,7 @@ Le colonne **Scanner grezzo** e **Market grezzo** sono diagnostiche: nel totale 
 
 - Confluenza: **MODERATAMENTE POSITIVA**
 - Bias: **Costruttivo prudente**
-- Punteggio finale: **+3**
+- Punteggio finale: **+6**
 - Affidabilità: **MEDIA**
 - Azione coerente: **ACCUMULA A TRANCHE SU PULLBACK / NON INSEGUIRE**
 
@@ -59,18 +59,18 @@ BTC è l'asset messo meglio nel breve, ma lo score statistico ora conta Scanner 
 Dettaglio moduli:
 
 - Famiglia statistica: **+3** — Scanner grezzo +3, Market Regime grezzo 0, match regime 0. Regime ignorato: meno di 5 match utili. Punteggio contato nel Global: +3.
-- Scanner (diagnostico, già incluso nella Famiglia statistica): **+3** — Casi positivi 82,50%, return centrale 30g +35,67%. Direzione scanner: SALITA. Fonte: latest_scanner_summary strutturato.
+- Scanner (diagnostico, già incluso nella Famiglia statistica): **+3** — Casi positivi 85,00%, return centrale 30g +36,97%. Direzione scanner: SALITA. Fonte: latest_scanner_summary strutturato.
 - Market regime (diagnostico, già incluso nella Famiglia statistica): **0** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 0, positivi 30g n/a, return p50 n/a.
-- Scanner path: **0** — Controlli disponibili 61. Il cono previsionale inizia a essere valutabile, ma resta secondario.
-- Tecnico: **+1** — Score tecnico 2/12, verdetto neutrale / misto, trend misto, struttura rialzista con massimi e minimi crescenti, divergenza nessuna, Wyckoff markup / fase rialzista, pattern score 0 (rialzista Doppio minimo / TARGET RAGGIUNTO; ribassista Doppio massimo / CANDIDATO). Fonte: technical_structure_metrics.csv.
-- Classic technical: **0** — Score classico -3/12, verdetto DEBOLE / NON CONFERMATO, stage STAGE 3 / DISTRIBUZIONE O PAUSA, struttura VOLATILITÀ IN ESPANSIONE, Wyckoff RANGE / FASE NON CHIARA, volatilità locale BASSO. Peso Global limitato a ±1 perché è un filtro di conferma.
+- Scanner path: **0** — Controlli disponibili 62. Il cono previsionale inizia a essere valutabile, ma resta secondario.
+- Tecnico: **+2** — Score tecnico 3/12, verdetto costruttivo ma non confermato, trend misto, struttura rialzista con massimi e minimi crescenti, divergenza nessuna, Wyckoff markup / fase rialzista, pattern score 0 (rialzista Doppio minimo / TARGET RAGGIUNTO; ribassista Doppio massimo / CANDIDATO). Fonte: technical_structure_metrics.csv.
+- Classic technical: **0** — Score classico -3/12, verdetto DEBOLE / NON CONFERMATO, stage STAGE 3 / DISTRIBUZIONE O PAUSA, struttura VOLATILITÀ IN ESPANSIONE, Wyckoff RANGE / FASE NON CHIARA, volatilità locale MEDIO. Peso Global limitato a ±1 perché è un filtro di conferma.
 - Frattale SOL: **0** — Non applicabile a questo asset.
 - Fractal path: **0** — Non applicabile a questo asset.
 - RSI top-cycle: **0** — Non applicabile a questo asset.
 - Lifecycle EMA: **0** — Non applicabile a questo asset.
-- Exchange flow: **0** — Flow +1.75, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +1.00; exchange 3/3, copertura 100%, consenso bull 0, bear 1, divergenze 0, campioni 4h 8 su 3.50h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza MEDIA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
-- Futures: **0** — Lettura futures Misto, forza 1/5.
-- Daily change: **-1** — BTC: cambiamento medio in peggioramento rispetto a ieri.
+- Exchange flow: **0** — Flow +1.75, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +1.00; exchange 3/3, copertura 100%, consenso bull 1, bear 0, divergenze 0, campioni 4h 9 su 4.00h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza MEDIA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
+- Futures: **0** — Lettura futures Rischio sotto, forza 2/5.
+- Daily change: **+1** — BTC: cambiamento medio in miglioramento rispetto a ieri.
 
 Conferme: Prima resistenza sopra 82.262; conferma del doppio minimo sopra 65.402.
 
@@ -89,22 +89,22 @@ SOL ha una confluenza costruttiva, ma va ancora trattato come setup anticipato. 
 Dettaglio moduli:
 
 - Famiglia statistica: **+3** — Scanner grezzo +3, Market Regime grezzo 0, match regime 0. Regime ignorato: meno di 5 match utili. Punteggio contato nel Global: +3.
-- Scanner (diagnostico, già incluso nella Famiglia statistica): **+3** — Casi positivi 65,00%, return centrale 30g +35,15%. Direzione scanner: SALITA. Fonte: latest_scanner_summary strutturato.
+- Scanner (diagnostico, già incluso nella Famiglia statistica): **+3** — Casi positivi 67,50%, return centrale 30g +33,19%. Direzione scanner: SALITA. Fonte: latest_scanner_summary strutturato.
 - Market regime (diagnostico, già incluso nella Famiglia statistica): **0** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 0, positivi 30g n/a, return p50 n/a.
-- Scanner path: **0** — Controlli disponibili 61. Il cono previsionale inizia a essere valutabile, ma resta secondario.
-- Tecnico: **0** — Score tecnico 0/12, verdetto neutrale / misto, trend misto, struttura compressione / triangolo, divergenza nessuna, Wyckoff markup / fase rialzista, pattern score 0 (rialzista Doppio minimo / TARGET RAGGIUNTO; ribassista Doppio massimo / CANDIDATO). Fonte: technical_structure_metrics.csv.
-- Classic technical: **0** — Score classico -1/12, verdetto NEUTRALE / MISTO, stage STAGE 3 / DISTRIBUZIONE O PAUSA, struttura COMPRESSIONE / TRIANGOLO POSSIBILE, Wyckoff SIGN OF STRENGTH POSSIBILE, volatilità locale BASSO. Peso Global limitato a ±1 perché è un filtro di conferma.
-- Frattale SOL: **0** — Verdetto ANALOGIA DEBOLE / SCENARIO SECONDARIO, somiglianza strutturale +70,17%, aderenza live +72,58%, errore live +13,71%, gap corrente +9,59%, peso operativo 0, tracking STRUTTURA STABILE, fase FRATTALE SOLO DI CONTESTO, rischio ALTO.
-- Fractal path: **0** — Controlli disponibili 58, ma percorso ancorato non aderente: gap +9,59%, errore live +13,71%. Peso 0.
+- Scanner path: **0** — Controlli disponibili 62. Il cono previsionale inizia a essere valutabile, ma resta secondario.
+- Tecnico: **+1** — Score tecnico 1/12, verdetto neutrale / misto, trend misto, struttura compressione / triangolo, divergenza nessuna, Wyckoff markup / fase rialzista, pattern score 0 (rialzista Doppio minimo / TARGET RAGGIUNTO; ribassista Doppio massimo / CANDIDATO). Fonte: technical_structure_metrics.csv.
+- Classic technical: **0** — Score classico 0/12, verdetto NEUTRALE / MISTO, stage STAGE 3 / DISTRIBUZIONE O PAUSA, struttura COMPRESSIONE / TRIANGOLO POSSIBILE, Wyckoff SIGN OF STRENGTH POSSIBILE, volatilità locale BASSO. Peso Global limitato a ±1 perché è un filtro di conferma.
+- Frattale SOL: **0** — Verdetto ANALOGIA DEBOLE / SCENARIO SECONDARIO, somiglianza strutturale +70,17%, aderenza live +72,50%, errore live +13,75%, gap corrente +11,71%, peso operativo 0, tracking STRUTTURA STABILE, fase FRATTALE SOLO DI CONTESTO, rischio ALTO.
+- Fractal path: **0** — Controlli disponibili 59, ma percorso ancorato non aderente: gap +11,71%, errore live +13,75%. Peso 0.
 - RSI top-cycle: **0** — Rischio top-cycle RSI: BASSO.
-- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 2, bias CONTESTO DA OSSERVARE, EMA200 111,24 $, upside EMA200 +9,57%, gap EMA50/EMA200 -5,75%, hit EMA200 12w +80,00%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
-- Exchange flow: **0** — Flow +2.00, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +0.00; exchange 3/3, copertura 100%, consenso bull 1, bear 1, divergenze 0, campioni 4h 8 su 3.50h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza BASSA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
-- Futures: **0** — Lettura futures Misto, forza 1/5.
-- Daily change: **+1** — SOL: cambiamento medio in miglioramento rispetto a ieri.
+- Lifecycle EMA: **0** — Contesto non pesato nel Global. Lifecycle score 2, bias CONTESTO DA OSSERVARE, EMA200 111,24 $, upside EMA200 +9,25%, gap EMA50/EMA200 -5,74%, hit EMA200 12w +73,33%, trend STABILE / DA CONFERMARE. Peso Global forzato a 0.
+- Exchange flow: **0** — Flow +2.00, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +0.00; exchange 3/3, copertura 100%, consenso bull 2, bear 0, divergenze 0, campioni 4h 9 su 4.00h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza BASSA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
+- Futures: **0** — Lettura futures Rischio sotto, forza 2/5.
+- Daily change: **0** — SOL: nessun cambiamento forte in miglioramento rispetto a ieri.
 
-Conferme: Doppio minimo target raggiunto finché mantiene 78,73; nuova conferma tecnica sopra 107,12; milestone analogiche 106,63 / 131,61, valide soltanto se rientra anche il gap frattale.
+Conferme: Doppio minimo target raggiunto finché mantiene 78,73; nuova conferma tecnica sopra 107,12; milestone analogiche 108,90 / 134,15, valide soltanto se rientra anche il gap frattale.
 
-Invalidazioni: Allarmi sotto 87,15 / 97,45 / 62,19.
+Invalidazioni: Allarmi sotto 88,83 / 97,45 / 62,19.
 
 ### DOGE
 
@@ -119,18 +119,18 @@ DOGE resta l'asset più debole. Anche senza contare due volte Scanner e Market R
 Dettaglio moduli:
 
 - Famiglia statistica: **-2** — Scanner grezzo -2, Market Regime grezzo 0, match regime 0. Regime ignorato: meno di 5 match utili. Punteggio contato nel Global: -2.
-- Scanner (diagnostico, già incluso nella Famiglia statistica): **-2** — Casi positivi 27,50%, return centrale 30g -14,87%. Direzione scanner: DISCESA. Fonte: latest_scanner_summary strutturato.
+- Scanner (diagnostico, già incluso nella Famiglia statistica): **-2** — Casi positivi 25,00%, return centrale 30g -14,87%. Direzione scanner: DISCESA. Fonte: latest_scanner_summary strutturato.
 - Market regime (diagnostico, già incluso nella Famiglia statistica): **0** — Gruppo SAME_BTC_AND_ASSET_REGIME, match 0, positivi 30g n/a, return p50 n/a.
-- Scanner path: **0** — Controlli disponibili 61. Il cono previsionale inizia a essere valutabile, ma resta secondario.
-- Tecnico: **-2** — Score tecnico -4/12, verdetto debole, trend misto, struttura compressione / triangolo, divergenza nessuna, Wyckoff possibile accumulazione, pattern score 0 (rialzista Doppio minimo / TARGET RAGGIUNTO; ribassista Doppio massimo / CANDIDATO). Fonte: technical_structure_metrics.csv.
-- Classic technical: **-1** — Score classico -6/12, verdetto RIBASSISTA / FRAGILE, stage STAGE 4 / MARKDOWN, struttura COMPRESSIONE / TRIANGOLO POSSIBILE, Wyckoff ACCUMULO POSSIBILE / RANGE BASSO, volatilità locale MEDIO. Peso Global limitato a ±1 perché è un filtro di conferma.
+- Scanner path: **0** — Controlli disponibili 62. Il cono previsionale inizia a essere valutabile, ma resta secondario.
+- Tecnico: **-2** — Score tecnico -6/12, verdetto debole, trend misto, struttura compressione / triangolo, divergenza nessuna, Wyckoff range / fase non chiara, pattern score 0 (rialzista Doppio minimo / TARGET RAGGIUNTO; ribassista Doppio massimo / CANDIDATO). Fonte: technical_structure_metrics.csv.
+- Classic technical: **-1** — Score classico -7/12, verdetto RIBASSISTA / FRAGILE, stage STAGE 4 / MARKDOWN, struttura COMPRESSIONE / TRIANGOLO POSSIBILE, Wyckoff ACCUMULO POSSIBILE / RANGE BASSO, volatilità locale MEDIO. Peso Global limitato a ±1 perché è un filtro di conferma.
 - Frattale SOL: **0** — Non applicabile a questo asset.
 - Fractal path: **0** — Non applicabile a questo asset.
 - RSI top-cycle: **0** — Non applicabile a questo asset.
 - Lifecycle EMA: **0** — Non applicabile a questo asset.
-- Exchange flow: **0** — Flow +1.75, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +0.75; exchange 3/3, copertura 100%, consenso bull 1, bear 1, divergenze 0, campioni 4h 8 su 3.50h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza MEDIA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
+- Exchange flow: **0** — Flow +1.75, derivati +0.00, affollamento +0.00, liquidazioni +0.00, conferme tecniche +0.50; exchange 3/3, copertura 100%, consenso bull 0, bear 2, divergenze 0, campioni 4h 9 su 4.00h; candidato +0, peso Global +0 (LOCKED / RACCOLTA 7G). Bias LEGGERMENTE POSITIVA / NON PESATA; confidenza BASSA; fonti 3/3; KuCoin OK; copertura 100,00%. Attivazione: LOCKED / RACCOLTA 7G. Il Global usa +0; il candidato +0 resta misurato separatamente.
 - Futures: **0** — Lettura futures Rischio sotto, forza 2/5.
-- Daily change: **0** — DOGE: nessun cambiamento forte in peggioramento rispetto a ieri.
+- Daily change: **0** — DOGE: nessun cambiamento forte in misto rispetto a ieri.
 
 Conferme: Sopra 0.09421 migliora; sopra 0.06933 viene invalidato il pattern ribassista dominante.
 

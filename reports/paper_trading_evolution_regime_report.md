@@ -1,6 +1,6 @@
 # Blocco 10 — Regime Fitness e specializzazione
 
-Generato: 2026-09-12T05:18:10+00:00
+Generato: 2026-09-13T05:18:08+00:00
 
 > Paper-only e advisory. Il blocco misura quali strategie funzionano nei diversi regimi, ma non cambia automaticamente strategia o posizione.
 
@@ -25,8 +25,8 @@ Generato: 2026-09-12T05:18:10+00:00
 | 6 | EVO_CAND_SHADOW_1H_FAST_V3_NO_ESPORTS_STRESS_G_TP_R200_89ab3f19 | momentum_breakout_v3_filtered | INSUFFICIENT | 80.4 | 1 | 99.00 | 1.959 | 0.00 |
 | 7 | SHADOW_SOL_ADAPTIVE_4H | shadow-sol-adaptive-4h | INSUFFICIENT | 80.4 | 1 | 99.00 | 0.682 | 0.00 |
 | 8 | SHADOW_SOL_DONCHIAN_4H | shadow-sol-donchian-4h | INSUFFICIENT | 80.4 | 1 | 99.00 | 0.744 | 0.00 |
-| 9 | MAIN_DYNAMIC_ASSET_SELECTOR_V1 | main-dynamic-asset-selector-v1 | OBSERVING | 79.8 | 10 | 3.74 | 0.874 | 1.11 |
-| 10 | EVO_CAND_SHADOW_1H_FAST_V3_CAP75_V1_TP_R200_86882aa9 | momentum_breakout_v3_filtered | INSUFFICIENT | 78.9 | 5 | 15.19 | 1.196 | 0.42 |
+| 9 | SHADOW_1H_FAST_V3_LONG_NOHIGH_CAP75_V1 | shadow-1h-fast-v3-long-nohigh-cap75-v1 | SPECIALIST | 80.0 | 61 | 1.83 | 0.351 | 6.81 |
+| 10 | MAIN_DYNAMIC_ASSET_SELECTOR_V1 | main-dynamic-asset-selector-v1 | OBSERVING | 79.8 | 10 | 3.74 | 0.874 | 1.11 |
 
 ## Sicurezza
 
