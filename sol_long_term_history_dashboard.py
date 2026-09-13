@@ -100,61 +100,159 @@ def _current_figure(current: Mapping[str, Any]):
 
 
 def _date_axis(axis, dates: Sequence[date]) -> None:
-    if len(set(dates)) == 1:
-        center = mdates.date2num(dates[0])
-        axis.set_xlim(center - 0.5, center + 0.5)
-        axis.set_xticks([center])
-        axis.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
-    else:
-        locator = mdates.AutoDateLocator(minticks=2, maxticks=8)
-        axis.xaxis.set_major_locator(locator)
-        axis.xaxis.set_major_formatter(mdates.ConciseDateFormatter(locator))
-    axis.set_xlabel("Real observation date · Europe/Madrid")
+    """Thin only tick labels; retain every supplied observation in the plots."""
+    unique = sorted(set(dates))
+    indices = np.unique(np.linspace(0, len(unique) - 1, min(len(unique), 12), dtype=int))
+    ticks = [unique[index] for index in indices]
+    axis.set_xticks(mdates.date2num(ticks))
+    pattern = "%d %b" if unique[0].year == unique[-1].year else "%d %b %y"
+    axis.xaxis.set_major_formatter(mdates.DateFormatter(pattern))
+    first, last = mdates.date2num([unique[0], unique[-1]])
+    margin = max((last - first) * 0.025, 0.3)
+    axis.set_xlim(first - margin, last + margin)
+    year = str(unique[0].year) if unique[0].year == unique[-1].year else f"{unique[0].year}–{unique[-1].year}"
+    axis.set_xlabel(f"Snapshot date · Europe/Madrid · {year}", labelpad=10, color="#506479")
+    axis.tick_params(axis="x", labelsize=9)
+
+
+def _plot_observed_series(axis, dates, values, *, label, gid, color,
+                          marker="o", linewidth=2, linestyle="-", alpha=1):
+    """Draw separate runs of adjacent real dates, never inserting missing dates.
+
+    A missing value ends a run as well. Every finite value appears in exactly
+    one Line2D, with its original date and value and a visible marker.
+    """
+    runs, run = [], []
+    for day, raw in zip(dates, values):
+        value = _number(raw)
+        if not math.isfinite(value):
+            if run:
+                runs.append(run)
+                run = []
+            continue
+        if run and (day - run[-1][0]).days != 1:
+            runs.append(run)
+            run = []
+        run.append((day, value))
+    if run:
+        runs.append(run)
+    for index, points in enumerate(runs):
+        axis.plot([p[0] for p in points], [p[1] for p in points],
+                  label=label if index == 0 else "_nolegend_", gid=gid,
+                  color=color, linewidth=linewidth, linestyle=linestyle,
+                  marker=marker, markersize=5.6 if linewidth >= 2.5 else 4.6,
+                  markeredgecolor="white", markeredgewidth=0.65, alpha=alpha,
+                  zorder=4 if linewidth >= 2.5 else 3)
+    return runs[-1][-1] if runs else None
+
+
+def _end_labels(axis, entries):
+    """Place labels outside the axes with leaders to the exact real endpoints."""
+    if not entries:
+        return
+    low, high = axis.get_ylim()
+    ordered = sorted(entries, key=lambda item: item[0][1])
+    minimum, maximum, gap = 0.065, 0.94, 0.095
+    positions = [max(minimum, min(maximum, (point[1] - low) / (high - low)))
+                 for point, _, _ in ordered]
+    for index in range(1, len(positions)):
+        positions[index] = max(positions[index], positions[index - 1] + gap)
+    if positions[-1] > maximum:
+        positions[-1] = maximum
+        for index in range(len(positions) - 2, -1, -1):
+            positions[index] = min(positions[index], positions[index + 1] - gap)
+    for (point, label, color), y in zip(ordered, positions):
+        axis.annotate(label, xy=(mdates.date2num(point[0]), point[1]), xycoords="data",
+                      xytext=(1.025, y), textcoords="axes fraction", va="center", ha="left",
+                      fontsize=10, fontweight="normal", color=color, annotation_clip=False,
+                      arrowprops={"arrowstyle": "-", "color": color, "linewidth": 0.75,
+                                  "alpha": 0.6, "connectionstyle": "angle3,angleA=0,angleB=90"},
+                      bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.5})
+
+
+def _panel_drift_title(label, horizon, statistics):
+    latest = statistics.get("trend_new") or {}
+    old = statistics.get("trend_old") or {}
+    key = f"h{horizon}_p50"
+    before, after = _number(old.get(key)), _number(latest.get(key))
+    change = (after / before - 1) * 100 if math.isfinite(before) and before > 0 and math.isfinite(after) else float("nan")
+    period = "available history" if statistics["short_7d"] else "7d"
+    delta = f"{change:+.1f}%" if math.isfinite(change) else "—"
+    return f"{label} — Latest p50 {_money(after)} · {period} {delta}"
 
 
 def _history_figure(rows: Sequence[Mapping[str, Any]]):
-    figure, axes = plt.subplots(3, 1, figsize=(12, 11), sharex=True)
+    figure, axes = plt.subplots(3, 1, figsize=(14, 12), sharex=True, sharey=False)
     dates = [date.fromisoformat(str(row["date_local"])) for row in rows]
+    statistics = recent_statistics(rows)
+    styles = (("p50", 2.8, "o", 1.0), ("p75", 1.8, "s", 0.95), ("p90", 1.15, "^", 0.72))
     for axis, (horizon, label) in zip(axes, HORIZONS):
-        for quantile in ("p50", "p75", "p90"):
-            # Scatter deliberately leaves unobserved dates and missing values empty.
+        labels, present = [], []
+        for quantile, width, marker, alpha in styles:
             values = [_number(row.get(f"h{horizon}_{quantile}")) for row in rows]
-            axis.scatter(dates, values, label=quantile, color=COLORS[quantile], s=35, alpha=0.88)
-        axis.scatter(dates, [_number(row.get("spot_sol")) for row in rows],
-                     label="SOL spot", marker="x", color=COLORS["spot"], s=38)
-        axis.set_title(label, loc="left", fontsize=12, fontweight="bold")
+            present.extend(value for value in values if math.isfinite(value))
+            endpoint = _plot_observed_series(axis, dates, values, label=quantile, gid=quantile,
+                color=COLORS[quantile], linewidth=width, marker=marker, alpha=alpha)
+            if endpoint:
+                labels.append((endpoint, f"{quantile} {_money(endpoint[1])}", COLORS[quantile]))
+        spot = [_number(row.get("spot_sol")) for row in rows]
+        present.extend(value for value in spot if math.isfinite(value))
+        endpoint = _plot_observed_series(axis, dates, spot, label="SOL spot", gid="spot",
+            color=COLORS["spot"], linewidth=1.05, linestyle="--", marker="D")
+        if endpoint:
+            labels.append((endpoint, f"SOL {_money(endpoint[1])}", COLORS["spot"]))
+        if present:
+            lower, upper = min(present), max(present)
+            span = max(upper - lower, abs(upper) * 0.1, 1)
+            axis.set_ylim(max(0, lower - span * 0.10), upper + span * 0.16)
         _style_axis(axis, "SOL price (USD)")
-        axis.legend(loc="best", frameon=False, ncol=4, fontsize=9)
-    _date_axis(axes[-1], dates)
-    figure.suptitle("SOL Long-Term Cone — Forecast History", x=0.08, y=0.992,
-                     ha="left", fontsize=17, fontweight="bold")
-    figure.text(0.08, 0.955, "LOG_ROBUST_TAIL · Real daily observations only · No interpolation · DIAGNOSTIC ONLY",
+        axis.set_title(_panel_drift_title(label, horizon, statistics), loc="left",
+                       fontsize=12, fontweight="bold", pad=13)
+        axis.legend(loc="upper right", frameon=False, ncol=4, fontsize=9,
+                    handlelength=2.5, columnspacing=1.3)
+        _date_axis(axis, dates)
+        axis.tick_params(axis="x", labelbottom=True)
+        _end_labels(axis, labels)
+    figure.suptitle("SOL Long-Term Cone — Forecast History", x=0.075, y=0.985,
+                   ha="left", fontsize=20, fontweight="bold")
+    figure.text(0.075, 0.95,
+                "LOG_ROBUST_TAIL · Real observations with markers · Missing days remain gaps · DIAGNOSTIC ONLY",
                 fontsize=10, color="#506479")
-    figure.tight_layout(rect=(0, 0, 1, 0.94))
+    figure.subplots_adjust(left=0.075, right=0.83, top=0.895, bottom=0.075, hspace=0.64)
     return figure
 
 
 def _probability_figure(rows: Sequence[Mapping[str, Any]]):
-    figure, axis = plt.subplots(figsize=(12, 6.3))
+    figure, axes = plt.subplots(2, 1, figsize=(14, 9.5), sharex=True)
     dates = [date.fromisoformat(str(row["date_local"])) for row in rows]
-    series = (
-        ("h730_p_ge_300", "2Y P(SOL ≥ $300)", "#185b96", "o"),
-        ("h730_p_ge_500", "2Y P(SOL ≥ $500)", "#b36905", "s"),
-        ("h730_p_ge_800", "2Y P(SOL ≥ $800)", "#9b3b8b", "^"),
-        ("h180_p_ge_200", "6M P(SOL ≥ $200)", "#187e70", "x"),
-        ("h180_p_ge_300", "6M P(SOL ≥ $300)", "#777777", "+"),
+    panels = (
+        ("2 YEARS", (("h730_p_ge_300", 300, "#185b96", "o"),
+                      ("h730_p_ge_500", 500, "#b36905", "s"),
+                      ("h730_p_ge_800", 800, "#9b3b8b", "^"))),
+        ("6 MONTHS", (("h180_p_ge_200", 200, "#187e70", "o"),
+                       ("h180_p_ge_300", 300, "#6a627d", "s"))),
     )
-    for key, label, color, marker in series:
-        axis.scatter(dates, [_number(row.get(key)) for row in rows], label=label,
-                     color=color, marker=marker, s=43, alpha=0.88)
-    axis.set_ylim(0, 100)
-    _style_axis(axis, "Empirical analog frequency (%)")
-    _date_axis(axis, dates)
-    axis.set_title("SOL Long-Term Cone — Probability History", loc="left", fontsize=17, pad=35, fontweight="bold")
-    axis.text(0, 1.045, "LOG_ROBUST_TAIL · Real daily observations only · DIAGNOSTIC ONLY",
-              transform=axis.transAxes, color="#506479")
-    axis.legend(loc="best", frameon=False, ncol=2, fontsize=9)
-    figure.tight_layout()
+    for axis, (title, series) in zip(axes, panels):
+        labels = []
+        for key, threshold, color, marker in series:
+            endpoint = _plot_observed_series(axis, dates, [row.get(key) for row in rows],
+                label=f"P(SOL ≥ ${threshold})", gid=key, color=color, marker=marker, linewidth=2.1)
+            if endpoint:
+                labels.append((endpoint, f"≥ ${threshold}: {endpoint[1]:.1f}%", color))
+        axis.set_ylim(0, 100)
+        axis.set_yticks([0, 20, 40, 60, 80, 100], ["0%", "20%", "40%", "60%", "80%", "100%"])
+        _style_axis(axis, "Empirical analog frequency")
+        axis.set_title(title, loc="left", fontsize=13, fontweight="bold", pad=13)
+        _date_axis(axis, dates)
+        axis.tick_params(axis="x", labelbottom=True)
+        axis.legend(loc="upper right", frameon=False, ncol=len(series), fontsize=9, handlelength=2.5)
+        _end_labels(axis, labels)
+    figure.suptitle("SOL Long-Term Cone — Probability History", x=0.075, y=0.98,
+                   ha="left", fontsize=20, fontweight="bold")
+    figure.text(0.075, 0.94,
+                "LOG_ROBUST_TAIL · Real observations with markers · Missing days remain gaps · DIAGNOSTIC ONLY",
+                fontsize=10, color="#506479")
+    figure.subplots_adjust(left=0.075, right=0.83, top=0.875, bottom=0.09, hspace=0.45)
     return figure
 
 
@@ -171,8 +269,14 @@ def _render_readme(rows: Sequence[Mapping[str, Any]], current: Mapping[str, Any]
         "**LOG_ROBUST_TAIL · DIAGNOSTIC ONLY**", "",
         "## Current cone", "", "![SOL Long-Term Probability Cone — Current](sol_long_term_cone_current.png)", "",
         "## Forecast history", "", "![SOL Long-Term Cone — Forecast History](sol_long_term_cone_history.png)", "",
-        "Solo osservazioni reali; i marker non interpolano giorni mancanti.", "",
+        "Linee tra osservazioni reali consecutive, con marker; i giorni mancanti restano gap.", "",
+        "- p50 = mediana degli analoghi",
+        "- p75 = 25% degli analoghi sopra questo livello",
+        "- p90 = 10% degli analoghi sopra questo livello",
+        "- SOL spot = prezzo osservato nel giorno dello snapshot", "",
         "## Probability history", "", "![SOL Long-Term Cone — Probability History](sol_long_term_probability_history.png)", "",
+        "Le percentuali rappresentano la frequenza empirica degli analoghi che terminano "
+        "sopra la soglia all'orizzonte indicato.", "",
         "## Latest snapshot", "",
         "| Horizon | p50 | p75 | p90 | P≥300 | P≥500 |",
         "| --- | ---: | ---: | ---: | ---: | ---: |",

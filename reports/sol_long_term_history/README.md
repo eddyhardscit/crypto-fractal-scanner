@@ -13,11 +13,18 @@ Cohort: **40** analoghi / **29.0** distinct assets
 
 ![SOL Long-Term Cone — Forecast History](sol_long_term_cone_history.png)
 
-Solo osservazioni reali; i marker non interpolano giorni mancanti.
+Linee tra osservazioni reali consecutive, con marker; i giorni mancanti restano gap.
+
+- p50 = mediana degli analoghi
+- p75 = 25% degli analoghi sopra questo livello
+- p90 = 10% degli analoghi sopra questo livello
+- SOL spot = prezzo osservato nel giorno dello snapshot
 
 ## Probability history
 
 ![SOL Long-Term Cone — Probability History](sol_long_term_probability_history.png)
+
+Le percentuali rappresentano la frequenza empirica degli analoghi che terminano sopra la soglia all'orizzonte indicato.
 
 ## Latest snapshot
 
