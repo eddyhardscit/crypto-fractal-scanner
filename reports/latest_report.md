@@ -4826,3 +4826,10 @@ Bande 4H: L2 95.2050 · L1 98.0500 · media 101.6062 · U1 105.1624 · U2 108.00
 
 > Questo portafoglio non condivide capitale, posizioni o statistiche con il paper trading da €10.000.
 <!-- SOL_SPOT_ADAPTIVE_END -->
+
+
+<!-- SOL_LONG_TERM_CONE_HISTORY_START -->
+## SOL Long-Term Cone History
+
+[SOL Long-Term Cone History](sol_long_term_history/README.md)
+<!-- SOL_LONG_TERM_CONE_HISTORY_END -->

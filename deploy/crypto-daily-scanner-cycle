@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 027
+
+PUB="/opt/crypto-fractal-scanner-publisher"
+PYTHON="/opt/crypto-fractal-scanner-vps/.venv-core/bin/python"
+ENV_FILE="/etc/crypto-fractal-scanner/paper.env"
+
+exec 9>/run/lock/crypto-publisher.lock
+flock -n 9 || exit 0
+
+cd "$PUB"
+
+set -a
+. "$ENV_FILE"
+set +a
+
+export PYTHONUTF8=1
+export PYTHONIOENCODING=utf-8
+export PYTHONUNBUFFERED=1
+export GIT_SSH_COMMAND="ssh -i /var/lib/crypto-fractal-scanner/.ssh/id_ed25519 -o IdentitiesOnly=yes -o BatchMode=yes"
+
+git fetch origin main
+if ! git diff --quiet || ! git diff --cached --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+    echo "Publisher worktree non pulito; sincronizzazione distruttiva rifiutata."
+    exit 1
+fi
+git merge --ff-only origin/main
+
+"$PYTHON" market_snapshot.py
+"$PYTHON" scanner.py
+"$PYTHON" daily_change_report.py
+"$PYTHON" bounce_after_drawdown_report.py
+"$PYTHON" market_regime_match_report.py
+"$PYTHON" scanner_forecast_tracker.py
+"$PYTHON" extreme_cases_path_report.py
+"$PYTHON" classic_technical_confirmation_report.py
+"$PYTHON" btc_2022_vs_sol_2026_report.py
+"$PYTHON" fractal_path_tracker.py
+"$PYTHON" rsi_top_cycle_report.py
+"$PYTHON" sol_onchain_metrics_report.py
+"$PYTHON" major_alt_lifecycle_squeeze_report.py
+
+if [ -f liquidation_report.py ]; then
+    "$PYTHON" liquidation_report.py
+elif [ -f liquidations_report.py ]; then
+    "$PYTHON" liquidations_report.py
+fi
+
+"$PYTHON" technical_structure_report.py
+"$PYTHON" classic_technical_visual_report.py
+"$PYTHON" price_coherence_sync.py
+
+export EXCHANGE_STORAGE_RELEASE_TAG=exchange-data-v2-1
+"$PYTHON" exchange_persistent_storage.py restore
+"$PYTHON" exchange_persistent_storage.py audit
+"$PYTHON" exchange_persistent_storage.py archive-completed-months
+"$PYTHON" exchange_microstructure_report.py
+"$PYTHON" exchange_signal_tracker.py
+"$PYTHON" exchange_microstructure_report.py
+
+"$PYTHON" relative_strength_btc_report.py
+"$PYTHON" btc_macro_cycle_report.py
+"$PYTHON" global_confluence_report.py
+"$PYTHON" decision_report.py
+"$PYTHON" module_signal_tracker.py
+"$PYTHON" global_weight_calibration_report.py
+"$PYTHON" risk_calibration_report.py
+"$PYTHON" calibration_status_report.py
+"$PYTHON" data_quality_coherence_report.py
+
+export PAPER_TRADING_RELEASE_TAG=paper-trading-v1
+export PAPER_TRADING_CONFIG=paper_trading_config.json
+"$PYTHON" paper_trading_storage.py restore
+"$PYTHON" paper_trading_storage.py audit
+"$PYTHON" paper_trading_report.py
+
+# Artifact-only SOL long-term history; failure must not block Legacy reports.
+if [ -f sol_long_term_history_publish.py ]; then
+    if ! "$PYTHON" sol_long_term_history_publish.py --best-effort; then
+        echo "LONG_TERM_HISTORY_RETAINED_LAST_VALID"
+    fi
+fi
+
+git config user.name "hetzner-crypto-bot"
+git config user.email "hetzner-crypto-bot@users.noreply.github.com"
+git add reports/
+
+if git diff --cached --quiet; then
+    echo "Nessuna modifica ai report."
+    exit 0
+fi
+
+git commit -m "Update daily crypto reports from Hetzner"
+
+for attempt in 1 2 3; do
+    git fetch origin main
+    if ! git merge-base --is-ancestor origin/main HEAD; then
+        echo "Origin main avanzato in modo concorrente; rebase automatico rifiutato."
+        exit 1
+    fi
+
+    if git push origin HEAD:main; then
+        echo "Report giornalieri pubblicati correttamente."
+        exit 0
+    fi
+
+    [ "$attempt" -lt 3 ] && sleep 5
+done
+
+echo "Push fallito dopo tre tentativi."
+exit 1
