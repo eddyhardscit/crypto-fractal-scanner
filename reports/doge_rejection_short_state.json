@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-13T07:47:54+00:00",
-  "updated_utc": "2026-09-13T05:18:15+00:00",
+  "updated_utc": "2026-09-14T05:18:54+00:00",
   "initial_capital_eur": 3600.0,
   "balance_eur": 3600.0,
   "peak_equity_eur": 3600.0,
@@ -30,7 +30,7 @@
     ]
   },
   "last_checks": {
-    "generated_utc": "2026-09-13T05:18:15+00:00",
+    "generated_utc": "2026-09-14T05:18:54+00:00",
     "static": {
       "checks": {
         "fresh_market": true,
@@ -44,13 +44,13 @@
         "candle_15m_fresh": true
       },
       "freshness_status": "FRESH",
-      "doge_mark": 0.0847,
-      "btc_mark": 77184.7,
+      "doge_mark": 0.08397,
+      "btc_mark": 77590.59,
       "global_score": -6.0,
       "classic_raw_score": -11.0,
       "relative_raw_score": -6.0,
       "bearish_pattern_status": "MATURO",
-      "candle_age_minutes": 33.25529521666667
+      "candle_age_minutes": 33.902702266666665
     },
     "rejection": {
       "accepted": false,
@@ -64,16 +64,16 @@
         "volume_valid": true,
         "stop_within_limit": false
       },
-      "candle_time": "2026-09-13 04:45:00+00:00",
-      "open": 0.08464,
-      "high": 0.0847,
-      "low": 0.08461,
-      "close": 0.08466,
-      "previous_close": 0.08463,
-      "volume_ratio": 0.8957446313487354,
-      "upper_wick_ratio": 0.4444444444444616,
-      "close_location": 0.5555555555555384,
-      "stop_price": 0.0848694,
+      "candle_time": "2026-09-14 04:45:00+00:00",
+      "open": 0.08398,
+      "high": 0.08409,
+      "low": 0.08394,
+      "close": 0.084,
+      "previous_close": 0.08399,
+      "volume_ratio": 0.6139823619254077,
+      "upper_wick_ratio": 0.599999999999963,
+      "close_location": 0.400000000000037,
+      "stop_price": 0.08425818,
       "reason": "closed_back_below_trigger, close_below_invalidation, entry_not_chased, bearish_confirmation, stop_within_limit"
     }
   }
