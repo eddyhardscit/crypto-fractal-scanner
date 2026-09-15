@@ -9,22 +9,22 @@
   "trades": 68,
   "peak_equity_eur": 46132.33581925268,
   "max_drawdown_pct": 6.4759347793257485,
-  "last_candle_time": "2026-09-15T08:00:00+00:00",
+  "last_candle_time": "2026-09-15T12:00:00+00:00",
   "last_action": "HOLD",
   "bands": {
-    "mid": 100.96533333333333,
-    "lower1": 97.43154666666666,
-    "lower2": 94.60451733333333,
-    "upper1": 104.49911999999999,
-    "upper2": 107.32614933333333
+    "mid": 100.95490000000001,
+    "lower1": 97.4214785,
+    "lower2": 94.59474130000001,
+    "upper1": 104.4883215,
+    "upper2": 107.31505870000001
   },
-  "updated_utc": "2026-09-15T12:30:35+00:00",
+  "updated_utc": "2026-09-15T16:30:35+00:00",
   "last_reason": "Prezzo dentro la fascia neutrale",
-  "last_price": 100.79,
-  "equity_eur": 45095.0981823639,
-  "return_pct": 12.737745455909755,
+  "last_price": 99.337,
+  "equity_eur": 44462.39193282595,
+  "return_pct": 11.155979832064865,
   "notifications": {
-    "telegram_last_sol_digest": "798911c0993ac5608e0048dde109a90da98ff8027980ed38e956a6492eca6e34",
-    "telegram_last_sol_sent_utc": "2026-09-15T12:30:35+00:00"
+    "telegram_last_sol_digest": "f0c42faedfa180e472022d007ce7863efed0357632312a18edeb53e6114635d1",
+    "telegram_last_sol_sent_utc": "2026-09-15T16:30:35+00:00"
   }
 }
