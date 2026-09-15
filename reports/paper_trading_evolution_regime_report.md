@@ -1,23 +1,23 @@
 # Blocco 10 — Regime Fitness e specializzazione
 
-Generato: 2026-09-14T05:18:46+00:00
+Generato: 2026-09-15T05:19:41+00:00
 
 > Paper-only e advisory. Il blocco misura quali strategie funzionano nei diversi regimi, ma non cambia automaticamente strategia o posizione.
 
 ## Stato
 
 - Regime corrente: **RANGE**
-- Righe di performance: **1110**
-- Strategie preferite nel regime corrente: **7**
-- Strategie da evitare nel regime corrente: **8**
-- Memorie contestuali: **530**
+- Righe di performance: **1112**
+- Strategie preferite nel regime corrente: **11**
+- Strategie da evitare nel regime corrente: **7**
+- Memorie contestuali: **531**
 - Routing automatico: **NO**
 
 ## Classifica del regime corrente
 
 | Rank | Portafoglio | Famiglia | Stato | Fitness | Trade | PF | Expectancy R | DD R |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| 1 | MAIN_SIDE_REGIME_GUARD_V1 | main-side-regime-guard-v1 | OBSERVING | 82.6 | 14 | 4.20 | 0.714 | 1.03 |
+| 1 | MAIN_SIDE_REGIME_GUARD_V1 | main-side-regime-guard-v1 | OBSERVING | 83.6 | 15 | 4.26 | 0.679 | 1.03 |
 | 2 | SHADOW_COMBO_TREND_SIDE_REGIME_GUARD_V1 | shadow-combo-trend-side-regime-guard-v1 | OBSERVING | 82.2 | 23 | 2.79 | 0.678 | 3.16 |
 | 3 | SHADOW_1H_FAST | shadow-1h-fast | COMPATIBLE | 81.7 | 33 | 1.98 | 0.336 | 2.65 |
 | 4 | SHADOW_BTC_BOLLINGER_1H | shadow-btc-bollinger-1h | INSUFFICIENT | 81.2 | 3 | 99.00 | 1.089 | 0.00 |
