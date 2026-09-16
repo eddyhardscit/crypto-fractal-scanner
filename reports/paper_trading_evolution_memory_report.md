@@ -1,6 +1,6 @@
 # Blocco 9 — Hall of Fame e memoria genetica
 
-Generato: 2026-09-15T05:19:41+00:00
+Generato: 2026-09-16T05:18:57+00:00
 
 > Paper-only. La memoria può bloccare soltanto una futura proposta Block 5 classificata AVOID; non modifica strategie esistenti.
 
@@ -16,16 +16,16 @@ Generato: 2026-09-15T05:19:41+00:00
 
 | Rank | Strategia | Stato | Score | Grade | Trade | PF | Expectancy R | DD R |
 | ---: | --- | --- | ---: | --- | ---: | ---: | ---: | ---: |
-| 1 | MAIN_SIDE_REGIME_GUARD_V1 | BASELINE | 23.4 | E | 56 | 1.95 | 0.395 | 4.71 |
-| 2 | SHADOW_COMBO_TREND_SIDE_REGIME_GUARD_V1 | BASELINE | 23.0 | E | 155 | 1.43 | 0.214 | 23.36 |
-| 3 | SHADOW_1H_FAST_V3_NO_ESPORTS_STRESS_GUARD_V1 | BASELINE | 20.8 | E | 169 | 1.13 | 0.063 | 10.66 |
-| 4 | SHADOW_COMBO_ADAPTIVE | BASELINE | 20.5 | E | 217 | 1.25 | 0.120 | 23.82 |
-| 5 | SHADOW_DONCHIAN_1H | BASELINE | 20.0 | E | 160 | 1.22 | 0.133 | 20.49 |
+| 1 | SHADOW_COMBO_TREND_SIDE_REGIME_GUARD_V1 | BASELINE | 23.0 | E | 155 | 1.43 | 0.214 | 23.36 |
+| 2 | MAIN_SIDE_REGIME_GUARD_V1 | BASELINE | 22.3 | E | 58 | 1.86 | 0.361 | 4.71 |
+| 3 | SHADOW_COMBO_ADAPTIVE | BASELINE | 20.5 | E | 217 | 1.25 | 0.120 | 23.82 |
+| 4 | SHADOW_1H_FAST_V3_NO_ESPORTS_STRESS_GUARD_V1 | BASELINE | 20.4 | E | 174 | 1.10 | 0.052 | 10.66 |
+| 5 | SHADOW_DONCHIAN_1H | BASELINE | 20.2 | E | 162 | 1.23 | 0.138 | 20.49 |
 | 6 | SHADOW_1H_FAST_SCORE_6_75_COST_AWARE_V1 | BASELINE | 19.9 | E | 205 | 1.18 | 0.088 | 24.60 |
-| 7 | SHADOW_1H_FAST_V3_NOHIGH_REGIME_GUARD_V1 | BASELINE | 19.6 | E | 170 | 1.16 | 0.080 | 14.92 |
+| 7 | SHADOW_1H_FAST_V3_NOHIGH_REGIME_GUARD_V1 | BASELINE | 19.6 | E | 174 | 1.16 | 0.080 | 14.92 |
 | 8 | SHADOW_1H_FAST_V3_NO_ESPORTS_MFE_LOCK_V1 | BASELINE | 19.1 | E | 229 | 1.11 | 0.054 | 30.08 |
 | 9 | SHADOW_1H_FAST_V3 | BASELINE | 18.4 | E | 273 | 1.09 | 0.047 | 29.54 |
-| 10 | SHADOW_1H_FAST_V3_NOHIGH_V1 | BASELINE | 18.2 | E | 197 | 1.06 | 0.032 | 14.78 |
+| 10 | SHADOW_1H_FAST_V3_NOHIGH_V1 | BASELINE | 18.2 | E | 199 | 1.06 | 0.032 | 14.78 |
 
 ## Memoria genetica
 

@@ -6,35 +6,35 @@
 
 Report separato completo: **[major_alt_lifecycle_squeeze_report.md](major_alt_lifecycle_squeeze_report.md)**
 
-| Voce                      | Valore                       |
-|:--------------------------|:-----------------------------|
-| Lifecycle squeeze score | 2 |
-| Bias | CONTESTO DA OSSERVARE |
-| Azione coerente | SOLO OSSERVAZIONE |
+| Voce                      | Valore                                            |
+|:--------------------------|:--------------------------------------------------|
+| Lifecycle squeeze score | 3 |
+| Bias | SQUEEZE SETUP MODERATO |
+| Azione coerente | CONTESTO INTERESSANTE, SERVONO CONFERME DI PREZZO |
 | Peso suggerito Global | 0 |
-| Trend squeeze | STABILE / DA CONFERMARE |
-| Trend squeeze score | 0 |
+| Trend squeeze | MIGLIORAMENTO |
+| Trend squeeze score | 1 |
 | Confronto precedente | 2026-09-14 |
 | Fonte prezzi | Yahoo Finance SOL-USD weekly |
-| Prezzo SOL | 100,90 $ |
-| EMA200 weekly target | 111,11 $ |
-| Upside verso EMA200 | +10,20% |
-| Distanza prezzo da EMA200 | -9,26% |
-| Gap EMA50/EMA200 | -5,86% |
+| Prezzo SOL | 97,07 $ |
+| EMA200 weekly target | 111,08 $ |
+| Upside verso EMA200 | +14,46% |
+| Distanza prezzo da EMA200 | -12,64% |
+| Gap EMA50/EMA200 | -5,96% |
 | Stato cross | EMA50 SOTTO EMA200 |
-| RSI weekly | 56,03 |
+| RSI weekly | 53,65 |
 | Età SOL | 6,4 anni |
 | Analoghi storici usati | 30 |
 | Max analoghi per asset | 3 |
-| Hit EMA200 12w analoghi | +76,67% |
-| Max gain mediano 12w | +31,94% |
-| Drawdown mediano 12w | -32,11% |
+| Hit EMA200 12w analoghi | +56,67% |
+| Max gain mediano 12w | +27,67% |
+| Drawdown mediano 12w | -30,93% |
 
 Lettura semplice:
 
-**SOLO OSSERVAZIONE**
+**CONTESTO INTERESSANTE, SERVONO CONFERME DI PREZZO**
 
-Autocontrollo: **STABILE / DA CONFERMARE**.
+Autocontrollo: **MIGLIORAMENTO**.
 
 Questo modulo confronta SOL con altre crypto in fasi simili di età, distanza da EMA200, EMA50/EMA200 e RSI. Non usa stock market.
 
@@ -42,5 +42,5 @@ Nota importante: **questo modulo ora NON pesa più nel Global Confluence**. Rest
 
 Nota: se EMA50/EMA200 sono dentro ±2%, il modulo parla di medie sovrapposte / incrocio in corso, perché exchange diversi possono mostrare il cross leggermente prima o dopo.
 
-<!-- Generato: 2026-09-15 05:32 UTC -->
+<!-- Generato: 2026-09-16 05:32 UTC -->
 <!-- MAJOR_ALT_LIFECYCLE_SQUEEZE_END -->
