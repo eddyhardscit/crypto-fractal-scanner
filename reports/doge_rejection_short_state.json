@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_utc": "2026-07-13T07:47:54+00:00",
-  "updated_utc": "2026-09-16T05:19:05+00:00",
+  "updated_utc": "2026-09-17T05:18:43+00:00",
   "initial_capital_eur": 3600.0,
   "balance_eur": 3600.0,
   "peak_equity_eur": 3600.0,
@@ -30,7 +30,7 @@
     ]
   },
   "last_checks": {
-    "generated_utc": "2026-09-16T05:19:05+00:00",
+    "generated_utc": "2026-09-17T05:18:43+00:00",
     "static": {
       "checks": {
         "fresh_market": true,
@@ -44,13 +44,13 @@
         "candle_15m_fresh": true
       },
       "freshness_status": "FRESH",
-      "doge_mark": 0.08004,
-      "btc_mark": 75715.45,
+      "doge_mark": 0.08101,
+      "btc_mark": 76490.34,
       "global_score": -6.0,
       "classic_raw_score": -11.0,
       "relative_raw_score": -6.0,
       "bearish_pattern_status": "MATURO",
-      "candle_age_minutes": 34.09088653333333
+      "candle_age_minutes": 33.723657616666664
     },
     "rejection": {
       "accepted": false,
@@ -60,21 +60,21 @@
         "close_below_invalidation": false,
         "entry_not_chased": false,
         "upper_wick": false,
-        "bearish_confirmation": true,
+        "bearish_confirmation": false,
         "volume_valid": true,
-        "stop_within_limit": true
+        "stop_within_limit": false
       },
-      "candle_time": "2026-09-16 04:45:00+00:00",
-      "open": 0.08031,
-      "high": 0.08038,
-      "low": 0.08013,
-      "close": 0.08021,
-      "previous_close": 0.08033,
-      "volume_ratio": 0.4968925292011415,
-      "upper_wick_ratio": 0.2799999999999623,
-      "close_location": 0.32000000000000445,
-      "stop_price": 0.0806,
-      "reason": "closed_back_below_trigger, close_below_invalidation, entry_not_chased, upper_wick"
+      "candle_time": "2026-09-17 04:45:00+00:00",
+      "open": 0.08088,
+      "high": 0.08109,
+      "low": 0.08087,
+      "close": 0.08108,
+      "previous_close": 0.08091,
+      "volume_ratio": 0.4481183156114314,
+      "upper_wick_ratio": 0.04545454545452825,
+      "close_location": 0.9545454545454718,
+      "stop_price": 0.08125218,
+      "reason": "closed_back_below_trigger, close_below_invalidation, entry_not_chased, upper_wick, bearish_confirmation, stop_within_limit"
     }
   }
 }
