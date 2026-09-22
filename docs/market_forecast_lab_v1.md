@@ -271,3 +271,31 @@ Detailed runtime logs and fingerprints remain outside the source worktree under
 The earlier JSON validation document is the historical pre-mode trial report, not
 a declaration that its untracked outputs are official. The required official
 consumer contract is now the explicit run-mode gate described above.
+
+## Production publisher integration
+
+The existing daily cycle calls `market_forecast_lab.py --mode OFFICIAL_DAILY`
+after operational modules, paper trading and the SOL history artifact step.
+Failure logs `MARKET_FORECAST_LAB_FAILED` and continues normal Legacy publication.
+No trading module, service, timer or release contract is changed.
+
+Official output is built in a private generation under the repository's Git
+runtime directory, on the provenance volume. A stable external flock serializes
+writers. All four histories, input manifests, latest files and resource report
+are completed and validated before a single directory rename publishes them.
+Existing generations use Linux `renameat2(RENAME_EXCHANGE)`; unsupported exchange
+fails closed. A failed computation/export leaves the previous official directory
+unchanged. Histories must preserve their previous byte prefix and every forecast
+must reference an existing hash-verified input manifest. An incomplete universe
+cannot publish. Individual CAS input additions may survive a failed official
+attempt as explicit provenance evidence; they do not create official vintages.
+
+The output directory contains regular files, so the existing `git add reports/`
+and backup reference to the exact publication commit cover Lab history, manifests
+and referenced raw CAS files. Runtime locks, staging and Yahoo SQLite caches stay
+outside reports. Staging abandoned by a killed process stays private and is never
+adopted by a later run. No second raw store or backup subsystem is introduced.
+Consumers should verify the latest envelope's artifact hashes (and retry a read
+that straddles a generation switch). The directory commit protects process errors
+and interruptions; host/filesystem disaster recovery remains the Git backup
+contract. Same-day retries reuse immutable forecasts and do not duplicate history.

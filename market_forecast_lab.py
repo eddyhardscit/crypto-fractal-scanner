@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import fcntl
 import hashlib
 import json
@@ -30,6 +31,8 @@ from market_forecast_lab_run import (
     freeze_run_ohlc, require_official, read_history, is_official, read_official_latest,
 )
 
+from market_forecast_lab_publication import official_transaction, runtime_root
+
 ROOT = Path(__file__).resolve().parent
 
 
@@ -49,7 +52,8 @@ def configure_store(root):
 
 def source_hashes():
     names = ['market_forecast_lab.py', 'market_forecast_lab_engine.py',
-             'market_forecast_lab_universe.py', 'market_forecast_lab_run.py', 'market_forecast_lab_config.json',
+             'market_forecast_lab_universe.py', 'market_forecast_lab_run.py',
+             'market_forecast_lab_publication.py', 'market_forecast_lab_config.json',
              'market_forecast_lab_registry.json', 'scanner.py', 'forecast_provenance.py']
     return {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in names}
 
@@ -229,13 +233,35 @@ def export(output, universe_record, forecasts, old, evaluations, config, run_rep
 
 
 def execute(args):
+    if args.mode != 'OFFICIAL_DAILY':
+        return execute_staged(args)
+    if args.trial_root:
+        raise ValueError('TRIAL_ROOT_NOT_ALLOWED_FOR_OFFICIAL')
+    destination = Path(args.output or ROOT / 'reports/market_forecast_lab').absolute()
+    reports = Path(args.legacy_reports).resolve()
+    source = Path(args.provenance_root or reports / 'forecast_provenance').resolve()
+    if (destination.name != 'market_forecast_lab' or destination.is_symlink()
+            or source == destination or source.is_relative_to(destination)
+            or destination.is_relative_to(source) or reports.is_relative_to(destination)):
+        raise ValueError('UNSAFE_OUTPUT_DIRECTORY')
+    runtime = runtime_root(ROOT, destination)
+    with official_transaction(destination, runtime, args.run_context) as staged:
+        staged_args = copy.copy(args)
+        staged_args.output = str(staged)
+        staged_args.runtime = runtime
+        report = execute_staged(staged_args)
+    event('official_published', **context(report), output=str(destination))
+    return report
+
+
+def execute_staged(args):
     started, cpu_started = time.perf_counter(), time.process_time()
     ctx = context(args.run_context)
     reports = Path(args.legacy_reports).resolve()
     source_root = Path(args.provenance_root or reports / 'forecast_provenance').resolve()
     configure_store(source_root)
     output, write_root = prepare_paths(args, ctx, source_root, reports, ROOT)
-    yf.set_tz_cache_location(str(output / '.yfinance-cache'))
+    yf.set_tz_cache_location(str(Path(getattr(args, 'runtime', output)) / '.yfinance-cache'))
     event('run_selected', **ctx, output=str(output), provenance_write_root=str(write_root))
     with (output / '.run.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -294,7 +320,7 @@ def execute(args):
                                    record['current_price'], record['anchor_date'], args.as_of,
                                    manifest_id, config, canonical=record)
             parity[ticker] = verify_canonical(f, record, reports)
-        report = dict(**ctx, as_of=args.as_of, published=False, input_manifest_id=manifest_id,
+        report = dict(**ctx, as_of=args.as_of, published=ctx['official_daily'], input_manifest_id=manifest_id,
                       universe_complete=sum(r['inclusion_status'] == 'INCLUDED' for r in universe) == config['universe_size'],
                       target_count=sum(r['inclusion_status'] == 'INCLUDED' for r in universe),
                       valid_count=sum(f['status'] == 'VALID' for f in forecasts),
@@ -303,6 +329,8 @@ def execute(args):
                       parity=parity, acquisition_errors=errors)
         universe_record = prior_universe[0] if prior_universe else dict(**ctx, snapshot_date=args.as_of,
                                                                       input_manifest_id=manifest_id, rows=universe)
+        if not report['universe_complete'] and ctx['run_mode'] == 'OFFICIAL_DAILY':
+            raise ValueError('INCOMPLETE_UNIVERSE_OFFICIAL_PUBLICATION_REFUSED')
         export(output, universe_record, forecasts, old, evaluations, config, report)
         report.update(elapsed_seconds=time.perf_counter() - started, cpu_seconds=time.process_time() - cpu_started,
                       peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
