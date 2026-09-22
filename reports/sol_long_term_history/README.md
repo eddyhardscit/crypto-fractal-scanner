@@ -16,12 +16,12 @@ Cohort: **40** analoghi / **27.0** distinct assets
 
 Asse X = date future reali. Le linee mostrano esplicitamente p10, p25, p50, p75 e p90 ai soli orizzonti registrati 90/180/365/730 giorni; i segmenti collegano i punti per leggibilità e non creano previsioni intermedie.
 
-| Horizon | Target date | p50 | p75 | p90 |
-| --- | --- | ---: | ---: | ---: |
-| 3M | 2026-12-16 | $143.59 | $180.71 | $226.69 |
-| 6M | 2027-03-16 | $134.66 | $200.25 | $314.32 |
-| 1Y | 2027-09-17 | $146.76 | $308.67 | $501.86 |
-| 2Y | 2028-09-16 | $85.63 | $271.99 | $443.44 |
+| Horizon | Target date | p10 | p25 | p50 | p75 | p90 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| 3M | 2026-12-16 | $86.44 | $109.28 | $143.59 | $180.71 | $226.69 |
+| 6M | 2027-03-16 | $72.25 | $87.62 | $134.66 | $200.25 | $314.32 |
+| 1Y | 2027-09-17 | $50.22 | $92.12 | $146.76 | $308.67 | $501.86 |
+| 2Y | 2028-09-16 | $33.15 | $38.96 | $85.63 | $271.99 | $443.44 |
 
 ## Forward vintages
 

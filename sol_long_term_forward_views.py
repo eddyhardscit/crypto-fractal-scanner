@@ -427,8 +427,8 @@ def _forward_readme_block(
         "90/180/365/730 giorni; i segmenti collegano i punti per "
         "leggibilità e non creano previsioni intermedie.",
         "",
-        "| Horizon | Target date | p50 | p75 | p90 |",
-        "| --- | --- | ---: | ---: | ---: |",
+        "| Horizon | Target date | p10 | p25 | p50 | p75 | p90 |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: |",
     ]
 
     for horizon, label in FORWARD_HORIZONS:
@@ -439,6 +439,8 @@ def _forward_readme_block(
 
         lines.append(
             f"| {label} | {target.isoformat()} | "
+            f"{_money(current.get(f'h{horizon}_p10'))} | "
+            f"{_money(current.get(f'h{horizon}_p25'))} | "
             f"{_money(current.get(f'h{horizon}_p50'))} | "
             f"{_money(current.get(f'h{horizon}_p75'))} | "
             f"{_money(current.get(f'h{horizon}_p90'))} |"
