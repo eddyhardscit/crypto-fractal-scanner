@@ -114,7 +114,10 @@
     "full_suite_passed": 479,
     "final_publication_tests_passed": 13,
     "distinct_tests_passed": 481,
-    "skips": 0
+    "skips": 0,
+    "post_integration_full_suite_passed": 481,
+    "post_integration_elapsed_seconds": 129.595,
+    "post_integration_log_sha256": "b9b9bce080b305ce16221d94fd61aa68aa30279f34eca0a76508f800458525bb"
   },
   "replay_and_idempotency": {
     "idempotency": "PASS",
@@ -127,5 +130,7 @@
   "backup_contract": "Existing exact publisher Git commit reference; all referenced CAS inputs covered; paper/exchange releases unchanged",
   "trial_comparison": "Elapsed and RSS stable; disk 14.42 MB versus approximately 12 MB; live membership includes 1000 candidates versus trial snapshot 250",
   "protected_modules": "Legacy logic/outputs, SOL Conditional, Global Confluence, Strategies, paper and live unchanged",
-  "runtime_exclusion": "reports/market_forecast_lab/inputs/.content-store.lock is ignored, not committed"
+  "runtime_exclusion": "reports/market_forecast_lab/inputs/.content-store.lock is ignored, not committed",
+  "post_integration_integrity": "PASS: all 2151 report files byte-identical after tests/replay/sandbox",
+  "backup_manifest_validation": "PASS before integration and after scheduled paper cycle completed its upload; no backup or Release changes"
 }
