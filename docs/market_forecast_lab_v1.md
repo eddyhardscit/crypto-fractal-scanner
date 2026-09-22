@@ -292,8 +292,9 @@ attempt as explicit provenance evidence; they do not create official vintages.
 
 The output directory contains regular files, so the existing `git add reports/`
 and backup reference to the exact publication commit cover Lab history, manifests
-and referenced raw CAS files. Runtime locks, staging and Yahoo SQLite caches stay
-outside reports. Staging abandoned by a killed process stays private and is never
+and referenced raw CAS files. Lab process locks, staging and Yahoo SQLite caches stay
+outside reports. The existing CAS primitive also creates an empty input-store
+mutex; that runtime file is explicitly excluded from Git. Staging abandoned by a killed process stays private and is never
 adopted by a later run. No second raw store or backup subsystem is introduced.
 Consumers should verify the latest envelope's artifact hashes (and retry a read
 that straddles a generation switch). The directory commit protects process errors

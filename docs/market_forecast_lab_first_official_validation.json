@@ -1,0 +1,131 @@
+{
+  "status": "PASS",
+  "run_mode": "OFFICIAL_DAILY",
+  "run_id": "market-lab:OFFICIAL_DAILY:4fed98c0029a4ecd8e0c6b3efcbce964",
+  "generated_at_utc": "2026-09-22T17:04:00.058536Z",
+  "code_version": "a40a6ac1bc2842e45c90b31a883e76109a576f3c",
+  "official_daily": true,
+  "forecast_date": "2026-09-22",
+  "top50": 50,
+  "valid": 46,
+  "insufficient": 4,
+  "pending": 895,
+  "history_deltas": {
+    "universe_history.jsonl": 1,
+    "forecast_vintages.jsonl": 50,
+    "forecast_path_versions.jsonl": 50,
+    "evaluation_versions.jsonl": 0
+  },
+  "parity": {
+    "BTC-USD": "PASS",
+    "DOGE-USD": "PASS",
+    "SOL-USD": "PASS"
+  },
+  "trial_rows_in_official_view": 0,
+  "raw_ledger_additions": 21,
+  "referenced_raw_count": 78,
+  "disk_delta_bytes": 14421536,
+  "legacy_mutation": false,
+  "protected_source_mutation": false,
+  "rotation_rows": 200,
+  "insufficient_targets": [
+    {
+      "coingecko_id": "stellar",
+      "ohlc_ticker": "XLM-USD",
+      "N": 39,
+      "rotation_ready": false
+    },
+    {
+      "coingecko_id": "aave",
+      "ohlc_ticker": "AAVE-USD",
+      "N": 39,
+      "rotation_ready": false
+    },
+    {
+      "coingecko_id": "ether-fi",
+      "ohlc_ticker": "ETHFI-USD",
+      "N": 39,
+      "rotation_ready": false
+    },
+    {
+      "coingecko_id": "thorchain",
+      "ohlc_ticker": "RUNE-USD",
+      "N": 39,
+      "rotation_ready": false
+    }
+  ],
+  "artifacts": {
+    ".lab_scope.json": {
+      "bytes": 229
+    },
+    "evaluation_latest.csv": {
+      "bytes": 107,
+      "records": 0
+    },
+    "evaluation_versions.jsonl": {
+      "bytes": 0,
+      "records": 0
+    },
+    "forecast_latest.csv": {
+      "bytes": 254984,
+      "records": 200
+    },
+    "forecast_path_versions.jsonl": {
+      "bytes": 923554,
+      "records": 50
+    },
+    "forecast_paths_latest.json": {
+      "bytes": 923796
+    },
+    "forecast_vintages.jsonl": {
+      "bytes": 2181299,
+      "records": 50
+    },
+    "latest.json": {
+      "bytes": 2519076
+    },
+    "resource_report.json": {
+      "bytes": 1394
+    },
+    "rotation_latest.csv": {
+      "bytes": 296574,
+      "records": 200
+    },
+    "universe_history.jsonl": {
+      "bytes": 577504,
+      "records": 1
+    },
+    "universe_latest.csv": {
+      "bytes": 291595,
+      "records": 1000
+    }
+  },
+  "pre_integration_origin_main": "250965cbf13448d9218e70759f210a8466c8d144",
+  "approved_forecast_lab_head": "96f03fc52303b0edf8d7c5ca6fec091644473e1c",
+  "official_code_head": "a40a6ac1bc2842e45c90b31a883e76109a576f3c",
+  "external_resource_measurements": {
+    "elapsed_seconds": 58.11,
+    "cpu_user_seconds": 41.28,
+    "cpu_system_seconds": 0.97,
+    "peak_rss_kib": 410104,
+    "disk_delta_bytes": 14421536
+  },
+  "test_results": {
+    "full_suite_passed": 479,
+    "final_publication_tests_passed": 13,
+    "distinct_tests_passed": 481,
+    "skips": 0
+  },
+  "replay_and_idempotency": {
+    "idempotency": "PASS",
+    "duplicate_vintages": 0,
+    "histories_byte_identical": true,
+    "forecasts_byte_identical": true,
+    "official_reports_unchanged_after_replay_and_sandbox": true,
+    "checked_files": 2151
+  },
+  "backup_contract": "Existing exact publisher Git commit reference; all referenced CAS inputs covered; paper/exchange releases unchanged",
+  "trial_comparison": "Elapsed and RSS stable; disk 14.42 MB versus approximately 12 MB; live membership includes 1000 candidates versus trial snapshot 250",
+  "protected_modules": "Legacy logic/outputs, SOL Conditional, Global Confluence, Strategies, paper and live unchanged",
+  "runtime_exclusion": "reports/market_forecast_lab/inputs/.content-store.lock is ignored, not committed"
+}

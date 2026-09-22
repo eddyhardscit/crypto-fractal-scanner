@@ -65,3 +65,6 @@ reports/*.bak-*
 
 # Runtime Paper state: stored by Paper Release, never publish through Git
 /reports/paper_trading_shadow_exit_state.json
+
+# Forecast Lab input CAS mutex is runtime state, not an official artifact.
+/reports/market_forecast_lab/inputs/.content-store.lock
