@@ -60,7 +60,25 @@ class ForwardViewsTests(unittest.TestCase):
         )
 
         try:
-            line = figure.axes[0].lines[0]
+            axis = figure.axes[0]
+
+            lines = {
+                line.get_gid(): line
+                for line in axis.lines
+            }
+
+            self.assertEqual(
+                set(lines),
+                {
+                    "forward_p10",
+                    "forward_p25",
+                    "forward_p50",
+                    "forward_p75",
+                    "forward_p90",
+                },
+            )
+
+            line = lines["forward_p50"]
 
             expected = [
                 date(

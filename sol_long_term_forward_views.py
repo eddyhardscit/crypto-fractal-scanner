@@ -32,7 +32,11 @@ CALENDAR_NAME = "sol_long_term_forward_calendar.svg"
 VINTAGES_NAME = "sol_long_term_forward_vintages.svg"
 
 COLORS = {
+    "p10": "#7f8c99",
+    "p25": "#4f7fa8",
     "p50": "#185b96",
+    "p75": "#b36905",
+    "p90": "#9b3b8b",
     "spot": "#273443",
 }
 
@@ -109,7 +113,7 @@ def forward_calendar_figure(current: Mapping[str, Any]):
         quantiles["p10"],
         quantiles["p90"],
         color="#d5e6f5",
-        label="p10–p90",
+        label="_nolegend_",
     )
 
     axis.fill_between(
@@ -117,18 +121,33 @@ def forward_calendar_figure(current: Mapping[str, Any]):
         quantiles["p25"],
         quantiles["p75"],
         color="#8fb9dc",
-        label="p25–p75",
+        label="_nolegend_",
     )
 
-    axis.plot(
-        target_dates,
-        quantiles["p50"],
-        color=COLORS["p50"],
-        linewidth=2.8,
-        marker="o",
-        markersize=6.2,
-        label="p50",
+    quantile_styles = (
+        ("p10", 1.15, ":", "v", 0.80),
+        ("p25", 1.55, "--", "s", 0.90),
+        ("p50", 2.90, "-", "o", 1.00),
+        ("p75", 1.55, "--", "s", 0.90),
+        ("p90", 1.15, ":", "^", 0.80),
     )
+
+    for quantile, width, linestyle, marker, alpha in quantile_styles:
+        axis.plot(
+            target_dates,
+            quantiles[quantile],
+            color=COLORS[quantile],
+            linewidth=width,
+            linestyle=linestyle,
+            marker=marker,
+            markersize=6.2 if quantile == "p50" else 4.8,
+            markeredgecolor="white",
+            markeredgewidth=0.65,
+            alpha=alpha,
+            label=quantile,
+            gid=f"forward_{quantile}",
+            zorder=4 if quantile == "p50" else 3,
+        )
 
     spot = _number(current.get("spot_sol"))
 
@@ -403,10 +422,10 @@ def _forward_readme_block(
         "",
         f"![SOL Long-Term Cone — Forward Calendar]({CALENDAR_NAME})",
         "",
-        "Asse X = date future reali. Sono mostrati soltanto gli "
-        "orizzonti registrati 90/180/365/730 giorni; le linee "
-        "collegano i punti per leggibilità e non creano "
-        "previsioni intermedie.",
+        "Asse X = date future reali. Le linee mostrano esplicitamente "
+        "p10, p25, p50, p75 e p90 ai soli orizzonti registrati "
+        "90/180/365/730 giorni; i segmenti collegano i punti per "
+        "leggibilità e non creano previsioni intermedie.",
         "",
         "| Horizon | Target date | p50 | p75 | p90 |",
         "| --- | --- | ---: | ---: | ---: |",

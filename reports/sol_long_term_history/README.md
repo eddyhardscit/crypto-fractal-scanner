@@ -14,7 +14,7 @@ Cohort: **40** analoghi / **27.0** distinct assets
 
 ![SOL Long-Term Cone — Forward Calendar](sol_long_term_forward_calendar.svg)
 
-Asse X = date future reali. Sono mostrati soltanto gli orizzonti registrati 90/180/365/730 giorni; le linee collegano i punti per leggibilità e non creano previsioni intermedie.
+Asse X = date future reali. Le linee mostrano esplicitamente p10, p25, p50, p75 e p90 ai soli orizzonti registrati 90/180/365/730 giorni; i segmenti collegano i punti per leggibilità e non creano previsioni intermedie.
 
 | Horizon | Target date | p50 | p75 | p90 |
 | --- | --- | ---: | ---: | ---: |
