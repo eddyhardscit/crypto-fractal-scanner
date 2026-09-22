@@ -1,0 +1,1074 @@
+{
+  "schema_version": 1,
+  "assets": [
+    {
+      "coingecko_id": "bitcoin",
+      "ohlc_ticker": "BTC-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "ethereum",
+      "ohlc_ticker": "ETH-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "solana",
+      "ohlc_ticker": "SOL-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "binancecoin",
+      "ohlc_ticker": "BNB-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "ripple",
+      "ohlc_ticker": "XRP-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "cardano",
+      "ohlc_ticker": "ADA-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "avalanche-2",
+      "ohlc_ticker": "AVAX-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "dogecoin",
+      "ohlc_ticker": "DOGE-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "chainlink",
+      "ohlc_ticker": "LINK-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "polkadot",
+      "ohlc_ticker": "DOT-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "litecoin",
+      "ohlc_ticker": "LTC-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "near",
+      "ohlc_ticker": "NEAR-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "uniswap",
+      "ohlc_ticker": "UNI-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "cosmos",
+      "ohlc_ticker": "ATOM-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "ethereum-classic",
+      "ohlc_ticker": "ETC-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "filecoin",
+      "ohlc_ticker": "FIL-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "aptos",
+      "ohlc_ticker": "APT-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "arbitrum",
+      "ohlc_ticker": "ARB-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "optimism",
+      "ohlc_ticker": "OP-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "sui",
+      "ohlc_ticker": "SUI-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "internet-computer",
+      "ohlc_ticker": "ICP-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "injective-protocol",
+      "ohlc_ticker": "INJ-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "aave",
+      "ohlc_ticker": "AAVE-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "matic-network",
+      "ohlc_ticker": "MATIC-USD",
+      "classification": "NATIVE",
+      "target_enabled": false,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "tron",
+      "ohlc_ticker": "TRX-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "bitcoin-cash",
+      "ohlc_ticker": "BCH-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "stellar",
+      "ohlc_ticker": "XLM-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "hedera-hashgraph",
+      "ohlc_ticker": "HBAR-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "vechain",
+      "ohlc_ticker": "VET-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "algorand",
+      "ohlc_ticker": "ALGO-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "eos",
+      "ohlc_ticker": "EOS-USD",
+      "classification": "NATIVE",
+      "target_enabled": false,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "tezos",
+      "ohlc_ticker": "XTZ-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "decentraland",
+      "ohlc_ticker": "MANA-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "the-sandbox",
+      "ohlc_ticker": "SAND-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "the-graph",
+      "ohlc_ticker": "GRT-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "chiliz",
+      "ohlc_ticker": "CHZ-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "elrond-erd-2",
+      "ohlc_ticker": "EGLD-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "fantom",
+      "ohlc_ticker": "FTM-USD",
+      "classification": "NATIVE",
+      "target_enabled": false,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "thorchain",
+      "ohlc_ticker": "RUNE-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "theta-token",
+      "ohlc_ticker": "THETA-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "kusama",
+      "ohlc_ticker": "KSM-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "zcash",
+      "ohlc_ticker": "ZEC-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "dash",
+      "ohlc_ticker": "DASH-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "compound-governance-token",
+      "ohlc_ticker": "COMP-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "maker",
+      "ohlc_ticker": "MKR-USD",
+      "classification": "NATIVE",
+      "target_enabled": false,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "havven",
+      "ohlc_ticker": "SNX-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "curve-dao-token",
+      "ohlc_ticker": "CRV-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "enjincoin",
+      "ohlc_ticker": "ENJ-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "basic-attention-token",
+      "ohlc_ticker": "BAT-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "zilliqa",
+      "ohlc_ticker": "ZIL-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "waves",
+      "ohlc_ticker": "WAVES-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "kava",
+      "ohlc_ticker": "KAVA-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "harmony",
+      "ohlc_ticker": "ONE-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "iota",
+      "ohlc_ticker": "IOTA-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "neo",
+      "ohlc_ticker": "NEO-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "qtum",
+      "ohlc_ticker": "QTUM-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "omisego",
+      "ohlc_ticker": "OMG-USD",
+      "classification": "NATIVE",
+      "target_enabled": false,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "yearn-finance",
+      "ohlc_ticker": "YFI-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "1inch",
+      "ohlc_ticker": "1INCH-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "loopring",
+      "ohlc_ticker": "LRC-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": true,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": true
+    },
+    {
+      "coingecko_id": "monero",
+      "ohlc_ticker": "XMR-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "hyperliquid",
+      "ohlc_ticker": "HYPE32196-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false,
+      "ohlc_name_aliases": [
+        "Hyperliquid"
+      ]
+    },
+    {
+      "coingecko_id": "shiba-inu",
+      "ohlc_ticker": "SHIB-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "crypto-com-chain",
+      "ohlc_ticker": "CRO-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false,
+      "ohlc_name_aliases": [
+        "Cronos",
+        "Crypto.com Coin"
+      ]
+    },
+    {
+      "coingecko_id": "bittensor",
+      "ohlc_ticker": "TAO-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "okb",
+      "ohlc_ticker": "OKB-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "mantle",
+      "ohlc_ticker": "MNT-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "ethena",
+      "ohlc_ticker": "ENA-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "ondo-finance",
+      "ohlc_ticker": "ONDO-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "pepe",
+      "ohlc_ticker": "PEPE-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "worldcoin-wld",
+      "ohlc_ticker": "WLD-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "bitget-token",
+      "ohlc_ticker": "BGB-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "gatechain-token",
+      "ohlc_ticker": "GT-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "kaspa",
+      "ohlc_ticker": "KAS-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "polygon-ecosystem-token",
+      "ohlc_ticker": "POL28321-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false,
+      "ohlc_name_aliases": [
+        "Polygon Ecosystem Token"
+      ]
+    },
+    {
+      "coingecko_id": "quant-network",
+      "ohlc_ticker": "QNT-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "kucoin-shares",
+      "ohlc_ticker": "KCS-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "jupiter-exchange-solana",
+      "ohlc_ticker": "JUP-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "render-token",
+      "ohlc_ticker": "RENDER-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false,
+      "ohlc_name_aliases": [
+        "Render",
+        "Render Token"
+      ]
+    },
+    {
+      "coingecko_id": "just",
+      "ohlc_ticker": "JST-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "nexo",
+      "ohlc_ticker": "NEXO-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "pancakeswap-token",
+      "ohlc_ticker": "CAKE-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "blockstack",
+      "ohlc_ticker": "STX-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "xdce-crowd-sale",
+      "ohlc_ticker": "XDC-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "the-open-network",
+      "ohlc_ticker": "TON11419-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false,
+      "ohlc_name_aliases": [
+        "Toncoin"
+      ]
+    },
+    {
+      "coingecko_id": "leo-token",
+      "ohlc_ticker": "LEO-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false,
+      "ohlc_name_aliases": [
+        "UNUS SED LEO",
+        "LEO Token"
+      ]
+    },
+    {
+      "coingecko_id": "whitebit",
+      "ohlc_ticker": "WBT-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "morpho",
+      "ohlc_ticker": "MORPHO-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "aerodrome-finance",
+      "ohlc_ticker": "AERO-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "ether-fi",
+      "ohlc_ticker": "ETHFI-USD",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed explicit Yahoo Finance USD ticker; runtime OHLC validation required",
+      "legacy_library": false
+    },
+    {
+      "coingecko_id": "tether",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "usd-coin",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "dai",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "usds",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "ethena-usde",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "usd1-wlfi",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "global-dollar",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "paypal-usd",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "ripple-usd",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "usdd",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "united-stables",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "usdgo",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "falcon-finance",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "bfusd",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "gho",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "first-digital-usd",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "true-usd",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "frax",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "crvusd",
+      "ohlc_ticker": null,
+      "classification": "STABLECOIN",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "wrapped-bitcoin",
+      "ohlc_ticker": null,
+      "classification": "WRAPPED_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "wrapped-ether",
+      "ohlc_ticker": null,
+      "classification": "WRAPPED_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "coinbase-wrapped-btc",
+      "ohlc_ticker": null,
+      "classification": "WRAPPED_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "binance-bridged-usdt",
+      "ohlc_ticker": null,
+      "classification": "BRIDGED_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "binance-peg-weth",
+      "ohlc_ticker": null,
+      "classification": "BRIDGED_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "binance-peg-dogecoin",
+      "ohlc_ticker": null,
+      "classification": "BRIDGED_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "staked-ether",
+      "ohlc_ticker": null,
+      "classification": "LIQUID_STAKING_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "wrapped-steth",
+      "ohlc_ticker": null,
+      "classification": "LIQUID_STAKING_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "rocket-pool-eth",
+      "ohlc_ticker": null,
+      "classification": "LIQUID_STAKING_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "jito-staked-sol",
+      "ohlc_ticker": null,
+      "classification": "LIQUID_STAKING_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "binance-staked-sol",
+      "ohlc_ticker": null,
+      "classification": "LIQUID_STAKING_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "tether-gold",
+      "ohlc_ticker": null,
+      "classification": "SYNTHETIC_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "pax-gold",
+      "ohlc_ticker": null,
+      "classification": "SYNTHETIC_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "susds",
+      "ohlc_ticker": null,
+      "classification": "SYNTHETIC_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    },
+    {
+      "coingecko_id": "staked-usde",
+      "ohlc_ticker": null,
+      "classification": "SYNTHETIC_DUPLICATE",
+      "target_enabled": false,
+      "analogue_enabled": false
+    }
+  ]
+}

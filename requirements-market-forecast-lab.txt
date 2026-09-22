@@ -1,0 +1,5 @@
+# Tested with Python 3.14. Install only in a dedicated Lab environment.
+numpy==2.5.1
+pandas==2.3.3
+scipy==1.18.0
+yfinance==0.2.66

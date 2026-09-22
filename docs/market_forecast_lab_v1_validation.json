@@ -1,0 +1,149 @@
+{
+  "IMPLEMENTATION_STATUS": "PASS",
+  "INITIAL_PUBLISHER_HEAD": "d38bb24c98818c3778cd868175b3f239180d7109",
+  "BASELINE_HEAD": "c1ab39f582db495f1de19a45490ce56247d81109",
+  "TESTED_ENGINE_HEAD": "1aed6d3cb2092d6d618affc66251416695a8ec20",
+  "WORKTREE": "/opt/crypto-fractal-scanner-publisher/.git/market-forecast-lab-v1",
+  "BRANCH": "market-forecast-lab-v1",
+  "FILES_ADDED": [
+    "docs/market_forecast_lab_v1.md",
+    "market_forecast_lab.py",
+    "market_forecast_lab_config.json",
+    "market_forecast_lab_engine.py",
+    "market_forecast_lab_registry.json",
+    "market_forecast_lab_universe.py",
+    "requirements-market-forecast-lab.txt",
+    "tests/test_market_forecast_lab.py",
+    "docs/market_forecast_lab_v1_validation.json"
+  ],
+  "FILES_MODIFIED": [
+    "Operational existing reports/forecast_provenance/raw_market_snapshots.jsonl: append-only; 61 records across three non-published trials"
+  ],
+  "FILES_UNTOUCHED": "All pre-existing baseline source and reports, except the authorized append-only provenance index; scanner Legacy, Conditional Successor + 20260918 vintage, Global Confluence, Strategies, paper/live, publisher, service/timers and Astro unchanged",
+  "BTC_PARITY": "PASS",
+  "SOL_PARITY": "PASS",
+  "DOGE_PARITY": "PASS",
+  "SOL_CONDITIONAL_UNCHANGED": true,
+  "TOP50_ELIGIBLE_COUNT": 50,
+  "FORECAST_VALID_COUNT": 46,
+  "INSUFFICIENT_COUNT": 4,
+  "INSUFFICIENT_ASSETS": {
+    "stellar": 39,
+    "aave": 39,
+    "ether-fi": 39,
+    "thorchain": 39
+  },
+  "UNIVERSE_COUNTS": {
+    "INCLUDED": 50,
+    "EXCLUDED": 41,
+    "PENDING_CLASSIFICATION": 154,
+    "OUTSIDE_TOP50": 5
+  },
+  "TEST_STATUS": "PASS",
+  "TEST_COUNT": 77,
+  "TEST_SUITES": {
+    "lab": {
+      "status": "PASS",
+      "count": 43,
+      "log": "/opt/crypto-fractal-scanner-publisher/.git/market-forecast-lab-evidence/release-tests.log",
+      "sha256": "a565e0b0b678cd02253029361f99b768a1a06cd4117f26ab5b4e13b9c0d32825"
+    },
+    "provenance_regression": {
+      "status": "PASS",
+      "count": 31,
+      "log": "/opt/crypto-fractal-scanner-publisher/.git/market-forecast-lab-evidence/provenance-regression.log",
+      "sha256": "9568a91dfd3c2c51423c8c866a35667a2a9d1803fde22e0070abb333c624da2d"
+    },
+    "conditional_successor_regression": {
+      "status": "PASS",
+      "count": 3,
+      "log": "/opt/crypto-fractal-scanner-publisher/.git/market-forecast-lab-evidence/sol-successor-regression.log",
+      "sha256": "c0020322ee1428014337d39a3b424ab8e84d93179dbf72749165d1c9aba3b8bc"
+    }
+  },
+  "TRIAL_RUN_STATUS": "PASS",
+  "TRIAL_RUN_PUBLISHED": false,
+  "TRIAL_RUN_ELAPSED_SECONDS": 59.13719572359696,
+  "TRIAL_RUN_CPU_SECONDS": 41.986591,
+  "TRIAL_RUN_PEAK_RSS_KIB": 403356,
+  "TRIAL_RUN_DISK_DELTA_ALLOCATED_BYTES": 12124160,
+  "TRIAL_RUN_DISK_DELTA_LOGICAL_BYTES": 12053504,
+  "SIGNATURE_INDEX_EPISODES": 25765,
+  "SIGNATURE_INDEX_BYTES": 103060000,
+  "LAB_OUTPUT_FINAL_LOGICAL_BYTES": 7465797,
+  "RESOURCE_MEASUREMENT": {
+    "exit_code": 0,
+    "elapsed_seconds": 59.13719572359696,
+    "cpu_user_seconds": 41.187081,
+    "cpu_system_seconds": 0.7995099999999999,
+    "cpu_total_seconds": 41.986591,
+    "peak_rss_kib": 403356,
+    "before": {
+      "/opt/crypto-fractal-scanner-publisher/.git/market-forecast-lab-v1/reports/market_forecast_lab": {
+        "logical_bytes": 0,
+        "allocated_bytes": 0
+      },
+      "/opt/crypto-fractal-scanner-publisher/reports/forecast_provenance": {
+        "logical_bytes": 533421029,
+        "allocated_bytes": 537145344
+      }
+    },
+    "after": {
+      "/opt/crypto-fractal-scanner-publisher/.git/market-forecast-lab-v1/reports/market_forecast_lab": {
+        "logical_bytes": 7465797,
+        "allocated_bytes": 7491584
+      },
+      "/opt/crypto-fractal-scanner-publisher/reports/forecast_provenance": {
+        "logical_bytes": 538008736,
+        "allocated_bytes": 541777920
+      }
+    },
+    "disk_delta_logical_bytes": 12053504,
+    "disk_delta_allocated_bytes": 12124160,
+    "scope": "Complete process; Lab directory plus existing provenance store; measured after child exit"
+  },
+  "RESOURCE_CONTEXT": "Real OHLC acquisition and computation using a frozen CoinGecko membership response; complete standalone child process, after-exit filesystem measurements. No live publication. Host not reserved exclusively.",
+  "INPUT_MANIFEST_ID": "sha256:03bfa1ee1bb2752c7b2710f4c9cfbfc9f62255f41facbc1c8be071c6d967ab0c",
+  "PROVENANCE_STATUS": "PASS",
+  "REPLAY_STATUS": "PASS: all 50 full vintage payloads reproduced without downloads or writes",
+  "VINTAGE_STATUS": "PASS",
+  "EVALUATION_STATUS": "PASS in tests; no naturally matured Lab observations on initial day",
+  "ROTATION_STATUS": "PASS",
+  "DATA_QUALITY_COUNTS": {
+    "LIMITED_CLOSE_ONLY_INPUT": 33,
+    "GOOD": 17
+  },
+  "INTEGRITY": {
+    "protected_file_count": 2251,
+    "changed_preexisting_files": [],
+    "raw_index_prefix_preserved": true,
+    "new_raw_index_records": 61,
+    "artifact_checks": "PASS",
+    "universe_states": {
+      "INCLUDED": 50,
+      "EXCLUDED": 41,
+      "PENDING_CLASSIFICATION": 154,
+      "OUTSIDE_TOP50": 5
+    }
+  },
+  "LEGACY_OUTPUT_MUTATION": false,
+  "GLOBAL_CONFLUENCE_MUTATION": false,
+  "PAPER_MUTATION": false,
+  "LIVE_MUTATION": false,
+  "READY_FOR_PUBLISHER_INTEGRATION": true,
+  "READY_FOR_CONTROL_ROOM": true,
+  "READINESS_SCOPE": "Engine/artifact prerequisites only; no publisher integration, Control Room implementation, deploy, service/timer modification or push performed.",
+  "REMAINING_RISKS": [
+    "33 targets have LIMITED_CLOSE_ONLY_INPUT, including the canonical 2026-09-22 Legacy gap; no data repair/interpolation performed.",
+    "Four targets have N=39 and are excluded from all rotation-ready comparisons.",
+    "154 unreviewed CoinGecko IDs remain PENDING_CLASSIFICATION; 13 attempted Yahoo mappings fail explicit identity verification and are excluded.",
+    "The first day has no naturally matured evaluation sample; MAE and coverages remain null until sufficient observations exist. N_PAIR=0 and paired probabilities are null.",
+    "Whole-asset OHLC snapshots and JSONL histories grow with retained versions; no monthly chunking, pruning or retention system added.",
+    "Future consumers must validate latest.json artifact hashes to reject interrupted multi-file updates.",
+    "Tests and runtime use pinned dependency versions from requirements-market-forecast-lab.txt; different numerical dependency versions require parity verification."
+  ],
+  "PUSH_PERFORMED": false,
+  "DEPLOY_PERFORMED": false,
+  "TRIAL_ARTIFACTS": "/opt/crypto-fractal-scanner-publisher/.git/market-forecast-lab-v1/reports/market_forecast_lab",
+  "EVIDENCE_DIRECTORY": "/opt/crypto-fractal-scanner-publisher/.git/market-forecast-lab-evidence"
+}
