@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "universe_size": 50,
+  "market_pages": 4,
+  "market_per_page": 250,
+  "max_market_age_hours": 24,
+  "max_close_age_days": 2,
+  "minimum_processed_rows": 251,
+  "rotation": {
+    "ordinary_edge_pp": 3.0,
+    "strong_edge_pp": 10.0,
+    "persistence_count": 2,
+    "snapshot_window": 3
+  },
+  "quality": {
+    "minimum_distinct_assets": 5,
+    "minimum_similarity": 60.0,
+    "maximum_cone_width_pp": 150.0,
+    "minimum_evaluations": 30,
+    "central_coverage_min": 0.35,
+    "outer_coverage_min": 0.65
+  },
+  "paired_minimum": 30,
+  "method": "CLOSE_ONLY_LEGACY_COMPATIBLE",
+  "current_signature_max_missing_days": 1,
+  "current_signature_max_gap_days": 2
+}
