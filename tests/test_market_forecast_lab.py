@@ -184,7 +184,7 @@ class UniverseTests(unittest.TestCase):
                         shortName='Unrelated Token USD', longName='Unrelated Token USD')
         with patch.object(lab.yf, 'Ticker') as ticker, patch.object(lab.yf, 'download') as download:
             ticker.return_value.get_history_metadata.return_value = metadata
-            errors, _ = lab.acquire_extra(registry, self.snapshot, {}, {}, {}, [], '2026-09-22')
+            errors, _ = lab.acquire_extra(registry, self.snapshot, {}, {}, {}, [], '2026-09-22', lab.new_context('TRIAL'))
         self.assertIn('OHLC_IDENTITY_NOT_VERIFIED', errors['TEST-USD'])
         download.assert_not_called()
 
@@ -231,10 +231,10 @@ class VintageEvaluationTests(unittest.TestCase):
         self.assertEqual(path.read_bytes(), before)
 
     def test_exit_stops_and_reentry_resumes_forecasts(self):
-        manifest = dict(raw_snapshot_ids={}, library_order=[], as_of='2026-09-22', config=load_config(),
+        manifest = dict(**lab.new_context('OFFICIAL_DAILY'), raw_snapshot_ids={}, library_order=[], as_of='2026-09-22', config=load_config(),
                         quality_evaluations=[], canonical={}, universe=[])
         index = SharedSignatureIndex({})
-        original = mini_forecast()
+        original = {**mini_forecast(), **lab.context(manifest)}
         output, _ = lab.forecasts_from_manifest(manifest, 'hash', index, [original])
         self.assertEqual(output, [])
         manifest['universe'] = [dict(coingecko_id='test', ohlc_ticker='TEST-USD', inclusion_status='INCLUDED')]
@@ -304,15 +304,15 @@ class VintageEvaluationTests(unittest.TestCase):
                                  downloaded_at_utc='2026-09-22T00:00:00Z', requested_interval='1d',
                                  requested_range='test', run_id='test', purpose='test')
             output = self.root / 'market_forecast_lab'
-            manifest = dict(schema_version=1, as_of='2026-09-22', config=load_config(),
+            manifest = dict(**lab.new_context('TRIAL'), schema_version=2, as_of='2026-09-22', config=load_config(),
                             raw_snapshot_ids={'TEST-USD': sid}, library_order=['TEST-USD'],
                             canonical={}, quality_evaluations=[], source_hashes=lab.source_hashes(),
                             universe=[dict(coingecko_id='test', ohlc_ticker='TEST-USD', inclusion_status='INCLUDED')])
             manifest_id = lab.store_input(output, manifest)
             forecasts, _ = lab.forecasts_from_manifest(manifest, manifest_id)
-            lab.immutable_append(output / 'forecast_vintages.jsonl', forecasts, ('coingecko_id', 'forecast_date'))
+            lab.immutable_append(output / 'trial_forecasts.jsonl', forecasts, ('coingecko_id', 'forecast_date'))
             before = {str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
-            args = SimpleNamespace(replay=str(output / 'inputs' / (manifest_id.split(':')[1] + '.json')),
+            args = SimpleNamespace(run_context=lab.new_context('REPLAY'), replay=str(output / 'inputs' / (manifest_id.split(':')[1] + '.json')),
                                    provenance_root=str(self.root), legacy_reports=str(self.root))
             with patch.object(lab.yf, 'download', side_effect=AssertionError('network forbidden')):
                 lab.replay(args)

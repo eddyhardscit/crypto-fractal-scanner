@@ -9,18 +9,48 @@ service, timer, strategy, trading, Astro, or Conditional Successor changes.
 ## Invocation and failure boundary
 
 ```sh
-python market_forecast_lab.py --as-of 2026-09-22 \
+python market_forecast_lab.py --mode TRIAL --as-of 2026-09-22 \
   --legacy-reports /path/to/authoritative/reports \
   --provenance-root /path/to/existing/reports/forecast_provenance
 ```
 
-Default output is `reports/market_forecast_lab/` relative to this source checkout.
-An override must retain the directory name `market_forecast_lab` and share the
-existing provenance filesystem. No scheduler integration is installed. An error
+`--mode` is required; omitting it exits with a CLI error before any writes.
+TRIAL writes to a fresh UUID directory under `--trial-root` (default:
+`.market_forecast_lab_trials` beside the source reports directory), outside official
+reports/provenance. `--output` is forbidden for TRIAL. It copies only the required
+frozen inputs to its own instance of the existing provenance store, then performs
+all acquisitions there. The official input store remains read-only.
+
+OFFICIAL_DAILY must be explicitly requested. Its default output is
+`reports/market_forecast_lab/` relative to this source checkout; an override must
+retain that directory name and use the existing provenance filesystem. An existing
+unclassified directory (including the pre-release trial directory) is rejected,
+never silently adopted. No real OFFICIAL_DAILY run was performed on the publisher
+for this correction: acceptance uses a temporary sandbox with copied inputs. No scheduler integration is installed. An error
 returns nonzero without invoking or modifying Legacy/trading code. Input artifacts
 must contain canonical scanner and tracker versions for the requested date.
 Use a coherent, completed Legacy daily report snapshot. The Lab must run after
 that step if integrated later; integration is not part of V1.
+
+All generated output envelopes and CSV records carry `run_mode`, a unique
+`run_id`, `generated_at_utc`, `code_version` and boolean `official_daily`.
+Only OFFICIAL_DAILY has `official_daily=true`. Forecast IDs include the mode and
+hash these metadata fields along with the forecast payload. Canonical input
+objects retain their original identity; they are inputs, not new Lab vintages.
+
+Only OFFICIAL_DAILY writes `universe_history.jsonl`, `forecast_vintages.jsonl`,
+`forecast_path_versions.jsonl` and `evaluation_versions.jsonl`. The gate rejects
+TRIAL, REPLAY, unflagged records and mixed histories before append. TRIAL keeps
+its forecasts in `trial_forecasts.jsonl` inside its isolated run directory, for
+verification/replay only. `forecast_paths_latest.json` is now an envelope with
+run metadata and a `versions` list. Empty CSVs retain metadata columns; their
+run metadata is in the enclosing `latest.json`.
+
+Future Control Room readers must use `market_forecast_lab_run.read_official_latest`:
+it accepts only an OFFICIAL_DAILY envelope, only officially tagged forecast and
+rotation records, and matching artifact checksums. It returns no official view
+for TRIAL or unflagged pre-release output. `published=false` records transport
+state only and MUST NOT be used to infer the run mode.
 
 The Lab holds its own exclusive advisory run lock. JSONL histories use atomic
 replacement and immutable daily keys; repeated identical writes are no-ops,
@@ -140,17 +170,27 @@ or pretends that coincidentally shared analogue dates create paired observations
 
 ## Provenance, replay and restore
 
-The existing `forecast_provenance` content-addressed OHLC store is reused directly.
-Existing objects are hash-verified; new target OHLC use its existing `freeze_ohlc`.
-There is no second raw store. Small content-addressed Lab manifests contain exact
+OFFICIAL_DAILY reuses the existing `forecast_provenance` content-addressed OHLC
+store. TRIAL uses the same format and CAS/ledger primitives in an isolated,
+disposable provenance root; it never appends to the official raw index. Newly
+acquired records include run metadata and mode-specific purpose. There is no new
+production raw-storage subsystem or chunking scheme. Small content-addressed Lab manifests contain exact
 CoinGecko input, registry, config, raw IDs, ordered library, canonical cohorts,
 quality controls, source hashes and source commit/dirty status. Each forecast
 references its manifest. Canonical price anchors retain their original snapshot ID.
 
 ```sh
-python market_forecast_lab.py --replay reports/market_forecast_lab/inputs/HASH.json \
+python market_forecast_lab.py --mode REPLAY --replay /path/to/run/market_forecast_lab/inputs/HASH.json \
   --provenance-root /path/to/existing/reports/forecast_provenance
 ```
+
+REPLAY performs no downloads, directory initialization, history writes or
+provenance writes. Its CLI envelope is tagged REPLAY; it reconstructs the original
+TRIAL/OFFICIAL_DAILY vintage bytes using the source run context stored in the
+manifest, without turning replay results into new official forecasts.
+`--output` and `--trial-root` are forbidden in REPLAY. Point `--provenance-root`
+at the original run's isolated store for trial replay, or the requested frozen
+store for official replay.
 
 Replay performs no downloads or writes. It verifies the manifest/source hashes,
 loads referenced frozen bytes, reconstructs forecasts and compares their complete
@@ -187,3 +227,47 @@ Dependency versions used for acceptance are recorded in `requirements-market-for
 (Python 3.14). They are not installed into or changed in the publisher environment.
 The self-reported byte counters are sampled before writing the resource report;
 the acceptance report also records the final measured Lab directory size.
+
+## Pre-release evidence
+
+The 61 additions from the three pre-mode experiments are documented individually
+in `market_forecast_lab_pre_release_orphans.md` as
+`PRE_RELEASE_TRIAL_ORPHANED_PROVENANCE`. No official Legacy forecast/evaluation
+or operational official Lab vintage references them at the audit cutoff. They
+are retained unchanged, including the shared JUP input referenced by all three
+experiments. Do not commit the untracked pre-release `reports/market_forecast_lab`
+directory or import it into an official history. The new mode gate refuses it.
+
+Run the full acceptance suite with `python -m unittest discover -s tests -p
+"test_*.py" -v` and both real-parity environment variables above. All temporary
+acceptance directories, copied input stores, SQLite caches, locks, logs and trial
+outputs remain on the publisher data volume, outside the committed source tree.
+
+## Run-mode correction acceptance (2026-09-22)
+
+Base commit: `f09ea967bd8dd4589798414d6947acd99503bd91`.
+The complete unittest suite passed **468 tests with no skips**, including real
+BTC/SOL/DOGE parity and the existing Conditional Successor tests.
+
+A new TRIAL produced 50 explicitly non-official vintages (46 valid, 4 insufficient)
+in its own fresh evidence directory and provenance instance. No official-history
+filename was created there. Hashes and sizes of **2,172 operational report/store
+files** were identical before and after; the old raw ledger still has 1,720 records
+including the same 61 pre-release additions. The official view rejected the trial.
+
+OFFICIAL_DAILY was simulated ONLY in a temporary sandbox seeded with 57 canonical
+input snapshots and zero pre-release trial snapshots. It produced 1 universe
+history record, 50 official vintages, 50 official path versions and an empty
+evaluation history (no matured initial-day observations). Every history record
+was explicitly OFFICIAL_DAILY with official_daily=true. All three parity checks
+passed. No official execution was performed against publisher output/provenance.
+
+Read-only replay reproduced all 50 trial vintages and all 50 sandbox official
+vintages. Hash/size fingerprints of both complete run directories, including
+provenance, histories, caches and locks, were unchanged by replay.
+
+Detailed runtime logs and fingerprints remain outside the source worktree under
+`.git/market-forecast-lab-evidence/mode-fix-validation/`; they are not committed.
+The earlier JSON validation document is the historical pre-mode trial report, not
+a declaration that its untracked outputs are official. The required official
+consumer contract is now the explicit run-mode gate described above.
