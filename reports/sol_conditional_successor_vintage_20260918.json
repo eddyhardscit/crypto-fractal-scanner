@@ -1,0 +1,132 @@
+{
+  "anchor_price": 112.7,
+  "anchor_semantics": "approximate_chat_anchor",
+  "condition": {
+    "first": -5.0,
+    "then": 10.0,
+    "within_days": 30
+  },
+  "diagnostic_only": true,
+  "distinct_assets": 6,
+  "episodes": [
+    {
+      "asset": "BNB-USD",
+      "episode_end_date": "2024-01-20",
+      "episode_start_date": "2023-10-13",
+      "minus5_hit_date": "2024-01-23",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2024-02-15",
+      "similarity": 100.0
+    },
+    {
+      "asset": "HBAR-USD",
+      "episode_end_date": "2021-02-11",
+      "episode_start_date": "2020-11-04",
+      "minus5_hit_date": "2021-02-14",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2021-02-18",
+      "similarity": 99.0
+    },
+    {
+      "asset": "RUNE-USD",
+      "episode_end_date": "2020-07-05",
+      "episode_start_date": "2020-03-28",
+      "minus5_hit_date": "2020-07-06",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2020-07-20",
+      "similarity": 98.0
+    },
+    {
+      "asset": "ETH-USD",
+      "episode_end_date": "2020-08-18",
+      "episode_start_date": "2020-05-11",
+      "minus5_hit_date": "2020-08-21",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2020-09-01",
+      "similarity": 97.0
+    },
+    {
+      "asset": "ADA-USD",
+      "episode_end_date": "2020-12-16",
+      "episode_start_date": "2020-09-08",
+      "minus5_hit_date": "2020-12-21",
+      "path_class_60d": "SHALLOW_PULLBACK_THEN_CONTINUATION",
+      "plus10_anchor_date": "2020-12-29",
+      "similarity": 96.0
+    },
+    {
+      "asset": "BCH-USD",
+      "episode_end_date": "2019-04-26",
+      "episode_start_date": "2019-01-17",
+      "minus5_hit_date": "2019-04-29",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2019-05-03",
+      "similarity": 95.0
+    },
+    {
+      "asset": "RUNE-USD",
+      "episode_end_date": "2023-09-08",
+      "episode_start_date": "2023-06-01",
+      "minus5_hit_date": "2023-09-11",
+      "path_class_60d": "SHALLOW_PULLBACK_THEN_CONTINUATION",
+      "plus10_anchor_date": "2023-09-15",
+      "similarity": 94.0
+    },
+    {
+      "asset": "HBAR-USD",
+      "episode_end_date": "2024-12-12",
+      "episode_start_date": "2024-09-04",
+      "minus5_hit_date": "2024-12-18",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2024-12-24",
+      "similarity": 93.0
+    }
+  ],
+  "manual_analysis_medians": {
+    "14": 8.85,
+    "21": 36.8,
+    "30": 49.55,
+    "7": -11.51
+  },
+  "path_classes_60d": {
+    "DIRECT_CONTINUATION": {
+      "count": 3,
+      "pct": 37.5
+    },
+    "FAILURE": {
+      "count": 3,
+      "pct": 37.5
+    },
+    "SHALLOW_PULLBACK_THEN_CONTINUATION": {
+      "count": 2,
+      "pct": 25.0
+    }
+  },
+  "path_csv": "reports/sol_conditional_successor_vintage_20260918.csv",
+  "path_csv_sha256": "294fb5d72bbf89f6ca1640dfdee4c40b18c8b79684b105d61ee0b77ceb8c00de",
+  "q30": {
+    "count": 8,
+    "p10_pct": -14.200941802224449,
+    "p10_price": 96.69553858889306,
+    "p25_pct": -2.663184783549857,
+    "p25_price": 109.69859074893931,
+    "p50_pct": 49.54952615977598,
+    "p50_price": 168.54231598206755,
+    "p75_pct": 66.98367659698661,
+    "p75_price": 188.19060352480392,
+    "p90_pct": 90.32732693146139,
+    "p90_price": 214.49889745175696
+  },
+  "qualified_episodes": 8,
+  "reproduced_medians": {
+    "14": 8.850657669097394,
+    "21": 36.79766807032428,
+    "30": 49.54952615977598,
+    "7": -11.506749402919148
+  },
+  "schema": "SOL_CONDITIONAL_SUCCESSOR_FROZEN_VINTAGE_V1",
+  "sensitivity_status": "UNSTABLE",
+  "stored_successor_days": 60,
+  "vintage_date": "2026-09-18",
+  "visible_days": 30
+}

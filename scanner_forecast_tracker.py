@@ -35,6 +35,12 @@ from scanner_forecast_shadow_calibration import (
     shadow_metrics_table,
     update_shadow_history,
 )
+from sol_conditional_successor import (
+    build_dynamic_analysis as build_sol_conditional_dynamic,
+    render_frozen_vintage as render_sol_conditional_frozen,
+    report_lines as sol_conditional_report_lines,
+)
+
 REPORTS_DIR = "reports"
 MAIN_REPORT_PATH = os.path.join(REPORTS_DIR, "latest_report.md")
 
@@ -1594,6 +1600,20 @@ def build_report(generated_at, latest_rows, metrics, shadow_metrics):
         else:
             lines.append("Grafico non disponibile: dati insufficienti.")
 
+        if asset == "SOL":
+            conditional_dynamic = row.get("sol_conditional_dynamic")
+            conditional_frozen = row.get("sol_conditional_frozen")
+
+            if conditional_dynamic or conditional_frozen:
+                lines.extend(
+                    sol_conditional_report_lines(
+                        conditional_dynamic,
+                        conditional_frozen,
+                        row.get("q30"),
+                        row.get("snapshot_date"),
+                    )
+                )
+
         historical_img = row.get("historical_chart_filename")
         historical = row.get("historical_review") or {}
         if historical_img:
@@ -1838,6 +1858,9 @@ def main():
         short = asset_short(target)
         print(f"Costruzione cono {short}...")
 
+        sol_conditional_dynamic = None
+        sol_conditional_frozen = None
+
         current_price = current_price_for_target(target, data)
         input_snapshot = input_snapshot_context(target, matches, data)
         target_snapshot_date = input_snapshot["price_snapshot_date"]
@@ -1906,10 +1929,24 @@ def main():
                 "regime_adjusted_chart_filename": None,
                 "regime_adjusted_status": regime_status,
                 "input_snapshot": input_snapshot,
+                "sol_conditional_dynamic": sol_conditional_dynamic,
+                "sol_conditional_frozen": sol_conditional_frozen,
             })
             continue
 
         quant_price = add_price_levels(quant, current_price)
+
+        if target == "SOL-USD":
+            sol_conditional_dynamic = build_sol_conditional_dynamic(
+                matches,
+                data,
+                current_price,
+                target_snapshot_date,
+            )
+
+            sol_conditional_frozen = render_sol_conditional_frozen(
+                data.get("SOL-USD"),
+            )
 
         shadow_quant, shadow_status = build_shadow_cone(
             target=target,
@@ -1985,6 +2022,8 @@ def main():
             ),
             "regime_adjusted_status": regime_status,
             "input_snapshot": input_snapshot,
+                "sol_conditional_dynamic": sol_conditional_dynamic,
+                "sol_conditional_frozen": sol_conditional_frozen,
         })
 
         asset_snapshot_rows = build_snapshot_rows(
