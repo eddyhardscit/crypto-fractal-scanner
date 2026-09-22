@@ -1,6 +1,6 @@
 # Blocco 9 — Hall of Fame e memoria genetica
 
-Generato: 2026-09-17T05:18:35+00:00
+Generato: 2026-09-17T17:41:08+00:00
 
 > Paper-only. La memoria può bloccare soltanto una futura proposta Block 5 classificata AVOID; non modifica strategie esistenti.
 
@@ -16,16 +16,16 @@ Generato: 2026-09-17T05:18:35+00:00
 
 | Rank | Strategia | Stato | Score | Grade | Trade | PF | Expectancy R | DD R |
 | ---: | --- | --- | ---: | --- | ---: | ---: | ---: | ---: |
-| 1 | MAIN_SIDE_REGIME_GUARD_V1 | BASELINE | 23.3 | E | 59 | 1.94 | 0.388 | 4.71 |
-| 2 | SHADOW_COMBO_TREND_SIDE_REGIME_GUARD_V1 | BASELINE | 23.0 | E | 155 | 1.43 | 0.214 | 23.36 |
-| 3 | SHADOW_COMBO_ADAPTIVE | BASELINE | 20.8 | E | 220 | 1.27 | 0.128 | 23.82 |
-| 4 | SHADOW_DONCHIAN_1H | BASELINE | 20.6 | E | 163 | 1.26 | 0.152 | 20.49 |
-| 5 | SHADOW_1H_FAST_V3_NO_ESPORTS_STRESS_GUARD_V1 | BASELINE | 20.6 | E | 179 | 1.11 | 0.054 | 10.66 |
-| 6 | SHADOW_1H_FAST_SCORE_6_75_COST_AWARE_V1 | BASELINE | 19.9 | E | 205 | 1.18 | 0.088 | 24.60 |
-| 7 | SHADOW_1H_FAST_V3_NOHIGH_REGIME_GUARD_V1 | BASELINE | 19.5 | E | 175 | 1.15 | 0.074 | 14.92 |
-| 8 | SHADOW_1H_FAST_V3_NO_ESPORTS_MFE_LOCK_V1 | BASELINE | 19.1 | E | 229 | 1.11 | 0.054 | 30.08 |
-| 9 | SHADOW_DONCHIAN_1H_GB20_120R_V1 | BASELINE | 18.7 | E | 131 | 1.27 | 0.158 | 20.49 |
-| 10 | SHADOW_1H_FAST_V3 | BASELINE | 18.4 | E | 273 | 1.09 | 0.047 | 29.54 |
+| 1 | SHADOW_COMBO_TREND_SIDE_REGIME_GUARD_V1 | BASELINE | 23.1 | E | 162 | 1.43 | 0.218 | 23.36 |
+| 2 | SHADOW_1H_FAST_V3_NO_ESPORTS_STRESS_GUARD_V1 | BASELINE | 21.0 | E | 185 | 1.15 | 0.072 | 10.66 |
+| 3 | SHADOW_1H_FAST_V3_NOHIGH_REGIME_GUARD_V1 | BASELINE | 20.7 | E | 184 | 1.25 | 0.115 | 14.92 |
+| 4 | SHADOW_DONCHIAN_1H | BASELINE | 20.7 | E | 171 | 1.25 | 0.153 | 20.49 |
+| 5 | SHADOW_1H_FAST_SCORE_6_75_COST_AWARE_V1 | BASELINE | 20.4 | E | 215 | 1.21 | 0.103 | 25.45 |
+| 6 | SHADOW_COMBO_ADAPTIVE | BASELINE | 19.8 | E | 230 | 1.20 | 0.098 | 23.82 |
+| 7 | SHADOW_DONCHIAN_1H_GB20_120R_V1 | BASELINE | 19.6 | E | 139 | 1.26 | 0.158 | 20.49 |
+| 8 | SHADOW_1H_FAST_V3_NO_ESPORTS_MFE_LOCK_V1 | BASELINE | 18.8 | E | 239 | 1.07 | 0.039 | 30.08 |
+| 9 | SHADOW_1H_FAST_V3_NOHIGH_V1 | BASELINE | 18.2 | E | 210 | 1.06 | 0.032 | 14.78 |
+| 10 | SHADOW_1H_FAST_V3 | BASELINE | 18.1 | E | 283 | 1.07 | 0.035 | 29.54 |
 
 ## Memoria genetica
 

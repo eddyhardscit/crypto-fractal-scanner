@@ -12,29 +12,29 @@ Report separato completo: **[major_alt_lifecycle_squeeze_report.md](major_alt_li
 | Bias | CONTESTO DA OSSERVARE |
 | Azione coerente | SOLO OSSERVAZIONE |
 | Peso suggerito Global | 0 |
-| Trend squeeze | PEGGIORAMENTO |
-| Trend squeeze score | -1 |
+| Trend squeeze | STABILE / DA CONFERMARE |
+| Trend squeeze score | 0 |
 | Confronto precedente | 2026-09-14 |
 | Fonte prezzi | Yahoo Finance SOL-USD weekly |
-| Prezzo SOL | 99,61 $ |
-| EMA200 weekly target | 111,10 $ |
-| Upside verso EMA200 | +11,65% |
-| Distanza prezzo da EMA200 | -10,43% |
-| Gap EMA50/EMA200 | -5,90% |
+| Prezzo SOL | 115,88 $ |
+| EMA200 weekly target | 111,26 $ |
+| Upside verso EMA200 | -3,75% |
+| Distanza prezzo da EMA200 | +3,89% |
+| Gap EMA50/EMA200 | -5,25% |
 | Stato cross | EMA50 SOTTO EMA200 |
-| RSI weekly | 55,30 |
-| Età SOL | 6,4 anni |
+| RSI weekly | 62,97 |
+| Età SOL | 6,5 anni |
 | Analoghi storici usati | 30 |
 | Max analoghi per asset | 3 |
-| Hit EMA200 12w analoghi | +63,33% |
-| Max gain mediano 12w | +32,64% |
-| Drawdown mediano 12w | -29,41% |
+| Hit EMA200 12w analoghi | +100,00% |
+| Max gain mediano 12w | +21,62% |
+| Drawdown mediano 12w | -40,20% |
 
 Lettura semplice:
 
 **SOLO OSSERVAZIONE**
 
-Autocontrollo: **PEGGIORAMENTO**.
+Autocontrollo: **STABILE / DA CONFERMARE**.
 
 Questo modulo confronta SOL con altre crypto in fasi simili di età, distanza da EMA200, EMA50/EMA200 e RSI. Non usa stock market.
 
@@ -42,5 +42,5 @@ Nota importante: **questo modulo ora NON pesa più nel Global Confluence**. Rest
 
 Nota: se EMA50/EMA200 sono dentro ±2%, il modulo parla di medie sovrapposte / incrocio in corso, perché exchange diversi possono mostrare il cross leggermente prima o dopo.
 
-<!-- Generato: 2026-09-17 05:32 UTC -->
+<!-- Generato: 2026-09-22 05:32 UTC -->
 <!-- MAJOR_ALT_LIFECYCLE_SQUEEZE_END -->
