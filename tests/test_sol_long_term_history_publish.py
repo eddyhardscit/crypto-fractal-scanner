@@ -109,7 +109,7 @@ class RealPublisherIntegrationTests(unittest.TestCase):
             output = Path(temporary) / "output"
             manifest = publisher.generate(REAL_REPORTS, output)
             self.assertGreater(manifest["DAILY_HISTORY_ROWS"], 0)
-            self.assertEqual(len(list(output.iterdir())), 7)
+            self.assertEqual(len(list(output.iterdir())), 9)
             self.assertEqual(manifest["FORECAST_VINTAGE_ROWS"], 4 * manifest["DAILY_HISTORY_ROWS"])
         after = {name: hashlib.sha256((REAL_REPORTS / name).read_bytes()).hexdigest() for name in FORECAST_NAMES}
         self.assertEqual(after, before)

@@ -103,12 +103,16 @@ def generate(reports_dir, output_dir=None, *, now=None):
         stage = Path(temporary)
         from sol_long_term_history_dashboard import render_dashboard
         render_dashboard(rows, current, stage, snapshots[0]['generated_at'], snapshots[-1]['generated_at'])
+        from sol_long_term_forward_views import render_forward_views
+        render_forward_views(rows, current, stage)
         (stage/DAILY_CSV).write_bytes(daily_bytes)
         (stage/VINTAGES_CSV).write_bytes(vintage_bytes)
         (stage/'availability.json').write_text(json.dumps(manifest, indent=2, allow_nan=False)+'\n', encoding='utf-8')
         candidates = {p.name: p.read_bytes() for p in stage.iterdir() if p.is_file()}
         required = {DAILY_CSV, VINTAGES_CSV, 'README.md', 'sol_long_term_cone_current.png',
-            'sol_long_term_cone_history.png', 'sol_long_term_probability_history.png', 'availability.json'}
+            'sol_long_term_cone_history.png', 'sol_long_term_probability_history.png',
+            'sol_long_term_forward_calendar.svg', 'sol_long_term_forward_vintages.svg',
+            'availability.json'}
         if set(candidates) != required or not all(candidates.values()):
             raise HistoryError('incomplete dashboard bundle')
         out.mkdir(parents=True, exist_ok=True)

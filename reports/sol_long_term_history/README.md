@@ -9,6 +9,28 @@ Cohort: **40** analoghi / **27.0** distinct assets
 
 ![SOL Long-Term Probability Cone — Current](sol_long_term_cone_current.png)
 
+<!-- SOL_FORWARD_VIEWS_START -->
+## Forward calendar
+
+![SOL Long-Term Cone — Forward Calendar](sol_long_term_forward_calendar.svg)
+
+Asse X = date future reali. Sono mostrati soltanto gli orizzonti registrati 90/180/365/730 giorni; le linee collegano i punti per leggibilità e non creano previsioni intermedie.
+
+| Horizon | Target date | p50 | p75 | p90 |
+| --- | --- | ---: | ---: | ---: |
+| 3M | 2026-12-16 | $143.59 | $180.71 | $226.69 |
+| 6M | 2027-03-16 | $134.66 | $200.25 | $314.32 |
+| 1Y | 2027-09-17 | $146.76 | $308.67 | $501.86 |
+| 2Y | 2028-09-16 | $85.63 | $271.99 | $443.44 |
+
+## Forward vintages
+
+![SOL Long-Term Cone — Forward Vintages](sol_long_term_forward_vintages.svg)
+
+Ogni linea è un vero snapshot giornaliero proiettato sulle sue date target esatte. La linea più marcata è l'ultimo vintage; sono usati spot e p50 registrati, senza punti sintetici.
+
+<!-- SOL_FORWARD_VIEWS_END -->
+
 ## Forecast history
 
 ![SOL Long-Term Cone — Forecast History](sol_long_term_cone_history.png)
