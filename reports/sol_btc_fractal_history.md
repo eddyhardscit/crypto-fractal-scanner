@@ -1,7 +1,7 @@
 # Storico frattale SOL/BTC
 
-Generato: **2026-09-22 07:33:44 CEST**  
-UTC: **2026-09-22 05:33:44 UTC**
+Generato: **2026-09-23 07:33:51 CEST**  
+UTC: **2026-09-23 05:33:51 UTC**
 
 Questo file salva giorno per giorno la lettura del frattale **BTC novembre 2022 vs SOL giugno 2026**.
 
@@ -14,25 +14,25 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | Voce | Valore |
 | --- | --- |
 | Prima rilevazione salvata | 2026-07-08 |
-| Ultima rilevazione salvata | 2026-09-22 |
-| Righe salvate | 70 |
+| Ultima rilevazione salvata | 2026-09-23 |
+| Righe salvate | 71 |
 
 ## Ultima lettura
 
 | Voce | Valore |
 | --- | --- |
-| Data lettura | 2026-09-22 |
-| Prezzo SOL | 115,88 $ |
-| BTC scalato | 80,22 $ |
-| Gap SOL vs BTC-scalato | +44,46% |
-| Somiglianza totale | +70,10% |
+| Data lettura | 2026-09-23 |
+| Prezzo SOL | 118,95 $ |
+| BTC scalato | 79,52 $ |
+| Gap SOL vs BTC-scalato | +49,58% |
+| Somiglianza totale | +68,63% |
 | Fase | FRATTALE NON CONFERMATO DAL PREZZO |
 | Tracking | STRUTTURA STABILE |
-| Errore medio da inizio programma | +14,59% |
+| Errore medio da inizio programma | +15,17% |
 | Errore ultimo giorno | n/a |
-| Conferma 1 | 161,24 $ |
-| Conferma 2 | 173,49 $ |
-| Invalidazione soft | 110,09 $ |
+| Conferma 1 | 166,95 $ |
+| Conferma 2 | 179,63 $ |
+| Invalidazione soft | 113,00 $ |
 | Invalidazione forte | 62,19 $ |
 | Target ciclo base da oggi | n/a |
 
@@ -108,6 +108,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | 2026-09-16 | 97,07 $ | 88,09 $ | +10,19% | +70,74% | FRATTALE SOLO DI CONTESTO | STRUTTURA STABILE | +13,57% | n/a | 122,41 $ | 124,49 $ | 87,63 $ | 119,04 $ | n/a |
 | 2026-09-17 | 99,61 $ | 88,06 $ | +13,12% | +71,56% | FRATTALE SOLO DI CONTESTO | STRUTTURA STABILE | +13,48% | n/a | 123,84 $ | 129,26 $ | 89,96 $ | 122,21 $ | n/a |
 | 2026-09-22 | 115,88 $ | 80,22 $ | +44,46% | +70,10% | FRATTALE NON CONFERMATO DAL PREZZO | STRUTTURA STABILE | +14,59% | n/a | 159,04 $ | 157,60 $ | 110,09 $ | 161,24 $ | n/a |
+| 2026-09-23 | 118,95 $ | 79,52 $ | +49,58% | +68,63% | FRATTALE NON CONFERMATO DAL PREZZO | STRUTTURA STABILE | +15,17% | n/a | 166,95 $ | 162,97 $ | 113,00 $ | 166,95 $ | n/a |
 | nan | 77,58 $ | 70,55 $ | +9,96% | +73,80% | nan | nan | +21,83% | +9,96% | 105,65 $ | 111,43 $ | 73,73 $ | 105,65 $ | 574,68 $ |
 | nan | 77,58 $ | 70,55 $ | +9,96% | +73,79% | nan | nan | +21,83% | +9,96% | 105,70 $ | 111,48 $ | 73,77 $ | 105,70 $ | 574,97 $ |
 
@@ -183,6 +184,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | 2026-09-16 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +72,86% | +13,57% | DEVIAZIONE MODERATA | +76,82% | +11,59% | DEVIAZIONE MODERATA |
 | 2026-09-17 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +73,04% | +13,48% | DEVIAZIONE MODERATA | +76,91% | +11,55% | DEVIAZIONE MODERATA |
 | 2026-09-22 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +70,81% | +14,59% | DEVIAZIONE MODERATA | +75,06% | +12,47% | DEVIAZIONE MODERATA |
+| 2026-09-23 | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +69,67% | +15,17% | STACCATO / NON ADERENTE | +74,16% | +12,92% | DEVIAZIONE MODERATA |
 | nan | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +56,35% | +21,83% | STACCATO / MOLTO IN ANTICIPO | +81,44% | +9,28% | ABBASTANZA ALLINEATO |
 | nan | +87,95% | +6,02% | ABBASTANZA ALLINEATO | +56,33% | +21,83% | STACCATO / MOLTO IN ANTICIPO | +81,44% | +9,28% | ABBASTANZA ALLINEATO |
 
@@ -258,6 +260,7 @@ Il CSV completo è: `sol_btc_fractal_history.csv`.
 | 2026-09-16 | 87,63 $ | 119,04 $ | 122,41 $ | 124,49 $ | 116,42 $ | 132,78 $ | 87,63 $ | 123,62 $ | n/a |
 | 2026-09-17 | 91,94 $ | 120,16 $ | 123,84 $ | 129,26 $ | 121,43 $ | 136,45 $ | 89,96 $ | 126,90 $ | n/a |
 | 2026-09-22 | 142,57 $ | 161,24 $ | 159,04 $ | 157,60 $ | 149,93 $ | 172,67 $ | 114,88 $ | 162,06 $ | n/a |
+| 2026-09-23 | 161,59 $ | 162,00 $ | 166,95 $ | 162,97 $ | 156,20 $ | 178,49 $ | 118,95 $ | 167,80 $ | n/a |
 | nan | 76,23 $ | 78,10 $ | 105,65 $ | 111,43 $ | 126,65 $ | 127,10 $ | 76,23 $ | 105,65 $ | 574,68 $ |
 | nan | 76,27 $ | 78,14 $ | 105,70 $ | 111,48 $ | 126,71 $ | 127,17 $ | 76,27 $ | 105,70 $ | 574,97 $ |
 
