@@ -1,6 +1,6 @@
 # Paper trading automatico KuCoin
 
-Generato: 2026-09-22T05:33:21+00:00
+Generato: 2026-09-23T05:33:20+00:00
 
 ## Configurazione attiva
 
