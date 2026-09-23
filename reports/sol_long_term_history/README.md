@@ -1,8 +1,8 @@
 # SOL Long-Term Cone History
 
-Ultimo aggiornamento: **2026-09-22T06:01:45.185085Z**  
-SOL spot: **$116.89**  
-Cohort: **40** analoghi / **31.0** distinct assets  
+Ultimo aggiornamento: **2026-09-23T06:04:35.239177Z**  
+SOL spot: **$118.57**  
+Cohort: **40** analoghi / **28.0** distinct assets  
 **LOG_ROBUST_TAIL · DIAGNOSTIC ONLY**
 
 ## Current cone
@@ -18,10 +18,10 @@ Asse X = date future reali. Le linee mostrano esplicitamente p10, p25, p50, p75 
 
 | Horizon | Target date | p10 | p25 | p50 | p75 | p90 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| 3M | 2026-12-21 | $78.19 | $107.30 | $136.00 | $191.04 | $244.59 |
-| 6M | 2027-03-21 | $52.05 | $83.62 | $134.72 | $160.68 | $269.34 |
-| 1Y | 2027-09-22 | $50.08 | $101.17 | $155.34 | $258.75 | $557.83 |
-| 2Y | 2028-09-21 | $27.74 | $39.69 | $75.72 | $228.22 | $484.19 |
+| 3M | 2026-12-22 | $83.10 | $94.79 | $142.10 | $191.40 | $246.36 |
+| 6M | 2027-03-22 | $52.30 | $78.61 | $114.69 | $148.87 | $215.75 |
+| 1Y | 2027-09-23 | $46.98 | $84.55 | $151.20 | $252.74 | $332.21 |
+| 2Y | 2028-09-22 | $24.16 | $35.32 | $53.69 | $150.61 | $326.96 |
 
 ## Forward vintages
 
@@ -52,9 +52,9 @@ Le percentuali rappresentano la frequenza empirica degli analoghi che terminano 
 
 | Horizon | p50 | p75 | p90 | P≥300 | P≥500 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 6M | $134.72 | $160.68 | $269.34 | 9.68% | 9.68% |
-| 1Y | $155.34 | $258.75 | $557.83 | 19.35% | 12.90% |
-| 2Y | $75.72 | $228.22 | $484.19 | 23.33% | 6.67% |
+| 6M | $114.69 | $148.87 | $215.75 | 7.14% | 7.14% |
+| 1Y | $151.20 | $252.74 | $332.21 | 21.43% | 7.14% |
+| 2Y | $53.69 | $150.61 | $326.96 | 14.81% | 0.00% |
 
 ## Recent drift
 
@@ -62,27 +62,27 @@ Ultime 7 daily observations reali (non necessariamente consecutive).
 
 | Date | Spot | 6M p50 | 1Y p50 | 2Y p50 | 2Y P≥300 | 2Y P≥500 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| 2026-09-12 | $101.61 | $139.40 | $184.43 | $198.98 | 29.63% | 14.81% |
 | 2026-09-13 | $101.78 | $178.95 | $172.81 | $109.93 | 31.03% | 17.24% |
 | 2026-09-14 | $101.11 | $164.06 | $175.95 | $98.11 | 21.43% | 14.29% |
 | 2026-09-15 | $101.41 | $147.38 | $158.14 | $85.66 | 18.52% | 11.11% |
 | 2026-09-16 | $97.26 | $151.69 | $141.78 | $92.83 | 17.86% | 7.14% |
 | 2026-09-17 | $99.50 | $134.66 | $146.76 | $85.63 | 18.52% | 7.41% |
 | 2026-09-22 | $116.89 | $134.72 | $155.34 | $75.72 | 23.33% | 6.67% |
+| 2026-09-23 | $118.57 | $114.69 | $151.20 | $53.69 | 14.81% | 0.00% |
 
 ## 30-day stability
 
-Finestra: 16 osservazioni reali disponibili negli ultimi 30 giorni di calendario; i giorni mancanti non vengono interpolati.
+Finestra: 17 osservazioni reali disponibili negli ultimi 30 giorni di calendario; i giorni mancanti non vengono interpolati.
 
 **storico <30 giorni**: statistiche sullo storico disponibile. Campione insufficiente per interpretare lo status come prova di stabilità duratura.
 
 | Metric | Median | Min | Max | range_pct | Range (pp) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 6M p50 | $134.69 | $128.08 | $178.95 | 37.77% | — |
-| 1Y p50 | $153.00 | $124.98 | $184.43 | 38.86% | — |
-| 2Y p50 | $131.20 | $75.72 | $198.98 | 93.95% | — |
-| 2Y P≥300 | 24.96% | 17.86% | 32.14% | — | 14.29 |
-| 2Y P≥500 | 14.55% | 6.67% | 22.22% | — | 15.56 |
+| 6M p50 | $134.66 | $114.69 | $178.95 | 47.72% | — |
+| 1Y p50 | $151.20 | $124.98 | $184.43 | 39.32% | — |
+| 2Y p50 | $127.85 | $53.69 | $198.98 | 113.64% | — |
+| 2Y P≥300 | 24.00% | 14.81% | 32.14% | — | 17.33 |
+| 2Y P≥500 | 14.29% | 0.00% | 22.22% | — | 22.22 |
 
 **FORECAST_DRIFT_STATUS=VOLATILE**
 
@@ -108,8 +108,8 @@ Indicatore diagnostico; non va usato per decisioni operative. Una sola osservazi
 
 FIRST_REAL_SNAPSHOT=2026-09-03T17:03:34.597672Z  
 FIRST_AVAILABLE_LONG_TERM_SNAPSHOT=2026-09-03T17:03:34.597672Z  
-LATEST_SNAPSHOT=2026-09-22T06:01:45.185085Z  
-DAILY_ROWS=16
+LATEST_SNAPSHOT=2026-09-23T06:04:35.239177Z  
+DAILY_ROWS=17
 
 Fonti autoritative: `sol_long_term_probability_cone.json`, `sol_long_term_probability_cone_history.jsonl` e snapshot immutabili in `sol_long_term_probability_cone_history/` nel publisher canonico.
 

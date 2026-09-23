@@ -17,7 +17,7 @@ La vicinanza matematica a una retta non basta: la linea deve essere costruita su
 
 | Voce | Valore |
 | --- | --- |
-| Prezzo SOL attuale | 118,95 $ |
+| Prezzo SOL attuale | 117,38 $ |
 | Target ciclo base | 735,08 $ |
 | Avanzamento verso target base | +16,18% |
 | Fase prezzo | inizio ciclo / lontano dal target macro |
