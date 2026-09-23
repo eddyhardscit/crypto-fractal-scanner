@@ -1,6 +1,6 @@
 # Classifica comparativa conti paper
 
-Generato: 2026-09-22T06:30:35+00:00
+Generato: 2026-09-23T06:30:35+00:00
 
 > La classifica privilegia l'ampiezza del campione. Non autorizza rotazioni automatiche del capitale.
 
