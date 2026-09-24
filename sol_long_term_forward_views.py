@@ -9,6 +9,8 @@ Presentation only:
 from __future__ import annotations
 
 from datetime import date, timedelta
+import csv
+import json
 import math
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -52,6 +54,162 @@ def _number(value: Any) -> float:
 def _money(value: Any) -> str:
     value = _number(value)
     return f"${value:,.2f}" if math.isfinite(value) else "—"
+
+
+def _load_short_term_context(
+    output_dir: Path,
+) -> dict[str, Any]:
+    """Load existing short-term SOL outputs without recalculation."""
+    reports_dir = output_dir.parent
+    context: dict[str, Any] = {
+        "available": False,
+        "standard": None,
+        "conditional": None,
+        "frozen": None,
+    }
+
+    latest_path = reports_dir / "scanner_forecast_latest.csv"
+    if latest_path.is_file():
+        try:
+            with latest_path.open(
+                "r", encoding="utf-8", newline=""
+            ) as handle:
+                rows = list(csv.DictReader(handle))
+            sol = next(
+                (
+                    row
+                    for row in reversed(rows)
+                    if str(row.get("asset", "")).strip() == "SOL"
+                ),
+                None,
+            )
+            if sol:
+                context["standard"] = {
+                    "snapshot_date": sol.get("snapshot_date"),
+                    "sample": 40,
+                    "p10_price": sol.get("p10_30d_price"),
+                    "p25_price": sol.get("p25_30d_price"),
+                    "p50_price": sol.get("p50_30d_price"),
+                    "p75_price": sol.get("p75_30d_price"),
+                    "p90_price": sol.get("p90_30d_price"),
+                }
+        except Exception:
+            context["standard"] = None
+
+    dynamic_path = reports_dir / "sol_conditional_successor_current.json"
+    if dynamic_path.is_file():
+        try:
+            payload = json.loads(dynamic_path.read_text(encoding="utf-8"))
+            if payload.get("status") == "AVAILABLE" and payload.get("q30"):
+                context["conditional"] = {
+                    "snapshot_date": payload.get("forecast_date"),
+                    "sample": payload.get("qualified_episodes"),
+                    **payload["q30"],
+                }
+        except Exception:
+            context["conditional"] = None
+
+    frozen_path = reports_dir / "sol_conditional_successor_vintage_20260918.json"
+    if frozen_path.is_file():
+        try:
+            payload = json.loads(frozen_path.read_text(encoding="utf-8"))
+            if payload.get("q30"):
+                context["frozen"] = {
+                    "snapshot_date": payload.get("vintage_date"),
+                    "sample": payload.get("qualified_episodes"),
+                    **payload["q30"],
+                }
+        except Exception:
+            context["frozen"] = None
+
+    context["available"] = any(
+        context.get(key)
+        for key in ("standard", "conditional", "frozen")
+    )
+    return context
+
+
+def _short_term_readme_lines(
+    context: Mapping[str, Any] | None,
+) -> list[str]:
+    lines = [
+        "## Short-term context (30 giorni)",
+        "",
+        (
+            "Questa pagina resta il **Long-Term Cone** (3M/6M/1Y/2Y). "
+
+            "Il blocco seguente riporta, senza ricalcolarli o mescolarli, "
+
+            "gli ultimi output dello scanner SOL a 30 giorni."
+        ),
+        "",
+    ]
+
+    if not context or not context.get("available"):
+        lines += [
+            (
+                "Dati short-term non disponibili in questo snapshot; "
+
+                "il Long-Term Cone resta invariato."
+            ),
+            "",
+            "[Apri il report short-term](../latest_report.md)",
+            "",
+        ]
+        return lines
+
+    lines += [
+        (
+            "| Modello short-term | Snapshot | Campione | "
+
+            "P10 | P25 | P50 | P75 | P90 |"
+        ),
+        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |",
+    ]
+
+    rows = (
+        ("Cono standard", context.get("standard"), "40 analoghi correnti"),
+        ("Conditional -5% → +10% corrente", context.get("conditional"), None),
+        ("Conditional vintage 18 Sep", context.get("frozen"), None),
+    )
+
+    for label, row, fixed_sample in rows:
+        if not row:
+            continue
+        sample = fixed_sample if fixed_sample is not None else str(row.get("sample", "—"))
+        lines.append(
+            f"| {label} | {row.get('snapshot_date') or '—'} | {sample} | "
+
+            f"{_money(row.get('p10_price'))} | {_money(row.get('p25_price'))} | "
+
+            f"{_money(row.get('p50_price'))} | {_money(row.get('p75_price'))} | "
+
+            f"{_money(row.get('p90_price'))} |"
+        )
+
+    lines += [
+        "",
+        "- **Standard:** usa i 40 analoghi SOL correnti.",
+        (
+            "- **Conditional corrente:** filtra quei 40 e mantiene solo "
+
+            "gli episodi che fanno prima -5% e poi +10% entro 30 giorni."
+        ),
+        (
+            "- **Vintage 18 Sep:** resta congelato per la verifica "
+
+            "fuori campione della previsione originale."
+        ),
+        (
+            "- Questi numeri non vengono mediati con il Long-Term Cone "
+
+            "e non ne modificano il modello."
+        ),
+        "",
+        "[Apri il dettaglio short-term](../latest_report.md)",
+        "",
+    ]
+    return lines
 
 
 def _style_axis(axis, ylabel: str) -> None:
@@ -412,12 +570,16 @@ def forward_vintages_figure(
 
 
 def _forward_readme_block(
-    current: Mapping[str, Any]
+    current: Mapping[str, Any],
+    short_term: Mapping[str, Any] | None = None,
 ) -> str:
     forecast_day = _forecast_day(current)
 
     lines = [
         "<!-- SOL_FORWARD_VIEWS_START -->",
+    ]
+    lines += _short_term_readme_lines(short_term)
+    lines += [
         "## Forward calendar",
         "",
         f"![SOL Long-Term Cone — Forward Calendar]({CALENDAR_NAME})",
@@ -466,6 +628,7 @@ def _forward_readme_block(
 def inject_readme(
     path: Path,
     current: Mapping[str, Any],
+    short_term: Mapping[str, Any] | None = None,
 ) -> None:
     text = path.read_text(
         encoding="utf-8"
@@ -503,7 +666,8 @@ def inject_readme(
     )
 
     block = _forward_readme_block(
-        current
+        current,
+        short_term,
     )
 
     text = (
@@ -574,9 +738,14 @@ def render_forward_views(
             vintages,
         )
 
+    short_term = _load_short_term_context(
+        output
+    )
+
     inject_readme(
         readme,
         current,
+        short_term,
     )
 
     if before_rows != [

@@ -10,6 +10,22 @@ Cohort: **40** analoghi / **30.0** distinct assets
 ![SOL Long-Term Probability Cone — Current](sol_long_term_cone_current.png)
 
 <!-- SOL_FORWARD_VIEWS_START -->
+## Short-term context (30 giorni)
+
+Questa pagina resta il **Long-Term Cone** (3M/6M/1Y/2Y). Il blocco seguente riporta, senza ricalcolarli o mescolarli, gli ultimi output dello scanner SOL a 30 giorni.
+
+| Modello short-term | Snapshot | Campione | P10 | P25 | P50 | P75 | P90 |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Cono standard | 2026-09-24 | 40 analoghi correnti | $77.07 | $93.26 | $115.80 | $141.86 | $194.70 |
+| Conditional -5% → +10% corrente | 2026-09-24 | 8 | $92.29 | $97.96 | $144.44 | $185.20 | $247.54 |
+| Conditional vintage 18 Sep | 2026-09-18 | 8 | $96.70 | $109.70 | $168.54 | $188.19 | $214.50 |
+
+- **Standard:** usa i 40 analoghi SOL correnti.
+- **Conditional corrente:** filtra quei 40 e mantiene solo gli episodi che fanno prima -5% e poi +10% entro 30 giorni.
+- **Vintage 18 Sep:** resta congelato per la verifica fuori campione della previsione originale.
+- Questi numeri non vengono mediati con il Long-Term Cone e non ne modificano il modello.
+
+[Apri il dettaglio short-term](../latest_report.md)
 ## Forward calendar
 
 ![SOL Long-Term Cone — Forward Calendar](sol_long_term_forward_calendar.svg)

@@ -1,6 +1,7 @@
 from copy import deepcopy
 from datetime import date, timedelta
 from pathlib import Path
+import json
 import tempfile
 import unittest
 
@@ -200,6 +201,62 @@ class ForwardViewsTests(unittest.TestCase):
             rows,
             before,
         )
+
+
+    def test_short_term_context_uses_existing_outputs_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            reports = Path(temporary) / "reports"
+            output = reports / "sol_long_term_history"
+            output.mkdir(parents=True)
+
+            (reports / "scanner_forecast_latest.csv").write_text(
+                "snapshot_date,asset,p10_30d_price,p25_30d_price,"
+
+                "p50_30d_price,p75_30d_price,p90_30d_price\n"
+
+                "2026-09-24,SOL,77,93,116,142,195\n",
+                encoding="utf-8",
+            )
+
+            (reports / "sol_conditional_successor_current.json").write_text(
+                json.dumps({
+                    "status": "AVAILABLE",
+                    "forecast_date": "2026-09-24",
+                    "qualified_episodes": 8,
+                    "q30": {
+                        "p10_price": 92,
+                        "p25_price": 98,
+                        "p50_price": 144,
+                        "p75_price": 185,
+                        "p90_price": 248,
+                    },
+                }),
+                encoding="utf-8",
+            )
+
+            (reports / "sol_conditional_successor_vintage_20260918.json").write_text(
+                json.dumps({
+                    "vintage_date": "2026-09-18",
+                    "qualified_episodes": 8,
+                    "q30": {
+                        "p10_price": 97,
+                        "p25_price": 110,
+                        "p50_price": 169,
+                        "p75_price": 188,
+                        "p90_price": 214,
+                    },
+                }),
+                encoding="utf-8",
+            )
+
+            context = forward._load_short_term_context(output)
+            block = forward._forward_readme_block(observation(), context)
+
+            self.assertIn("## Short-term context (30 giorni)", block)
+            self.assertIn("Cono standard", block)
+            self.assertIn("$144.00", block)
+            self.assertIn("$169.00", block)
+            self.assertIn("../latest_report.md", block)
 
 
 if __name__ == "__main__":
