@@ -5,8 +5,8 @@
     "then": 10.0,
     "within_days": 30
   },
-  "current_price": 116.41999816894531,
-  "distinct_assets": 7,
+  "current_price": 122.12999725341797,
+  "distinct_assets": 10,
   "episodes": [
     {
       "asset": "RUNE-USD",
@@ -15,16 +15,7 @@
       "minus5_hit_date": "2023-09-21",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-10-01",
-      "similarity": 88.6567942192632
-    },
-    {
-      "asset": "BTC-USD",
-      "episode_end_date": "2023-02-19",
-      "episode_start_date": "2022-11-12",
-      "minus5_hit_date": "2023-03-03",
-      "path_class_60d": "DIRECT_CONTINUATION",
-      "plus10_anchor_date": "2023-03-17",
-      "similarity": 86.72847419942656
+      "similarity": 89.66585699957912
     },
     {
       "asset": "THETA-USD",
@@ -33,7 +24,16 @@
       "minus5_hit_date": "2023-12-11",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2023-12-24",
-      "similarity": 86.25868973803642
+      "similarity": 87.16815422027678
+    },
+    {
+      "asset": "BTC-USD",
+      "episode_end_date": "2023-02-19",
+      "episode_start_date": "2022-11-12",
+      "minus5_hit_date": "2023-03-03",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2023-03-17",
+      "similarity": 86.8743631714977
     },
     {
       "asset": "ALGO-USD",
@@ -42,16 +42,7 @@
       "minus5_hit_date": "2023-12-17",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-12-21",
-      "similarity": 85.44540900196677
-    },
-    {
-      "asset": "RUNE-USD",
-      "episode_end_date": "2020-07-10",
-      "episode_start_date": "2020-04-02",
-      "minus5_hit_date": "2020-07-13",
-      "path_class_60d": "DIRECT_CONTINUATION",
-      "plus10_anchor_date": "2020-07-20",
-      "similarity": 85.38684571907645
+      "similarity": 85.99608727062605
     },
     {
       "asset": "1INCH-USD",
@@ -60,16 +51,52 @@
       "minus5_hit_date": "2023-12-11",
       "path_class_60d": "SHALLOW_PULLBACK_THEN_CONTINUATION",
       "plus10_anchor_date": "2023-12-26",
-      "similarity": 85.36832231909524
+      "similarity": 85.66563191036794
+    },
+    {
+      "asset": "NEO-USD",
+      "episode_end_date": "2021-02-14",
+      "episode_start_date": "2020-11-07",
+      "minus5_hit_date": "2021-02-15",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2021-02-21",
+      "similarity": 85.20480767802763
     },
     {
       "asset": "HBAR-USD",
-      "episode_end_date": "2021-02-16",
-      "episode_start_date": "2020-11-09",
-      "minus5_hit_date": "2021-02-23",
-      "path_class_60d": "DEEP_PULLBACK_THEN_RECOVERY",
-      "plus10_anchor_date": "2021-03-04",
-      "similarity": 84.94558954487857
+      "episode_end_date": "2021-02-21",
+      "episode_start_date": "2020-11-14",
+      "minus5_hit_date": "2021-02-22",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2021-03-08",
+      "similarity": 84.89957843255651
+    },
+    {
+      "asset": "RUNE-USD",
+      "episode_end_date": "2020-07-10",
+      "episode_start_date": "2020-04-02",
+      "minus5_hit_date": "2020-07-13",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2020-07-20",
+      "similarity": 83.94965330904927
+    },
+    {
+      "asset": "XRP-USD",
+      "episode_end_date": "2021-05-10",
+      "episode_start_date": "2021-01-31",
+      "minus5_hit_date": "2021-05-12",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2021-05-18",
+      "similarity": 83.92530510714856
+    },
+    {
+      "asset": "OP-USD",
+      "episode_end_date": "2023-12-12",
+      "episode_start_date": "2023-09-04",
+      "minus5_hit_date": "2023-12-15",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2023-12-22",
+      "similarity": 83.91783442870883
     },
     {
       "asset": "SNX-USD",
@@ -78,42 +105,38 @@
       "minus5_hit_date": "2019-05-12",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2019-05-14",
-      "similarity": 84.82067087966762
+      "similarity": 83.7001715945932
     }
   ],
   "forecast_date": "2026-09-25",
   "path_classes_60d": {
-    "DEEP_PULLBACK_THEN_RECOVERY": {
-      "count": 1,
-      "pct": 12.5
-    },
     "DIRECT_CONTINUATION": {
-      "count": 4,
-      "pct": 50.0
+      "count": 6,
+      "pct": 54.54545454545455
     },
     "FAILURE": {
-      "count": 2,
-      "pct": 25.0
+      "count": 4,
+      "pct": 36.36363636363637
     },
     "SHALLOW_PULLBACK_THEN_CONTINUATION": {
       "count": 1,
-      "pct": 12.5
+      "pct": 9.090909090909092
     }
   },
   "q30": {
-    "count": 8,
-    "p10_pct": -23.9006084578216,
-    "p10_price": 88.59491023998261,
-    "p25_pct": -18.927027972578625,
-    "p25_price": 94.3851525498335,
-    "p50_pct": 25.110003473500782,
-    "p50_price": 145.65306375301702,
-    "p75_pct": 60.41335029445304,
-    "p75_price": 186.75321947554608,
-    "p90_pct": 114.41536954023626,
-    "p90_price": 249.62236929268036
+    "count": 11,
+    "p10_pct": -25.90870691719418,
+    "p10_price": 90.48769420705261,
+    "p25_pct": -23.74086922217972,
+    "p25_price": 93.13527432443232,
+    "p50_pct": -10.904972504448562,
+    "p50_price": 108.81175463324895,
+    "p75_pct": 43.662362742272094,
+    "p75_price": 175.45483967133225,
+    "p90_pct": 71.41137182837059,
+    "p90_price": 209.3447037060351
   },
-  "qualified_episodes": 8,
-  "small_sample": true,
+  "qualified_episodes": 11,
+  "small_sample": false,
   "status": "AVAILABLE"
 }
