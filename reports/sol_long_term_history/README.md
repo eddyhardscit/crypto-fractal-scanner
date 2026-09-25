@@ -1,7 +1,7 @@
 # SOL Long-Term Cone History
 
-Ultimo aggiornamento: **2026-09-23T11:03:45.244992Z**  
-SOL spot: **$117.42**  
+Ultimo aggiornamento: **2026-09-24T06:03:33.165057Z**  
+SOL spot: **$114.82**  
 Cohort: **40** analoghi / **30.0** distinct assets  
 **LOG_ROBUST_TAIL · DIAGNOSTIC ONLY**
 
@@ -14,18 +14,10 @@ Cohort: **40** analoghi / **30.0** distinct assets
 
 Questa pagina resta il **Long-Term Cone** (3M/6M/1Y/2Y). Il blocco seguente riporta, senza ricalcolarli o mescolarli, gli ultimi output dello scanner SOL a 30 giorni.
 
-| Modello short-term | Snapshot | Campione | P10 | P25 | P50 | P75 | P90 |
-| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Cono standard | 2026-09-24 | 40 analoghi correnti | $77.07 | $93.26 | $115.80 | $141.86 | $194.70 |
-| Conditional -5% → +10% corrente | 2026-09-24 | 8 | $92.29 | $97.96 | $144.44 | $185.20 | $247.54 |
-| Conditional vintage 18 Sep | 2026-09-18 | 8 | $96.70 | $109.70 | $168.54 | $188.19 | $214.50 |
+Dati short-term non disponibili in questo snapshot; il Long-Term Cone resta invariato.
 
-- **Standard:** usa i 40 analoghi SOL correnti.
-- **Conditional corrente:** filtra quei 40 e mantiene solo gli episodi che fanno prima -5% e poi +10% entro 30 giorni.
-- **Vintage 18 Sep:** resta congelato per la verifica fuori campione della previsione originale.
-- Questi numeri non vengono mediati con il Long-Term Cone e non ne modificano il modello.
+[Apri il report short-term](../latest_report.md)
 
-[Apri il dettaglio short-term](../latest_report.md)
 ## Forward calendar
 
 ![SOL Long-Term Cone — Forward Calendar](sol_long_term_forward_calendar.svg)
@@ -34,10 +26,10 @@ Asse X = date future reali. Le linee mostrano esplicitamente p10, p25, p50, p75 
 
 | Horizon | Target date | p10 | p25 | p50 | p75 | p90 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| 3M | 2026-12-22 | $78.52 | $97.10 | $140.72 | $190.90 | $245.33 |
-| 6M | 2027-03-22 | $52.13 | $82.16 | $111.68 | $141.94 | $235.76 |
-| 1Y | 2027-09-23 | $50.05 | $97.58 | $137.97 | $220.92 | $386.68 |
-| 2Y | 2028-09-22 | $25.18 | $35.96 | $53.17 | $151.67 | $426.15 |
+| 3M | 2026-12-23 | $76.78 | $94.95 | $131.82 | $182.69 | $238.66 |
+| 6M | 2027-03-23 | $50.97 | $80.35 | $114.44 | $153.74 | $230.54 |
+| 1Y | 2027-09-24 | $48.95 | $95.42 | $139.01 | $236.18 | $378.12 |
+| 2Y | 2028-09-23 | $27.09 | $35.80 | $74.53 | $187.72 | $416.11 |
 
 ## Forward vintages
 
@@ -68,9 +60,9 @@ Le percentuali rappresentano la frequenza empirica degli analoghi che terminano 
 
 | Horizon | p50 | p75 | p90 | P≥300 | P≥500 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 6M | $111.68 | $141.94 | $235.76 | 10.00% | 6.67% |
-| 1Y | $137.97 | $220.92 | $386.68 | 16.67% | 10.00% |
-| 2Y | $53.17 | $151.67 | $426.15 | 17.24% | 6.90% |
+| 6M | $114.44 | $153.74 | $230.54 | 10.00% | 6.67% |
+| 1Y | $139.01 | $236.18 | $378.12 | 16.67% | 10.00% |
+| 2Y | $74.53 | $187.72 | $416.11 | 20.69% | 6.90% |
 
 ## Recent drift
 
@@ -78,25 +70,25 @@ Ultime 7 daily observations reali (non necessariamente consecutive).
 
 | Date | Spot | 6M p50 | 1Y p50 | 2Y p50 | 2Y P≥300 | 2Y P≥500 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| 2026-09-13 | $101.78 | $178.95 | $172.81 | $109.93 | 31.03% | 17.24% |
 | 2026-09-14 | $101.11 | $164.06 | $175.95 | $98.11 | 21.43% | 14.29% |
 | 2026-09-15 | $101.41 | $147.38 | $158.14 | $85.66 | 18.52% | 11.11% |
 | 2026-09-16 | $97.26 | $151.69 | $141.78 | $92.83 | 17.86% | 7.14% |
 | 2026-09-17 | $99.50 | $134.66 | $146.76 | $85.63 | 18.52% | 7.41% |
 | 2026-09-22 | $116.89 | $134.72 | $155.34 | $75.72 | 23.33% | 6.67% |
 | 2026-09-23 | $118.57 | $114.69 | $151.20 | $53.69 | 14.81% | 0.00% |
+| 2026-09-24 | $114.82 | $114.44 | $139.01 | $74.53 | 20.69% | 6.90% |
 
 ## 30-day stability
 
-Finestra: 17 osservazioni reali disponibili negli ultimi 30 giorni di calendario; i giorni mancanti non vengono interpolati.
+Finestra: 18 osservazioni reali disponibili negli ultimi 30 giorni di calendario; i giorni mancanti non vengono interpolati.
 
 **storico <30 giorni**: statistiche sullo storico disponibile. Campione insufficiente per interpretare lo status come prova di stabilità duratura.
 
 | Metric | Median | Min | Max | range_pct | Range (pp) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 6M p50 | $134.66 | $114.69 | $178.95 | 47.72% | — |
-| 1Y p50 | $151.20 | $124.98 | $184.43 | 39.32% | — |
-| 2Y p50 | $127.85 | $53.69 | $198.98 | 113.64% | — |
+| 6M p50 | $134.56 | $114.44 | $178.95 | 47.94% | — |
+| 1Y p50 | $150.93 | $124.98 | $184.43 | 39.39% | — |
+| 2Y p50 | $119.57 | $53.69 | $198.98 | 121.51% | — |
 | 2Y P≥300 | 24.00% | 14.81% | 32.14% | — | 17.33 |
 | 2Y P≥500 | 14.29% | 0.00% | 22.22% | — | 22.22 |
 
@@ -124,8 +116,8 @@ Indicatore diagnostico; non va usato per decisioni operative. Una sola osservazi
 
 FIRST_REAL_SNAPSHOT=2026-09-03T17:03:34.597672Z  
 FIRST_AVAILABLE_LONG_TERM_SNAPSHOT=2026-09-03T17:03:34.597672Z  
-LATEST_SNAPSHOT=2026-09-23T11:03:45.244992Z  
-DAILY_ROWS=17
+LATEST_SNAPSHOT=2026-09-24T06:03:33.165057Z  
+DAILY_ROWS=18
 
 Fonti autoritative: `sol_long_term_probability_cone.json`, `sol_long_term_probability_cone_history.jsonl` e snapshot immutabili in `sol_long_term_probability_cone_history/` nel publisher canonico.
 

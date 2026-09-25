@@ -5,27 +5,9 @@
     "then": 10.0,
     "within_days": 30
   },
-  "current_price": 115.44999694824219,
+  "current_price": 116.41999816894531,
   "distinct_assets": 7,
   "episodes": [
-    {
-      "asset": "THETA-USD",
-      "episode_end_date": "2023-12-05",
-      "episode_start_date": "2023-08-28",
-      "minus5_hit_date": "2023-12-06",
-      "path_class_60d": "DIRECT_CONTINUATION",
-      "plus10_anchor_date": "2023-12-24",
-      "similarity": 87.11892117821537
-    },
-    {
-      "asset": "BTC-USD",
-      "episode_end_date": "2023-02-18",
-      "episode_start_date": "2022-11-11",
-      "minus5_hit_date": "2023-02-24",
-      "path_class_60d": "DIRECT_CONTINUATION",
-      "plus10_anchor_date": "2023-03-17",
-      "similarity": 86.63481612293903
-    },
     {
       "asset": "RUNE-USD",
       "episode_end_date": "2023-09-18",
@@ -33,7 +15,34 @@
       "minus5_hit_date": "2023-09-21",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-10-01",
-      "similarity": 86.48782240343218
+      "similarity": 88.6567942192632
+    },
+    {
+      "asset": "BTC-USD",
+      "episode_end_date": "2023-02-19",
+      "episode_start_date": "2022-11-12",
+      "minus5_hit_date": "2023-03-03",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2023-03-17",
+      "similarity": 86.72847419942656
+    },
+    {
+      "asset": "THETA-USD",
+      "episode_end_date": "2023-12-10",
+      "episode_start_date": "2023-09-02",
+      "minus5_hit_date": "2023-12-11",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2023-12-24",
+      "similarity": 86.25868973803642
+    },
+    {
+      "asset": "ALGO-USD",
+      "episode_end_date": "2023-12-10",
+      "episode_start_date": "2023-09-02",
+      "minus5_hit_date": "2023-12-17",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2023-12-21",
+      "similarity": 85.44540900196677
     },
     {
       "asset": "RUNE-USD",
@@ -42,25 +51,7 @@
       "minus5_hit_date": "2020-07-13",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2020-07-20",
-      "similarity": 86.22636124235099
-    },
-    {
-      "asset": "HBAR-USD",
-      "episode_end_date": "2021-02-16",
-      "episode_start_date": "2020-11-09",
-      "minus5_hit_date": "2021-02-23",
-      "path_class_60d": "DEEP_PULLBACK_THEN_RECOVERY",
-      "plus10_anchor_date": "2021-03-04",
-      "similarity": 86.13987521411055
-    },
-    {
-      "asset": "SNX-USD",
-      "episode_end_date": "2019-05-11",
-      "episode_start_date": "2019-02-01",
-      "minus5_hit_date": "2019-05-12",
-      "path_class_60d": "DIRECT_CONTINUATION",
-      "plus10_anchor_date": "2019-05-14",
-      "similarity": 84.85643461975748
+      "similarity": 85.38684571907645
     },
     {
       "asset": "1INCH-USD",
@@ -69,19 +60,28 @@
       "minus5_hit_date": "2023-12-11",
       "path_class_60d": "SHALLOW_PULLBACK_THEN_CONTINUATION",
       "plus10_anchor_date": "2023-12-26",
-      "similarity": 84.16300376128783
+      "similarity": 85.36832231909524
     },
     {
-      "asset": "AVAX-USD",
-      "episode_end_date": "2021-09-18",
-      "episode_start_date": "2021-06-11",
-      "minus5_hit_date": "2021-09-20",
-      "path_class_60d": "FAILURE",
-      "plus10_anchor_date": "2021-09-23",
-      "similarity": 83.93907241871442
+      "asset": "HBAR-USD",
+      "episode_end_date": "2021-02-16",
+      "episode_start_date": "2020-11-09",
+      "minus5_hit_date": "2021-02-23",
+      "path_class_60d": "DEEP_PULLBACK_THEN_RECOVERY",
+      "plus10_anchor_date": "2021-03-04",
+      "similarity": 84.94558954487857
+    },
+    {
+      "asset": "SNX-USD",
+      "episode_end_date": "2019-05-11",
+      "episode_start_date": "2019-02-01",
+      "minus5_hit_date": "2019-05-12",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2019-05-14",
+      "similarity": 84.82067087966762
     }
   ],
-  "forecast_date": "2026-09-24",
+  "forecast_date": "2026-09-25",
   "path_classes_60d": {
     "DEEP_PULLBACK_THEN_RECOVERY": {
       "count": 1,
@@ -102,16 +102,16 @@
   },
   "q30": {
     "count": 8,
-    "p10_pct": -20.06183938867719,
-    "p10_price": 92.28860398625314,
-    "p25_pct": -15.145382878542613,
-    "p25_price": 97.96465287716515,
+    "p10_pct": -23.9006084578216,
+    "p10_price": 88.59491023998261,
+    "p25_pct": -18.927027972578625,
+    "p25_price": 94.3851525498335,
     "p50_pct": 25.110003473500782,
-    "p50_price": 144.43949519210236,
+    "p50_price": 145.65306375301702,
     "p75_pct": 60.41335029445304,
-    "p75_price": 185.1972080195191,
+    "p75_price": 186.75321947554608,
     "p90_pct": 114.41536954023626,
-    "p90_price": 247.54253759076497
+    "p90_price": 249.62236929268036
   },
   "qualified_episodes": 8,
   "small_sample": true,

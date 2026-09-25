@@ -18,9 +18,9 @@ Questo report non è la vera heatmap CoinGlass. Serve a capire se il mercato fut
 
 | Asset | Prezzo | Prezzo 24h | Funding | Open Interest | OI 24h | Long/Short |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 84.184 $ | +1.87% | +0.0020% | $2.60B | -12.36% | 1.10 |
-| SOL | 115,45 $ | +2.86% | +0.0035% | $368.41M | -23.90% | 1.99 |
-| DOGE | 0.09448 $ | +3.66% | +0.0100% | $117.48M | -11.50% | 3.13 |
+| BTC | 84.151 $ | +1.87% | +0.0020% | $2.60B | -12.36% | 1.10 |
+| SOL | 116,42 $ | +2.86% | +0.0035% | $368.41M | -23.90% | 1.99 |
+| DOGE | 0.09506 $ | +3.66% | +0.0100% | $117.48M | -11.50% | 3.13 |
 
 ## Spiegazione rapida dei termini
 

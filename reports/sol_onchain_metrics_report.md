@@ -1,7 +1,7 @@
 # SOL on-chain metrics report
 
-Generato: **2026-09-24 07:32:20 CEST**  
-UTC: **2026-09-24 05:32:12 UTC**
+Generato: **2026-09-25 07:32:19 CEST**  
+UTC: **2026-09-25 05:32:11 UTC**
 
 Questo report aggiunge una lettura on-chain/fondamentale di Solana.
 
@@ -11,7 +11,7 @@ Non sostituisce il frattale SOL/BTC. Serve a capire se dietro il movimento ci so
 
 | Voce | Valore |
 | --- | --- |
-| Score on-chain | 4 |
+| Score on-chain | 3 |
 | Bias | POSITIVA |
 | Azione coerente | CONFERMA MODERATA / BUONO SE IL FRATTALE REGGE |
 | Metriche importanti mancanti | sol_realized_price_usd, sol_mvrv, sol_holder_profit_pct, sol_exchange_netflow_24h_usd |
@@ -20,38 +20,38 @@ Non sostituisce il frattale SOL/BTC. Serve a capire se dietro il movimento ci so
 
 | Componente | Valore | Punti | Lettura |
 | --- | --- | --- | --- |
-| TVL 7g | +10,70% | +1 | TVL in crescita: rete più forte. |
-| DEX volume 7g | -4,17% | 0 | Volume DEX stabile. |
-| Fees 7g | +10,94% | +1 | Fee in crescita: uso della rete in miglioramento. |
-| Stablecoin liquidity 7g | +4,21% | +1 | Stablecoin su Solana in aumento: liquidità disponibile migliore. |
-| Stake ratio | 69,33% | +1 | Quota staked alta: supply liquida più contenuta. |
-| Stake delinquent | 0,05% | 0 | Delinquent stake basso. |
+| TVL 7g | +9,58% | +1 | TVL in crescita: rete più forte. |
+| DEX volume 7g | -12,74% | -1 | Volume DEX in calo: attività più debole. |
+| Fees 7g | +13,10% | +1 | Fee in crescita: uso della rete in miglioramento. |
+| Stablecoin liquidity 7g | +12,65% | +1 | Stablecoin su Solana in aumento: liquidità disponibile migliore. |
+| Stake ratio | 69,43% | +1 | Quota staked alta: supply liquida più contenuta. |
+| Stake delinquent | 0,02% | 0 | Delinquent stake basso. |
 
 ## Metriche disponibili
 
 | Metrica | Valore | Lettura |
 | --- | --- | --- |
-| Prezzo SOL | 115,45 $ | Prezzo spot usato per il report. |
-| Market cap | 67,84 mld $ | Grandezza complessiva di mercato. |
-| Volume 24h | 5,08 mld $ | Liquidità di trading spot aggregata. |
-| TVL Solana | 6,40 mld $ | Capitale in DeFi su Solana. |
-| TVL 7g | +10,70% | Crescita/calo DeFi a 7 giorni. |
-| DEX volume 24h | 2,68 mld $ | Attività di scambio on-chain. |
-| DEX volume 7g | 19,96 mld $ | Volume settimanale DEX. |
-| DEX change 7g | -4,17% | Accelerazione o rallentamento DEX. |
-| Fees 24h | 16,53 mln $ | Fee generate dalla chain/protocolli monitorati. |
-| Fees 7g | 114,97 mln $ | Fee settimanali. |
-| Fees change 7g | +10,94% | Uso rete in crescita/calo. |
-| Stablecoin su Solana | 16,37 mld $ | Liquidità stabile disponibile su chain. |
-| Stablecoin 7g | +4,21% | Entrata/uscita liquidità stabile. |
-| Supply totale | 634.608.578 | Supply totale convertita da lamports a SOL. |
-| Supply circolante | 587.577.466 | Supply circolante convertita da lamports a SOL. |
-| SOL in stake | 439.964.137 | Stake attivo stimato da vote accounts. |
-| Stake / supply totale | 69,33% | Quota supply totale in staking. |
-| Stake / supply circolante | 74,88% | Quota supply circolante in staking. |
-| Stake delinquent | 0,05% | Quota stake su validatori delinquent. |
+| Prezzo SOL | 116,42 $ | Prezzo spot usato per il report. |
+| Market cap | 68,42 mld $ | Grandezza complessiva di mercato. |
+| Volume 24h | 4,22 mld $ | Liquidità di trading spot aggregata. |
+| TVL Solana | 6,46 mld $ | Capitale in DeFi su Solana. |
+| TVL 7g | +9,58% | Crescita/calo DeFi a 7 giorni. |
+| DEX volume 24h | 2,26 mld $ | Attività di scambio on-chain. |
+| DEX volume 7g | 19,63 mld $ | Volume settimanale DEX. |
+| DEX change 7g | -12,74% | Accelerazione o rallentamento DEX. |
+| Fees 24h | 15,87 mln $ | Fee generate dalla chain/protocolli monitorati. |
+| Fees 7g | 114,19 mln $ | Fee settimanali. |
+| Fees change 7g | +13,10% | Uso rete in crescita/calo. |
+| Stablecoin su Solana | 17,63 mld $ | Liquidità stabile disponibile su chain. |
+| Stablecoin 7g | +12,65% | Entrata/uscita liquidità stabile. |
+| Supply totale | 634.686.447 | Supply totale convertita da lamports a SOL. |
+| Supply circolante | 587.647.905 | Supply circolante convertita da lamports a SOL. |
+| SOL in stake | 440.637.196 | Stake attivo stimato da vote accounts. |
+| Stake / supply totale | 69,43% | Quota supply totale in staking. |
+| Stake / supply circolante | 74,98% | Quota supply circolante in staking. |
+| Stake delinquent | 0,02% | Quota stake su validatori delinquent. |
 | Validatori attivi | 675 | Validatori correnti letti da RPC. |
-| Validatori delinquent | 12 | Validatori delinquent letti da RPC. |
+| Validatori delinquent | 10 | Validatori delinquent letti da RPC. |
 | Inflazione stimata | 3,63% | Inflation rate da RPC. |
 
 ## Metriche opzionali: realized price / MVRV / holder profit / exchange flow
@@ -82,7 +82,6 @@ Queste metriche sono molto utili, ma spesso richiedono provider esterni. Il file
 
 | Data | Prezzo | TVL | TVL 7g | DEX 24h | DEX 7g | Stablecoin | Stake ratio | Score | Bias |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-08-22 | 94,02 $ | 5,62 mld $ | +16,93% | 3,47 mld $ | +115,88% | 16,36 mld $ | 68,52% | 5 | POSITIVA FORTE |
 | 2026-08-23 | 93,10 $ | 5,56 mld $ | +15,63% | 3,65 mld $ | +212,06% | 16,31 mld $ | 68,50% | 5 | POSITIVA FORTE |
 | 2026-08-24 | 94,09 $ | 5,56 mld $ | +16,32% | 3,12 mld $ | +195,58% | 16,39 mld $ | 68,50% | 5 | POSITIVA FORTE |
 | 2026-08-25 | 102,58 $ | 5,79 mld $ | +19,32% | 2,99 mld $ | +102,57% | 16,36 mld $ | 68,75% | 5 | POSITIVA FORTE |
@@ -112,6 +111,7 @@ Queste metriche sono molto utili, ma spesso richiedono provider esterni. Il file
 | 2026-09-22 | 115,84 $ | 6,47 mld $ | +9,26% | 3,37 mld $ | +33,20% | 17,11 mld $ | 69,32% | 5 | POSITIVA FORTE |
 | 2026-09-23 | 117,37 $ | 6,55 mld $ | +14,39% | 3,45 mld $ | +27,58% | 16,82 mld $ | 69,32% | 5 | POSITIVA FORTE |
 | 2026-09-24 | 115,46 $ | 6,40 mld $ | +10,70% | 2,68 mld $ | -4,17% | 16,37 mld $ | 69,33% | 4 | POSITIVA |
+| 2026-09-25 | 116,43 $ | 6,46 mld $ | +9,58% | 2,26 mld $ | -12,74% | 17,63 mld $ | 69,43% | 3 | POSITIVA |
 
 ## Come usarlo insieme al frattale SOL/BTC
 
