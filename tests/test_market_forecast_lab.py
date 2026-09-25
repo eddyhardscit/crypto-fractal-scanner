@@ -260,6 +260,15 @@ class VintageEvaluationTests(unittest.TestCase):
             lab.immutable_append(path, [f], ('coingecko_id', 'forecast_date'))
         self.assertEqual(path.read_bytes(), before)
 
+    def test_export_rejects_same_mode_forecasts_from_a_different_run(self):
+        original_ctx = lab.new_context('OFFICIAL_DAILY')
+        retry_ctx = lab.new_context('OFFICIAL_DAILY')
+        forecast = {**mini_forecast(), **original_ctx}
+        universe = dict(**retry_ctx, snapshot_date='2026-09-22', rows=[])
+        report = dict(**retry_ctx, universe_complete=True)
+        with self.assertRaisesRegex(ValueError, 'RUN_CONTEXT_FORECAST_MISMATCH'):
+            lab.export(self.root, universe, [forecast], [], [], load_config(), report)
+
     def test_exit_stops_and_reentry_resumes_forecasts(self):
         manifest = dict(**lab.new_context('OFFICIAL_DAILY'), raw_snapshot_ids={}, library_order=[], as_of='2026-09-22', config=load_config(),
                         quality_evaluations=[], canonical={}, universe=[])

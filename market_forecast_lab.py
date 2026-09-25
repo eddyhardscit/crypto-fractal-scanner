@@ -204,10 +204,12 @@ def export(output, universe_record, forecasts, old, evaluations, config, run_rep
     ctx = context(run_report)
     if ctx['run_mode'] == 'REPLAY':
         raise ValueError('REPLAY_EXPORT_FORBIDDEN')
-    if context(universe_record)['run_mode'] != ctx['run_mode']:
-        raise ValueError('MIXED_MODE_UNIVERSE')
-    if any(context(f)['run_mode'] != ctx['run_mode'] for f in forecasts + old):
-        raise ValueError('MIXED_MODE_EXPORT')
+    if context(universe_record) != ctx:
+        raise ValueError('RUN_CONTEXT_UNIVERSE_MISMATCH')
+    if any(context(f) != ctx for f in forecasts):
+        raise ValueError('RUN_CONTEXT_FORECAST_MISMATCH')
+    if any(context(f)['run_mode'] != ctx['run_mode'] for f in old):
+        raise ValueError('MIXED_MODE_HISTORY')
     versions = [dict(**context(f), forecast_id=f['forecast_id'], coingecko_id=f['coingecko_id'],
                      forecast_date=f['forecast_date'], paths=f['paths']) for f in forecasts]
     old_evaluations = read_history(output, 'evaluation_versions.jsonl', ctx)
@@ -315,6 +317,10 @@ def execute_staged(args):
             if previous['source_hashes'] != source_hashes():
                 raise ValueError('DAILY_SOURCE_CHANGED_REPLAY_ORIGINAL_VERSION')
             manifest = previous
+        # Same-day reruns reuse the immutable manifest and therefore its original
+        # OFFICIAL_DAILY identity. The publication envelope must use that same
+        # provenance instead of minting a second run_id around old forecasts.
+        publication_ctx = context(manifest)
         manifest_id = store_input(output, manifest)
         event('index_build_started', **ctx, library_assets=len(library_order))
         frozen_library = {t: legacy.add_indicators(fp.load_frozen_ohlc(manifest['raw_snapshot_ids'][t]))
@@ -331,14 +337,14 @@ def execute_staged(args):
                                    record['current_price'], record['anchor_date'], args.as_of,
                                    manifest_id, config, canonical=record)
             parity[ticker] = verify_canonical(f, record, reports)
-        report = dict(**ctx, as_of=args.as_of, published=ctx['official_daily'], input_manifest_id=manifest_id,
+        report = dict(**publication_ctx, as_of=args.as_of, published=publication_ctx['official_daily'], input_manifest_id=manifest_id,
                       universe_complete=sum(r['inclusion_status'] == 'INCLUDED' for r in universe) == config['universe_size'],
                       target_count=sum(r['inclusion_status'] == 'INCLUDED' for r in universe),
                       valid_count=sum(f['status'] == 'VALID' for f in forecasts),
                       insufficient_count=sum(f['status'] == 'INSUFFICIENT_ANALOGUES' for f in forecasts),
                       signature_index_episodes=len(index.episodes), signature_index_bytes=index.signature_bytes,
                       parity=parity, acquisition_errors=errors)
-        universe_record = prior_universe[0] if prior_universe else dict(**ctx, snapshot_date=args.as_of,
+        universe_record = prior_universe[0] if prior_universe else dict(**publication_ctx, snapshot_date=args.as_of,
                                                                       input_manifest_id=manifest_id, rows=universe)
         if not report['universe_complete'] and ctx['run_mode'] == 'OFFICIAL_DAILY':
             raise ValueError('INCOMPLETE_UNIVERSE_OFFICIAL_PUBLICATION_REFUSED')
