@@ -158,6 +158,66 @@ def future_stats(df, end_idx):
     return results
 
 
+def repair_recent_daily_gaps(daily, hourly, as_of_date, lookback_days=3):
+    """Fill missing completed UTC daily bars from hourly Yahoo data.
+
+    The live daily endpoint can temporarily omit yesterday while already exposing
+    today's partial candle. Only missing *completed* days are repaired; existing
+    daily bars are never overwritten.
+    """
+    daily = daily.copy()
+    if daily.empty or hourly is None or hourly.empty:
+        return daily, []
+
+    d_idx = pd.DatetimeIndex(daily.index)
+    if d_idx.tz is not None:
+        daily.index = d_idx.tz_convert("UTC").tz_localize(None)
+
+    hourly = hourly.copy()
+    h_idx = pd.DatetimeIndex(hourly.index)
+    if h_idx.tz is None:
+        h_idx = h_idx.tz_localize("UTC")
+    else:
+        h_idx = h_idx.tz_convert("UTC")
+    hourly.index = h_idx
+    needed = {"Open", "High", "Low", "Close", "Volume"}
+    if not needed.issubset(hourly.columns):
+        return daily, []
+    hourly = hourly[list(needed)].dropna(subset=["Open", "High", "Low", "Close"])
+    if hourly.empty:
+        return daily, []
+
+    counts = hourly["Close"].resample("1D").count()
+    bars = hourly.resample("1D").agg(
+        {"Open": "first", "High": "max", "Low": "min", "Close": "last", "Volume": "sum"}
+    )
+    as_of = pd.Timestamp(as_of_date).normalize()
+    repaired = []
+    for day in pd.date_range(as_of - pd.Timedelta(days=lookback_days), as_of - pd.Timedelta(days=1), freq="D"):
+        key = day.tz_localize("UTC") if day.tzinfo is None else day.tz_convert("UTC")
+        naive = key.tz_localize(None)
+        if naive in daily.index or key not in bars.index or int(counts.get(key, 0)) < 20:
+            continue
+        daily.loc[naive, ["Open", "High", "Low", "Close", "Volume"]] = bars.loc[key, ["Open", "High", "Low", "Close", "Volume"]].to_numpy()
+        repaired.append(naive.date().isoformat())
+    return daily.sort_index(), repaired
+
+
+def recent_completed_gap_days(daily, as_of_date, lookback_days=3):
+    if daily is None or daily.empty:
+        return []
+    idx = pd.DatetimeIndex(daily.index)
+    if idx.tz is not None:
+        idx = idx.tz_convert("UTC").tz_localize(None)
+    present = {ts.date() for ts in idx}
+    as_of = pd.Timestamp(as_of_date).date()
+    return [
+        (pd.Timestamp(as_of) - pd.Timedelta(days=d)).date().isoformat()
+        for d in range(1, lookback_days + 1)
+        if (pd.Timestamp(as_of) - pd.Timedelta(days=d)).date() not in present
+    ]
+
+
 def download_data(*, run_id=None, downloaded_at_utc=None):
     print("Downloading data...")
 
@@ -171,21 +231,43 @@ def download_data(*, run_id=None, downloaded_at_utc=None):
         threads=True,
     )
 
+    as_of_date = pd.Timestamp(downloaded_at_utc or datetime.now(timezone.utc)).date()
+    try:
+        hourly_raw = yf.download(
+            CRYPTO_TICKERS,
+            period="7d",
+            interval="1h",
+            auto_adjust=True,
+            progress=False,
+            group_by="ticker",
+            threads=True,
+        )
+    except Exception as exc:
+        hourly_raw = None
+        print(f"Recent hourly gap-repair feed unavailable ({exc})")
+
     asset_data = {}
     raw_snapshot_ids = {}
 
     for ticker in CRYPTO_TICKERS:
         try:
             df = raw[ticker].dropna().copy()
+            repaired = []
+            if hourly_raw is not None and recent_completed_gap_days(df, as_of_date):
+                try:
+                    hourly = hourly_raw[ticker].dropna().copy()
+                    df, repaired = repair_recent_daily_gaps(df, hourly, as_of_date)
+                except Exception as exc:
+                    print(f"{ticker}: hourly gap repair skipped ({exc})")
 
             if run_id and downloaded_at_utc:
                 raw_snapshot_ids[ticker] = freeze_ohlc(
                     df,
                     ticker=ticker,
-                    source="Yahoo Finance/yfinance",
+                    source="Yahoo Finance/yfinance" + (" + 1h completed-day repair" if repaired else ""),
                     downloaded_at_utc=downloaded_at_utc,
                     requested_interval="1d",
-                    requested_range="period=10y",
+                    requested_range="period=10y" + (f";repaired={','.join(repaired)}" if repaired else ""),
                     run_id=run_id,
                     purpose="forecast_generation_and_evaluation",
                 )

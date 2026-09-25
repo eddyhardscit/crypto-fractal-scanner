@@ -29,8 +29,23 @@ def load_registry():
     return {r['coingecko_id']: r for r in records}
 
 
+def dedupe_market_rows(rows):
+    """Remove live pagination overlaps while preserving explicit evidence."""
+    unique, seen, duplicates = [], set(), []
+    for row in rows:
+        cid = row.get('id') if isinstance(row, dict) else None
+        if not cid:
+            raise ValueError('INVALID_MARKET_ROW')
+        if cid in seen:
+            duplicates.append(cid)
+            continue
+        seen.add(cid)
+        unique.append(row)
+    return unique, sorted(set(duplicates))
+
+
 def fetch_markets(config):
-    """Bounded pagination; no silent stale cache or membership substitution."""
+    """Bounded pagination with explicit de-duplication of provider page overlap."""
     rows = []
     for page in range(1, config['market_pages'] + 1):
         params = urllib.parse.urlencode(dict(vs_currency='usd', order='market_cap_desc',
@@ -48,8 +63,9 @@ def fetch_markets(config):
         rows.extend(part)
         if len(part) < config['market_per_page']:
             break
+    unique, duplicates = dedupe_market_rows(rows)
     return {'provider': 'CoinGecko', 'generated_at': datetime.now(timezone.utc).isoformat(),
-            'rows': rows}
+            'raw_row_count': len(rows), 'duplicate_ids_removed': duplicates, 'rows': unique}
 
 
 def data_quality(frame, as_of, config):
@@ -73,10 +89,13 @@ def data_quality(frame, as_of, config):
         return 'GAPPED_DAILY_HISTORY'
     bad_range = ((recent.High < recent[['Open', 'Close', 'Low']].max(axis=1)) |
                  (recent.Low > recent[['Open', 'Close', 'High']].min(axis=1))).any()
-    age = (pd.Timestamp(as_of).date() - idx[-1].date()).days
+    as_of_date = pd.Timestamp(as_of).date()
+    age = (as_of_date - idx[-1].date()).days
     if age < 0 or age > config['max_close_age_days']:
         return 'STALE_OR_FUTURE_CLOSE'
-    return 'LIMITED_CLOSE_ONLY_INPUT' if missing or bad_range or age else 'GOOD'
+    # A row stamped with today's UTC date is still an in-progress crypto candle.
+    partial_current_day = idx[-1].date() == as_of_date
+    return 'LIMITED_CLOSE_ONLY_INPUT' if missing or bad_range or age or partial_current_day else 'GOOD'
 
 
 def select_universe(snapshot, registry, processed, as_of, config, acquisition_errors=None):

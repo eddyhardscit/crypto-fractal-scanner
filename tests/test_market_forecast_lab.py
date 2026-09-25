@@ -20,7 +20,9 @@ from market_forecast_lab_engine import (
     load_legacy_inputs, paired_probability, paths_from_cohort, quality_components,
     rotation, verify_canonical,
 )
-from market_forecast_lab_universe import data_quality, load_config, load_registry, select_universe
+from market_forecast_lab_universe import (
+    data_quality, dedupe_market_rows, load_config, load_registry, select_universe,
+)
 
 
 def frame(seed=1, periods=1050, end='2026-09-22'):
@@ -172,6 +174,11 @@ class UniverseTests(unittest.TestCase):
         self.assertEqual(row['inclusion_status'], 'INCLUDED')
         self.assertEqual(row['data_quality'], 'LIMITED_CLOSE_ONLY_INPUT')
 
+    def test_current_utc_day_candle_is_disclosed_as_partial(self):
+        row = self.select()[0]
+        self.assertEqual(row['inclusion_status'], 'INCLUDED')
+        self.assertEqual(row['data_quality'], 'LIMITED_CLOSE_ONLY_INPUT')
+
     def test_high_low_inconsistency_disclosed_close_only(self):
         self.data['T'].loc[self.data['T'].index[-1], 'High'] = 1
         row = self.select()[0]
@@ -197,10 +204,33 @@ class UniverseTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'STALE_OR_FUTURE_UNIVERSE'):
             self.select()
 
+    def test_live_provider_pagination_overlap_is_deduplicated_with_evidence(self):
+        rows = [self.coin('test', 1), self.coin('other', 2), self.coin('test', 3)]
+        unique, duplicates = dedupe_market_rows(rows)
+        self.assertEqual([row['id'] for row in unique], ['test', 'other'])
+        self.assertEqual(duplicates, ['test'])
+        self.assertEqual(unique[0]['market_cap_rank'], 1)
+
     def test_duplicate_identity_rejected(self):
         self.snapshot['rows'] *= 2
         with self.assertRaisesRegex(ValueError, 'DUPLICATE_MARKET_ID'):
             self.select()
+
+    def test_recent_completed_gap_is_repaired_from_hourly_without_overwrite(self):
+        daily = frame(periods=12, end='2026-09-25')
+        original_close = float(daily.loc['2026-09-23', 'Close'])
+        daily = daily.drop(pd.Timestamp('2026-09-24'))
+        hourly_index = pd.date_range('2026-09-24T00:00:00Z', periods=24, freq='h')
+        values = np.arange(24, dtype=float) + 200
+        hourly = pd.DataFrame({
+            'Open': values, 'High': values + 1, 'Low': values - 1,
+            'Close': values + .5, 'Volume': np.ones(24) * 10,
+        }, index=hourly_index)
+        repaired, dates = legacy.repair_recent_daily_gaps(daily, hourly, '2026-09-25')
+        self.assertEqual(dates, ['2026-09-24'])
+        self.assertIn(pd.Timestamp('2026-09-24'), repaired.index)
+        self.assertAlmostEqual(float(repaired.loc['2026-09-24', 'Close']), 223.5)
+        self.assertAlmostEqual(float(repaired.loc['2026-09-23', 'Close']), original_close)
 
     def test_registry_unique_targets_and_legacy_library(self):
         registry = load_registry()

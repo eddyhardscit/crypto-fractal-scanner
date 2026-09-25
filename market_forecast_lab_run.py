@@ -145,7 +145,8 @@ def seed_trial_store(source, destination, snapshot_ids, canonical, ctx):
     fp._atomic_write(destination / 'run_context.json', fp.canonical_json(ctx))
 
 
-def freeze_run_ohlc(frame, *, ticker, as_of, ctx):
+def freeze_run_ohlc(frame, *, ticker, as_of, ctx, source='Yahoo Finance/yfinance',
+                    requested_range='period=10y'):
     """Existing CAS/ledger primitives, with explicit run metadata on new records."""
     if context(ctx)['run_mode'] not in ('TRIAL', 'OFFICIAL_DAILY'):
         raise ValueError('REPLAY_PROVENANCE_WRITE_FORBIDDEN')
@@ -161,8 +162,8 @@ def freeze_run_ohlc(frame, *, ticker, as_of, ctx):
     target = fp.RAW_DIR / (checksum + '.csv')
     fp._install_content_addressed(target, payload, checksum)
     record = dict(schema_version=1, snapshot_id=sid, sha256=checksum, ticker=ticker,
-                  source='Yahoo Finance/yfinance', downloaded_at_utc=fp.utc_now(),
-                  requested_interval='1d', requested_range='period=10y', timezone='UTC',
+                  source=source, downloaded_at_utc=fp.utc_now(),
+                  requested_interval='1d', requested_range=requested_range, timezone='UTC',
                   purpose='market_forecast_lab_' + ctx['run_mode'].lower(),
                   row_count=len(frame), dataset_path=str(target), forecast_date=as_of, **ctx)
     fp.append_jsonl_once(fp.RAW_INDEX, record, ('snapshot_id',))

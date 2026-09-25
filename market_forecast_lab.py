@@ -129,7 +129,18 @@ def acquire_extra(registry, markets, raw, processed, snapshot_ids, old, as_of, c
             frame = frame.loc[:as_of]
             if frame.empty:
                 raise ValueError('EMPTY_OHLC')
-            sid = freeze_run_ohlc(frame, ticker=ticker, as_of=as_of, ctx=ctx)
+            repaired = []
+            if legacy.recent_completed_gap_days(frame, as_of):
+                hourly = yf.download(ticker, period='7d', interval='1h', auto_adjust=True,
+                                     progress=False, threads=False)
+                if isinstance(hourly.columns, pd.MultiIndex):
+                    hourly = hourly.xs(ticker, axis=1, level=1)
+                frame, repaired = legacy.repair_recent_daily_gaps(frame, hourly.dropna(), as_of)
+            sid = freeze_run_ohlc(
+                frame, ticker=ticker, as_of=as_of, ctx=ctx,
+                source='Yahoo Finance/yfinance' + (' + 1h completed-day repair' if repaired else ''),
+                requested_range='period=10y' + (f";repaired={','.join(repaired)}" if repaired else ''),
+            )
             # Always compute from reloaded bytes: live acquisition and replay share precision.
             raw[ticker] = fp.load_frozen_ohlc(sid)
             processed[ticker] = legacy.add_indicators(raw[ticker])
