@@ -1,6 +1,6 @@
 # Forza relativa SOL/BTC e DOGE/BTC
 
-Generato: 2026-09-26 05:32 UTC
+Generato: 2026-09-27 05:32 UTC
 
 Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salita in USD accompagnata da una coppia ALT/BTC ribassista è spesso soltanto trascinamento di BTC.
 
@@ -10,8 +10,8 @@ Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salit
 
 | Asset | Coppia | Prezzo | Score raw | Candidato | Peso Global | Forza vs BTC | Confidenza | 30g | Tecnico USD | Lettura combinata |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| SOL | SOL/BTC | 0.00143420 | +8 | +1 | 0 | SOVRAPERFORMA BTC | MEDIA | +10,92% | RIALZISTA | CONFERMA FORTE: sale in USD e batte BTC |
-| DOGE | DOGE/BTC | 0.00000116 | +1 | 0 | 0 | RELATIVA MISTA / NON CONFERMATA | BASSA | +4,55% | RIALZISTA | QUADRO MISTO / NESSUNA CONFERMA RELATIVA |
+| SOL | SOL/BTC | 0.00142660 | +8 | +1 | 0 | SOVRAPERFORMA BTC | MEDIA | +4,82% | RIALZISTA | CONFERMA FORTE: sale in USD e batte BTC |
+| DOGE | DOGE/BTC | 0.00000114 | 0 | 0 | 0 | RELATIVA MISTA / NON CONFERMATA | BASSA | +2,32% | RIALZISTA | QUADRO MISTO / NESSUNA CONFERMA RELATIVA |
 
 ## Matrice di lettura
 
@@ -28,12 +28,12 @@ Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salit
 - **Candidato futuro:** +1; **peso attuale Global: 0**
 - **Lettura combinata USD/BTC:** CONFERMA FORTE: sale in USD e batte BTC
 - **Struttura:** MASSIMI E MINIMI CRESCENTI
-- **Rendimenti relativi:** 7g +3,03%; 30g +10,92%; 90g +22,06%; 180g +16,22%
-- **Daily:** RSI 69.25; MA50 0.00127832; MA200 0.00119045
-- **Weekly:** MA30 0.00119811; RSI 64.84
-- **Livelli:** supporto 0.00127800; resistenza 0.00145453; breakout 60g 0.00140500; breakdown 60g 0.00112700
+- **Rendimenti relativi:** 7g +4,36%; 30g +4,82%; 90g +18,98%; 180g +15,42%
+- **Daily:** RSI 65.35; MA50 0.00128449; MA200 0.00119153
+- **Weekly:** MA30 0.00119785; RSI 64.41
+- **Livelli:** supporto 0.00127800; resistenza 0.00145900; breakout 60g 0.00140500; breakdown 60g 0.00112700
 - **Pattern:** DOPPIO MINIMO / TARGET RAGGIUNTO; neckline 0.00133900; target 0.00140150
-- **Fibonacci:** NON ATTIVO — 23.6% a 0.00134939
+- **Fibonacci:** NON ATTIVO — 23.6% a 0.00135280
 - **Fonte:** Yahoo Finance SOL-BTC (coppia diretta)
 - **Motivi score:** prezzo sopra MA50 daily; prezzo sopra MA200 daily; MA50 daily in salita; prezzo sopra MA30 weekly; struttura con massimi/minimi crescenti; RSI relativo forte; MACD relativo positivo; breakout relativo 60g
 
@@ -41,18 +41,18 @@ Questo modulo controlla se SOL e DOGE stanno davvero battendo Bitcoin. Una salit
 
 ## DOGE/BTC
 
-- **Verdetto relativo:** RELATIVA MISTA / NON CONFERMATA (+1)
+- **Verdetto relativo:** RELATIVA MISTA / NON CONFERMATA (0)
 - **Candidato futuro:** 0; **peso attuale Global: 0**
 - **Lettura combinata USD/BTC:** QUADRO MISTO / NESSUNA CONFERMA RELATIVA
 - **Struttura:** MASSIMI E MINIMI CRESCENTI
-- **Rendimenti relativi:** 7g +7,44%; 30g +4,55%; 90g -6,52%; 180g -15,31%
-- **Daily:** RSI 59.59; MA50 0.00000110; MA200 0.00000124
-- **Weekly:** MA30 0.00000124; RSI 45.07
-- **Livelli:** supporto 0.00000116; resistenza 0.00000119; breakout 60g 0.00000131; breakdown 60g 0.00000099
+- **Rendimenti relativi:** 7g +5,24%; 30g +2,32%; 90g -7,44%; 180g -16,45%
+- **Daily:** RSI 54.31; MA50 0.00000110; MA200 0.00000124
+- **Weekly:** MA30 0.00000124; RSI 43.25
+- **Livelli:** supporto 0.00000112; resistenza 0.00000114; breakout 60g 0.00000131; breakdown 60g 0.00000099
 - **Pattern:** DOPPIO MINIMO / TARGET RAGGIUNTO; neckline 0.00000115; target 0.00000128
-- **Fibonacci:** NON ATTIVO — 38.2% a 0.00000119
+- **Fibonacci:** VICINO — 23.6% a 0.00000112
 - **Fonte:** Rapporto sintetico DOGE-USD / BTC-USD (sintetica)
-- **Motivi score:** prezzo sopra MA50 daily; prezzo sotto MA200 daily; prezzo sotto MA30 weekly; MA30 weekly in discesa; struttura con massimi/minimi crescenti; RSI relativo forte; MACD relativo positivo
+- **Motivi score:** prezzo sopra MA50 daily; prezzo sotto MA200 daily; prezzo sotto MA30 weekly; MA30 weekly in discesa; struttura con massimi/minimi crescenti; MACD relativo positivo
 
 ![Grafico DOGE/BTC](relative_strength_DOGEBTC.png)
 
@@ -62,7 +62,7 @@ Il backtest usa soltanto indicatori disponibili alla data del segnale e campiona
 
 | Asset | Orizzonte | Controlli | Accuratezza | Return corretto direzione | Return futuro mediano |
 | --- | --- | --- | --- | --- | --- |
-| SOL | 7g | 209 | 52,63% | +1,96% | -1,05% |
+| SOL | 7g | 210 | 52,86% | +1,97% | -1,04% |
 | SOL | 30g | 206 | 47,57% | +4,57% | +0,58% |
 | SOL | 90g | 201 | 52,74% | +9,80% | +3,09% |
 | DOGE | 7g | 296 | 55,41% | +1,80% | -1,66% |
@@ -73,16 +73,16 @@ Il backtest usa soltanto indicatori disponibili alla data del segnale e campiona
 
 | Asset | Orizzonte | Controlli | Accuratezza | Return corretto | Stato | Peso Global |
 | --- | --- | --- | --- | --- | --- | --- |
-| SOL | 1g | 39 | 58,97% | +0,34% | LOCKED / RACCOLTA LIVE | 0 |
-| SOL | 3g | 37 | 56,76% | +0,72% | LOCKED / RACCOLTA LIVE | 0 |
+| SOL | 1g | 40 | 57,50% | +0,33% | LOCKED / RACCOLTA LIVE | 0 |
+| SOL | 3g | 38 | 57,89% | +0,83% | LOCKED / RACCOLTA LIVE | 0 |
 | SOL | 7g | 35 | 42,86% | +0,55% | LOCKED / RACCOLTA LIVE | 0 |
 | SOL | 14g | 35 | 45,71% | +0,59% | LOCKED / RACCOLTA LIVE | 0 |
-| SOL | 30g | 24 | 37,50% | -3,27% | LOCKED / RACCOLTA LIVE | 0 |
+| SOL | 30g | 25 | 40,00% | -2,83% | LOCKED / RACCOLTA LIVE | 0 |
 | DOGE | 1g | 54 | 66,67% | -0,02% | LOCKED / RACCOLTA LIVE | 0 |
 | DOGE | 3g | 54 | 57,41% | +0,01% | LOCKED / RACCOLTA LIVE | 0 |
 | DOGE | 7g | 54 | 53,70% | -0,56% | LOCKED / RACCOLTA LIVE | 0 |
-| DOGE | 14g | 49 | 55,10% | -0,21% | LOCKED / RACCOLTA LIVE | 0 |
-| DOGE | 30g | 37 | 62,16% | +0,05% | LOCKED / RACCOLTA LIVE | 0 |
+| DOGE | 14g | 50 | 54,00% | -0,26% | LOCKED / RACCOLTA LIVE | 0 |
+| DOGE | 30g | 38 | 60,53% | -0,02% | LOCKED / RACCOLTA LIVE | 0 |
 
 Gate prudente: almeno 30 controlli live a 7 giorni, accuratezza almeno 55% e return corretto direzione positivo. Anche dopo il gate, il contributo futuro non dovrà superare ±1 e dovrà restare dentro la famiglia tecnica.
 
