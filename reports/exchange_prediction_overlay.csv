@@ -1,4 +1,4 @@
 generated_utc,asset,raw_positive_rate_30d,raw_return_p50_30d,exchange_score,tracker_controls_30d,tracker_accuracy_30d,overlay_status,overlay_weight,adjusted_positive_rate_30d,adjusted_return_p50_30d,note
-2026-09-29T05:32:54+00:00,BTC,42.5,-2.319004934403135,0,3,66.66666666666666,RACCOLTA DATI,0.0,42.5,-2.319004934403135,Overlay non attivo: servono almeno 30 controlli maturati a 30 giorni.
-2026-09-29T05:32:54+00:00,SOL,45.0,-1.920110783872564,0,5,100.0,RACCOLTA DATI,0.0,45.0,-1.920110783872564,Overlay non attivo: servono almeno 30 controlli maturati a 30 giorni.
-2026-09-29T05:32:54+00:00,DOGE,40.0,-11.04353477211053,0,8,75.0,RACCOLTA DATI,0.0,40.0,-11.04353477211053,Overlay non attivo: servono almeno 30 controlli maturati a 30 giorni.
+2026-09-30T05:32:55+00:00,BTC,50.0,-0.2206492410708027,0,3,66.66666666666666,RACCOLTA DATI,0.0,50.0,-0.2206492410708027,Overlay non attivo: servono almeno 30 controlli maturati a 30 giorni.
+2026-09-30T05:32:55+00:00,SOL,37.5,-4.516491268086459,0,5,100.0,RACCOLTA DATI,0.0,37.5,-4.516491268086459,Overlay non attivo: servono almeno 30 controlli maturati a 30 giorni.
+2026-09-30T05:32:55+00:00,DOGE,40.0,-4.207044009543909,0,8,75.0,RACCOLTA DATI,0.0,40.0,-4.207044009543909,Overlay non attivo: servono almeno 30 controlli maturati a 30 giorni.

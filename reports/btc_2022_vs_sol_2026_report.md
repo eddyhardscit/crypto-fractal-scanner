@@ -1,41 +1,41 @@
 # Frattale mirato: BTC novembre 2022 vs SOL giugno 2026
 
-Generato: **2026-09-29 07:32:13 CEST**
-UTC: **2026-09-29 05:32:13 UTC**
+Generato: **2026-09-30 07:32:12 CEST**
+UTC: **2026-09-30 05:32:12 UTC**
 
-Ultima candela SOL usata: **29 settembre 2026**
+Ultima candela SOL usata: **30 settembre 2026**
 
 ## SOL PRICE CONTEXT
 
 | Voce | Valore | Provenienza / significato |
 | --- | --- | --- |
-| Anchor computazionale | 117,81 $ | 2026-09-29T05:30:21Z \| Yahoo Finance daily shared snapshot \| Close 1d |
+| Anchor computazionale | 119,12 $ | 2026-09-30T05:30:21Z \| Yahoo Finance daily shared snapshot \| Close 1d |
 | Candela anchor completata | NO | Stato esplicito; il valore non viene sostituito dal prezzo pubblico. |
-| Riferimento pubblico corrente | 117,65 $ | 2026-09-29T05:32:00Z \| Yahoo Finance \| solo display |
+| Riferimento pubblico corrente | 119,44 $ | 2026-09-30T05:32:00Z \| Yahoo Finance \| solo display |
 | Età anchor alla generazione | 0h 1m | WITHIN_DAILY_REPORT_CADENCE |
-| Gap corrente vs anchor | -0,16000 $ | -0,14% |
+| Gap corrente vs anchor | 0,32000 $ | +0,27% |
 | Validità input modello | REPRODUCIBLE_SHARED_SNAPSHOT | Non è una dichiarazione di validità del segnale/trading. |
 
 ```text
-COMPUTATIONAL_ANCHOR_PRICE=117.80999755859375
+COMPUTATIONAL_ANCHOR_PRICE=119.12000274658203
 COMPUTATIONAL_ANCHOR_FIELD=Close
-COMPUTATIONAL_ANCHOR_TIMESTAMP=2026-09-29T05:30:21Z
+COMPUTATIONAL_ANCHOR_TIMESTAMP=2026-09-30T05:30:21Z
 COMPUTATIONAL_ANCHOR_SYMBOL=SOL-USD
 COMPUTATIONAL_ANCHOR_PROVIDER=Yahoo Finance daily shared snapshot
 COMPUTATIONAL_ANCHOR_TIMEFRAME=1d
 COMPUTATIONAL_ANCHOR_COMPLETED=NO
-CURRENT_PUBLIC_REFERENCE_PRICE=117.6500015258789
-CURRENT_PUBLIC_REFERENCE_TIMESTAMP=2026-09-29T05:32:00Z
-CURRENT_PUBLIC_REFERENCE_ACQUIRED_AT=2026-09-29T05:32:13Z
+CURRENT_PUBLIC_REFERENCE_PRICE=119.44000244140625
+CURRENT_PUBLIC_REFERENCE_TIMESTAMP=2026-09-30T05:32:00Z
+CURRENT_PUBLIC_REFERENCE_ACQUIRED_AT=2026-09-30T05:32:12Z
 CURRENT_PUBLIC_REFERENCE_SYMBOL=SOL-USD
 CURRENT_PUBLIC_REFERENCE_PROVIDER=Yahoo Finance
 CURRENT_PUBLIC_REFERENCE_FIELD=Close
 CURRENT_PUBLIC_REFERENCE_TIMEFRAME=1m
 CURRENT_PUBLIC_REFERENCE_STATUS=AVAILABLE
-ANCHOR_AGE_SECONDS=112.621077
-ANCHOR_AGE_HOURS=0.0312836325
-CURRENT_VS_ANCHOR_GAP_USD=-0.15999603271484375
-CURRENT_VS_ANCHOR_GAP_PCT=-0.13580853580381635
+ANCHOR_AGE_SECONDS=111.38793
+ANCHOR_AGE_HOURS=0.030941091666666667
+CURRENT_VS_ANCHOR_GAP_USD=0.31999969482421875
+CURRENT_VS_ANCHOR_GAP_PCT=0.2686364065193958
 ```
 
 Correzione metodologica: questo report separa **somiglianza strutturale** e **aderenza reale del prezzo**.
@@ -49,13 +49,13 @@ Un 70% di forma simile non significa che il prezzo sia vicino al percorso BTC sc
 
 **Sintesi:** La geometria ricorda BTC 2022, ma SOL è troppo distante dal percorso scalato per usarlo come conferma operativa.
 
-**Somiglianza strutturale:** +70,73%
+**Somiglianza strutturale:** +70,80%
 
-**Aderenza prezzo live:** +67,72%
+**Aderenza prezzo live:** +67,91%
 
-**Errore medio live:** +16,14%
+**Errore medio live:** +16,05%
 
-**Gap corrente:** +19,38%
+**Gap corrente:** +10,27%
 
 **Fase attuale:** FRATTALE NON CONFERMATO DAL PREZZO
 
@@ -63,7 +63,7 @@ Un 70% di forma simile non significa che il prezzo sia vicino al percorso BTC sc
 
 **Rischio fase:** ALTO
 
-**Prossimo step:** Proiezione condizionale, non conferma operativa: **Spinta rialzista abbastanza pulita.** Zona bassa **117,81 $** intorno al **29 settembre 2026**; zona alta **133,31 $** intorno al **12 ottobre 2026**; fine step circa **131,83 $** entro il **13 ottobre 2026**.
+**Prossimo step:** Proiezione condizionale, non conferma operativa: **Laterale / movimento non forte.** Zona bassa **117,13 $** intorno al **1 ottobre 2026**; zona alta **123,70 $** intorno al **14 ottobre 2026**; fine step circa **123,70 $** entro il **14 ottobre 2026**.
 
 **Cosa fare:** Non assegnare punti operativi al frattale finché il gap non rientra circa entro ±12% e l'aderenza live non migliora.
 
@@ -71,22 +71,22 @@ Un 70% di forma simile non significa che il prezzo sia vicino al percorso BTC sc
 
 ### Perché
 
-- Somiglianza strutturale +70,73%.
-- Aderenza prezzo live +67,72%.
-- Errore medio live +16,14%.
-- Gap corrente SOL vs BTC scalato +19,38%.
+- Somiglianza strutturale +70,80%.
+- Aderenza prezzo live +67,91%.
+- Errore medio live +16,05%.
+- Gap corrente SOL vs BTC scalato +10,27%.
 
 ### Livelli pratici
 
 | Livello | Prezzo / soglia | Significato |
 | --- | --- | --- |
 | Rientro gap | entro ±12% | Condizione necessaria per tornare operativo. |
-| Prima conferma prezzo | 133,31 $ | Rottura iniziale, da accompagnare al rientro del gap. |
-| Seconda conferma | 143,36 $ | Scenario più credibile. |
-| Invalidazione soft | 111,92 $ | Il setup si indebolisce. |
+| Prima conferma prezzo | 125,08 $ | Rottura iniziale, da accompagnare al rientro del gap. |
+| Seconda conferma | 133,41 $ | Scenario più credibile. |
+| Invalidazione soft | 113,16 $ | Il setup si indebolisce. |
 | Invalidazione forte | 62,19 $ | Il paragone è quasi rotto. |
 
-Per tornare operativo non basta salire: il gap rispetto al BTC scalato deve rientrare circa entro ±12%. La prima conferma di prezzo è 133,31 $, mentre l'invalidazione soft è 111,92 $.
+Per tornare operativo non basta salire: il gap rispetto al BTC scalato deve rientrare circa entro ±12%. La prima conferma di prezzo è 125,08 $, mentre l'invalidazione soft è 113,16 $.
 
 ### Metadata aderenza prezzo
 
@@ -94,11 +94,11 @@ Per tornare operativo non basta salire: il gap rispetto al BTC scalato deve rien
 OPERATIONAL_VERDICT_REASON=STRUTTURA ANALOGA, PREZZO NON ADERENTE
 PRICE_ADHERENCE_FAILED=YES
 PRICE_ADHERENCE_LIVE_AVG_GAP_FAILED=YES
-PRICE_ADHERENCE_LAST_GAP_FAILED=YES
+PRICE_ADHERENCE_LAST_GAP_FAILED=NO
 PRICE_ADHERENCE_LIVE_AVG_GAP_THRESHOLD_PCT=15.0
 PRICE_ADHERENCE_LAST_GAP_THRESHOLD_PCT=18.0
-PRICE_ADHERENCE_OBSERVED_LIVE_AVG_GAP_PCT=16.13819788479942
-PRICE_ADHERENCE_OBSERVED_LAST_GAP_PCT=19.375252490792306
+PRICE_ADHERENCE_OBSERVED_LIVE_AVG_GAP_PCT=16.04723301399646
+PRICE_ADHERENCE_OBSERVED_LAST_GAP_PCT=10.266412719165396
 ```
 
 ## Somiglianza prima e dopo inizio programma
@@ -112,8 +112,8 @@ Questa sezione separa la somiglianza della forma dall'aderenza reale del prezzo.
 | Periodo | Date | Giorni | Aderenza prezzo | Errore medio | Gap ultimo | Stato |
 | --- | --- | --- | --- | --- | --- | --- |
 | Prima del programma | 6 giugno 2026 -> 2 luglio 2026 | 27 | +87,95% | +6,02% | +21,89% | ABBASTANZA ALLINEATO |
-| Da inizio programma | 3 luglio 2026 -> 29 settembre 2026 | 89 | +67,72% | +16,14% | +19,38% | STACCATO / NON ADERENTE |
-| Totale dal bottom | 6 giugno 2026 -> 29 settembre 2026 | 116 | +72,43% | +13,78% | +19,38% | DEVIAZIONE MODERATA |
+| Da inizio programma | 3 luglio 2026 -> 30 settembre 2026 | 90 | +67,91% | +16,05% | +10,27% | STACCATO / NON ADERENTE |
+| Totale dal bottom | 6 giugno 2026 -> 30 settembre 2026 | 117 | +72,53% | +13,73% | +10,27% | DEVIAZIONE MODERATA |
 
 Nota: un frattale può avere una forma simile ma un prezzo distante. In quel caso non è operativo finché il gap non rientra.
 
@@ -124,28 +124,28 @@ Il frattale resta non operativo. Motivo effettivo: STRUTTURA ANALOGA, PREZZO NON
 | Voce | Risposta | Perché |
 | --- | --- | --- |
 | Uso operativo | NO | Peso 0 per il verdetto: STRUTTURA ANALOGA, PREZZO NON ADERENTE. |
-| Aderenza live | +67,72% | Errore medio live +16,14%. |
-| Gap corrente | +19,38% | Prezzo non aderente: superata almeno una soglia canonica (15% medio / 18% ultimo). |
-| Prima conferma prezzo | 133,31 $ | Serve anche miglioramento del gap, non solo una candela sopra il livello. |
-| Seconda conferma | 143,36 $ | Rende più credibile il percorso, ma non sostituisce l'aderenza. |
-| Invalidazione soft | 111,92 $ | Sotto questa zona il quadro peggiora. |
+| Aderenza live | +67,91% | Errore medio live +16,05%. |
+| Gap corrente | +10,27% | Prezzo non aderente: superata almeno una soglia canonica (15% medio / 18% ultimo). |
+| Prima conferma prezzo | 125,08 $ | Serve anche miglioramento del gap, non solo una candela sopra il livello. |
+| Seconda conferma | 133,41 $ | Rende più credibile il percorso, ma non sostituisce l'aderenza. |
+| Invalidazione soft | 113,16 $ | Sotto questa zona il quadro peggiora. |
 | Invalidazione forte | 62,19 $ | Sotto il bottom il paragone è quasi rotto. |
 
 ## Tracking giornaliero
 
 **Stato struttura:** STRUTTURA STABILE
 
-Variazione strutturale +0,36%.
+Variazione strutturale +0,07%.
 
 | Data | Prezzo SOL | Struttura | Aderenza live | Gap | Verdetto |
 | --- | --- | --- | --- | --- | --- |
-| 2026-09-23 | 117,38 $ | +69,22% | +69,72% | +47,61% | STRUTTURA ANALOGA, PREZZO NON ADERENTE |
 | 2026-09-24 | 115,45 $ | +69,04% | +69,05% | +42,05% | STRUTTURA ANALOGA, PREZZO NON ADERENTE |
 | 2026-09-25 | 122,13 $ | +69,17% | +68,53% | +39,88% | STRUTTURA ANALOGA, PREZZO NON ADERENTE |
 | 2026-09-26 | 120,40 $ | +69,86% | +68,42% | +26,31% | STRUTTURA ANALOGA, PREZZO NON ADERENTE |
 | 2026-09-27 | 120,68 $ | +70,86% | +68,07% | +23,80% | STRUTTURA ANALOGA, PREZZO NON ADERENTE |
 | 2026-09-28 | 119,07 $ | +70,37% | +67,88% | +24,00% | STRUTTURA ANALOGA, PREZZO NON ADERENTE |
 | 2026-09-29 | 117,81 $ | +70,73% | +67,72% | +19,38% | STRUTTURA ANALOGA, PREZZO NON ADERENTE |
+| 2026-09-30 | 119,12 $ | +70,80% | +67,91% | +10,27% | STRUTTURA ANALOGA, PREZZO NON ADERENTE |
 
 ## Grafici
 
@@ -188,20 +188,20 @@ Blu e proiezioni usano l'anchor computazionale; l'eventuale riferimento pubblico
 | Top BTC 2025 usato | 6 ottobre 2025 - 124.753 $ | Massimo close BTC nella finestra 2025. |
 | Data SOL equivalente | 21 aprile 2029 | Data analogica, non previsione certa. |
 | Target base dal bottom | 491,43 $ | Scenario base. |
-| Target base dall'anchor modello | 586,65 $ | Scenario condizionale dall'input computazionale, non dal riferimento live. |
-| Massimo percorso base | 586,65 $ (21 aprile 2029) | Massimo base nel percorso. |
-| Massimo beta | 818,56 $ (21 aprile 2029) | Scenario speculativo, non target principale. |
+| Target base dall'anchor modello | 541,88 $ | Scenario condizionale dall'input computazionale, non dal riferimento live. |
+| Massimo percorso base | 541,88 $ (21 aprile 2029) | Massimo base nel percorso. |
+| Massimo beta | 679,64 $ (21 aprile 2029) | Scenario speculativo, non target principale. |
 
 ## Prossimi step condizionali
 
 | Step | Date SOL | BTC fine | SOL fine base | Zona bassa | Zona alta | Lettura |
 | --- | --- | --- | --- | --- | --- | --- |
-| Step 1 - prossime 2 settimane | 29 settembre 2026 -> 13 ottobre 2026 | +11,90% | 131,83 $ | 117,81 $ (29 settembre 2026) | 133,31 $ (12 ottobre 2026) | Spinta rialzista abbastanza pulita. |
-| Step 2 - primo mese | 14 ottobre 2026 -> 29 ottobre 2026 | +21,02% | 142,57 $ | 130,68 $ (17 ottobre 2026) | 143,36 $ (28 ottobre 2026) | Spinta rialzista abbastanza pulita. |
-| Step 3 - secondo mese | 30 ottobre 2026 -> 28 novembre 2026 | +8,54% | 127,87 $ | 125,95 $ (26 novembre 2026) | 142,94 $ (1 novembre 2026) | Spinta rialzista abbastanza pulita. |
-| Step 4 - terzo mese | 29 novembre 2026 -> 28 dicembre 2026 | +0,29% | 118,15 $ | 118,15 $ (28 dicembre 2026) | 132,07 $ (11 dicembre 2026) | Spike poco sostenuto. |
-| Step 5 - quarto mese | 29 dicembre 2026 -> 27 gennaio 2027 | +21,08% | 142,65 $ | 120,27 $ (29 dicembre 2026) | 148,02 $ (26 gennaio 2027) | Spinta rialzista abbastanza pulita. |
-| Step 6 - estensione 6 mesi | 28 gennaio 2027 -> 28 marzo 2027 | +3,12% | 121,48 $ | 118,33 $ (27 marzo 2027) | 142,47 $ (28 gennaio 2027) | Laterale / movimento non forte. |
+| Step 1 - prossime 2 settimane | 30 settembre 2026 -> 14 ottobre 2026 | +3,85% | 123,70 $ | 117,13 $ (1 ottobre 2026) | 123,70 $ (14 ottobre 2026) | Laterale / movimento non forte. |
+| Step 2 - primo mese | 15 ottobre 2026 -> 30 ottobre 2026 | +10,54% | 131,68 $ | 120,71 $ (17 ottobre 2026) | 132,42 $ (28 ottobre 2026) | Spinta rialzista abbastanza pulita. |
+| Step 3 - secondo mese | 31 ottobre 2026 -> 29 novembre 2026 | -1,41% | 117,44 $ | 116,34 $ (26 novembre 2026) | 132,04 $ (1 novembre 2026) | Spike poco sostenuto. |
+| Step 4 - terzo mese | 30 novembre 2026 -> 29 dicembre 2026 | -6,74% | 111,09 $ | 109,13 $ (28 dicembre 2026) | 121,99 $ (11 dicembre 2026) | Laterale / movimento non forte. |
+| Step 5 - quarto mese | 30 dicembre 2026 -> 28 gennaio 2027 | +10,47% | 131,59 $ | 114,36 $ (30 dicembre 2026) | 136,72 $ (26 gennaio 2027) | Prima retest / debolezza, poi recupero. |
+| Step 6 - estensione 6 mesi | 29 gennaio 2027 -> 29 marzo 2027 | -4,36% | 113,93 $ | 109,30 $ (27 marzo 2027) | 131,39 $ (29 gennaio 2027) | Prima spike, poi scarico. |
 
 ## Proiezione standard a giorni fissi
 
@@ -209,14 +209,14 @@ Queste proiezioni partono dall'anchor computazionale SOL e replicano i movimenti
 
 | Orizzonte | Data SOL | Data BTC eq. | BTC fece | SOL base | SOL beta | Min percorso | Max percorso |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 7 giorni | 6 ottobre 2026 | 2023-03-23 | +13,10% | 133,24 $ | 136,69 $ | 117,81 $ | 133,24 $ |
-| 14 giorni | 13 ottobre 2026 | 2023-03-30 | +11,90% | 131,83 $ | 134,94 $ | 117,81 $ | 133,31 $ |
-| 30 giorni | 29 ottobre 2026 | 2023-04-15 | +21,02% | 142,57 $ | 148,33 $ | 117,81 $ | 143,36 $ |
-| 60 giorni | 28 novembre 2026 | 2023-05-15 | +8,54% | 127,87 $ | 130,07 $ | 117,81 $ | 143,36 $ |
-| 90 giorni | 28 dicembre 2026 | 2023-06-14 | +0,29% | 118,15 $ | 118,22 $ | 117,81 $ | 143,36 $ |
-| 120 giorni | 27 gennaio 2027 | 2023-07-14 | +21,08% | 142,65 $ | 148,42 $ | 117,81 $ | 148,02 $ |
-| 180 giorni | 28 marzo 2027 | 2023-09-12 | +3,12% | 121,48 $ | 122,26 $ | 117,81 $ | 148,02 $ |
-| 365 giorni | 29 settembre 2027 | 2024-03-15 | +177,03% | 326,37 $ | 403,22 $ | 117,81 $ | 343,67 $ |
+| 7 giorni | 7 ottobre 2026 | 2023-03-24 | +0,25% | 119,42 $ | 119,47 $ | 117,13 $ | 123,07 $ |
+| 14 giorni | 14 ottobre 2026 | 2023-03-31 | +3,85% | 123,70 $ | 124,40 $ | 117,13 $ | 123,70 $ |
+| 30 giorni | 30 ottobre 2026 | 2023-04-16 | +10,54% | 131,68 $ | 133,67 $ | 117,13 $ | 132,42 $ |
+| 60 giorni | 29 novembre 2026 | 2023-05-16 | -1,41% | 117,44 $ | 117,19 $ | 116,34 $ | 132,42 $ |
+| 90 giorni | 29 dicembre 2026 | 2023-06-15 | -6,74% | 111,09 $ | 109,94 $ | 109,13 $ | 132,42 $ |
+| 120 giorni | 28 gennaio 2027 | 2023-07-15 | +10,47% | 131,59 $ | 133,57 $ | 109,13 $ | 136,72 $ |
+| 180 giorni | 29 marzo 2027 | 2023-09-13 | -4,36% | 113,93 $ | 113,17 $ | 109,13 $ | 136,72 $ |
+| 365 giorni | 30 settembre 2027 | 2024-03-16 | +138,17% | 283,71 $ | 323,01 $ | 109,13 $ | 317,45 $ |
 
 ## Dati base
 
@@ -224,19 +224,19 @@ Queste proiezioni partono dall'anchor computazionale SOL e replicano i movimenti
 | --- | --- | --- |
 | BTC bottom usato | 2022-11-21 | 15.787 $ |
 | SOL bottom usato | 2026-06-06 | 62,19 $ |
-| Anchor computazionale SOL | 29 settembre 2026 | 117,81 $ |
-| Giorni SOL dal bottom | - | 115 |
-| Data BTC equivalente | 2023-03-16 | - |
-| BTC normalizzato equivalente | - | 158,69 |
-| SOL normalizzato oggi | - | 189,44 |
-| Gap SOL vs BTC equivalente | - | +19,38% |
-| Lettura gap | - | SOL è molto sopra il percorso BTC equivalente: la forma può essere simile, ma il prezzo non è aderente. |
-| Somiglianza forma prezzo | - | +83,81% |
-| Somiglianza ritmo/rendimenti | - | +40,27% |
-| Somiglianza RSI | - | +69,59% |
-| Somiglianza medie | - | +68,51% |
-| Somiglianza strutturale | - | +70,73% |
-| Beta volatilità SOL/BTC | - | 1,21 |
+| Anchor computazionale SOL | 30 settembre 2026 | 119,12 $ |
+| Giorni SOL dal bottom | - | 116 |
+| Data BTC equivalente | 2023-03-17 | - |
+| BTC normalizzato equivalente | - | 173,71 |
+| SOL normalizzato oggi | - | 191,54 |
+| Gap SOL vs BTC equivalente | - | +10,27% |
+| Lettura gap | - | SOL è sopra il percorso BTC equivalente. |
+| Somiglianza forma prezzo | - | +84,36% |
+| Somiglianza ritmo/rendimenti | - | +38,89% |
+| Somiglianza RSI | - | +69,83% |
+| Somiglianza medie | - | +68,75% |
+| Somiglianza strutturale | - | +70,80% |
+| Beta volatilità SOL/BTC | - | 1,15 |
 
 ## Regola di lettura
 
