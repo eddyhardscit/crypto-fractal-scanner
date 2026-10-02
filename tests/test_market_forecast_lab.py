@@ -195,6 +195,31 @@ class UniverseTests(unittest.TestCase):
         self.assertIn('OHLC_IDENTITY_NOT_VERIFIED', errors['TEST-USD'])
         download.assert_not_called()
 
+    def test_binance_spot_download_verifies_identity_and_builds_daily_frame(self):
+        entry = dict(ohlc_ticker='ASTERUSDT', ohlc_base_asset='ASTER', ohlc_quote_asset='USDT')
+        info = {'symbols': [dict(symbol='ASTERUSDT', status='TRADING', baseAsset='ASTER',
+                                 quoteAsset='USDT', isSpotTradingAllowed=True)]}
+        start = pd.Timestamp('2025-10-06', tz='UTC')
+        rows = []
+        for i in range(260):
+            ts = int((start + pd.Timedelta(days=i)).timestamp() * 1000)
+            rows.append([ts, '1', '1.2', '.8', '1.1', '100', ts + 86399999,
+                         '110', 10, '50', '55', '0'])
+        with patch.object(lab, '_binance_json', side_effect=[info, rows]):
+            result, identity = lab._download_binance_spot(entry, '2026-06-22')
+        self.assertEqual(len(result), 260)
+        self.assertEqual(list(result.columns), ['Open', 'High', 'Low', 'Close', 'Volume'])
+        self.assertEqual(identity['baseAsset'], 'ASTER')
+        self.assertEqual(identity['quoteAsset'], 'USDT')
+
+    def test_binance_spot_wrong_identity_fails_closed(self):
+        entry = dict(ohlc_ticker='ASTERUSDT', ohlc_base_asset='ASTER', ohlc_quote_asset='USDT')
+        info = {'symbols': [dict(symbol='ASTERUSDT', status='TRADING', baseAsset='OTHER',
+                                 quoteAsset='USDT', isSpotTradingAllowed=True)]}
+        with patch.object(lab, '_binance_json', return_value=info):
+            with self.assertRaisesRegex(ValueError, 'OHLC_IDENTITY_NOT_VERIFIED'):
+                lab._download_binance_spot(entry, '2026-09-22')
+
     def test_stale_data_excluded(self):
         self.data['T'] = self.data['T'].iloc[:-4]
         self.assertEqual(self.select()[0]['exclusion_reason'], 'STALE_OR_FUTURE_CLOSE')

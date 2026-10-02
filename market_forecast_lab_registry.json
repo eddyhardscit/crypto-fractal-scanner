@@ -833,6 +833,18 @@
       "legacy_library": false
     },
     {
+      "coingecko_id": "aster-2",
+      "ohlc_ticker": "ASTERUSDT",
+      "ohlc_provider": "BINANCE_SPOT",
+      "ohlc_base_asset": "ASTER",
+      "ohlc_quote_asset": "USDT",
+      "classification": "NATIVE",
+      "target_enabled": true,
+      "analogue_enabled": false,
+      "mapping_source": "Reviewed Binance Spot ASTER/USDT; CoinGecko aster-2 identity cross-checked against official Binance and OKX ASTER listings; runtime exchangeInfo verification required",
+      "legacy_library": false
+    },
+    {
       "coingecko_id": "tether",
       "ohlc_ticker": null,
       "classification": "STABLECOIN",

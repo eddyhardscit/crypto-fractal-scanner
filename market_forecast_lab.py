@@ -12,6 +12,8 @@ import resource
 import re
 import sys
 import time
+import urllib.parse
+import urllib.request
 
 import pandas as pd
 import yfinance as yf
@@ -96,6 +98,57 @@ def directory_bytes(root):
     return sum(p.stat().st_size for p in root.rglob('*') if p.is_file())
 
 
+def _binance_json(path, params):
+    query = urllib.parse.urlencode(params)
+    request = urllib.request.Request(
+        'https://api.binance.com' + path + '?' + query,
+        headers={'User-Agent': 'MarketForecastLab/1.0'},
+    )
+    with urllib.request.urlopen(request, timeout=20) as response:
+        return json.load(response)
+
+
+def _download_binance_spot(entry, as_of):
+    symbol = entry['ohlc_ticker']
+    info = _binance_json('/api/v3/exchangeInfo', {'symbol': symbol})
+    matches = info.get('symbols', []) if isinstance(info, dict) else []
+    expected_base = entry.get('ohlc_base_asset')
+    expected_quote = entry.get('ohlc_quote_asset', 'USDT')
+    if (len(matches) != 1 or matches[0].get('symbol') != symbol
+            or matches[0].get('status') != 'TRADING'
+            or matches[0].get('baseAsset') != expected_base
+            or matches[0].get('quoteAsset') != expected_quote
+            or matches[0].get('isSpotTradingAllowed') is not True):
+        raise ValueError('OHLC_IDENTITY_NOT_VERIFIED')
+    end_ms = int((pd.Timestamp(as_of, tz='UTC') + pd.Timedelta(days=1)).timestamp() * 1000) - 1
+    rows, start_ms = [], 0
+    while start_ms <= end_ms:
+        batch = _binance_json('/api/v3/klines', {
+            'symbol': symbol, 'interval': '1d', 'limit': 1000,
+            'startTime': start_ms, 'endTime': end_ms,
+        })
+        if not isinstance(batch, list) or not batch:
+            break
+        rows.extend(batch)
+        if len(batch) < 1000:
+            break
+        start_ms = int(batch[-1][0]) + 1
+    if not rows:
+        raise ValueError('EMPTY_OHLC')
+    frame = pd.DataFrame(rows, columns=[
+        'OpenTime', 'Open', 'High', 'Low', 'Close', 'Volume', 'CloseTime',
+        'QuoteVolume', 'Trades', 'TakerBase', 'TakerQuote', 'Ignore',
+    ])
+    frame.index = pd.to_datetime(frame.pop('OpenTime').astype('int64'), unit='ms', utc=True).dt.tz_localize(None)
+    frame = frame[['Open', 'High', 'Low', 'Close', 'Volume']].astype(float)
+    frame = frame[~frame.index.duplicated(keep='last')].sort_index().loc[:as_of]
+    if frame.empty:
+        raise ValueError('EMPTY_OHLC')
+    identity = {k: matches[0].get(k) for k in (
+        'symbol', 'status', 'baseAsset', 'quoteAsset', 'isSpotTradingAllowed')}
+    return frame, identity
+
+
 def acquire_extra(registry, markets, raw, processed, snapshot_ids, old, as_of, ctx):
     """Only explicitly mapped targets and outstanding vintages; no microcap discovery."""
     ids = {r['id'] for r in markets['rows']}
@@ -111,35 +164,47 @@ def acquire_extra(registry, markets, raw, processed, snapshot_ids, old, as_of, c
     for ticker in sorted(needed - set(raw)):
         try:
             cid, entry = by_ticker[ticker]
-            metadata = yf.Ticker(ticker).get_history_metadata()
-            normal = lambda value: re.sub(r'[^a-z0-9]', '', str(value).lower().removesuffix(' usd'))
-            expected = entry.get('ohlc_name_aliases', []) + [markets_by_id.get(cid, {}).get('name', cid)]
-            if (metadata.get('symbol') != ticker or metadata.get('currency') != 'USD'
-                    or metadata.get('instrumentType') != 'CRYPTOCURRENCY'
-                    or not any(normal(metadata.get('longName')) == normal(name) or
-                               normal(metadata.get('shortName')) == normal(name) for name in expected)):
-                raise ValueError('OHLC_IDENTITY_NOT_VERIFIED')
-            identities[ticker] = {k: metadata.get(k) for k in ('symbol', 'currency', 'instrumentType', 'shortName', 'longName')}
-            frame = yf.download(ticker, period='10y', interval='1d', auto_adjust=True,
-                                progress=False, threads=False)
-            if isinstance(frame.columns, pd.MultiIndex):
-                frame = frame.xs(ticker, axis=1, level=1)
-            frame = frame.dropna()
-            frame.index = pd.DatetimeIndex(frame.index).tz_localize(None)
-            frame = frame.loc[:as_of]
-            if frame.empty:
-                raise ValueError('EMPTY_OHLC')
+            provider = entry.get('ohlc_provider', 'YAHOO_FINANCE')
             repaired = []
-            if legacy.recent_completed_gap_days(frame, as_of):
-                hourly = yf.download(ticker, period='7d', interval='1h', auto_adjust=True,
-                                     progress=False, threads=False)
-                if isinstance(hourly.columns, pd.MultiIndex):
-                    hourly = hourly.xs(ticker, axis=1, level=1)
-                frame, repaired = legacy.repair_recent_daily_gaps(frame, hourly.dropna(), as_of)
+            if provider == 'BINANCE_SPOT':
+                market_symbol = str(markets_by_id.get(cid, {}).get('symbol', '')).upper()
+                if market_symbol != entry.get('ohlc_base_asset'):
+                    raise ValueError('OHLC_IDENTITY_NOT_VERIFIED')
+                frame, identities[ticker] = _download_binance_spot(entry, as_of)
+                source = 'Binance Spot REST'
+                requested_range = f"symbol={ticker};interval=1d;start=listing;as_of={as_of}"
+            elif provider == 'YAHOO_FINANCE':
+                metadata = yf.Ticker(ticker).get_history_metadata()
+                normal = lambda value: re.sub(r'[^a-z0-9]', '', str(value).lower().removesuffix(' usd'))
+                expected = entry.get('ohlc_name_aliases', []) + [markets_by_id.get(cid, {}).get('name', cid)]
+                if (metadata.get('symbol') != ticker or metadata.get('currency') != 'USD'
+                        or metadata.get('instrumentType') != 'CRYPTOCURRENCY'
+                        or not any(normal(metadata.get('longName')) == normal(name) or
+                                   normal(metadata.get('shortName')) == normal(name) for name in expected)):
+                    raise ValueError('OHLC_IDENTITY_NOT_VERIFIED')
+                identities[ticker] = {k: metadata.get(k) for k in ('symbol', 'currency', 'instrumentType', 'shortName', 'longName')}
+                frame = yf.download(ticker, period='10y', interval='1d', auto_adjust=True,
+                                    progress=False, threads=False)
+                if isinstance(frame.columns, pd.MultiIndex):
+                    frame = frame.xs(ticker, axis=1, level=1)
+                frame = frame.dropna()
+                frame.index = pd.DatetimeIndex(frame.index).tz_localize(None)
+                frame = frame.loc[:as_of]
+                if frame.empty:
+                    raise ValueError('EMPTY_OHLC')
+                if legacy.recent_completed_gap_days(frame, as_of):
+                    hourly = yf.download(ticker, period='7d', interval='1h', auto_adjust=True,
+                                         progress=False, threads=False)
+                    if isinstance(hourly.columns, pd.MultiIndex):
+                        hourly = hourly.xs(ticker, axis=1, level=1)
+                    frame, repaired = legacy.repair_recent_daily_gaps(frame, hourly.dropna(), as_of)
+                source = 'Yahoo Finance/yfinance' + (' + 1h completed-day repair' if repaired else '')
+                requested_range = 'period=10y' + (f";repaired={','.join(repaired)}" if repaired else '')
+            else:
+                raise ValueError('UNKNOWN_OHLC_PROVIDER:' + str(provider))
             sid = freeze_run_ohlc(
                 frame, ticker=ticker, as_of=as_of, ctx=ctx,
-                source='Yahoo Finance/yfinance' + (' + 1h completed-day repair' if repaired else ''),
-                requested_range='period=10y' + (f";repaired={','.join(repaired)}" if repaired else ''),
+                source=source, requested_range=requested_range,
             )
             # Always compute from reloaded bytes: live acquisition and replay share precision.
             raw[ticker] = fp.load_frozen_ohlc(sid)
