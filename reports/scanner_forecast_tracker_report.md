@@ -1,15 +1,15 @@
 <!-- SCANNER_FORECAST_TRACKER_START -->
 # Scanner forecast path / cono probabilistico
 
-Generato: 2026-10-02 14:07:08 UTC
+Generato: 2026-10-03 05:31:54 UTC
 
 ## Snapshot effettivamente usato
 
 | Asset   | Snapshot prezzo   | Generazione snapshot prezzo   | Snapshot match scanner   |
 |:--------|:------------------|:------------------------------|:-------------------------|
-| BTC | 2026-10-02 | 2026-10-02T14:05:25Z | 2026-10-02 14:05:25 |
-| SOL | 2026-10-02 | 2026-10-02T14:05:25Z | 2026-10-02 14:05:25 |
-| DOGE | 2026-10-02 | 2026-10-02T14:05:25Z | 2026-10-02 14:05:25 |
+| BTC | 2026-10-03 | 2026-10-03T05:30:21Z | 2026-10-03 05:30:21 |
+| SOL | 2026-10-03 | 2026-10-03T05:30:21Z | 2026-10-03 05:30:21 |
+| DOGE | 2026-10-03 | 2026-10-03T05:30:21Z | 2026-10-03 05:30:21 |
 
 La data di generazione del report non sostituisce la data degli input: se gli snapshot locali sono più vecchi, i valori restano riferiti agli snapshot indicati in tabella.
 
@@ -28,9 +28,9 @@ Correzione importante: il cono ora viene calcolato dai percorsi reali dei match 
 
 | Asset   | Data       | Prezzo iniziale   | Direzione scanner   | Casi positivi   | P10 30g     | P25 30g     | P50 30g     | P75 30g      | P90 30g      |
 |:--------|:-----------|:------------------|:--------------------|:----------------|:------------|:------------|:------------|:-------------|:-------------|
-| BTC | 2026-10-02 | 86.839 $ | INCERTO | 52,50% | 73.352,60 $ | 76.623,67 $ | 89.305,32 $ | 102.252,27 $ | 125.966,01 $ |
-| SOL | 2026-10-02 | 122,43 $ | DISCESA | 35,00% | 97,55 $ | 104,46 $ | 114,97 $ | 130,75 $ | 159,79 $ |
-| DOGE | 2026-10-02 | 0.09707 $ | DISCESA | 37,50% | 0.07139 $ | 0.08221 $ | 0.09299 $ | 0.10403 $ | 0.14399 $ |
+| BTC | 2026-10-03 | 84.612 $ | INCERTO | 47,50% | 71.471,50 $ | 75.473,19 $ | 83.254,18 $ | 102.664,17 $ | 122.576,98 $ |
+| SOL | 2026-10-03 | 119,53 $ | DISCESA | 40,00% | 99,88 $ | 104,62 $ | 115,52 $ | 131,51 $ | 166,33 $ |
+| DOGE | 2026-10-03 | 0.09315 $ | DISCESA | 35,00% | 0.07368 $ | 0.07895 $ | 0.08849 $ | 0.09788 $ | 0.13388 $ |
 
 ## Confronto raw / regime-adjusted
 
@@ -38,9 +38,9 @@ Il cono raw continua a usare i 40 casi dello scanner. Il cono regime-adjusted sc
 
 | Asset   | Stato adjusted   | selected_regime_group   |   full_regime_matches |   same_asset_regime_matches |   same_btc_regime_matches |   selected_sample_size |   minimum_required | fallback_level        | selection_reason              | Raw p50 30g   | Adjusted p50 30g   | Raw p90 30g   | Adjusted p90 30g   |
 |:--------|:-----------------|:------------------------|----------------------:|----------------------------:|--------------------------:|-----------------------:|-------------------:|:----------------------|:------------------------------|:--------------|:-------------------|:--------------|:-------------------|
-| BTC | AVAILABLE | SAME_BTC_REGIME | 2 | 2 | 12 | 12 | 5 | 2_SAME_BTC_FALLBACK | FALLBACK_TO_SAME_BTC_REGIME | 89.305,32 $ | 87.585,61 $ | 125.966,01 $ | 111.637,86 $ |
-| SOL | AVAILABLE | SAME_ASSET_REGIME | 2 | 6 | 12 | 6 | 5 | 1_SAME_ASSET_FALLBACK | FALLBACK_TO_SAME_ASSET_REGIME | 114,97 $ | 125,19 $ | 159,79 $ | 184,59 $ |
-| DOGE | AVAILABLE | SAME_BTC_REGIME | 0 | 2 | 9 | 9 | 5 | 2_SAME_BTC_FALLBACK | FALLBACK_TO_SAME_BTC_REGIME | 0.09299 $ | 0.08983 $ | 0.14399 $ | 0.12727 $ |
+| BTC | AVAILABLE | SAME_BTC_REGIME | 2 | 2 | 11 | 11 | 5 | 2_SAME_BTC_FALLBACK | FALLBACK_TO_SAME_BTC_REGIME | 83.254,18 $ | 80.273,51 $ | 122.576,98 $ | 104.747,57 $ |
+| SOL | AVAILABLE | SAME_ASSET_REGIME | 2 | 6 | 13 | 6 | 5 | 1_SAME_ASSET_FALLBACK | FALLBACK_TO_SAME_ASSET_REGIME | 115,52 $ | 122,23 $ | 166,33 $ | 180,22 $ |
+| DOGE | AVAILABLE | SAME_BTC_REGIME | 0 | 1 | 10 | 10 | 5 | 2_SAME_BTC_FALLBACK | FALLBACK_TO_SAME_BTC_REGIME | 0.08849 $ | 0.08827 $ | 0.13388 $ | 0.11670 $ |
 
 ## Grafici
 
@@ -52,9 +52,9 @@ Il cono raw continua a usare i 40 casi dello scanner. Il cono regime-adjusted sc
 
 ![Verifica storica cono BTC](scanner_forecast_history_BTC.png)
 
-- Cono congelato il **2026-09-02**; verificato fino al **2026-10-02**; stato **COMPLETO 30/30g**.
-- Reale **86.577,81 $**; p50 previsto **83.250,64 $**; scarto **4,00%**.
-- Errore medio assoluto **3,32%**; massimo **8,84%**; DENTRO p10-p90; DENTRO p25-p75.
+- Cono congelato il **2026-09-03**; verificato fino al **2026-10-03**; stato **COMPLETO 30/30g**.
+- Reale **84.622,69 $**; p50 previsto **84.069,39 $**; scarto **0,66%**.
+- Errore medio assoluto **3,85%**; massimo **10,19%**; DENTRO p10-p90; DENTRO p25-p75.
 
 #### Cono regime-adjusted
 
@@ -79,7 +79,7 @@ Il filtro condizionato parte proprio da quei 40 casi e conserva soltanto gli epi
 
 Questo campione viene ricostruito ad ogni run dai **40 analoghi SOL correnti**. Di conseguenza il numero di episodi qualificati e gli asset possono cambiare giorno per giorno.
 
-**Campione corrente:** 11 episodi qualificati su 40 · 11 asset distinti.
+**Campione corrente:** 10 episodi qualificati su 40 · 10 asset distinti.
 
 ![SOL conditional successor corrente](scanner_forecast_SOL_conditional_successor_current.png)
 
@@ -87,34 +87,33 @@ Questo campione viene ricostruito ad ogni run dai **40 analoghi SOL correnti**. 
 
 | Modello | Vintage | N | Target | P10 | P25 | P50 | P75 | P90 |
 | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |
-| Cono standard | 2026-10-02 | 40 | 2026-11-01 | 97.55 $ | 104.46 $ | 114.97 $ | 130.75 $ | 159.79 $ |
-| Conditional corrente | 2026-10-02 | 11 | 2026-11-01 | 92.51 $ | 97.85 $ | 111.76 $ | 137.65 $ | 210.81 $ |
+| Cono standard | 2026-10-03 | 40 | 2026-11-02 | 99.88 $ | 104.62 $ | 115.52 $ | 131.51 $ | 166.33 $ |
+| Conditional corrente | 2026-10-03 | 10 | 2026-11-02 | 87.61 $ | 94.43 $ | 114.21 $ | 135.52 $ | 217.52 $ |
 
 ###### Struttura successiva dei casi correnti
 
 | Classe | Episodi | Frequenza empirica |
 | --- | ---: | ---: |
-| DIRECT_CONTINUATION | 5 | 45.45% |
+| DIRECT_CONTINUATION | 5 | 50.00% |
 | SHALLOW_PULLBACK_THEN_CONTINUATION | 0 | 0.00% |
-| DEEP_PULLBACK_THEN_RECOVERY | 1 | 9.09% |
-| FAILURE | 5 | 45.45% |
+| DEEP_PULLBACK_THEN_RECOVERY | 1 | 10.00% |
+| FAILURE | 4 | 40.00% |
 | UNRESOLVED | 0 | 0.00% |
 
 ###### Episodi qualificati oggi
 
 | Asset | Match window | -5% hit | +10% anchor | Classe 60d |
 | --- | --- | --- | --- | --- |
-| RUNE-USD | 2023-06-16 → 2023-09-23 | 2023-10-09 | 2023-10-23 | DIRECT_CONTINUATION |
 | KSM-USD | 2023-09-06 → 2023-12-14 | 2023-12-15 | 2023-12-21 | DIRECT_CONTINUATION |
-| BTC-USD | 2022-11-19 → 2023-02-26 | 2023-03-03 | 2023-03-17 | DIRECT_CONTINUATION |
-| VET-USD | 2023-09-05 → 2023-12-13 | 2023-12-15 | 2023-12-20 | FAILURE |
+| RUNE-USD | 2023-06-16 → 2023-09-23 | 2023-10-09 | 2023-10-23 | DIRECT_CONTINUATION |
+| BTC-USD | 2022-11-20 → 2023-02-27 | 2023-03-07 | 2023-03-17 | DIRECT_CONTINUATION |
 | EOS-USD | 2023-09-08 → 2023-12-16 | 2023-12-19 | 2023-12-27 | FAILURE |
-| AVAX-USD | 2021-06-21 → 2021-09-28 | 2021-10-10 | 2021-10-25 | DEEP_PULLBACK_THEN_RECOVERY |
 | ETC-USD | 2023-09-08 → 2023-12-16 | 2023-12-19 | 2024-01-10 | DIRECT_CONTINUATION |
-| DOT-USD | 2023-09-08 → 2023-12-16 | 2023-12-19 | 2023-12-21 | DIRECT_CONTINUATION |
 | KAVA-USD | 2023-09-08 → 2023-12-16 | 2023-12-18 | 2023-12-26 | FAILURE |
-| NEO-USD | 2020-11-12 → 2021-02-19 | 2021-02-20 | 2021-02-21 | FAILURE |
 | XTZ-USD | 2023-09-08 → 2023-12-16 | 2023-12-18 | 2023-12-25 | FAILURE |
+| AVAX-USD | 2021-06-21 → 2021-09-28 | 2021-10-10 | 2021-10-25 | DEEP_PULLBACK_THEN_RECOVERY |
+| DOT-USD | 2023-09-08 → 2023-12-16 | 2023-12-19 | 2023-12-21 | DIRECT_CONTINUATION |
+| VET-USD | 2020-04-08 → 2020-07-16 | 2020-07-20 | 2020-08-08 | FAILURE |
 
 ##### B. Vintage originale 18 settembre — congelato
 
@@ -134,9 +133,9 @@ Anchor della chat: circa **$112.70** il **2026-09-18**.
 
 ###### Verifica contro SOL reale
 
-- Ultimo close disponibile: **2026-10-02** · SOL **121.93 $**.
-- Giorno del vintage: **14/30**.
-- P50 condizionato previsto per quel giorno: **122.67 $**.
+- Ultimo close disponibile: **2026-10-03** · SOL **119.59 $**.
+- Giorno del vintage: **15/30**.
+- P50 condizionato previsto per quel giorno: **115.87 $**.
 - SOL reale: **DENTRO p10-p90** · **DENTRO p25-p75**.
 
 ###### Parità con l'analisi originale
@@ -172,9 +171,9 @@ I due modelli **non vengono mediati**, non sostituiscono l'uno l'altro e non mod
 
 ![Verifica storica cono SOL](scanner_forecast_history_SOL.png)
 
-- Cono congelato il **2026-09-02**; verificato fino al **2026-10-02**; stato **COMPLETO 30/30g**.
-- Reale **121,93 $**; p50 previsto **106,97 $**; scarto **13,99%**.
-- Errore medio assoluto **7,15%**; massimo **17,51%**; DENTRO p10-p90; DENTRO p25-p75.
+- Cono congelato il **2026-09-03**; verificato fino al **2026-10-03**; stato **COMPLETO 30/30g**.
+- Reale **119,59 $**; p50 previsto **112,17 $**; scarto **6,62%**.
+- Errore medio assoluto **6,31%**; massimo **12,83%**; DENTRO p10-p90; DENTRO p25-p75.
 
 #### Cono regime-adjusted
 
@@ -192,9 +191,9 @@ Gruppo selezionato: **SAME_ASSET_REGIME**; fallback: **1_SAME_ASSET_FALLBACK**; 
 
 ![Verifica storica cono DOGE](scanner_forecast_history_DOGE.png)
 
-- Cono congelato il **2026-09-02**; verificato fino al **2026-10-02**; stato **COMPLETO 30/30g**.
-- Reale **0.09653 $**; p50 previsto **0.07570 $**; scarto **27,51%**.
-- Errore medio assoluto **10,53%**; massimo **27,51%**; DENTRO p10-p90; FUORI p25-p75.
+- Cono congelato il **2026-09-03**; verificato fino al **2026-10-03**; stato **COMPLETO 30/30g**.
+- Reale **0.09316 $**; p50 previsto **0.07480 $**; scarto **24,54%**.
+- Errore medio assoluto **11,59%**; massimo **27,76%**; DENTRO p10-p90; FUORI p25-p75.
 
 #### Cono regime-adjusted
 
@@ -208,21 +207,21 @@ Gruppo selezionato: **SAME_BTC_REGIME**; fallback: **2_SAME_BTC_FALLBACK**; moti
 
 | Asset   | Giorno   |   Controlli | Dentro p10-p90   | Dentro p25-p75   | Errore medio abs vs p50   | Errore medio vs p50   |
 |:--------|:---------|------------:|:-----------------|:-----------------|:--------------------------|:----------------------|
-| BTC | 1g | 76 | 93,42% | 68,42% | 1,97% | 0,46% |
-| BTC | 3g | 73 | 93,15% | 75,34% | 3,40% | 0,69% |
-| BTC | 7g | 65 | 92,31% | 67,69% | 4,98% | 1,80% |
+| BTC | 1g | 77 | 93,51% | 68,83% | 1,98% | 0,41% |
+| BTC | 3g | 74 | 93,24% | 75,68% | 3,36% | 0,69% |
+| BTC | 7g | 66 | 92,42% | 68,18% | 4,93% | 1,75% |
 | BTC | 14g | 54 | 98,15% | 72,22% | 5,57% | 2,13% |
-| BTC | 30g | 25 | 100,00% | 92,00% | 8,50% | 3,22% |
-| SOL | 1g | 76 | 82,89% | 63,16% | 2,70% | 0,91% |
-| SOL | 3g | 73 | 91,78% | 73,97% | 3,95% | 1,76% |
-| SOL | 7g | 65 | 90,77% | 72,31% | 5,62% | 3,83% |
+| BTC | 30g | 26 | 100,00% | 92,31% | 8,20% | 3,12% |
+| SOL | 1g | 77 | 83,12% | 63,64% | 2,69% | 0,87% |
+| SOL | 3g | 74 | 91,89% | 74,32% | 3,92% | 1,76% |
+| SOL | 7g | 66 | 90,91% | 72,73% | 5,54% | 3,78% |
 | SOL | 14g | 54 | 87,04% | 75,93% | 8,04% | 7,16% |
-| SOL | 30g | 25 | 92,00% | 52,00% | 15,18% | 14,67% |
-| DOGE | 1g | 76 | 88,16% | 61,84% | 3,07% | 0,57% |
-| DOGE | 3g | 73 | 91,78% | 63,01% | 4,74% | 1,47% |
-| DOGE | 7g | 65 | 75,38% | 73,85% | 8,70% | 6,00% |
+| SOL | 30g | 26 | 92,31% | 53,85% | 14,88% | 14,39% |
+| DOGE | 1g | 77 | 88,31% | 61,04% | 3,07% | 0,52% |
+| DOGE | 3g | 74 | 91,89% | 63,51% | 4,68% | 1,45% |
+| DOGE | 7g | 66 | 75,76% | 74,24% | 8,58% | 5,92% |
 | DOGE | 14g | 54 | 83,33% | 46,30% | 11,35% | 9,79% |
-| DOGE | 30g | 25 | 92,00% | 36,00% | 17,69% | 17,69% |
+| DOGE | 30g | 26 | 92,31% | 34,62% | 17,87% | 17,87% |
 
 ## Tail / outlier audit
 
