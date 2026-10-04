@@ -1,6 +1,6 @@
 # Report struttura tecnica
 
-Generato: 2026-10-03 05:32 UTC
+Generato: 2026-10-04 05:32 UTC
 
 Questo report aggiunge al tuo scanner una lettura classica di analisi tecnica.
 
@@ -25,9 +25,9 @@ Regola anti-pattern-zombie: un pattern vecchio non resta indefinitamente conferm
 
 | Asset   | Prezzo   |   Punteggio | Verdetto                      | Trend           | Momentum        | Struttura                                          |   Pattern score | Fibonacci      | Pattern rialzista                  | Pattern ribassista         | Supporto   | Resistenza   |
 |:--------|:---------|------------:|:------------------------------|:----------------|:----------------|:---------------------------------------------------|----------------:|:---------------|:-----------------------------------|:---------------------------|:-----------|:-------------|
-| BTC | 84.612 $ | 4 | COSTRUTTIVO MA NON CONFERMATO | Trend rialzista | Momentum debole | Struttura rialzista con massimi e minimi crescenti | +2 | 0 / NON ATTIVO | Doppio minimo / CONFERMATO RECENTE | Doppio massimo / CANDIDATO | 82.571 | 87.364 |
-| SOL | 119,53 $ | 5 | COSTRUTTIVO MA NON CONFERMATO | Trend rialzista | Momentum debole | Volatilità in espansione | 0 | 0 / NON ATTIVO | Doppio minimo / TARGET RAGGIUNTO | Triplo massimo / CANDIDATO | 96,23 | 124,62 |
-| DOGE | 0.09315 $ | 6 | COSTRUTTIVO MA NON CONFERMATO | Trend rialzista | Momentum debole | Volatilità in espansione | +2 | +1 / TENUTO | Doppio minimo / CONFERMATO RECENTE | Doppio massimo / CANDIDATO | 0.07841 | 0.10528 |
+| BTC | 84.844 $ | 9 | RIALZISTA TECNICO | Trend rialzista | Momentum misto | Struttura rialzista con massimi e minimi crescenti | +2 | 0 / NON ATTIVO | Doppio minimo / CONFERMATO RECENTE | Doppio massimo / CANDIDATO | 82.571 | 87.364 |
+| SOL | 120,74 $ | 7 | RIALZISTA TECNICO | Trend rialzista | Momentum misto | Volatilità in espansione | 0 | 0 / NON ATTIVO | Doppio minimo / TARGET RAGGIUNTO | Triplo massimo / CANDIDATO | 96,23 | 124,62 |
+| DOGE | 0.09278 $ | 6 | COSTRUTTIVO MA NON CONFERMATO | Trend rialzista | Momentum debole | Volatilità in espansione | +2 | +1 / TENUTO | Doppio minimo / CONFERMATO RECENTE | Doppio massimo / CANDIDATO | 0.07841 | 0.10528 |
 
 ## Riepilogo ciclo di vita pattern
 
@@ -41,25 +41,25 @@ Regola anti-pattern-zombie: un pattern vecchio non resta indefinitamente conferm
 
 | Asset   |   RSI 14 |   Istogramma MACD | MA20    | MA50    | MA200   | Pendenza MA50 20g   | Pendenza MA200 60g   | Rendimento 30g   | Rendimento 90g   |
 |:--------|---------:|------------------:|:--------|:--------|:--------|:--------------------|:---------------------|:-----------------|:-----------------|
-| BTC | 63.49 | -133.514 | 82.051 | 78.125 | 71.372 | 9,79% | 0,80% | 4,11% | 33,15% |
-| SOL | 63.53 | -0.27727 | 113,11 | 102,90 | 85,67 | 17,04% | 0,77% | 14,96% | 46,80% |
-| DOGE | 54.2 | -0.0003 | 0.09110 | 0.08654 | 0.08781 | 10,34% | -6,12% | 6,12% | 19,83% |
+| BTC | 63.97 | -148.739 | 82.446 | 78.560 | 71.426 | 10,00% | 1,09% | 6,49% | 32,58% |
+| SOL | 65.05 | -0.3438 | 114,14 | 103,79 | 85,80 | 17,36% | 1,34% | 18,43% | 47,40% |
+| DOGE | 53.52 | -0.00047 | 0.09161 | 0.08699 | 0.08777 | 10,63% | -5,82% | 9,39% | 21,15% |
 
 ## Dettaglio asset
 
 ### BTC
 
-- Prezzo: **84.612 $**
-- Punteggio tecnico: **4 / 12**
-- Verdetto: **COSTRUTTIVO MA NON CONFERMATO**
+- Prezzo: **84.844 $**
+- Punteggio tecnico: **9 / 12**
+- Verdetto: **RIALZISTA TECNICO**
 - Trend: **Trend rialzista** (3)
-- Momentum: **Momentum debole** (-2)
-- Volume: **Volume da distribuzione** (-1)
+- Momentum: **Momentum misto** (0)
+- Volume: **Volume neutrale** (0)
 - Struttura: **Struttura rialzista con massimi e minimi crescenti** (2)
   - Dettaglio struttura: Ultimi minimi: 7.494e+04 -> 8.257e+04. Ultimi massimi: 8.226e+04 -> 8.736e+04.
 - Divergenza: **Nessuna** (0)
-- Fase Wyckoff candidata: **Range / fase non chiara** (0)
-  - Dettaglio Wyckoff: Posizione nel range a 120 giorni: 90,71%. Fase non abbastanza chiara.
+- Fase Wyckoff candidata: **Markup / fase rialzista** (2)
+  - Dettaglio Wyckoff: Prezzo sopra MA200, MA50 in salita e trend a 30 giorni positivo.
 - Fibonacci automatico: **NON ATTIVO** (0)
   - Swing UP 2026-07-01 57.748 -> 2026-09-21 87.364; livello più vicino 23.6% a 80.374; stato NON ATTIVO; confluenza: invalidazione rialzista.
 - Punteggio pattern: **+2**
@@ -70,31 +70,31 @@ Regola anti-pattern-zombie: un pattern vecchio non resta indefinitamente conferm
 Pattern classici e ciclo di vita:
 
 - Doppio minimo: **CONFERMATO RECENTE** (+2)
-  - Due minimi simili vicino a 74.945 tra 2026-09-02 e 2026-09-15. Neckline stimata: 82.262. Breakout neckline: 2026-09-21 (12 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 89.580; progresso corrente: 32,11%. Relazione prezzo/neckline: sopra neckline.
-  - neckline 82.262; target 89.580; breakout 2026-09-21 (12g); progresso 32,11%; prezzo sopra neckline.
+  - Due minimi simili vicino a 74.945 tra 2026-09-02 e 2026-09-15. Neckline stimata: 82.262. Breakout neckline: 2026-09-21 (13 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 89.580; progresso corrente: 35,28%. Relazione prezzo/neckline: sopra neckline.
+  - neckline 82.262; target 89.580; breakout 2026-09-21 (13g); progresso 35,28%; prezzo sopra neckline.
 - Triplo minimo: **TARGET RAGGIUNTO** (0)
-  - Tre minimi simili vicino a 58.076 dal 2026-06-25 al 2026-08-14. Neckline stimata: 66.910. Breakout neckline: 2026-08-19 (45 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 75.744; progresso corrente: 200,38%. Relazione prezzo/neckline: sopra neckline.
-  - neckline 66.910; target 75.744; breakout 2026-08-19 (45g); progresso 200,38%; prezzo sopra neckline.
+  - Tre minimi simili vicino a 58.076 dal 2026-06-25 al 2026-08-14. Neckline stimata: 66.910. Breakout neckline: 2026-08-19 (46 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 75.744; progresso corrente: 203,01%. Relazione prezzo/neckline: sopra neckline.
+  - neckline 66.910; target 75.744; breakout 2026-08-19 (46g); progresso 203,01%; prezzo sopra neckline.
 - Eve and Adam Bottom: **CONFERMATO RECENTE** (+2)
-  - Pattern Eve and Adam Bottom vicino a 74.945 dal 2026-09-02 al 2026-09-15. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 82.262. Breakout neckline: 2026-09-21 (12 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 89.580; progresso corrente: 32,11%. Relazione prezzo/neckline: sopra neckline.
-  - neckline 82.262; target 89.580; breakout 2026-09-21 (12g); progresso 32,11%; prezzo sopra neckline.
+  - Pattern Eve and Adam Bottom vicino a 74.945 dal 2026-09-02 al 2026-09-15. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 82.262. Breakout neckline: 2026-09-21 (13 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 89.580; progresso corrente: 35,28%. Relazione prezzo/neckline: sopra neckline.
+  - neckline 82.262; target 89.580; breakout 2026-09-21 (13g); progresso 35,28%; prezzo sopra neckline.
 - Doppio massimo: **CANDIDATO** (0)
-  - Due massimi simili vicino a 87.364 tra 2026-09-03 e 2026-09-21. Neckline ribassista stimata: 74.945. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 12 giorni.
-  - neckline 74.945; target 62.525; distanza dalla neckline 12,90%; prezzo sopra neckline.
+  - Due massimi simili vicino a 87.364 tra 2026-09-03 e 2026-09-21. Neckline ribassista stimata: 74.945. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 13 giorni.
+  - neckline 74.945; target 62.525; distanza dalla neckline 13,21%; prezzo sopra neckline.
 - Triplo massimo: **CANDIDATO** (0)
-  - Tre massimi simili vicino a 65.544 dal 2026-06-22 al 2026-08-09. Neckline ribassista stimata: 57.748. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 55 giorni.
-  - neckline 57.748; target 49.952; distanza dalla neckline 46,52%; prezzo sopra neckline.
+  - Tre massimi simili vicino a 65.544 dal 2026-06-22 al 2026-08-09. Neckline ribassista stimata: 57.748. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 56 giorni.
+  - neckline 57.748; target 49.952; distanza dalla neckline 46,92%; prezzo sopra neckline.
 - Adam and Eve Top: **CANDIDATO** (0)
-  - Pattern Adam and Eve Top vicino a 87.364 dal 2026-09-03 al 2026-09-21. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 74.945. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 12 giorni.
-  - neckline 74.945; target 62.525; distanza dalla neckline 12,90%; prezzo sopra neckline.
+  - Pattern Adam and Eve Top vicino a 87.364 dal 2026-09-03 al 2026-09-21. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 74.945. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 13 giorni.
+  - neckline 74.945; target 62.525; distanza dalla neckline 13,21%; prezzo sopra neckline.
 
 ### SOL
 
-- Prezzo: **119,53 $**
-- Punteggio tecnico: **5 / 12**
-- Verdetto: **COSTRUTTIVO MA NON CONFERMATO**
+- Prezzo: **120,74 $**
+- Punteggio tecnico: **7 / 12**
+- Verdetto: **RIALZISTA TECNICO**
 - Trend: **Trend rialzista** (3)
-- Momentum: **Momentum debole** (-2)
+- Momentum: **Momentum misto** (0)
 - Volume: **Volume da accumulazione** (2)
 - Struttura: **Volatilità in espansione** (0)
   - Dettaglio struttura: Ultimi minimi: 97.45 -> 96.23. Ultimi massimi: 107.1 -> 124.6.
@@ -111,25 +111,25 @@ Pattern classici e ciclo di vita:
 Pattern classici e ciclo di vita:
 
 - Doppio minimo: **TARGET RAGGIUNTO** (0)
-  - Due minimi simili vicino a 96,23 tra 2026-09-02 e 2026-09-16. Neckline stimata: 107,12. Breakout neckline: 2026-09-18 (15 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 118,01; progresso corrente: 113,98%. Relazione prezzo/neckline: sopra neckline.
-  - neckline 107,12; target 118,01; breakout 2026-09-18 (15g); progresso 113,98%; prezzo sopra neckline.
+  - Due minimi simili vicino a 96,23 tra 2026-09-02 e 2026-09-16. Neckline stimata: 107,12. Breakout neckline: 2026-09-18 (16 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 118,01; progresso corrente: 125,09%. Relazione prezzo/neckline: sopra neckline.
+  - neckline 107,12; target 118,01; breakout 2026-09-18 (16g); progresso 125,09%; prezzo sopra neckline.
 - Triplo minimo: **TARGET RAGGIUNTO** (0)
-  - Tre minimi simili vicino a 70,69 dal 2026-07-17 al 2026-08-16. Neckline stimata: 78,73. Breakout neckline: 2026-08-19 (45 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 86,76; progresso corrente: 508,04%. Relazione prezzo/neckline: sopra neckline.
-  - neckline 78,73; target 86,76; breakout 2026-08-19 (45g); progresso 508,04%; prezzo sopra neckline.
+  - Tre minimi simili vicino a 70,69 dal 2026-07-17 al 2026-08-16. Neckline stimata: 78,73. Breakout neckline: 2026-08-19 (46 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 86,76; progresso corrente: 523,10%. Relazione prezzo/neckline: sopra neckline.
+  - neckline 78,73; target 86,76; breakout 2026-08-19 (46g); progresso 523,10%; prezzo sopra neckline.
 - Adam and Eve Bottom: **TARGET RAGGIUNTO** (0)
-  - Pattern Adam and Eve Bottom vicino a 96,23 dal 2026-09-02 al 2026-09-16. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 107,12. Breakout neckline: 2026-09-18 (15 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 118,01; progresso corrente: 113,98%. Relazione prezzo/neckline: sopra neckline.
-  - neckline 107,12; target 118,01; breakout 2026-09-18 (15g); progresso 113,98%; prezzo sopra neckline.
+  - Pattern Adam and Eve Bottom vicino a 96,23 dal 2026-09-02 al 2026-09-16. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 107,12. Breakout neckline: 2026-09-18 (16 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 118,01; progresso corrente: 125,09%. Relazione prezzo/neckline: sopra neckline.
+  - neckline 107,12; target 118,01; breakout 2026-09-18 (16g); progresso 125,09%; prezzo sopra neckline.
 - Doppio massimo: **INVALIDATO** (0)
-  - Due massimi simili vicino a 110,04 tra 2026-08-27 e 2026-09-06. Neckline ribassista stimata: 97,45. Breakout neckline: 2026-09-15 (18 giorni fa). Stato: INVALIDATO. Target teorico: 84,86; progresso corrente: -175,40%. Relazione prezzo/neckline: sopra neckline.
-  - neckline 97,45; target 84,86; breakout 2026-09-15 (18g); progresso -175,40%; prezzo sopra neckline.
+  - Due massimi simili vicino a 110,04 tra 2026-08-27 e 2026-09-06. Neckline ribassista stimata: 97,45. Breakout neckline: 2026-09-15 (19 giorni fa). Stato: INVALIDATO. Target teorico: 84,86; progresso corrente: -185,01%. Relazione prezzo/neckline: sopra neckline.
+  - neckline 97,45; target 84,86; breakout 2026-09-15 (19g); progresso -185,01%; prezzo sopra neckline.
 - Triplo massimo: **CANDIDATO** (0)
-  - Tre massimi simili vicino a 78,88 dal 2026-07-15 al 2026-08-09. Neckline ribassista stimata: 70,69. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 55 giorni.
-  - neckline 70,69; target 62,51; distanza dalla neckline 69,08%; prezzo sopra neckline.
+  - Tre massimi simili vicino a 78,88 dal 2026-07-15 al 2026-08-09. Neckline ribassista stimata: 70,69. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 56 giorni.
+  - neckline 70,69; target 62,51; distanza dalla neckline 70,79%; prezzo sopra neckline.
 - Adam/Eve Top: **ASSENTE** (0)
 
 ### DOGE
 
-- Prezzo: **0.09315 $**
+- Prezzo: **0.09278 $**
 - Punteggio tecnico: **6 / 12**
 - Verdetto: **COSTRUTTIVO MA NON CONFERMATO**
 - Trend: **Trend rialzista** (3)
@@ -150,23 +150,23 @@ Pattern classici e ciclo di vita:
 Pattern classici e ciclo di vita:
 
 - Doppio minimo: **CONFERMATO RECENTE** (+2)
-  - Due minimi simili vicino a 0.07841 tra 2026-09-02 e 2026-09-16. Neckline stimata: 0.09421. Breakout neckline: 2026-09-21 (12 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 0.11001; progresso corrente: -6,70%. Relazione prezzo/neckline: sotto neckline.
-  - neckline 0.09421; target 0.11001; breakout 2026-09-21 (12g); progresso -6,70%; prezzo sotto neckline.
+  - Due minimi simili vicino a 0.07841 tra 2026-09-02 e 2026-09-16. Neckline stimata: 0.09421. Breakout neckline: 2026-09-21 (13 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 0.11001; progresso corrente: -9,04%. Relazione prezzo/neckline: sotto neckline.
+  - neckline 0.09421; target 0.11001; breakout 2026-09-21 (13g); progresso -9,04%; prezzo sotto neckline.
 - Triplo minimo: **TARGET RAGGIUNTO** (0)
-  - Tre minimi simili vicino a 0.06835 dal 2026-07-13 al 2026-08-12. Neckline stimata: 0.07380. Breakout neckline: 2026-08-19 (45 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 0.07926; progresso corrente: 354,65%. Relazione prezzo/neckline: sopra neckline.
-  - neckline 0.07380; target 0.07926; breakout 2026-08-19 (45g); progresso 354,65%; prezzo sopra neckline.
+  - Tre minimi simili vicino a 0.06835 dal 2026-07-13 al 2026-08-12. Neckline stimata: 0.07380. Breakout neckline: 2026-08-19 (46 giorni fa). Stato: TARGET RAGGIUNTO. Target teorico: 0.07926; progresso corrente: 347,86%. Relazione prezzo/neckline: sopra neckline.
+  - neckline 0.07380; target 0.07926; breakout 2026-08-19 (46g); progresso 347,86%; prezzo sopra neckline.
 - Adam and Eve Bottom: **CONFERMATO RECENTE** (+2)
-  - Pattern Adam and Eve Bottom vicino a 0.07841 dal 2026-09-02 al 2026-09-16. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 0.09421. Breakout neckline: 2026-09-21 (12 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 0.11001; progresso corrente: -6,70%. Relazione prezzo/neckline: sotto neckline.
-  - neckline 0.09421; target 0.11001; breakout 2026-09-21 (12g); progresso -6,70%; prezzo sotto neckline.
+  - Pattern Adam and Eve Bottom vicino a 0.07841 dal 2026-09-02 al 2026-09-16. Un minimo è più appuntito e l'altro più arrotondato. Neckline stimata: 0.09421. Breakout neckline: 2026-09-21 (13 giorni fa). Stato: CONFERMATO RECENTE. Target teorico: 0.11001; progresso corrente: -9,04%. Relazione prezzo/neckline: sotto neckline.
+  - neckline 0.09421; target 0.11001; breakout 2026-09-21 (13g); progresso -9,04%; prezzo sotto neckline.
 - Doppio massimo: **CANDIDATO** (0)
-  - Due massimi simili vicino a 0.10528 tra 2026-08-22 e 2026-09-22. Neckline ribassista stimata: 0.07841. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 11 giorni.
-  - neckline 0.07841; target 0.05153; distanza dalla neckline 18,81%; prezzo sopra neckline.
+  - Due massimi simili vicino a 0.10528 tra 2026-08-22 e 2026-09-22. Neckline ribassista stimata: 0.07841. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 12 giorni.
+  - neckline 0.07841; target 0.05153; distanza dalla neckline 18,33%; prezzo sopra neckline.
 - Triplo massimo: **CANDIDATO** (0)
-  - Tre massimi simili vicino a 0.07923 dal 2026-07-04 al 2026-08-11. Neckline ribassista stimata: 0.06797. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 53 giorni.
-  - neckline 0.06797; target 0.05671; distanza dalla neckline 37,04%; prezzo sopra neckline.
+  - Tre massimi simili vicino a 0.07923 dal 2026-07-04 al 2026-08-11. Neckline ribassista stimata: 0.06797. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 54 giorni.
+  - neckline 0.06797; target 0.05671; distanza dalla neckline 36,50%; prezzo sopra neckline.
 - Adam and Eve Top: **CANDIDATO** (0)
-  - Pattern Adam and Eve Top vicino a 0.07380 dal 2026-07-26 al 2026-08-11. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 0.06797. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 53 giorni.
-  - neckline 0.06797; target 0.06214; distanza dalla neckline 37,04%; prezzo sopra neckline.
+  - Pattern Adam and Eve Top vicino a 0.07380 dal 2026-07-26 al 2026-08-11. Un massimo è più appuntito e l'altro più arrotondato. Neckline ribassista stimata: 0.06797. Stato: CANDIDATO; la neckline non è ancora stata rotta con un margine di almeno 0.50%. Età della formazione: 54 giorni.
+  - neckline 0.06797; target 0.06214; distanza dalla neckline 36,50%; prezzo sopra neckline.
 
 ## Fibonacci automatico
 

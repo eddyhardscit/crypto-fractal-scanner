@@ -1,7 +1,7 @@
 # RSI top-cycle warning - SOL
 
-Generato: **2026-10-03 07:32:17 CEST**  
-UTC: **2026-10-03 05:32:17 UTC**
+Generato: **2026-10-04 07:32:17 CEST**  
+UTC: **2026-10-04 05:32:17 UTC**
 
 Questo report usa l'RSI soltanto come filtro di possibile esaurimento ciclo.
 La vicinanza matematica a una retta non basta: la linea deve essere costruita su almeno tre picchi, superare i controlli di qualità e trovarsi in una vera zona RSI da top.
@@ -10,16 +10,16 @@ La vicinanza matematica a una retta non basta: la linea deve essere costruita su
 
 | Voce | RSI attuale | Linea stimata grezza | Distanza matematica | Vicinanza matematica | Rischio reale | Picchi | R² | RMSE | Qualità linea |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Weekly RSI | 63,66 | 51,53 | -12,13 | SOPRA LA LINEA | LINEA NON AFFIDABILE / RISCHIO NON ATTIVO | 3 | 0,93 | 2,45 | IRREALISTICA / NON OPERATIVA |
-| Monthly RSI | 50,30 | 55,13 | 4,83 | VICINO | RSI TROPPO BASSO PER RISCHIO TOP | 3 | 1,00 | 0,18 | VALIDA / USO PRUDENTE |
+| Weekly RSI | 64,52 | 51,53 | -12,99 | SOPRA LA LINEA | LINEA NON AFFIDABILE / RISCHIO NON ATTIVO | 3 | 0,93 | 2,45 | IRREALISTICA / NON OPERATIVA |
+| Monthly RSI | 50,54 | 55,13 | 4,59 | VICINO | RSI TROPPO BASSO PER RISCHIO TOP | 3 | 1,00 | 0,18 | VALIDA / USO PRUDENTE |
 
 ## Confluenza con target ciclo SOL
 
 | Voce | Valore |
 | --- | --- |
-| Prezzo SOL attuale | 119,53 $ |
-| Target ciclo base | 537,02 $ |
-| Avanzamento verso target base | +22,26% |
+| Prezzo SOL attuale | 120,74 $ |
+| Target ciclo base | 534,59 $ |
+| Avanzamento verso target base | +22,59% |
 | Fase prezzo | inizio ciclo / lontano dal target macro |
 | Rischio top-cycle RSI | BASSO |
 | Score weekly | 0 |
@@ -75,7 +75,7 @@ Regole applicate:
 ## Stato attuale
 
 - **Weekly:** La top-line weekly non supera i controlli di qualità. Non viene usata per generare rischio top-cycle.
-- **Monthly:** RSI monthly è 50,3, sotto la soglia prudente 55. Anche se fosse vicino alla linea, non è una vera zona di esaurimento ciclo.
+- **Monthly:** RSI monthly è 50,5, sotto la soglia prudente 55. Anche se fosse vicino alla linea, non è una vera zona di esaurimento ciclo.
 - **Rischio top-cycle attuale:** BASSO
 
 Traduzione pratica: questo modulo serve soprattutto quando RSI weekly/monthly tornano davvero in area alta. Con RSI basso o con una top-line non affidabile resta neutrale e non sottrae punti al Global Confluence.
