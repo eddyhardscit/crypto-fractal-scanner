@@ -1,6 +1,6 @@
 # Bitcoin Macro Cycle — Power Law e Four-Year Spiral
 
-Generato: 2026-10-04 05:32 UTC
+Generato: 2026-10-04 14:40 UTC
 
 Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche, non autorizza leva e pesa **0** nel Global Confluence.
 
@@ -8,12 +8,12 @@ Questo modulo descrive il contesto macro di Bitcoin. Non genera entrate tattiche
 
 | Voce | Valore | Lettura |
 | --- | --- | --- |
-| Prezzo BTC | 84.851 $ | prezzo corrente |
-| Power Law centrale | 126.295 $ | deviazione -32,82% |
-| Banda p10-p90 | 78.576 $ / 318.922 $ | BASSA NEL CORRIDOIO |
-| Percentile residuo | 17,45% | posizione storica nel corridoio |
-| Esponente β | 5,7891 | R² log-log 91,94% |
-| Stabilità β | BASSA | range 1,3160 cambiando finestra |
+| Prezzo BTC | 85.120 $ | prezzo corrente |
+| Power Law centrale | 126.232 $ | deviazione -32,57% |
+| Banda p10-p90 | 78.552 $ / 318.819 $ | BASSA NEL CORRIDOIO |
+| Percentile residuo | 17,79% | posizione storica nel corridoio |
+| Esponente β | 5,7885 | R² log-log 91,94% |
+| Stabilità β | BASSA | range 1,3159 cambiando finestra |
 | Ultimo halving | 2024-04-19 | 898 giorni fa |
 | Fase ciclo | 61,47% | percentuale indicativa del ciclo quadriennale |
 | Peso Global | 0 | CONTESTO MACRO / DIAGNOSTICO |
@@ -22,11 +22,11 @@ La Power Law viene trattata come regressione empirica, non come legge fisica. Il
 
 ## Bitcoin Power Law
 
-- Campione: 2014-09-17 → 2026-10-04 (4400 osservazioni)
-- Formula stimata: prezzo ≈ exp(-38.9400) × giorni^5.7891
-- Prezzo centrale oggi: **126.295 $**
-- Posizione corrente: **BASSA NEL CORRIDOIO**, percentile 17,45%
-- Scarto dal centro: **-32,82%**
+- Campione: 2014-09-17 → 2026-10-04 (4401 osservazioni)
+- Formula stimata: prezzo ≈ exp(-38.9356) × giorni^5.7885
+- Prezzo centrale oggi: **126.232 $**
+- Posizione corrente: **BASSA NEL CORRIDOIO**, percentile 17,79%
+- Scarto dal centro: **-32,57%**
 
 ![Bitcoin Power Law](btc_power_law_chart.png)
 
@@ -36,11 +36,11 @@ La Power Law viene trattata come regressione empirica, non come legge fisica. Il
 
 | Inizio campione | β | R² log-log |
 | --- | --- | --- |
-| 2014 | 5,7891 | 91,94% |
-| 2015 | 5,8694 | 91,48% |
-| 2016 | 5,5518 | 87,76% |
-| 2017 | 4,8271 | 83,02% |
-| 2018 | 4,5535 | 78,59% |
+| 2014 | 5,7885 | 91,94% |
+| 2015 | 5,8688 | 91,48% |
+| 2016 | 5,5511 | 87,76% |
+| 2017 | 4,8266 | 83,03% |
+| 2018 | 4,5529 | 78,60% |
 
 ### Backtest walk-forward contro prezzo invariato
 
@@ -73,8 +73,8 @@ Campione molto piccolo: questi rendimenti sono contesto di ciclo, non probabilit
 
 | Asset | Coppia | Forza vs BTC | Score raw | Candidato | 30g | Peso Global |
 | --- | --- | --- | --- | --- | --- | --- |
-| SOL | SOL/BTC | SOVRAPERFORMA BTC | 5 | 1 | 11.27443743363461 | 0 |
-| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -4 | -1 | 1.2036191155411213 | 0 |
+| SOL | SOL/BTC | SOVRAPERFORMA BTC | 5 | 1 | 11.546881360778727 | 0 |
+| DOGE | DOGE/BTC | SOTTOPERFORMA BTC | -4 | -1 | 3.3612857622588033 | 0 |
 
 ## Tracker live Power Law
 

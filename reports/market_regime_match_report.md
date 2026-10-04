@@ -1,6 +1,6 @@
 # Market Regime Match Report
 
-Generated: 2026-10-04 05:31 UTC
+Generated: 2026-10-04 14:39 UTC
 
 This report adds market regime context to the raw fractal matches.
 
@@ -14,15 +14,15 @@ Main idea:
 
 | target   | snapshot_date   | target_regime_today   |   target_price | target_above_ma200   | target_return_90d   | target_ma200_slope_60d   | btc_regime_today   | btc_return_90d   | btc_ma200_slope_60d   |
 |:---------|:----------------|:----------------------|---------------:|:---------------------|:--------------------|:-------------------------|:-------------------|:-----------------|:----------------------|
-| BTC-USD | 2026-10-04 | RECOVERY | 84.844 $ | True | 32.58% | 1.09% | RECOVERY | 32.58% | 1.09% |
-| DOGE-USD | 2026-10-04 | RECOVERY | 0.09278 $ | True | 21.15% | -5.82% | RECOVERY | 32.58% | 1.09% |
-| SOL-USD | 2026-10-04 | RECOVERY | 120,74 $ | True | 47.40% | 1.34% | RECOVERY | 32.58% | 1.09% |
+| BTC-USD | 2026-10-04 | RECOVERY | 85.128 $ | True | 33.02% | 1.19% | RECOVERY | 33.02% | 1.19% |
+| DOGE-USD | 2026-10-04 | RECOVERY | 0.09358 $ | True | 22.19% | -5.83% | RECOVERY | 33.02% | 1.19% |
+| SOL-USD | 2026-10-04 | RECOVERY | 121,45 $ | True | 48.26% | 1.52% | RECOVERY | 33.02% | 1.19% |
 
 ## Summary by regime filter
 
 | target   | group                     |   matches | positive_30d_rate   | return_30d_p50   | return_30d_p75   | return_30d_p90   | drawdown_30d_p50   | drawdown_30d_p10   | max_gain_30d_p50   | max_gain_30d_p75   | max_gain_30d_p90   | positive_60d_rate   | return_60d_p50   | return_60d_p75   | return_60d_p90   |
 |:---------|:--------------------------|----------:|:--------------------|:-----------------|:-----------------|:-----------------|:-------------------|:-------------------|:-------------------|:-------------------|:-------------------|:--------------------|:-----------------|:-----------------|:-----------------|
-| BTC-USD | ALL_MATCHES | 40 | 50.00% | -0.55% | 21.78% | 39.15% | -11.06% | -22.65% | 17.67% | 38.95% | 65.51% | 52.50% | 0.46% | 32.29% | 86.69% |
+| BTC-USD | ALL_MATCHES | 40 | 52.50% | 0.78% | 21.78% | 39.15% | -10.65% | -22.65% | 17.67% | 38.95% | 65.51% | 52.50% | 0.46% | 32.29% | 86.69% |
 | BTC-USD | SAME_BTC_REGIME | 13 | 46.15% | -1.65% | 9.65% | 28.03% | -8.66% | -14.72% | 20.00% | 31.38% | 41.49% | 38.46% | -3.46% | 0.84% | 26.50% |
 | BTC-USD | SAME_ASSET_REGIME | 1 | 100.00% | 29.09% | 29.09% | 29.09% | -7.20% | -7.20% | 42.37% | 42.37% | 42.37% | 100.00% | 29.72% | 29.72% | 29.72% |
 | BTC-USD | SAME_BTC_AND_ASSET_REGIME | 1 | 100.00% | 29.09% | 29.09% | 29.09% | -7.20% | -7.20% | 42.37% | 42.37% | 42.37% | 100.00% | 29.72% | 29.72% | 29.72% |
@@ -39,7 +39,7 @@ Main idea:
 
 | target   | group                       |   matches | positive_30d_rate   | return_30d_p50   | drawdown_30d_p50   | max_gain_30d_p75   | positive_60d_rate   | return_60d_p50   | max_gain_60d_p75   |
 |:---------|:----------------------------|----------:|:--------------------|:-----------------|:-------------------|:-------------------|:--------------------|:-----------------|:-------------------|
-| BTC-USD | HISTORICAL_BTC_BEAR | 21 | 52.38% | 0.23% | -11.14% | 41.87% | 57.14% | 2.97% | 43.24% |
+| BTC-USD | HISTORICAL_BTC_BEAR | 21 | 57.14% | 1.45% | -10.30% | 41.87% | 57.14% | 2.97% | 43.24% |
 | BTC-USD | HISTORICAL_BTC_BULL | 4 | 50.00% | -0.51% | -13.48% | 84.24% | 75.00% | 89.21% | 288.36% |
 | BTC-USD | HISTORICAL_BTC_DISTRIBUTION | 2 | 50.00% | -12.65% | -31.59% | 18.90% | 50.00% | 100.93% | 205.53% |
 | BTC-USD | HISTORICAL_BTC_RECOVERY | 13 | 46.15% | -1.65% | -8.66% | 31.38% | 38.46% | -3.46% | 31.38% |
@@ -55,7 +55,7 @@ Main idea:
 
 | target   | group                         |   matches | positive_30d_rate   | return_30d_p50   | drawdown_30d_p50   | max_gain_30d_p75   | positive_60d_rate   | return_60d_p50   | max_gain_60d_p75   |
 |:---------|:------------------------------|----------:|:--------------------|:-----------------|:-------------------|:-------------------|:--------------------|:-----------------|:-------------------|
-| BTC-USD | HISTORICAL_ASSET_BEAR | 35 | 48.57% | -1.32% | -11.14% | 33.64% | 48.57% | -1.33% | 39.92% |
+| BTC-USD | HISTORICAL_ASSET_BEAR | 35 | 51.43% | 0.23% | -10.99% | 33.64% | 48.57% | -1.33% | 39.92% |
 | BTC-USD | HISTORICAL_ASSET_BULL | 2 | 50.00% | 81.51% | -7.14% | 145.42% | 50.00% | 198.24% | 358.24% |
 | BTC-USD | HISTORICAL_ASSET_DISTRIBUTION | 2 | 50.00% | 32.89% | -14.30% | 93.49% | 100.00% | 57.96% | 106.96% |
 | BTC-USD | HISTORICAL_ASSET_RECOVERY | 1 | 100.00% | 29.09% | -7.20% | 42.37% | 100.00% | 29.72% | 42.37% |
@@ -83,31 +83,31 @@ A single cohort is selected deterministically: SAME_BTC_AND_ASSET_REGIME, otherw
 
 | target   | similar_asset   | start_date   | similarity   | btc_regime_at_match   | similar_asset_regime_at_match   | regime_alignment   | outcome_family   | return_30d   | drawdown_30d   | max_gain_30d   | return_60d   | drawdown_60d   | max_gain_60d   |
 |:---------|:----------------|:-------------|:-------------|:----------------------|:--------------------------------|:-------------------|:-----------------|:-------------|:---------------|:---------------|:-------------|:---------------|:---------------|
-| BTC-USD | EGLD-USD | 2023-09-08 | 88.84% | RECOVERY | BEAR | SAME_BTC_ONLY | BEARISH_30D | -12.39% | -15.18% | 20.00% | 0.08% | -19.94% | 20.00% |
-| BTC-USD | XTZ-USD | 2023-09-08 | 88.72% | RECOVERY | BEAR | SAME_BTC_ONLY | BULLISH_30D | 23.80% | -8.09% | 23.80% | 13.64% | -8.09% | 23.80% |
-| BTC-USD | QTUM-USD | 2023-09-03 | 88.72% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | 1.33% | -4.79% | 19.28% | -3.46% | -10.06% | 19.28% |
-| BTC-USD | ATOM-USD | 2023-09-08 | 87.93% | RECOVERY | BEAR | SAME_BTC_ONLY | BEARISH_30D | -15.48% | -21.95% | 0.00% | -15.03% | -25.65% | 0.00% |
-| BTC-USD | EOS-USD | 2023-09-08 | 87.87% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -3.03% | -12.83% | 12.39% | -5.97% | -15.90% | 12.39% |
+| BTC-USD | EGLD-USD | 2023-09-08 | 88.85% | RECOVERY | BEAR | SAME_BTC_ONLY | BEARISH_30D | -12.39% | -15.18% | 20.00% | 0.08% | -19.94% | 20.00% |
+| BTC-USD | XTZ-USD | 2023-09-08 | 88.73% | RECOVERY | BEAR | SAME_BTC_ONLY | BULLISH_30D | 23.80% | -8.09% | 23.80% | 13.64% | -8.09% | 23.80% |
+| BTC-USD | QTUM-USD | 2023-09-03 | 88.70% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | 1.33% | -4.79% | 19.28% | -3.46% | -10.06% | 19.28% |
+| BTC-USD | ATOM-USD | 2023-09-08 | 87.97% | RECOVERY | BEAR | SAME_BTC_ONLY | BEARISH_30D | -15.48% | -21.95% | 0.00% | -15.03% | -25.65% | 0.00% |
+| BTC-USD | EOS-USD | 2023-09-08 | 87.88% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -3.03% | -12.83% | 12.39% | -5.97% | -15.90% | 12.39% |
 | BTC-USD | MANA-USD | 2023-09-03 | 87.71% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -5.13% | -12.85% | 14.59% | -4.63% | -13.25% | 14.59% |
 | BTC-USD | ETC-USD | 2023-09-08 | 87.12% | RECOVERY | RECOVERY | SAME_BTC_AND_ASSET | BULLISH_30D | 29.09% | -7.20% | 42.37% | 29.72% | -7.20% | 42.37% |
-| BTC-USD | XRP-USD | 2023-09-08 | 86.40% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -7.08% | -10.99% | 4.28% | -13.14% | -18.82% | 4.28% |
-| BTC-USD | KAVA-USD | 2023-09-08 | 86.16% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -7.45% | -9.25% | 16.06% | -9.35% | -17.51% | 16.06% |
-| BTC-USD | NEAR-USD | 2023-09-08 | 85.59% | RECOVERY | BEAR | SAME_BTC_ONLY | HIGH_SPIKE_60D | 38.69% | -4.73% | 80.83% | 40.02% | -4.73% | 80.83% |
-| DOGE-USD | NEAR-USD | 2023-09-08 | 86.94% | RECOVERY | BEAR | SAME_BTC_ONLY | HIGH_SPIKE_60D | 38.69% | -4.73% | 80.83% | 40.02% | -4.73% | 80.83% |
-| DOGE-USD | EGLD-USD | 2023-09-08 | 86.21% | RECOVERY | BEAR | SAME_BTC_ONLY | BEARISH_30D | -12.39% | -15.18% | 20.00% | 0.08% | -19.94% | 20.00% |
-| DOGE-USD | EOS-USD | 2023-09-08 | 85.36% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -3.03% | -12.83% | 12.39% | -5.97% | -15.90% | 12.39% |
-| DOGE-USD | XTZ-USD | 2023-09-08 | 84.68% | RECOVERY | BEAR | SAME_BTC_ONLY | BULLISH_30D | 23.80% | -8.09% | 23.80% | 13.64% | -8.09% | 23.80% |
-| DOGE-USD | KAVA-USD | 2023-09-08 | 84.65% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -7.45% | -9.25% | 16.06% | -9.35% | -17.51% | 16.06% |
-| DOGE-USD | DOT-USD | 2023-09-08 | 84.39% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | 6.09% | -5.23% | 30.24% | 8.08% | -10.63% | 30.24% |
-| DOGE-USD | LRC-USD | 2023-09-08 | 83.88% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -1.65% | -8.66% | 31.38% | -3.24% | -12.90% | 31.38% |
-| DOGE-USD | ATOM-USD | 2023-09-08 | 82.80% | RECOVERY | BEAR | SAME_BTC_ONLY | BEARISH_30D | -15.48% | -21.95% | 0.00% | -15.03% | -25.65% | 0.00% |
-| DOGE-USD | MANA-USD | 2023-09-08 | 82.42% | RECOVERY | BEAR | SAME_BTC_ONLY | BEARISH_30D | -10.01% | -15.01% | 11.74% | -2.99% | -15.41% | 11.74% |
+| BTC-USD | XRP-USD | 2023-09-08 | 86.37% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -7.08% | -10.99% | 4.28% | -13.14% | -18.82% | 4.28% |
+| BTC-USD | KAVA-USD | 2023-09-08 | 86.15% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -7.45% | -9.25% | 16.06% | -9.35% | -17.51% | 16.06% |
+| BTC-USD | NEAR-USD | 2023-09-08 | 85.60% | RECOVERY | BEAR | SAME_BTC_ONLY | HIGH_SPIKE_60D | 38.69% | -4.73% | 80.83% | 40.02% | -4.73% | 80.83% |
+| DOGE-USD | NEAR-USD | 2023-09-08 | 86.97% | RECOVERY | BEAR | SAME_BTC_ONLY | HIGH_SPIKE_60D | 38.69% | -4.73% | 80.83% | 40.02% | -4.73% | 80.83% |
+| DOGE-USD | EGLD-USD | 2023-09-08 | 86.24% | RECOVERY | BEAR | SAME_BTC_ONLY | BEARISH_30D | -12.39% | -15.18% | 20.00% | 0.08% | -19.94% | 20.00% |
+| DOGE-USD | EOS-USD | 2023-09-08 | 85.40% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -3.03% | -12.83% | 12.39% | -5.97% | -15.90% | 12.39% |
+| DOGE-USD | XTZ-USD | 2023-09-08 | 84.70% | RECOVERY | BEAR | SAME_BTC_ONLY | BULLISH_30D | 23.80% | -8.09% | 23.80% | 13.64% | -8.09% | 23.80% |
+| DOGE-USD | KAVA-USD | 2023-09-08 | 84.64% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -7.45% | -9.25% | 16.06% | -9.35% | -17.51% | 16.06% |
+| DOGE-USD | DOT-USD | 2023-09-08 | 84.45% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | 6.09% | -5.23% | 30.24% | 8.08% | -10.63% | 30.24% |
+| DOGE-USD | LRC-USD | 2023-09-08 | 83.91% | RECOVERY | BEAR | SAME_BTC_ONLY | MIXED | -1.65% | -8.66% | 31.38% | -3.24% | -12.90% | 31.38% |
+| DOGE-USD | ATOM-USD | 2023-09-08 | 82.88% | RECOVERY | BEAR | SAME_BTC_ONLY | BEARISH_30D | -15.48% | -21.95% | 0.00% | -15.03% | -25.65% | 0.00% |
+| DOGE-USD | MANA-USD | 2023-09-08 | 82.44% | RECOVERY | BEAR | SAME_BTC_ONLY | BEARISH_30D | -10.01% | -15.01% | 11.74% | -2.99% | -15.41% | 11.74% |
 | SOL-USD | MKR-USD | 2018-12-24 | 88.63% | BEAR | RECOVERY | SAME_ASSET_ONLY | BEARISH_30D | -29.36% | -36.47% | 0.00% | -7.04% | -36.47% | 0.00% |
-| SOL-USD | HBAR-USD | 2023-09-10 | 87.83% | BEAR | RECOVERY | SAME_ASSET_ONLY | MIXED | -0.62% | -5.39% | 22.01% | 7.74% | -13.94% | 22.01% |
-| SOL-USD | WAVES-USD | 2023-09-08 | 87.35% | RECOVERY | RECOVERY | SAME_BTC_AND_ASSET | MIXED | 5.14% | 0.00% | 28.82% | -1.73% | -11.91% | 28.82% |
-| SOL-USD | ZEC-USD | 2024-05-20 | 86.84% | BULL | RECOVERY | SAME_ASSET_ONLY | BEARISH_30D | -15.14% | -24.21% | 0.00% | -2.90% | -27.89% | 6.57% |
+| SOL-USD | HBAR-USD | 2023-09-10 | 87.86% | BEAR | RECOVERY | SAME_ASSET_ONLY | MIXED | -0.62% | -5.39% | 22.01% | 7.74% | -13.94% | 22.01% |
+| SOL-USD | WAVES-USD | 2023-09-08 | 87.33% | RECOVERY | RECOVERY | SAME_BTC_AND_ASSET | MIXED | 5.14% | 0.00% | 28.82% | -1.73% | -11.91% | 28.82% |
+| SOL-USD | ZEC-USD | 2024-05-20 | 86.79% | BULL | RECOVERY | SAME_ASSET_ONLY | BEARISH_30D | -15.14% | -24.21% | 0.00% | -2.90% | -27.89% | 6.57% |
 | SOL-USD | OP-USD | 2023-09-09 | 86.76% | BEAR | RECOVERY | SAME_ASSET_ONLY | EXPLOSIVE_60D | 72.45% | 0.00% | 91.14% | 85.11% | 0.00% | 91.14% |
-| SOL-USD | ETC-USD | 2023-09-08 | 86.21% | RECOVERY | RECOVERY | SAME_BTC_AND_ASSET | BULLISH_30D | 29.09% | -7.20% | 42.37% | 29.72% | -7.20% | 42.37% |
+| SOL-USD | ETC-USD | 2023-09-08 | 86.20% | RECOVERY | RECOVERY | SAME_BTC_AND_ASSET | BULLISH_30D | 29.09% | -7.20% | 42.37% | 29.72% | -7.20% | 42.37% |
 
 ## Interpretation rules
 

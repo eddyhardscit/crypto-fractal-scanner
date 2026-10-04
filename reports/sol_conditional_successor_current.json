@@ -5,7 +5,7 @@
     "then": 10.0,
     "within_days": 30
   },
-  "current_price": 120.73999786376953,
+  "current_price": 121.44999694824219,
   "distinct_assets": 8,
   "episodes": [
     {
@@ -15,7 +15,7 @@
       "minus5_hit_date": "2023-10-06",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2023-10-23",
-      "similarity": 90.48957646589676
+      "similarity": 90.49310039886784
     },
     {
       "asset": "BTC-USD",
@@ -24,7 +24,7 @@
       "minus5_hit_date": "2023-03-08",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2023-03-17",
-      "similarity": 88.18504279502665
+      "similarity": 88.15970480389697
     },
     {
       "asset": "KSM-USD",
@@ -33,7 +33,7 @@
       "minus5_hit_date": "2023-12-15",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2023-12-21",
-      "similarity": 87.74496775699811
+      "similarity": 87.75784880994276
     },
     {
       "asset": "EOS-USD",
@@ -42,7 +42,7 @@
       "minus5_hit_date": "2023-12-19",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-12-27",
-      "similarity": 87.22185689337425
+      "similarity": 87.2327204853458
     },
     {
       "asset": "KAVA-USD",
@@ -51,7 +51,7 @@
       "minus5_hit_date": "2023-12-18",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-12-26",
-      "similarity": 86.70067599479887
+      "similarity": 86.68738478800032
     },
     {
       "asset": "XTZ-USD",
@@ -60,7 +60,7 @@
       "minus5_hit_date": "2023-12-18",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-12-25",
-      "similarity": 86.4791336217552
+      "similarity": 86.47984121562708
     },
     {
       "asset": "ETC-USD",
@@ -69,7 +69,7 @@
       "minus5_hit_date": "2023-12-19",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2024-01-10",
-      "similarity": 86.20864238499149
+      "similarity": 86.19948851606244
     },
     {
       "asset": "AVAX-USD",
@@ -78,7 +78,7 @@
       "minus5_hit_date": "2021-10-10",
       "path_class_60d": "DEEP_PULLBACK_THEN_RECOVERY",
       "plus10_anchor_date": "2021-10-25",
-      "similarity": 85.99181097336687
+      "similarity": 85.97495021187365
     }
   ],
   "forecast_date": "2026-10-04",
@@ -99,15 +99,15 @@
   "q30": {
     "count": 8,
     "p10_pct": -23.048366886461082,
-    "p10_price": 92.91140017742266,
+    "p10_price": 93.45775606801554,
     "p25_pct": -12.079085690539547,
-    "p25_price": 106.15571005904918,
+    "p25_price": 106.77994774570635,
     "p50_pct": 5.176406337222744,
-    "p50_price": 126.98999076475229,
+    "p50_price": 127.73674228682782,
     "p75_pct": 28.785369212430815,
-    "p75_price": 155.49545203593667,
+    "p75_price": 156.40982697827965,
     "p90_pct": 101.55728528320344,
-    "p90_price": 243.3602619452117
+    "p90_price": 244.79131682541038
   },
   "qualified_episodes": 8,
   "small_sample": true,
