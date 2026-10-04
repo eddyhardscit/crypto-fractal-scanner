@@ -20,6 +20,7 @@ import yfinance as yf
 
 import forecast_provenance as fp
 import scanner as legacy
+from market_forecast_lab_http import call_with_retry, request_json
 from market_forecast_lab_engine import (
     LEGACY_IDS, SharedSignatureIndex, build_forecast, digest, evaluate,
     load_legacy_inputs, read_jsonl, rotation, verify_canonical,
@@ -54,7 +55,8 @@ def configure_store(root):
 
 def source_hashes():
     names = ['market_forecast_lab.py', 'market_forecast_lab_engine.py',
-             'market_forecast_lab_universe.py', 'market_forecast_lab_run.py',
+             'market_forecast_lab_universe.py', 'market_forecast_lab_http.py',
+             'market_forecast_lab_run.py',
              'market_forecast_lab_publication.py', 'market_forecast_lab_config.json',
              'market_forecast_lab_registry.json', 'scanner.py', 'forecast_provenance.py']
     return {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in names}
@@ -104,8 +106,11 @@ def _binance_json(path, params):
         'https://api.binance.com' + path + '?' + query,
         headers={'User-Agent': 'MarketForecastLab/1.0'},
     )
-    with urllib.request.urlopen(request, timeout=20) as response:
-        return json.load(response)
+    return request_json(
+        request, timeout=20,
+        on_retry=lambda fields: event(
+            'provider_retry', provider='Binance Spot REST', operation=path, **fields),
+    )
 
 
 def _download_binance_spot(entry, as_of):
@@ -174,7 +179,12 @@ def acquire_extra(registry, markets, raw, processed, snapshot_ids, old, as_of, c
                 source = 'Binance Spot REST'
                 requested_range = f"symbol={ticker};interval=1d;start=listing;as_of={as_of}"
             elif provider == 'YAHOO_FINANCE':
-                metadata = yf.Ticker(ticker).get_history_metadata()
+                metadata = call_with_retry(
+                    lambda: yf.Ticker(ticker).get_history_metadata(),
+                    on_retry=lambda fields: event(
+                        'provider_retry', provider='Yahoo Finance/yfinance',
+                        operation='metadata', ticker=ticker, **fields),
+                )
                 normal = lambda value: re.sub(r'[^a-z0-9]', '', str(value).lower().removesuffix(' usd'))
                 expected = entry.get('ohlc_name_aliases', []) + [markets_by_id.get(cid, {}).get('name', cid)]
                 if (metadata.get('symbol') != ticker or metadata.get('currency') != 'USD'
@@ -183,8 +193,13 @@ def acquire_extra(registry, markets, raw, processed, snapshot_ids, old, as_of, c
                                    normal(metadata.get('shortName')) == normal(name) for name in expected)):
                     raise ValueError('OHLC_IDENTITY_NOT_VERIFIED')
                 identities[ticker] = {k: metadata.get(k) for k in ('symbol', 'currency', 'instrumentType', 'shortName', 'longName')}
-                frame = yf.download(ticker, period='10y', interval='1d', auto_adjust=True,
-                                    progress=False, threads=False)
+                frame = call_with_retry(
+                    lambda: yf.download(ticker, period='10y', interval='1d', auto_adjust=True,
+                                        progress=False, threads=False),
+                    on_retry=lambda fields: event(
+                        'provider_retry', provider='Yahoo Finance/yfinance',
+                        operation='download_1d', ticker=ticker, **fields),
+                )
                 if isinstance(frame.columns, pd.MultiIndex):
                     frame = frame.xs(ticker, axis=1, level=1)
                 frame = frame.dropna()
@@ -193,8 +208,13 @@ def acquire_extra(registry, markets, raw, processed, snapshot_ids, old, as_of, c
                 if frame.empty:
                     raise ValueError('EMPTY_OHLC')
                 if legacy.recent_completed_gap_days(frame, as_of):
-                    hourly = yf.download(ticker, period='7d', interval='1h', auto_adjust=True,
-                                         progress=False, threads=False)
+                    hourly = call_with_retry(
+                        lambda: yf.download(ticker, period='7d', interval='1h', auto_adjust=True,
+                                            progress=False, threads=False),
+                        on_retry=lambda fields: event(
+                            'provider_retry', provider='Yahoo Finance/yfinance',
+                            operation='download_1h', ticker=ticker, **fields),
+                    )
                     if isinstance(hourly.columns, pd.MultiIndex):
                         hourly = hourly.xs(ticker, axis=1, level=1)
                     frame, repaired = legacy.repair_recent_daily_gaps(frame, hourly.dropna(), as_of)

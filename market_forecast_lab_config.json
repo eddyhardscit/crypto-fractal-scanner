@@ -23,5 +23,6 @@
   "paired_minimum": 30,
   "method": "CLOSE_ONLY_LEGACY_COMPATIBLE",
   "current_signature_max_missing_days": 1,
-  "current_signature_max_gap_days": 2
+  "current_signature_max_gap_days": 2,
+  "market_page_pacing_seconds": 1.0
 }

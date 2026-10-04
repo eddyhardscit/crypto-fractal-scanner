@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -10,6 +11,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from market_forecast_lab_http import request_json
 
 CONFIG_PATH = Path(__file__).with_name('market_forecast_lab_config.json')
 REGISTRY_PATH = Path(__file__).with_name('market_forecast_lab_registry.json')
@@ -56,13 +59,21 @@ def fetch_markets(config):
             headers['x-cg-demo-api-key'] = os.environ['COINGECKO_DEMO_API_KEY']
         request = urllib.request.Request('https://api.coingecko.com/api/v3/coins/markets?' + params,
                                          headers=headers)
-        with urllib.request.urlopen(request, timeout=30) as response:
-            part = json.load(response)
+        part = request_json(
+            request, timeout=30,
+            on_retry=lambda fields: print(json.dumps(dict(
+                phase='provider_retry', provider='CoinGecko',
+                operation='coins/markets', page=page, **fields)), flush=True),
+        )
         if not isinstance(part, list):
             raise ValueError('INVALID_MARKET_RESPONSE')
         rows.extend(part)
         if len(part) < config['market_per_page']:
             break
+        if page < config['market_pages']:
+            pacing = float(config.get('market_page_pacing_seconds', 1.0))
+            if pacing > 0:
+                time.sleep(pacing)
     unique, duplicates = dedupe_market_rows(rows)
     return {'provider': 'CoinGecko', 'generated_at': datetime.now(timezone.utc).isoformat(),
             'raw_row_count': len(rows), 'duplicate_ids_removed': duplicates, 'rows': unique}
