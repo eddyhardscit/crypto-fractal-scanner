@@ -1,6 +1,6 @@
 # Divergenze RSI multi-timeframe — diagnostica
 
-Generato: 2026-10-04 14:40 UTC
+Generato: 2026-10-05 05:32 UTC
 
 Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Riconosce divergenze regolari e nascoste, segnali in formazione, invalidazioni e semplice conferma del momentum.
 
@@ -8,22 +8,22 @@ Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Ric
 
 ## Sintesi corrente
 
-| Asset   | Daily                      | Stato D   | Weekly             | Stato W    | Lettura weekly                                                                                                              |   Peso |
-|:--------|:---------------------------|:----------|:-------------------|:-----------|:----------------------------------------------------------------------------------------------------------------------------|-------:|
-| BTC     | Misto / nessuna divergenza | CONTESTO  | Conferma rialzista | CONTESTO   | Prezzo e RSI stanno salendo insieme: momentum rialzista confermato.                                                         |      0 |
-| SOL     | Conferma rialzista         | CONTESTO  | Conferma rialzista | CONTESTO   | Prezzo e RSI stanno salendo insieme: momentum rialzista confermato.                                                         |      0 |
-| DOGE    | Misto / nessuna divergenza | CONTESTO  | Hidden bearish     | CONFERMATA | Hidden bearish confermata sui due pivot del prezzo e dell'RSI. Contesto diagnostico: nessun punto operativo viene aggiunto. |      0 |
+| Asset   | Daily                      | Stato D   | Weekly                    | Stato W    | Lettura weekly                                                                                       |   Peso |
+|:--------|:---------------------------|:----------|:--------------------------|:-----------|:-----------------------------------------------------------------------------------------------------|-------:|
+| BTC     | Misto / nessuna divergenza | CONTESTO  | Conferma rialzista        | CONTESTO   | Prezzo e RSI stanno salendo insieme: momentum rialzista confermato.                                  |      0 |
+| SOL     | Misto / nessuna divergenza | CONTESTO  | Conferma rialzista        | CONTESTO   | Prezzo e RSI stanno salendo insieme: momentum rialzista confermato.                                  |      0 |
+| DOGE    | Misto / nessuna divergenza | CONTESTO  | Hidden bearish invalidata | INVALIDATA | La precedente hidden bearish non è più sostenuta dalla relazione corrente tra pivot di prezzo e RSI. |      0 |
 
 ## Dettaglio dei pivot
 
-| Asset   | TF   | Tipo                       | Stato      | Prezzo / RSI      | Pivot confrontati                                                   | Δ prezzo contesto   | Δ RSI contesto   |   Peso |
-|:--------|:-----|:---------------------------|:-----------|:------------------|:--------------------------------------------------------------------|:--------------------|:-----------------|-------:|
-| BTC     | 1D   | Misto / nessuna divergenza | CONTESTO   | 85.120 $ / 64,84  | n/a                                                                 | +4,90%              | 0,90             |      0 |
-| BTC     | 1W   | Conferma rialzista         | CONTESTO   | 85.120 $ / 62,11  | n/a                                                                 | +9,47%              | 5,47             |      0 |
-| SOL     | 1D   | Conferma rialzista         | CONTESTO   | 121,43 $ / 65,97  | n/a                                                                 | +9,27%              | 2,03             |      0 |
-| SOL     | 1W   | Conferma rialzista         | CONTESTO   | 121,43 $ / 65,02  | n/a                                                                 | +27,23%             | 10,49            |      0 |
-| DOGE    | 1D   | Misto / nessuna divergenza | CONTESTO   | 0.09366 $ / 55,02 | n/a                                                                 | +7,31%              | -1,35            |      0 |
-| DOGE    | 1W   | Hidden bearish             | CONFERMATA | 0.09366 $ / 50,75 | 2026-05-17 0.11825 $ / RSI 44,25 → 2026-08-23 0.09998 $ / RSI 49,72 | n/a                 | n/a              |      0 |
+| Asset   | TF   | Tipo                       | Stato      | Prezzo / RSI      | Pivot confrontati   | Δ prezzo contesto   | Δ RSI contesto   |   Peso |
+|:--------|:-----|:---------------------------|:-----------|:------------------|:--------------------|:--------------------|:-----------------|-------:|
+| BTC     | 1D   | Misto / nessuna divergenza | CONTESTO   | 85.470 $ / 65,86  | n/a                 | +5,33%              | 1,93             |      0 |
+| BTC     | 1W   | Conferma rialzista         | CONTESTO   | 85.470 $ / 62,45  | n/a                 | +10,05%             | 5,91             |      0 |
+| SOL     | 1D   | Misto / nessuna divergenza | CONTESTO   | 120,10 $ / 64,34  | n/a                 | +8,07%              | 0,40             |      0 |
+| SOL     | 1W   | Conferma rialzista         | CONTESTO   | 120,10 $ / 63,94  | n/a                 | +17,89%             | 5,98             |      0 |
+| DOGE    | 1D   | Misto / nessuna divergenza | CONTESTO   | 0.09492 $ / 56,99 | n/a                 | +8,75%              | 0,63             |      0 |
+| DOGE    | 1W   | Hidden bearish invalidata  | INVALIDATA | 0.09492 $ / 51,43 | n/a                 | +15,62%             | 7,41             |      0 |
 
 ### BTC
 
@@ -32,13 +32,13 @@ Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Ric
 
 ### SOL
 
-- **1D — Conferma rialzista / CONTESTO**: Prezzo e RSI stanno salendo insieme: momentum rialzista confermato.
+- **1D — Misto / nessuna divergenza / CONTESTO**: Misto / nessuna divergenza. Non esiste una divergenza confermata sugli ultimi pivot.
 - **1W — Conferma rialzista / CONTESTO**: Prezzo e RSI stanno salendo insieme: momentum rialzista confermato.
 
 ### DOGE
 
 - **1D — Misto / nessuna divergenza / CONTESTO**: Misto / nessuna divergenza. Non esiste una divergenza confermata sugli ultimi pivot.
-- **1W — Hidden bearish / CONFERMATA**: Hidden bearish confermata sui due pivot del prezzo e dell'RSI. Contesto diagnostico: nessun punto operativo viene aggiunto.
+- **1W — Hidden bearish invalidata / INVALIDATA**: La precedente hidden bearish non è più sostenuta dalla relazione corrente tra pivot di prezzo e RSI.
 
 ## Tracker live delle divergenze confermate
 
@@ -58,6 +58,7 @@ Viene salvato un solo evento per combinazione di asset, timeframe, tipo e coppia
 | BTC     | 1W   | Bullish regolare |          30 |           1 | +100,00%      | +1,03%            | RACCOLTA DATI |      0 |
 | BTC     | 1W   | Bullish regolare |          60 |           1 | +100,00%      | +22,85%           | RACCOLTA DATI |      0 |
 | DOGE    | 1D   | Bullish regolare |          30 |           1 | +100,00%      | +22,35%           | RACCOLTA DATI |      0 |
+| DOGE    | 1D   | Bullish regolare |          60 |           1 | +100,00%      | +35,62%           | RACCOLTA DATI |      0 |
 | DOGE    | 1D   | Hidden bearish   |          30 |           2 | +50,00%       | -8,18%            | RACCOLTA DATI |      0 |
 | DOGE    | 1D   | Hidden bearish   |          60 |           2 | 0,00%         | -25,06%           | RACCOLTA DATI |      0 |
 | DOGE    | 1W   | Hidden bearish   |          30 |           1 | 0,00%         | -13,35%           | RACCOLTA DATI |      0 |

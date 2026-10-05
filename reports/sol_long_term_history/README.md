@@ -1,7 +1,7 @@
 # SOL Long-Term Cone History
 
-Ultimo aggiornamento: **2026-10-04T06:00:54.223784Z**  
-SOL spot: **$120.80**  
+Ultimo aggiornamento: **2026-10-04T15:02:31.437520Z**  
+SOL spot: **$121.92**  
 Cohort: **40** analoghi / **30.0** distinct assets  
 **LOG_ROBUST_TAIL · DIAGNOSTIC ONLY**
 
@@ -26,10 +26,10 @@ Asse X = date future reali. Le linee mostrano esplicitamente p10, p25, p50, p75 
 
 | Horizon | Target date | p10 | p25 | p50 | p75 | p90 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| 3M | 2027-01-02 | $98.44 | $121.84 | $141.16 | $182.49 | $237.86 |
-| 6M | 2027-04-02 | $65.46 | $75.60 | $91.28 | $121.56 | $186.02 |
-| 1Y | 2027-10-04 | $71.24 | $95.27 | $144.00 | $201.69 | $327.18 |
-| 2Y | 2028-10-03 | $17.81 | $34.52 | $70.28 | $129.90 | $368.12 |
+| 3M | 2027-01-02 | $99.35 | $122.97 | $142.47 | $184.19 | $240.07 |
+| 6M | 2027-04-02 | $66.06 | $76.30 | $92.13 | $122.69 | $187.74 |
+| 1Y | 2027-10-04 | $71.90 | $96.15 | $145.33 | $203.56 | $330.21 |
+| 2Y | 2028-10-03 | $17.98 | $34.84 | $70.93 | $131.10 | $371.53 |
 
 ## Forward vintages
 
@@ -60,9 +60,9 @@ Le percentuali rappresentano la frequenza empirica degli analoghi che terminano 
 
 | Horizon | p50 | p75 | p90 | P≥300 | P≥500 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 6M | $91.28 | $121.56 | $186.02 | 10.00% | 0.00% |
-| 1Y | $144.00 | $201.69 | $327.18 | 13.33% | 3.33% |
-| 2Y | $70.28 | $129.90 | $368.12 | 17.86% | 7.14% |
+| 6M | $92.13 | $122.69 | $187.74 | 10.00% | 0.00% |
+| 1Y | $145.33 | $203.56 | $330.21 | 13.33% | 3.33% |
+| 2Y | $70.93 | $131.10 | $371.53 | 17.86% | 7.14% |
 
 ## Recent drift
 
@@ -116,7 +116,7 @@ Indicatore diagnostico; non va usato per decisioni operative. Una sola osservazi
 
 FIRST_REAL_SNAPSHOT=2026-09-03T17:03:34.597672Z  
 FIRST_AVAILABLE_LONG_TERM_SNAPSHOT=2026-09-03T17:03:34.597672Z  
-LATEST_SNAPSHOT=2026-10-04T06:00:54.223784Z  
+LATEST_SNAPSHOT=2026-10-04T15:02:31.437520Z  
 DAILY_ROWS=28
 
 Fonti autoritative: `sol_long_term_probability_cone.json`, `sol_long_term_probability_cone_history.jsonl` e snapshot immutabili in `sol_long_term_probability_cone_history/` nel publisher canonico.

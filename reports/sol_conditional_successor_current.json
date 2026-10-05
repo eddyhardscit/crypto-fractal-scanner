@@ -5,8 +5,8 @@
     "then": 10.0,
     "within_days": 30
   },
-  "current_price": 121.44999694824219,
-  "distinct_assets": 8,
+  "current_price": 120.08999633789062,
+  "distinct_assets": 6,
   "episodes": [
     {
       "asset": "RUNE-USD",
@@ -15,16 +15,16 @@
       "minus5_hit_date": "2023-10-06",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2023-10-23",
-      "similarity": 90.49310039886784
+      "similarity": 91.61733127397116
     },
     {
       "asset": "BTC-USD",
-      "episode_end_date": "2023-02-28",
-      "episode_start_date": "2022-11-21",
-      "minus5_hit_date": "2023-03-08",
+      "episode_end_date": "2023-03-01",
+      "episode_start_date": "2022-11-22",
+      "minus5_hit_date": "2023-03-03",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2023-03-17",
-      "similarity": 88.15970480389697
+      "similarity": 88.21078194721747
     },
     {
       "asset": "KSM-USD",
@@ -33,16 +33,7 @@
       "minus5_hit_date": "2023-12-15",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2023-12-21",
-      "similarity": 87.75784880994276
-    },
-    {
-      "asset": "EOS-USD",
-      "episode_end_date": "2023-12-16",
-      "episode_start_date": "2023-09-08",
-      "minus5_hit_date": "2023-12-19",
-      "path_class_60d": "FAILURE",
-      "plus10_anchor_date": "2023-12-27",
-      "similarity": 87.2327204853458
+      "similarity": 87.38217551038744
     },
     {
       "asset": "KAVA-USD",
@@ -51,7 +42,16 @@
       "minus5_hit_date": "2023-12-18",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-12-26",
-      "similarity": 86.68738478800032
+      "similarity": 86.23105275831595
+    },
+    {
+      "asset": "EOS-USD",
+      "episode_end_date": "2023-12-16",
+      "episode_start_date": "2023-09-08",
+      "minus5_hit_date": "2023-12-19",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2023-12-27",
+      "similarity": 86.13131425966624
     },
     {
       "asset": "XTZ-USD",
@@ -60,56 +60,34 @@
       "minus5_hit_date": "2023-12-18",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-12-25",
-      "similarity": 86.47984121562708
-    },
-    {
-      "asset": "ETC-USD",
-      "episode_end_date": "2023-12-16",
-      "episode_start_date": "2023-09-08",
-      "minus5_hit_date": "2023-12-19",
-      "path_class_60d": "DIRECT_CONTINUATION",
-      "plus10_anchor_date": "2024-01-10",
-      "similarity": 86.19948851606244
-    },
-    {
-      "asset": "AVAX-USD",
-      "episode_end_date": "2021-09-28",
-      "episode_start_date": "2021-06-21",
-      "minus5_hit_date": "2021-10-10",
-      "path_class_60d": "DEEP_PULLBACK_THEN_RECOVERY",
-      "plus10_anchor_date": "2021-10-25",
-      "similarity": 85.97495021187365
+      "similarity": 85.70069094723277
     }
   ],
-  "forecast_date": "2026-10-04",
+  "forecast_date": "2026-10-05",
   "path_classes_60d": {
-    "DEEP_PULLBACK_THEN_RECOVERY": {
-      "count": 1,
-      "pct": 12.5
-    },
     "DIRECT_CONTINUATION": {
-      "count": 4,
+      "count": 3,
       "pct": 50.0
     },
     "FAILURE": {
       "count": 3,
-      "pct": 37.5
+      "pct": 50.0
     }
   },
   "q30": {
-    "count": 8,
-    "p10_pct": -23.048366886461082,
-    "p10_price": 93.45775606801554,
-    "p25_pct": -12.079085690539547,
-    "p25_price": 106.77994774570635,
-    "p50_pct": 5.176406337222744,
-    "p50_price": 127.73674228682782,
-    "p75_pct": 28.785369212430815,
-    "p75_price": 156.40982697827965,
-    "p90_pct": 101.55728528320344,
-    "p90_price": 244.79131682541038
+    "count": 6,
+    "p10_pct": -23.63409566236472,
+    "p10_price": 91.70781172246326,
+    "p25_pct": -18.806211045250265,
+    "p25_price": 97.5056181823536,
+    "p50_pct": 0.913958874473364,
+    "p50_price": 121.18756951677551,
+    "p75_pct": 13.374785333856497,
+    "p75_price": 136.15177555551963,
+    "p90_pct": 92.20468657838872,
+    "p90_price": 230.81860107324115
   },
-  "qualified_episodes": 8,
+  "qualified_episodes": 6,
   "small_sample": true,
   "status": "AVAILABLE"
 }
