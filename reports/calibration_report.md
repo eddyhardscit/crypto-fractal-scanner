@@ -1,7 +1,7 @@
 # Stato calibrazione scanner
 
-Generato: **2026-10-05 07:33:08 CEST**  
-UTC: **2026-10-05 05:33:08 UTC**
+Generato: **2026-10-06 07:33:16 CEST**  
+UTC: **2026-10-06 05:33:16 UTC**
 
 La calibrazione non serve a prevedere direttamente il prezzo.  
 Serve a capire se lo scanner, col tempo, è stato troppo ottimista, troppo pessimista o abbastanza preciso.
@@ -10,9 +10,9 @@ Serve a capire se lo scanner, col tempo, è stato troppo ottimista, troppo pessi
 
 | Asset | Fatte | Controllate | Progresso | In attesa | Stato | Prossimo controllo |
 | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 88 | 35 | 30/30 [██████████] | 53 | ATTIVA | 2026-10-06 / tra 1 giorno |
-| SOL | 88 | 35 | 30/30 [██████████] | 53 | ATTIVA | 2026-10-06 / tra 1 giorno |
-| DOGE | 88 | 35 | 30/30 [██████████] | 53 | ATTIVA | 2026-10-06 / tra 1 giorno |
+| BTC | 89 | 36 | 30/30 [██████████] | 53 | ATTIVA | 2026-10-07 / tra 1 giorno |
+| SOL | 89 | 36 | 30/30 [██████████] | 53 | ATTIVA | 2026-10-07 / tra 1 giorno |
+| DOGE | 89 | 36 | 30/30 [██████████] | 53 | ATTIVA | 2026-10-07 / tra 1 giorno |
 
 ## Regola semplice
 
