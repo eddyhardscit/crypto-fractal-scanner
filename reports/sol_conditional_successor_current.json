@@ -5,8 +5,8 @@
     "then": 10.0,
     "within_days": 30
   },
-  "current_price": 120.12000274658203,
-  "distinct_assets": 5,
+  "current_price": 118.58999633789062,
+  "distinct_assets": 8,
   "episodes": [
     {
       "asset": "RUNE-USD",
@@ -15,25 +15,16 @@
       "minus5_hit_date": "2023-10-06",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2023-10-23",
-      "similarity": 91.60323308472611
+      "similarity": 90.41769483868832
     },
     {
       "asset": "BTC-USD",
-      "episode_end_date": "2023-03-02",
-      "episode_start_date": "2022-11-23",
-      "minus5_hit_date": "2023-03-07",
+      "episode_end_date": "2023-03-03",
+      "episode_start_date": "2022-11-24",
+      "minus5_hit_date": "2023-03-09",
       "path_class_60d": "DIRECT_CONTINUATION",
-      "plus10_anchor_date": "2023-03-17",
-      "similarity": 88.13006615427345
-    },
-    {
-      "asset": "SOL-USD",
-      "episode_end_date": "2021-02-22",
-      "episode_start_date": "2020-11-15",
-      "minus5_hit_date": "2021-02-26",
-      "path_class_60d": "FAILURE",
-      "plus10_anchor_date": "2021-03-11",
-      "similarity": 86.96790244426525
+      "plus10_anchor_date": "2023-03-14",
+      "similarity": 87.84369489567054
     },
     {
       "asset": "HBAR-USD",
@@ -42,43 +33,83 @@
       "minus5_hit_date": "2023-03-08",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-03-31",
-      "similarity": 85.86370133389012
+      "similarity": 87.36482963293165
     },
     {
-      "asset": "LINK-USD",
-      "episode_end_date": "2021-02-24",
-      "episode_start_date": "2020-11-17",
-      "minus5_hit_date": "2021-02-25",
+      "asset": "SOL-USD",
+      "episode_end_date": "2021-02-22",
+      "episode_start_date": "2020-11-15",
+      "minus5_hit_date": "2021-02-26",
       "path_class_60d": "FAILURE",
-      "plus10_anchor_date": "2021-03-08",
-      "similarity": 85.84911570589668
+      "plus10_anchor_date": "2021-03-11",
+      "similarity": 87.03840280321182
+    },
+    {
+      "asset": "ENJ-USD",
+      "episode_end_date": "2023-12-16",
+      "episode_start_date": "2023-09-08",
+      "minus5_hit_date": "2023-12-19",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2023-12-24",
+      "similarity": 86.89770873919078
+    },
+    {
+      "asset": "ETC-USD",
+      "episode_end_date": "2023-12-21",
+      "episode_start_date": "2023-09-13",
+      "minus5_hit_date": "2024-01-07",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2024-01-10",
+      "similarity": 85.78332635416199
+    },
+    {
+      "asset": "XTZ-USD",
+      "episode_end_date": "2023-12-21",
+      "episode_start_date": "2023-09-13",
+      "minus5_hit_date": "2024-01-07",
+      "path_class_60d": "DEEP_PULLBACK_THEN_RECOVERY",
+      "plus10_anchor_date": "2024-01-11",
+      "similarity": 85.60511805362512
+    },
+    {
+      "asset": "ETH-USD",
+      "episode_end_date": "2021-09-17",
+      "episode_start_date": "2021-06-10",
+      "minus5_hit_date": "2021-09-20",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2021-10-14",
+      "similarity": 85.54339439130085
     }
   ],
-  "forecast_date": "2026-10-06",
+  "forecast_date": "2026-10-07",
   "path_classes_60d": {
+    "DEEP_PULLBACK_THEN_RECOVERY": {
+      "count": 1,
+      "pct": 12.5
+    },
     "DIRECT_CONTINUATION": {
-      "count": 2,
-      "pct": 40.0
+      "count": 4,
+      "pct": 50.0
     },
     "FAILURE": {
       "count": 3,
-      "pct": 60.0
+      "pct": 37.5
     }
   },
   "q30": {
-    "count": 5,
-    "p10_pct": -8.511695430285993,
-    "p10_price": 109.8957539619418,
-    "p25_pct": -1.6498620702312117,
-    "p25_price": 118.13818838250549,
-    "p50_pct": 10.543440762130917,
-    "p50_price": 132.78478407963794,
-    "p75_pct": 67.83976738194968,
-    "p75_price": 201.60913318905486,
-    "p90_pct": 129.19039073218732,
-    "p90_price": 275.3035036424055
+    "count": 8,
+    "p10_pct": -18.213569875570435,
+    "p10_price": 96.9905244894525,
+    "p25_pct": -6.193678570157565,
+    "p25_price": 111.24491314836006,
+    "p50_pct": 11.326683921427977,
+    "p50_price": 132.0223103855165,
+    "p75_pct": 34.104217839692545,
+    "p75_price": 159.03418702504825,
+    "p90_pct": 98.51507905706848,
+    "p90_price": 235.4190249839382
   },
-  "qualified_episodes": 5,
+  "qualified_episodes": 8,
   "small_sample": true,
   "status": "AVAILABLE"
 }
