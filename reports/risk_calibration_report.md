@@ -1,6 +1,6 @@
 # Calibrazione rischio spot / leva
 
-Generato: **2026-10-10 05:33 UTC**
+Generato: **2026-10-11 05:33 UTC**
 
 Questo report controlla se le zone di rischio previste dallo scanner vengono davvero toccate nei 30 giorni successivi.
 
@@ -24,34 +24,34 @@ Questo file **non modifica ancora il Decision Report**. Per ora salva dati e mis
 
 | Asset   | Prezzo    | Direzione scanner                    | Drawdown normale    | Drawdown brutto     | Max gain normale   | Rischio spot   | Rischio leva   |
 |:--------|:----------|:-------------------------------------|:--------------------|:--------------------|:-------------------|:---------------|:---------------|
-| BTC     | 605,06 $  | Direzione più probabile a 30 giorni: | 969,16 $ / -10,45%  | 447,99 $ / -15,93%  | 25,00 $ / 13,82%   | MEDIO          | MOLTO ALTO     |
-| SOL     | 109,96 $  | Direzione più probabile a 30 giorni: | 98,62 $ / -10,32%   | 91,60 $ / -16,70%   | 124,93 $ / 13,62%  | MEDIO          | MOLTO ALTO     |
-| DOGE    | 0.09000 $ | Direzione più probabile a 30 giorni: | 0.08000 $ / -10,81% | 0.07000 $ / -16,73% | 0.10000 $ / 12,42% | MEDIO          | MOLTO ALTO     |
+| BTC     | 976,46 $  | Direzione più probabile a 30 giorni: | 534,11 $ / -13,79%  | 491,29 $ / -17,46%  | 879,57 $ / 11,93%  | ALTO           | MOLTO ALTO     |
+| SOL     | 109,54 $  | Direzione più probabile a 30 giorni: | 97,97 $ / -10,56%   | 90,90 $ / -17,02%   | 123,76 $ / 12,98%  | MEDIO          | MOLTO ALTO     |
+| DOGE    | 0.09000 $ | Direzione più probabile a 30 giorni: | 0.08000 $ / -10,18% | 0.07000 $ / -16,71% | 0.10000 $ / 12,42% | MEDIO          | MOLTO ALTO     |
 
 ## Stato calibrazione rischio
 
 | Asset   |   Snapshot |   Controlli 30g |   In attesa | Stato                | DD normale hit   | DD brutto hit   | DD molto brutto hit   | Bias rischio                |
 |:--------|-----------:|----------------:|------------:|:---------------------|:-----------------|:----------------|:----------------------|:----------------------------|
-| BTC     |         86 |              62 |          24 | CALIBRAZIONE LEGGERA | 0,00%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
-| SOL     |         86 |              62 |          24 | CALIBRAZIONE LEGGERA | 1,61%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
-| DOGE    |         86 |              62 |          24 | CALIBRAZIONE LEGGERA | 14,52%           | 4,84%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
+| BTC     |         87 |              63 |          24 | CALIBRAZIONE LEGGERA | 0,00%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
+| SOL     |         87 |              63 |          24 | CALIBRAZIONE LEGGERA | 1,59%            | 0,00%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
+| DOGE    |         87 |              63 |          24 | CALIBRAZIONE LEGGERA | 14,29%           | 4,76%           | 0,00%                 | RISCHIO FORSE TROPPO SEVERO |
 
 ## Ultimi controlli completati
 
 | Data previsione   | Asset   | Prezzo iniziale   | Min reale   | Max reale   | Drawdown reale   | Max gain reale   | Risultato rischio      |
 |:------------------|:--------|:------------------|:------------|:------------|:-----------------|:-----------------|:-----------------------|
+| 2026-09-11        | DOGE    | 0.08000 $         | 0.07841 $   | 0.10528 $   | -1,99%           | 31,60%           | RISCHIO STIMATO SEVERO |
+| 2026-09-11        | SOL     | 99,61 $           | 96,23 $     | 124,62 $    | -3,40%           | 25,11%           | RISCHIO STIMATO SEVERO |
+| 2026-09-11        | BTC     | 59,01 $           | 74.944,59 $ | 87.363,76 $ | 126903,21%       | 147949,07%       | RISCHIO STIMATO SEVERO |
 | 2026-09-10        | DOGE    | 0.09000 $         | 0.07841 $   | 0.10528 $   | -12,88%          | 16,98%           | RISCHIO STIMATO SEVERO |
 | 2026-09-10        | SOL     | 102,02 $          | 96,23 $     | 124,62 $    | -5,68%           | 22,15%           | RISCHIO STIMATO SEVERO |
 | 2026-09-10        | BTC     | 456,64 $          | 74.944,59 $ | 87.363,76 $ | 16312,18%        | 19031,87%        | RISCHIO STIMATO SEVERO |
 | 2026-09-09        | DOGE    | 0.09000 $         | 0.07841 $   | 0.10528 $   | -12,88%          | 16,98%           | RISCHIO STIMATO SEVERO |
 | 2026-09-09        | SOL     | 104,43 $          | 96,23 $     | 124,62 $    | -7,86%           | 19,33%           | RISCHIO STIMATO SEVERO |
 | 2026-09-09        | BTC     | 122,84 $          | 74.944,59 $ | 87.363,76 $ | 60909,93%        | 71019,96%        | RISCHIO STIMATO SEVERO |
-| 2026-09-08        | DOGE    | 0.09000 $         | 0.07841 $   | 0.10528 $   | -12,88%          | 16,98%           | RISCHIO STIMATO SEVERO |
-| 2026-09-08        | SOL     | 103,29 $          | 96,23 $     | 124,62 $    | -6,84%           | 20,65%           | RISCHIO STIMATO SEVERO |
 | 2026-09-08        | BTC     | 780,06 $          | 74.944,59 $ | 87.363,76 $ | 9507,54%         | 11099,62%        | RISCHIO STIMATO SEVERO |
-| 2026-09-07        | BTC     | 817,81 $          | 74.944,59 $ | 87.363,76 $ | 9064,06%         | 10582,65%        | RISCHIO STIMATO SEVERO |
-| 2026-09-07        | SOL     | 105,54 $          | 96,23 $     | 124,62 $    | -8,83%           | 18,08%           | RISCHIO STIMATO SEVERO |
-| 2026-09-07        | DOGE    | 0.09000 $         | 0.07841 $   | 0.10528 $   | -12,88%          | 16,98%           | RISCHIO STIMATO SEVERO |
+| 2026-09-08        | SOL     | 103,29 $          | 96,23 $     | 124,62 $    | -6,84%           | 20,65%           | RISCHIO STIMATO SEVERO |
+| 2026-09-08        | DOGE    | 0.09000 $         | 0.07841 $   | 0.10528 $   | -12,88%          | 16,98%           | RISCHIO STIMATO SEVERO |
 
 ## Come leggerlo
 
