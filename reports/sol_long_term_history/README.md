@@ -1,8 +1,8 @@
 # SOL Long-Term Cone History
 
-Ultimo aggiornamento: **2026-10-10T06:04:31.335667Z**  
-SOL spot: **$109.93**  
-Cohort: **40** analoghi / **31.0** distinct assets  
+Ultimo aggiornamento: **2026-10-11T06:04:19.310671Z**  
+SOL spot: **$109.32**  
+Cohort: **40** analoghi / **33.0** distinct assets  
 **LOG_ROBUST_TAIL · DIAGNOSTIC ONLY**
 
 ## Current cone
@@ -26,10 +26,10 @@ Asse X = date future reali. Le linee mostrano esplicitamente p10, p25, p50, p75 
 
 | Horizon | Target date | p10 | p25 | p50 | p75 | p90 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| 3M | 2027-01-08 | $82.41 | $95.48 | $114.06 | $137.35 | $162.98 |
-| 6M | 2027-04-08 | $51.73 | $64.93 | $80.22 | $118.74 | $140.41 |
-| 1Y | 2027-10-10 | $57.89 | $73.61 | $127.67 | $171.81 | $241.03 |
-| 2Y | 2028-10-09 | $17.89 | $27.36 | $65.83 | $143.59 | $406.29 |
+| 3M | 2027-01-09 | $82.74 | $90.12 | $101.87 | $131.86 | $153.25 |
+| 6M | 2027-04-09 | $51.66 | $65.16 | $78.67 | $114.18 | $138.81 |
+| 1Y | 2027-10-11 | $57.30 | $75.81 | $126.96 | $183.28 | $249.61 |
+| 2Y | 2028-10-10 | $16.09 | $28.48 | $60.23 | $140.13 | $395.13 |
 
 ## Forward vintages
 
@@ -60,9 +60,9 @@ Le percentuali rappresentano la frequenza empirica degli analoghi che terminano 
 
 | Horizon | p50 | p75 | p90 | P≥300 | P≥500 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 6M | $80.22 | $118.74 | $140.41 | 3.23% | 0.00% |
-| 1Y | $127.67 | $171.81 | $241.03 | 6.45% | 0.00% |
-| 2Y | $65.83 | $143.59 | $406.29 | 17.24% | 3.45% |
+| 6M | $78.67 | $114.18 | $138.81 | 3.03% | 0.00% |
+| 1Y | $126.96 | $183.28 | $249.61 | 9.09% | 0.00% |
+| 2Y | $60.23 | $140.13 | $395.13 | 16.13% | 3.23% |
 
 ## Recent drift
 
@@ -70,13 +70,13 @@ Ultime 7 daily observations reali (non necessariamente consecutive).
 
 | Date | Spot | 6M p50 | 1Y p50 | 2Y p50 | 2Y P≥300 | 2Y P≥500 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| 2026-10-04 | $120.80 | $91.28 | $144.00 | $70.28 | 17.86% | 7.14% |
 | 2026-10-05 | $120.56 | $89.69 | $138.91 | $69.89 | 18.52% | 7.41% |
 | 2026-10-06 | $119.47 | $84.37 | $123.03 | $54.57 | 13.79% | 6.90% |
 | 2026-10-07 | $118.63 | $84.96 | $132.79 | $63.70 | 10.34% | 3.45% |
 | 2026-10-08 | $114.94 | $79.39 | $117.32 | $60.83 | 10.71% | 3.57% |
 | 2026-10-09 | $110.26 | $74.24 | $100.10 | $66.03 | 18.52% | 3.70% |
 | 2026-10-10 | $109.93 | $80.22 | $127.67 | $65.83 | 17.24% | 3.45% |
+| 2026-10-11 | $109.32 | $78.67 | $126.96 | $60.23 | 16.13% | 3.23% |
 
 ## 30-day stability
 
@@ -86,11 +86,11 @@ Finestra: 26 osservazioni reali disponibili negli ultimi 30 giorni di calendario
 
 | Metric | Median | Min | Max | range_pct | Range (pp) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 6M p50 | $110.14 | $74.24 | $178.95 | 95.08% | — |
-| 1Y p50 | $151.92 | $100.10 | $205.66 | 69.49% | — |
-| 2Y p50 | $70.32 | $53.69 | $198.98 | 206.60% | — |
-| 2Y P≥300 | 17.55% | 10.34% | 31.03% | — | 20.69 |
-| 2Y P≥500 | 7.02% | 0.00% | 17.24% | — | 17.24 |
+| 6M p50 | $106.99 | $74.24 | $178.95 | 97.88% | — |
+| 1Y p50 | $150.49 | $100.10 | $205.66 | 70.14% | — |
+| 2Y p50 | $70.09 | $53.69 | $198.98 | 207.30% | — |
+| 2Y P≥300 | 16.95% | 10.34% | 31.03% | — | 20.69 |
+| 2Y P≥500 | 6.90% | 0.00% | 17.24% | — | 17.24 |
 
 **FORECAST_DRIFT_STATUS=VOLATILE**
 
@@ -116,8 +116,8 @@ Indicatore diagnostico; non va usato per decisioni operative. Una sola osservazi
 
 FIRST_REAL_SNAPSHOT=2026-09-03T17:03:34.597672Z  
 FIRST_AVAILABLE_LONG_TERM_SNAPSHOT=2026-09-03T17:03:34.597672Z  
-LATEST_SNAPSHOT=2026-10-10T06:04:31.335667Z  
-DAILY_ROWS=34
+LATEST_SNAPSHOT=2026-10-11T06:04:19.310671Z  
+DAILY_ROWS=35
 
 Fonti autoritative: `sol_long_term_probability_cone.json`, `sol_long_term_probability_cone_history.jsonl` e snapshot immutabili in `sol_long_term_probability_cone_history/` nel publisher canonico.
 

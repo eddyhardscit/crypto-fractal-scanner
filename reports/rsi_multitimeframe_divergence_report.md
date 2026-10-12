@@ -1,6 +1,6 @@
 # Divergenze RSI multi-timeframe — diagnostica
 
-Generato: 2026-10-11 05:33 UTC
+Generato: 2026-10-12 05:33 UTC
 
 Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Riconosce divergenze regolari e nascoste, segnali in formazione, invalidazioni e semplice conferma del momentum.
 
@@ -18,12 +18,12 @@ Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Ric
 
 | Asset   | TF   | Tipo                       | Stato         | Prezzo / RSI      | Pivot confrontati                                                | Δ prezzo contesto   | Δ RSI contesto   |   Peso |
 |:--------|:-----|:---------------------------|:--------------|:------------------|:-----------------------------------------------------------------|:--------------------|:-----------------|-------:|
-| BTC     | 1D   | Misto / nessuna divergenza | CONTESTO      | 83.007 $ / 51,87  | n/a                                                              | -1,66%              | -13,10           |      0 |
-| BTC     | 1W   | Misto / nessuna divergenza | CONTESTO      | 83.007 $ / 58,51  | n/a                                                              | +6,87%              | 1,97             |      0 |
-| SOL     | 1D   | Hidden bullish             | IN_FORMAZIONE | 109,54 $ / 43,47  | 2026-09-16 96,23 $ / RSI 51,17 → 2026-10-08 105,84 $ / RSI 43,11 | n/a                 | n/a              |      0 |
-| SOL     | 1W   | Hidden bullish             | IN_FORMAZIONE | 109,54 $ / 56,85  | 2026-09-20 96,23 $ / RSI 61,01 → 2026-10-11 105,84 $ / RSI 56,85 | n/a                 | n/a              |      0 |
-| DOGE    | 1D   | Conferma ribassista        | CONTESTO      | 0.08535 $ / 41,25 | n/a                                                              | -11,80%             | -19,31           |      0 |
-| DOGE    | 1W   | Misto / nessuna divergenza | CONTESTO      | 0.08535 $ / 46,43 | n/a                                                              | +3,96%              | 2,41             |      0 |
+| BTC     | 1D   | Misto / nessuna divergenza | CONTESTO      | 83.790 $ / 54,73  | n/a                                                              | -0,79%              | -10,36           |      0 |
+| BTC     | 1W   | Misto / nessuna divergenza | CONTESTO      | 83.790 $ / 59,22  | n/a                                                              | +4,28%              | 0,20             |      0 |
+| SOL     | 1D   | Hidden bullish             | IN_FORMAZIONE | 112,44 $ / 48,82  | 2026-09-16 96,23 $ / RSI 51,17 → 2026-10-08 105,84 $ / RSI 43,11 | n/a                 | n/a              |      0 |
+| SOL     | 1W   | Hidden bullish             | IN_FORMAZIONE | 112,44 $ / 58,29  | 2026-09-20 96,23 $ / RSI 61,01 → 2026-10-11 105,84 $ / RSI 57,15 | n/a                 | n/a              |      0 |
+| DOGE    | 1D   | Conferma ribassista        | CONTESTO      | 0.08741 $ / 45,26 | n/a                                                              | -9,92%              | -15,58           |      0 |
+| DOGE    | 1W   | Misto / nessuna divergenza | CONTESTO      | 0.08741 $ / 47,57 | n/a                                                              | -3,75%              | -1,31            |      0 |
 
 ### BTC
 
@@ -54,6 +54,7 @@ Viene salvato un solo evento per combinazione di asset, timeframe, tipo e coppia
 | BTC     | 1D   | Bullish regolare |          60 |           1 | +100,00%      | +21,03%           | RACCOLTA DATI |      0 |
 | BTC     | 1D   | Hidden bearish   |          30 |           1 | 0,00%         | -1,37%            | RACCOLTA DATI |      0 |
 | BTC     | 1D   | Hidden bearish   |          60 |           1 | 0,00%         | -23,44%           | RACCOLTA DATI |      0 |
+| BTC     | 1D   | Hidden bearish   |          90 |           1 | 0,00%         | -33,97%           | RACCOLTA DATI |      0 |
 | BTC     | 1D   | Hidden bullish   |          30 |           1 | +100,00%      | +25,83%           | RACCOLTA DATI |      0 |
 | BTC     | 1W   | Bullish regolare |          30 |           1 | +100,00%      | +1,03%            | RACCOLTA DATI |      0 |
 | BTC     | 1W   | Bullish regolare |          60 |           1 | +100,00%      | +22,85%           | RACCOLTA DATI |      0 |
