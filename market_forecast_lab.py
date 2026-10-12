@@ -245,7 +245,7 @@ def forecasts_from_manifest(manifest, manifest_id, index=None, existing=()):
     processed = {ticker: legacy.add_indicators(frame) for ticker, frame in raw.items()}
     library = {ticker: processed[ticker] for ticker in manifest['library_order']}
     if index is None:
-        index = SharedSignatureIndex(library)
+        index = SharedSignatureIndex(library, raw)
     saved = {(f['coingecko_id'], f['forecast_date']): f for f in existing}
     forecasts = []
     for member in manifest['universe']:
@@ -269,7 +269,7 @@ def forecasts_from_manifest(manifest, manifest_id, index=None, existing=()):
                 row['end_date'] = str(row['end_date'])
             anchor = float(raw[ticker].Close.iloc[-1])
             anchor_date = raw[ticker].index[-1].date().isoformat()
-        forecasts.append(build_forecast(cid, ticker, cohort, library, anchor, anchor_date,
+        forecasts.append(build_forecast(cid, ticker, cohort, raw, anchor, anchor_date,
                                         manifest['as_of'], manifest_id, manifest['config'],
                                         manifest['quality_evaluations'], canonical, member.get('data_quality', 'GOOD')))
         forecasts[-1].update(ctx)
@@ -408,9 +408,10 @@ def execute_staged(args):
         publication_ctx = context(manifest)
         manifest_id = store_input(output, manifest)
         event('index_build_started', **ctx, library_assets=len(library_order))
-        frozen_library = {t: legacy.add_indicators(fp.load_frozen_ohlc(manifest['raw_snapshot_ids'][t]))
-                          for t in manifest['library_order']}
-        index = SharedSignatureIndex(frozen_library)
+        frozen_prices = {t: fp.load_frozen_ohlc(manifest['raw_snapshot_ids'][t])
+                         for t in manifest['library_order']}
+        frozen_library = {t: legacy.add_indicators(f) for t, f in frozen_prices.items()}
+        index = SharedSignatureIndex(frozen_library, frozen_prices)
         event('index_ready', **ctx, episodes=len(index.episodes), signature_bytes=index.signature_bytes)
         forecasts, _ = forecasts_from_manifest(manifest, manifest_id, index, old)
         parity = {}
@@ -418,7 +419,7 @@ def execute_staged(args):
             # Verify canonical adapters even if a canonical target is outside Top50.
             f = next((f for f in forecasts if f['ohlc_ticker'] == ticker), None)
             if f is None:
-                f = build_forecast(LEGACY_IDS[ticker], ticker, record['cohort'], processed,
+                f = build_forecast(LEGACY_IDS[ticker], ticker, record['cohort'], raw,
                                    record['current_price'], record['anchor_date'], args.as_of,
                                    manifest_id, config, canonical=record)
             parity[ticker] = verify_canonical(f, record, reports)
