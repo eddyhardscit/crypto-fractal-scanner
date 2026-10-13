@@ -1,0 +1,7 @@
+asset,source,horizon_days,checked_predictions,inside_band_rate,avg_abs_error_pct,avg_error_pct
+SOL,BTC_2022_vs_SOL_2026,7,0,,,
+SOL,BTC_2022_vs_SOL_2026,14,0,,,
+SOL,BTC_2022_vs_SOL_2026,30,0,,,
+SOL,BTC_2022_vs_SOL_2026,60,0,,,
+SOL,BTC_2022_vs_SOL_2026,90,0,,,
+SOL,BTC_2022_vs_SOL_2026,120,0,,,

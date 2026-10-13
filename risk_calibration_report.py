@@ -1193,6 +1193,10 @@ def inject_into_latest_report(section_md):
 
 
 def main():
+    from lab_reduction import RISK_QUARANTINED, quarantine_risk
+    if RISK_QUARANTINED:
+        quarantine_risk(REPORTS_DIR)
+        return
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     today_df = build_today_snapshot()

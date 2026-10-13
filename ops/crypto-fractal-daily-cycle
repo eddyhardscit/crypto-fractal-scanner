@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 027
+
+PUB=/opt/crypto-fractal-scanner-publisher
+PYTHON=/opt/crypto-fractal-scanner-vps/.venv-core/bin/python
+ENV_FILE=/etc/crypto-fractal-scanner/paper.env
+
+exec 9>/run/lock/crypto-publisher.lock
+flock -n 9 || exit 0
+cd "$PUB"
+
+set -a
+. "$ENV_FILE"
+set +a
+unset PAPER_DIRECTIONAL_PIPELINE_TELEMETRY_V1 PAPER_DIRECTIONAL_PIPELINE_TELEMETRY_V1_PATH _legacy_directional_requested
+export PYTHONUTF8=1 PYTHONIOENCODING=utf-8 PYTHONUNBUFFERED=1
+export GIT_SSH_COMMAND='ssh -i /var/lib/crypto-fractal-scanner/.ssh/id_ed25519 -o IdentitiesOnly=yes -o BatchMode=yes'
+
+run_retry() {
+    local attempt=1 max_attempts=3
+    while true; do
+        if "$@"; then return 0; fi
+        if [ "$attempt" -ge "$max_attempts" ]; then return 1; fi
+        echo "Transient command failure; retry $attempt/$max_attempts: $*" >&2
+        sleep $((attempt * 5))
+        attempt=$((attempt + 1))
+    done
+}
+
+if ! git diff --quiet || ! git diff --cached --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+    echo 'Publisher worktree not clean; daily fractal run refused.' >&2
+    exit 1
+fi
+
+START_HEAD="$(git rev-parse HEAD)"
+cleanup_failed_run() {
+    local rc=$?
+    trap - EXIT
+    if [ "$rc" -ne 0 ] && [ "$(git rev-parse HEAD 2>/dev/null || true)" = "$START_HEAD" ]; then
+        echo 'Daily run failed before commit; restoring clean publisher worktree.' >&2
+        git reset --hard "$START_HEAD" >/dev/null 2>&1 || true
+        git clean -fd -- reports/ >/dev/null 2>&1 || true
+    fi
+    exit "$rc"
+}
+trap cleanup_failed_run EXIT
+
+"$PYTHON" market_snapshot.py
+"$PYTHON" scanner.py
+"$PYTHON" daily_change_report.py
+"$PYTHON" bounce_after_drawdown_report.py
+"$PYTHON" market_regime_match_report.py
+"$PYTHON" scanner_forecast_tracker.py
+"$PYTHON" extreme_cases_path_report.py
+"$PYTHON" classic_technical_confirmation_report.py
+"$PYTHON" btc_2022_vs_sol_2026_report.py
+"$PYTHON" fractal_path_tracker.py
+"$PYTHON" rsi_top_cycle_report.py
+"$PYTHON" sol_onchain_metrics_report.py
+"$PYTHON" major_alt_lifecycle_squeeze_report.py
+if [ -f liquidation_report.py ]; then
+    "$PYTHON" liquidation_report.py
+elif [ -f liquidations_report.py ]; then
+    "$PYTHON" liquidations_report.py
+else
+    echo 'Liquidation report script missing; daily report refused.' >&2
+    exit 1
+fi
+"$PYTHON" technical_structure_report.py
+"$PYTHON" classic_technical_visual_report.py
+"$PYTHON" price_coherence_sync.py
+
+export EXCHANGE_STORAGE_RELEASE_TAG=exchange-data-v2-1
+"$PYTHON" exchange_persistent_storage.py restore
+run_retry "$PYTHON" exchange_persistent_storage.py audit
+"$PYTHON" exchange_persistent_storage.py archive-completed-months
+"$PYTHON" exchange_microstructure_report.py
+"$PYTHON" exchange_signal_tracker.py
+"$PYTHON" exchange_microstructure_report.py
+"$PYTHON" relative_strength_btc_report.py
+"$PYTHON" btc_macro_cycle_report.py
+"$PYTHON" global_confluence_report.py
+"$PYTHON" decision_report.py
+"$PYTHON" module_signal_tracker.py
+"$PYTHON" global_weight_calibration_report.py
+"$PYTHON" risk_calibration_report.py
+"$PYTHON" calibration_status_report.py
+"$PYTHON" data_quality_coherence_report.py
+
+"$PYTHON" - <<'PY'
+from pathlib import Path
+
+report = Path("reports/latest_report.md").read_text(encoding="utf-8")
+required = (
+    "decision",
+    "module_accuracy",
+    "global_weight_calibration",
+    "risk_calibration",
+    "global_confluence",
+    "btc_macro_cycle",
+    "relative_strength_btc",
+    "btc_sol_fractal",
+    "rsi_top_cycle",
+    "sol_onchain",
+    "major_alt_lifecycle",
+    "daily_change",
+    "bounce_after_drawdown",
+    "scanner_forecast",
+    "extreme_cases",
+    "scanner_full_detail",
+    "market_regime",
+    "classic_technical",
+    "classic_visual",
+    "fractal_path",
+    "exchange_microstructure",
+    "exchange_signal_tracker",
+    "liquidations",
+    "technical_structure",
+    "calibration_readable",
+    "data_quality",
+)
+missing = [
+    key
+    for key in required
+    if f"<!-- COMPACT_SECTION_START:{key} -->" not in report
+]
+if missing:
+    raise SystemExit(
+        "DAILY_REPORT_REQUIRED_SECTIONS_MISSING:" + ",".join(missing)
+    )
+if "Blocco Global Confluence non trovato nel report principale." in report:
+    raise SystemExit("DAILY_REPORT_GLOBAL_CONFLUENCE_COHERENCE_WARNING")
+print(f"DAILY_REPORT_SECTION_VALIDATION=PASS sections={len(required)}")
+PY
+
+if [ -f sol_long_term_history_publish.py ]; then
+    "$PYTHON" sol_long_term_history_publish.py --best-effort || echo LONG_TERM_HISTORY_RETAINED_LAST_VALID
+fi
+"$PYTHON" market_forecast_lab.py --mode OFFICIAL_DAILY || echo MARKET_FORECAST_LAB_FAILED
+"$PYTHON" lab_reduction.py
+
+git config user.name hetzner-crypto-bot
+git config user.email hetzner-crypto-bot@users.noreply.github.com
+strategy_changes="$(
+    git status --porcelain --untracked-files=all -- reports/         | grep -Ei 'paper_|paper-|strategy_|strategy-|challenger|discovery|evolution|promotion|btc_spot_adaptive_shadow|paper_shadow|inverse_shadow|donchian.*shadow'         || true
+)"
+if [ -n "$strategy_changes" ]; then
+    printf '%s\n' "$strategy_changes"
+    echo 'Strategy-like publisher artifact changed; publication refused.' >&2
+    exit 1
+fi
+git add reports/
+if git diff --cached --quiet; then exit 0; fi
+git commit -m 'Update daily fractal and market reports from Hetzner'
+for attempt in 1 2 3; do
+    git fetch origin main
+    git merge-base --is-ancestor origin/main HEAD || exit 1
+    if git push origin HEAD:main; then exit 0; fi
+    [ "$attempt" -lt 3 ] && sleep 5
+done
+exit 1

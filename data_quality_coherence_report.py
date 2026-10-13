@@ -95,6 +95,9 @@ MODULE_PRICE_SPECS: dict[str, dict[str, Any]] = {
 }
 
 
+from lab_reduction import PAUSED_QUALITY_NAMES
+MODULE_PRICE_SPECS = {k: v for k, v in MODULE_PRICE_SPECS.items() if k not in PAUSED_QUALITY_NAMES}
+
 def utc_now_text() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
@@ -487,7 +490,7 @@ def main() -> None:
     prices = snapshot_prices()
 
     critical: list[str] = []
-    warnings: list[str] = []
+    warnings: list[str] = ["Calibrazione rischio in quarantena; moduli sospesi esclusi dalla verifica prezzi correnti. Consultare lab_reduction_status.md."]
 
     scanner_validation = validate_scanner_summary()
     if scanner_validation:

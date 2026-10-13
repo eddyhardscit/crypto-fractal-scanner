@@ -1361,6 +1361,9 @@ def write_csv(weekly, monthly, confluence, ctx):
 
 
 def main():
+    from lab_reduction import paused_notice
+    if paused_notice('rsi_top_cycle_report'):
+        return
     os.makedirs(REPORT_DIR, exist_ok=True)
 
     daily = download_close(TICKER, DOWNLOAD_START)

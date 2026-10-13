@@ -1178,6 +1178,9 @@ def inject_into_main_report(row):
 
 
 def main():
+    from lab_reduction import paused_notice
+    if paused_notice('sol_onchain_metrics_report'):
+        return
     os.makedirs(REPORT_DIR, exist_ok=True)
 
     old_rows = load_history()

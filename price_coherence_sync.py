@@ -133,6 +133,12 @@ JSON_SPECS: dict[str, tuple[str, tuple[str, ...]]] = {
     ),
 }
 
+from lab_reduction import PAUSED_PRICE_FILES, PAUSED
+MARKDOWN_REPORTS = {k: v for k, v in MARKDOWN_REPORTS.items() if k not in PAUSED_PRICE_FILES}
+CSV_SPECS = {k: v for k, v in CSV_SPECS.items() if k not in PAUSED_PRICE_FILES}
+JSON_SPECS = {k: v for k, v in JSON_SPECS.items() if k not in PAUSED_PRICE_FILES}
+LATEST_MARKERS = tuple(k for k in LATEST_MARKERS if k not in {v[0] for v in PAUSED.values()})
+
 PRICE_HEADERS = {
     "prezzo",
     "price",

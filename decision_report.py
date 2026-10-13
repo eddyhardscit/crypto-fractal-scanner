@@ -345,6 +345,9 @@ def read_global_data(latest_text: str):
 
 
 def read_risk_calibration():
+    from lab_reduction import RISK_QUARANTINED
+    if RISK_QUARANTINED:
+        return {}
     rows = read_csv_rows(RISK_CALIBRATION_METRICS_PATH)
     out = {}
 

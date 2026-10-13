@@ -730,6 +730,9 @@ def inject(section):
 
 
 def main():
+    from lab_reduction import paused_notice
+    if paused_notice('extreme_cases_path_report'):
+        return
     REPORTS.mkdir(exist_ok=True)
 
     df = read_matches()

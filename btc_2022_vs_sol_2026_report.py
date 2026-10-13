@@ -2134,6 +2134,9 @@ def write_csv(summary, projections, stages, projection_daily, cycle, cycle_daily
 
 
 def main():
+    from lab_reduction import paused_notice
+    if paused_notice('btc_2022_vs_sol_2026_report'):
+        return
     os.makedirs(REPORT_DIR, exist_ok=True)
     btc = download_close(BTC_TICKER, start="2022-01-01")
     sol = download_close(SOL_TICKER, start="2026-01-01")

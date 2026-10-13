@@ -1641,6 +1641,10 @@ def build_components(source_text: str):
             "Daily change": parse_daily_change_component(daily_block, asset),
         }
 
+    from lab_reduction import PAUSED_COMPONENTS
+    for asset in ASSETS:
+        for name in PAUSED_COMPONENTS:
+            components[asset][name] = component_template(0, "SOSPESO dal 2026-10-13; archivio escluso dai segnali.")
     return components
 
 

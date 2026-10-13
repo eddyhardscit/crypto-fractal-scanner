@@ -1,0 +1,41 @@
+{
+  "policy": "2026-10-13-v1",
+  "generated_at_utc": "2026-10-13T12:36:49.282911+00:00",
+  "risk": "QUARANTINED",
+  "paused_modules": [
+    "btc_2022_vs_sol_2026_report",
+    "fractal_path_tracker",
+    "rsi_top_cycle_report",
+    "sol_onchain_metrics_report",
+    "extreme_cases_path_report"
+  ],
+  "development_frozen": [
+    "BTC_30D",
+    "DOGE_30D",
+    "SECONDARY_FRACTALS"
+  ],
+  "retained": [
+    "BTC_SOL_DOGE_FORECASTS_AND_EVALUATIONS",
+    "SOL_7D_PRIORITY",
+    "TOP50_FIXED_VALIDATION",
+    "DATA_COLLECTION",
+    "BACKUP"
+  ],
+  "top50_validation": {
+    "validation_start": "2026-10-14",
+    "review_date": "2026-11-13",
+    "primary_horizon_days": 7,
+    "baseline": "UNCHANGED_ANCHOR_PRICE",
+    "eligible_observations": 0,
+    "complete_week_buckets": [],
+    "mae_improvement_pct": null,
+    "status": "COLLECTING_FIXED_VALIDATION",
+    "minimum_complete_weeks": 3,
+    "minimum_assets_per_week": 30,
+    "minimum_improvement_pct": 5,
+    "minimum_winning_weeks": 2,
+    "automatic_promotion": false,
+    "automatic_trading": false,
+    "note": "Exploratory continuation gate; correlated assets/weeks, no statistical certification. No automatic stop; explicit review required."
+  }
+}

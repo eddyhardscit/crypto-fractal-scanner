@@ -1074,6 +1074,9 @@ def replace_section_in_latest_report(section_text: str) -> None:
 
 
 def main() -> None:
+    from lab_reduction import paused_notice
+    if paused_notice('fractal_path_tracker'):
+        return
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     latest_text = read_text(MAIN_REPORT_PATH)

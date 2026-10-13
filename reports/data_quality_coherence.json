@@ -1,9 +1,11 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-10-13 05:33 UTC",
-  "overall_status": "OK",
+  "generated_at_utc": "2026-10-13 12:36 UTC",
+  "overall_status": "WARN",
   "critical_issues": [],
-  "warnings": [],
+  "warnings": [
+    "Calibrazione rischio in quarantena; moduli sospesi esclusi dalla verifica prezzi correnti. Consultare lab_reduction_status.md."
+  ],
   "snapshot_complete": true,
   "scanner_summary_available": true,
   "price_sync_available": true,
@@ -235,46 +237,6 @@
       "difference_pct": -0.047227698600993406,
       "field": "price",
       "tolerance_pct": 0.2
-    },
-    {
-      "module": "RSI top-cycle",
-      "asset": "SOL",
-      "status": "OK",
-      "module_price": 108.20999908447266,
-      "snapshot_price": 108.20999908447266,
-      "difference_pct": 0.0,
-      "field": "current_price",
-      "tolerance_pct": 1e-06
-    },
-    {
-      "module": "RSI top-cycle",
-      "asset": "SOL",
-      "status": "OK",
-      "module_price": 108.20999908447266,
-      "snapshot_price": 108.20999908447266,
-      "difference_pct": 0.0,
-      "field": "current_price",
-      "tolerance_pct": 1e-06
-    },
-    {
-      "module": "Frattale BTC/SOL",
-      "asset": "SOL",
-      "status": "OK",
-      "module_price": 108.20999908447266,
-      "snapshot_price": 108.20999908447266,
-      "difference_pct": 0.0,
-      "field": "sol_current_price",
-      "tolerance_pct": 1e-06
-    },
-    {
-      "module": "Fractal path",
-      "asset": "SOL",
-      "status": "OK",
-      "module_price": 108.20999908447266,
-      "snapshot_price": 108.20999908447266,
-      "difference_pct": 0.0,
-      "field": "current_price",
-      "tolerance_pct": 1e-06
     }
   ],
   "technical_integrity": {
