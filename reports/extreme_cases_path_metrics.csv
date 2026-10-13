@@ -1,1 +1,2 @@
-
+asset,direction,trigger_pct,cases_used,median_spike_before_low_pct,mean_spike_before_low_pct,p75_spike_before_low_pct,median_spike_day,median_low_day,median_dump_from_peak_pct,spike_5_rate,spike_10_rate,spike_15_rate,immediate_drop_rate
+DOGE,POSITIVO / RIALZISTA,80.0,32,0.0,1.5003204570185433,0.4045851872957751,0.0,1.0,-5.717964423273598,9.375,6.25,0.0,75.0
