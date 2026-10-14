@@ -75,10 +75,11 @@ class SharedSignatureIndex:
     Historical signatures are built once. No vectorized distance/sort substitution.
     Library order is significant for ties and is retained in the input manifest.
     """
-    def __init__(self, data):
+    def __init__(self, data, price_data=None):
         if (legacy.WINDOW, legacy.STEP, legacy.TOP_N, legacy.MIN_GAP_DAYS, legacy.CLEAN_TOP_N) != (100, 5, 200, 90, 40):
             raise ValueError('LEGACY_CONFIG_CHANGED')
         self.data, self.episodes, self.signatures = data, [], []
+        self.price_data = data if price_data is None else price_data
         for ticker, frame in data.items():
             for start in range(0, len(frame) - legacy.WINDOW - max(legacy.FORWARD_DAYS), legacy.STEP):
                 signature = legacy.make_signature_v2(frame, start_idx=start)
@@ -109,7 +110,7 @@ class SharedSignatureIndex:
         for pos, row in top.iterrows():
             data = self.data[row.similar_asset]
             end = data.index.get_loc(pd.Timestamp(row.end_date))
-            for key, value in legacy.future_stats(data, end).items():
+            for key, value in legacy.future_stats(data, end, self.price_data[row.similar_asset]).items():
                 top.loc[pos, key] = value
         return top, legacy.deoverlap_matches(top)
 
@@ -121,16 +122,10 @@ def paths_from_cohort(cohort, data):
         frame = data.get(row['similar_asset'])
         if frame is None:
             continue
-        end_date = pd.Timestamp(row['end_date'])
-        if end_date not in frame.index:
+        future = legacy.calendar_close_path(frame, row['end_date'], 60)
+        if len(future) != 61:
             continue
-        end = frame.index.get_loc(end_date)
-        future = frame.iloc[end:end + 61]
-        if len(future) != 61 or not ((future.index[1:] - future.index[:-1]) == pd.Timedelta(days=1)).all():
-            continue
-        close = future.Close.to_numpy(float)
-        if not np.isfinite(close).all() or (close <= 0).any():
-            continue
+        close = future.to_numpy(float)
         paths.append((close / close[0] - 1) * 100)
         valid.append(row)
     return valid, np.asarray(paths).reshape(-1, 61)
@@ -165,6 +160,18 @@ def quality_components(n, distinct, similarity, width, evaluations, config):
 def build_forecast(cid, ticker, cohort, data, anchor, anchor_date, as_of, manifest_id,
                    config, evaluations=(), canonical=None, data_quality='GOOD'):
     valid, matrix = paths_from_cohort(cohort, data)
+    if canonical:
+        # Aggregate quantiles can hide a changed interior observation.
+        # Require each frozen canonical outcome to describe its actual price path.
+        for row, values in zip(valid, matrix):
+            for horizon in HORIZONS:
+                expected = {'return': values[horizon],
+                            'drawdown': values[:horizon + 1].min(),
+                            'max_gain': values[:horizon + 1].max()}
+                for metric, value in expected.items():
+                    recorded = row.get(f'{metric}_{horizon}d')
+                    if recorded is None or not np.isclose(recorded, value, rtol=0, atol=1e-10):
+                        raise ValueError('CANONICAL_PATH_STATISTICS_MISMATCH')
     n = len(matrix)
     similarity = [float(r['similarity']) for r in valid]
     distinct = len({r['similar_asset'] for r in valid})

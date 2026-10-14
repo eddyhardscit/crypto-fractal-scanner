@@ -138,23 +138,41 @@ def make_signature_v2(df, start_idx=None, window=WINDOW):
     return (features * weights).flatten()
 
 
-def future_stats(df, end_idx):
-    close_now = df["Close"].iloc[end_idx]
+def calendar_close_path(frame, end_date, days):
+    """Original closes on exact calendar days; never fill or shift missing bars."""
+    if not frame.index.is_unique or not frame.index.is_monotonic_increasing:
+        return pd.Series(dtype=float)
+    start = pd.Timestamp(end_date)
+    if frame.index.tz is not None and start.tzinfo is None:
+        start = start.tz_localize(frame.index.tz)
+    elif frame.index.tz is None and start.tzinfo is not None:
+        start = start.tz_convert("UTC").tz_localize(None)
+    expected = pd.date_range(start, periods=days + 1, freq="D")
+    if not expected.isin(frame.index).all():
+        return pd.Series(dtype=float)
+    close = frame.loc[expected, "Close"]
+    if not np.isfinite(close.to_numpy(float)).all() or (close <= 0).any():
+        return pd.Series(dtype=float)
+    return close
+
+
+def future_stats(df, end_idx, price_frame=None):
+    # Indicators define signatures only; forward outcomes use frozen raw prices.
+    prices = df if price_frame is None else price_frame
+    end_date = df.index[end_idx]
     results = {}
-
+    full_path = calendar_close_path(prices, end_date, max(FORWARD_DAYS))
     for d in FORWARD_DAYS:
-        if end_idx + d < len(df):
-            future_close = df["Close"].iloc[end_idx + d]
-            future_slice = df["Close"].iloc[end_idx:end_idx + d + 1]
-
-            results[f"return_{d}d"] = (future_close / close_now - 1) * 100
+        future_slice = (full_path.iloc[:d + 1] if len(full_path) == max(FORWARD_DAYS) + 1
+                        else calendar_close_path(prices, end_date, d))
+        if len(future_slice) == d + 1:
+            close_now = future_slice.iloc[0]
+            results[f"return_{d}d"] = (future_slice.iloc[-1] / close_now - 1) * 100
             results[f"drawdown_{d}d"] = (future_slice.min() / close_now - 1) * 100
             results[f"max_gain_{d}d"] = (future_slice.max() / close_now - 1) * 100
         else:
-            results[f"return_{d}d"] = np.nan
-            results[f"drawdown_{d}d"] = np.nan
-            results[f"max_gain_{d}d"] = np.nan
-
+            for metric in ("return", "drawdown", "max_gain"):
+                results[f"{metric}_{d}d"] = np.nan
     return results
 
 
@@ -288,7 +306,7 @@ def download_data(*, run_id=None, downloaded_at_utc=None):
     return asset_data, raw_snapshot_ids
 
 
-def find_similar_patterns(target_ticker, data_with_indicators):
+def find_similar_patterns(target_ticker, data_with_indicators, price_data=None):
     target_sig = make_signature_v2(data_with_indicators[target_ticker])
     matches = []
 
@@ -311,7 +329,7 @@ def find_similar_patterns(target_ticker, data_with_indicators):
             if np.isnan(similarity):
                 continue
 
-            stats = future_stats(df, end_idx)
+            stats = future_stats(df, end_idx, None if price_data is None else price_data[ticker])
 
             matches.append({
                 "target": target_ticker,
@@ -2068,6 +2086,7 @@ def main():
             run_id=run_id, purpose="forecast_current_price",
         )
 
+    price_data = {ticker: load_frozen_ohlc(raw_snapshot_ids[ticker]) for ticker in data}
     all_results = {}
 
     for target in TARGETS:
@@ -2076,8 +2095,11 @@ def main():
         if target not in data:
             raise RuntimeError(f"Target {target} not found in downloaded data.")
 
-        matches_raw = find_similar_patterns(target, data)
+        matches_raw = find_similar_patterns(target, data, price_data)
         matches_clean = deoverlap_matches(matches_raw)
+        for row in matches_clean.itertuples():
+            if len(calendar_close_path(price_data[row.similar_asset], row.end_date, 60)) != 61:
+                raise ValueError("INCOMPLETE_CANONICAL_CALENDAR_PATH:" + row.similar_asset)
         cohort_id, cohort_sha = freeze_cohort(
             matches_clean, target=target, run_id=run_id,
             generated_at_utc=generated_at_iso,
