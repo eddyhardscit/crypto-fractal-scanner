@@ -137,7 +137,11 @@ PY
 if [ -f sol_long_term_history_publish.py ]; then
     "$PYTHON" sol_long_term_history_publish.py --best-effort || echo LONG_TERM_HISTORY_RETAINED_LAST_VALID
 fi
-"$PYTHON" market_forecast_lab.py --mode OFFICIAL_DAILY || echo MARKET_FORECAST_LAB_FAILED
+forecast_rc=0
+"$PYTHON" market_forecast_lab.py --mode OFFICIAL_DAILY || {
+    forecast_rc=$?
+    echo "MARKET_FORECAST_LAB_FAILED exit_code=$forecast_rc; retaining last valid forecast" >&2
+}
 "$PYTHON" lab_reduction.py
 
 git config user.name hetzner-crypto-bot
@@ -151,12 +155,12 @@ if [ -n "$strategy_changes" ]; then
     exit 1
 fi
 git add reports/
-if git diff --cached --quiet; then exit 0; fi
+if git diff --cached --quiet; then exit "$forecast_rc"; fi
 git commit -m 'Update daily fractal and market reports from Hetzner'
 for attempt in 1 2 3; do
     git fetch origin main
     git merge-base --is-ancestor origin/main HEAD || exit 1
-    if git push origin HEAD:main; then exit 0; fi
+    if git push origin HEAD:main; then exit "$forecast_rc"; fi
     [ "$attempt" -lt 3 ] && sleep 5
 done
 exit 1
