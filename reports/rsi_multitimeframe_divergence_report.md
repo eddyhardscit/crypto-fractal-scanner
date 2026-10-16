@@ -1,6 +1,6 @@
 # Divergenze RSI multi-timeframe — diagnostica
 
-Generato: 2026-10-15 05:33 UTC
+Generato: 2026-10-16 05:33 UTC
 
 Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Riconosce divergenze regolari e nascoste, segnali in formazione, invalidazioni e semplice conferma del momentum.
 
@@ -8,27 +8,27 @@ Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Ric
 
 ## Sintesi corrente
 
-| Asset   | Daily               | Stato D       | Weekly                                               | Stato W       | Lettura weekly                                                                                                 |   Peso |
-|:--------|:--------------------|:--------------|:-----------------------------------------------------|:--------------|:---------------------------------------------------------------------------------------------------------------|-------:|
-| BTC     | Hidden bullish      | IN_FORMAZIONE | Momentum in indebolimento, divergenza non confermata | CONTESTO      | Momentum in indebolimento, divergenza non confermata. Non esiste una divergenza confermata sugli ultimi pivot. |      0 |
-| SOL     | Hidden bullish      | IN_FORMAZIONE | Hidden bullish                                       | IN_FORMAZIONE | Hidden bullish in formazione: il secondo estremo non è ancora un pivot confermato. Peso operativo sempre 0.    |      0 |
-| DOGE    | Conferma ribassista | CONTESTO      | Hidden bullish                                       | IN_FORMAZIONE | Hidden bullish in formazione: il secondo estremo non è ancora un pivot confermato. Peso operativo sempre 0.    |      0 |
+| Asset   | Daily                     | Stato D       | Weekly                     | Stato W       | Lettura weekly                                                                                              |   Peso |
+|:--------|:--------------------------|:--------------|:---------------------------|:--------------|:------------------------------------------------------------------------------------------------------------|-------:|
+| BTC     | Hidden bullish invalidata | INVALIDATA    | Misto / nessuna divergenza | CONTESTO      | Misto / nessuna divergenza. Non esiste una divergenza confermata sugli ultimi pivot.                        |      0 |
+| SOL     | Hidden bullish            | IN_FORMAZIONE | Hidden bullish             | IN_FORMAZIONE | Hidden bullish in formazione: il secondo estremo non è ancora un pivot confermato. Peso operativo sempre 0. |      0 |
+| DOGE    | Bullish regolare          | IN_FORMAZIONE | Hidden bullish             | IN_FORMAZIONE | Hidden bullish in formazione: il secondo estremo non è ancora un pivot confermato. Peso operativo sempre 0. |      0 |
 
 ## Dettaglio dei pivot
 
-| Asset   | TF   | Tipo                                                 | Stato         | Prezzo / RSI      | Pivot confrontati                                                   | Δ prezzo contesto   | Δ RSI contesto   |   Peso |
-|:--------|:-----|:-----------------------------------------------------|:--------------|:------------------|:--------------------------------------------------------------------|:--------------------|:-----------------|-------:|
-| BTC     | 1D   | Hidden bullish                                       | IN_FORMAZIONE | 80.957 $ / 44,75  | 2026-10-08 80.337 $ / RSI 46,86 → 2026-10-15 80.643 $ / RSI 44,75   | n/a                 | n/a              |      0 |
-| BTC     | 1W   | Momentum in indebolimento, divergenza non confermata | CONTESTO      | 80.957 $ / 55,81  | n/a                                                                 | +0,76%              | -3,21            |      0 |
-| SOL     | 1D   | Hidden bullish                                       | IN_FORMAZIONE | 102,14 $ / 35,33  | 2026-09-16 96,23 $ / RSI 51,17 → 2026-10-15 101,80 $ / RSI 35,33    | n/a                 | n/a              |      0 |
-| SOL     | 1W   | Hidden bullish                                       | IN_FORMAZIONE | 102,14 $ / 52,37  | 2026-09-20 96,23 $ / RSI 61,01 → 2026-10-18 101,80 $ / RSI 52,37    | n/a                 | n/a              |      0 |
-| DOGE    | 1D   | Conferma ribassista                                  | CONTESTO      | 0.07966 $ / 36,09 | n/a                                                                 | -15,68%             | -20,54           |      0 |
-| DOGE    | 1W   | Hidden bullish                                       | IN_FORMAZIONE | 0.07966 $ / 43,70 | 2026-09-20 0.07841 $ / RSI 47,54 → 2026-10-18 0.07916 $ / RSI 43,70 | n/a                 | n/a              |      0 |
+| Asset   | TF   | Tipo                       | Stato         | Prezzo / RSI      | Pivot confrontati                                                   | Δ prezzo contesto   | Δ RSI contesto   |   Peso |
+|:--------|:-----|:---------------------------|:--------------|:------------------|:--------------------------------------------------------------------|:--------------------|:-----------------|-------:|
+| BTC     | 1D   | Hidden bullish invalidata  | INVALIDATA    | 82.113 $ / 48,60  | n/a                                                                 | -3,23%              | -16,12           |      0 |
+| BTC     | 1W   | Misto / nessuna divergenza | CONTESTO      | 82.113 $ / 57,27  | n/a                                                                 | +2,19%              | -1,76            |      0 |
+| SOL     | 1D   | Hidden bullish             | IN_FORMAZIONE | 105,87 $ / 41,04  | 2026-09-16 96,23 $ / RSI 51,17 → 2026-10-13 102,63 $ / RSI 40,87    | n/a                 | n/a              |      0 |
+| SOL     | 1W   | Hidden bullish             | IN_FORMAZIONE | 105,87 $ / 54,50  | 2026-09-20 96,23 $ / RSI 61,01 → 2026-10-18 102,63 $ / RSI 54,50    | n/a                 | n/a              |      0 |
+| DOGE    | 1D   | Bullish regolare           | IN_FORMAZIONE | 0.08220 $ / 39,44 | 2026-10-08 0.08122 $ / RSI 38,74 → 2026-10-13 0.08050 $ / RSI 41,79 | n/a                 | n/a              |      0 |
+| DOGE    | 1W   | Hidden bullish             | IN_FORMAZIONE | 0.08220 $ / 44,86 | 2026-09-20 0.07841 $ / RSI 47,54 → 2026-10-18 0.08050 $ / RSI 44,86 | n/a                 | n/a              |      0 |
 
 ### BTC
 
-- **1D — Hidden bullish / IN_FORMAZIONE**: Hidden bullish in formazione: il secondo estremo non è ancora un pivot confermato. Peso operativo sempre 0.
-- **1W — Momentum in indebolimento, divergenza non confermata / CONTESTO**: Momentum in indebolimento, divergenza non confermata. Non esiste una divergenza confermata sugli ultimi pivot.
+- **1D — Hidden bullish invalidata / INVALIDATA**: La precedente hidden bullish non è più sostenuta dalla relazione corrente tra pivot di prezzo e RSI.
+- **1W — Misto / nessuna divergenza / CONTESTO**: Misto / nessuna divergenza. Non esiste una divergenza confermata sugli ultimi pivot.
 
 ### SOL
 
@@ -37,7 +37,7 @@ Il modulo confronta prezzo e RSI 14 sui pivot confermati **daily e weekly**. Ric
 
 ### DOGE
 
-- **1D — Conferma ribassista / CONTESTO**: Prezzo e RSI stanno scendendo insieme: momentum ribassista confermato, nessuna bullish divergence attiva.
+- **1D — Bullish regolare / IN_FORMAZIONE**: Bullish regolare in formazione: il secondo estremo non è ancora un pivot confermato. Peso operativo sempre 0.
 - **1W — Hidden bullish / IN_FORMAZIONE**: Hidden bullish in formazione: il secondo estremo non è ancora un pivot confermato. Peso operativo sempre 0.
 
 ## Tracker live delle divergenze confermate
