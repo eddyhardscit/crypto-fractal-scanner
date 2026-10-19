@@ -1,25 +1,25 @@
 # Accuratezza dati exchange e microstruttura
 
-Generato: 2026-10-18 05:33 UTC
+Generato: 2026-10-19 05:33 UTC
 
 Questo tracker verifica se il segnale candidato exchange ±1 anticipa correttamente la direzione del prezzo a 1/3/7/14/30 giorni.
 Il peso Global resta 0 finché l'orizzonte 7g non ha almeno 30 controlli, accuratezza almeno 55% e return corretto direzione positivo. L'overlay a 30g ha un gate separato.
 
-Controlli maturati completati in questa esecuzione: **24**.
+Controlli maturati completati in questa esecuzione: **12**.
 
 ## Ultime fotografie giornaliere
 
 | Data | Asset | Prezzo | Versione | Calibrazione | Candidato | Peso Global | Score raw | Confidenza | Taker 4h | OI 24h | Book 0,5% |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-10-19 | BTC | 82.595,70 | V2.1.3 | OK | 0 | 0 | 2,00 | BASSA | 4,85 | -1,52% | -3,84% |
+| 2026-10-19 | DOGE | 0.07944 | V2.1.3 | OK | 0 | 0 | 2,00 | BASSA | 1,11 | -2,36% | +0,54% |
+| 2026-10-19 | SOL | 105,43 | V2.1.3 | OK | 0 | 0 | 2,00 | BASSA | 1,79 | -0,23% | -6,53% |
 | 2026-10-18 | BTC | 81.751,50 | V2.1.3 | OK | 0 | 0 | 2,25 | MEDIA | 1,56 | -0,43% | +0,94% |
 | 2026-10-18 | DOGE | 0.07931 | V2.1.3 | OK | 0 | 0 | 2,00 | BASSA | 1,41 | -1,56% | +2,62% |
 | 2026-10-18 | SOL | 103,77 | V2.1.3 | OK | 0 | 0 | 2,00 | BASSA | 6,07 | -2,39% | -4,86% |
 | 2026-10-16 | BTC | 82.351,80 | V2.1.3 | OK | 0 | 0 | 2,00 | BASSA | 1,99 | -2,45% | -0,58% |
 | 2026-10-16 | DOGE | 0.08238 | V2.1.3 | OK | 1 | 0 | 3,00 | MEDIA | 1,27 | +3,38% | -0,52% |
 | 2026-10-16 | SOL | 106,36 | V2.1.3 | OK | 0 | 0 | 0,75 | BASSA | 0,91 | +4,72% | +2,43% |
-| 2026-10-15 | BTC | 81.453,00 | V2.1.3 | OK | 0 | 0 | 0,75 | BASSA | 5,82 | +5,23% | +0,79% |
-| 2026-10-15 | DOGE | 0.08033 | V2.1.3 | OK | 0 | 0 | 1,25 | BASSA | 0,95 | -5,64% | -1,85% |
-| 2026-10-15 | SOL | 103,29 | V2.1.3 | OK | 0 | 0 | 2,50 | BASSA | 1,14 | -5,91% | +8,22% |
 
 ## Accuratezza direzionale
 
@@ -36,7 +36,7 @@ Controlli maturati completati in questa esecuzione: **24**.
 | SOL | 14g | 5 | +80,00% | +8,45% | -4,32% | +14,61% | FEEDBACK RAPIDO |
 | SOL | 30g | 5 | +100,00% | +22,07% | -4,32% | +25,38% | FEEDBACK RAPIDO |
 | DOGE | 1g | 12 | +50,00% | +1,09% | -0,60% | +2,49% | FEEDBACK RAPIDO |
-| DOGE | 3g | 11 | +36,36% | +1,63% | -3,44% | +6,33% | FEEDBACK RAPIDO |
+| DOGE | 3g | 12 | +33,33% | +1,19% | -3,61% | +5,84% | FEEDBACK RAPIDO |
 | DOGE | 7g | 11 | +45,45% | -0,13% | -4,83% | +9,23% | FEEDBACK RAPIDO |
 | DOGE | 14g | 11 | +36,36% | +1,12% | -6,04% | +13,84% | FEEDBACK RAPIDO |
 | DOGE | 30g | 10 | +70,00% | +9,97% | -6,58% | +29,10% | FEEDBACK RAPIDO |

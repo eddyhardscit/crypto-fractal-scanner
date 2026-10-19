@@ -5,7 +5,7 @@
     "then": 10.0,
     "within_days": 30
   },
-  "current_price": 103.44000244140625,
+  "current_price": 105.62000274658203,
   "distinct_assets": 6,
   "episodes": [
     {
@@ -15,7 +15,16 @@
       "minus5_hit_date": "2019-04-21",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2019-05-15",
-      "similarity": 90.26982004766415
+      "similarity": 90.39398830095088
+    },
+    {
+      "asset": "MKR-USD",
+      "episode_end_date": "2021-03-07",
+      "episode_start_date": "2020-11-28",
+      "minus5_hit_date": "2021-03-14",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2021-04-02",
+      "similarity": 89.98609298445032
     },
     {
       "asset": "HBAR-USD",
@@ -24,16 +33,7 @@
       "minus5_hit_date": "2023-03-15",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-03-31",
-      "similarity": 89.94542605367721
-    },
-    {
-      "asset": "DOGE-USD",
-      "episode_end_date": "2024-04-24",
-      "episode_start_date": "2024-01-16",
-      "minus5_hit_date": "2024-04-29",
-      "path_class_60d": "FAILURE",
-      "plus10_anchor_date": "2024-05-21",
-      "similarity": 88.22150360763408
+      "similarity": 89.70022893980885
     },
     {
       "asset": "ENJ-USD",
@@ -42,16 +42,7 @@
       "minus5_hit_date": "2023-03-27",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2023-04-07",
-      "similarity": 88.08094052467962
-    },
-    {
-      "asset": "VET-USD",
-      "episode_end_date": "2020-07-31",
-      "episode_start_date": "2020-04-23",
-      "minus5_hit_date": "2020-08-02",
-      "path_class_60d": "SHALLOW_PULLBACK_THEN_CONTINUATION",
-      "plus10_anchor_date": "2020-08-06",
-      "similarity": 87.56261163303444
+      "similarity": 89.03171814032261
     },
     {
       "asset": "RUNE-USD",
@@ -60,38 +51,52 @@
       "minus5_hit_date": "2023-10-17",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2023-10-22",
-      "similarity": 86.67710034699006
+      "similarity": 88.40975865941387
+    },
+    {
+      "asset": "DOGE-USD",
+      "episode_end_date": "2024-04-24",
+      "episode_start_date": "2024-01-16",
+      "minus5_hit_date": "2024-04-29",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2024-05-21",
+      "similarity": 88.28557175206986
+    },
+    {
+      "asset": "ZEC-USD",
+      "episode_end_date": "2024-09-11",
+      "episode_start_date": "2024-06-04",
+      "minus5_hit_date": "2024-09-30",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2024-10-10",
+      "similarity": 87.25024783350345
     }
   ],
-  "forecast_date": "2026-10-18",
+  "forecast_date": "2026-10-19",
   "path_classes_60d": {
     "DIRECT_CONTINUATION": {
-      "count": 1,
-      "pct": 16.666666666666668
+      "count": 2,
+      "pct": 28.571428571428573
     },
     "FAILURE": {
-      "count": 4,
-      "pct": 66.66666666666667
-    },
-    "SHALLOW_PULLBACK_THEN_CONTINUATION": {
-      "count": 1,
-      "pct": 16.666666666666668
+      "count": 5,
+      "pct": 71.42857142857143
     }
   },
   "q30": {
-    "count": 6,
-    "p10_pct": -32.8162575553904,
-    "p10_price": 69.49486482493226,
-    "p25_pct": -25.895445029800943,
-    "p25_price": 76.65375347036714,
-    "p50_pct": -17.810248560588214,
-    "p50_price": 85.01708089551327,
-    "p75_pct": -1.7500361334936345,
-    "p75_price": 101.62976502219495,
-    "p90_pct": 85.23279047557406,
-    "p90_price": 191.60480299021873
+    "count": 7,
+    "p10_pct": -24.32688553740344,
+    "p10_price": 79.92594557381865,
+    "p25_pct": -17.810248560588214,
+    "p25_price": 86.80881772771568,
+    "p50_pct": 2.0287021565604357,
+    "p50_price": 107.76271802006113,
+    "p75_pct": 66.79610850815104,
+    "p75_price": 176.17005438750107,
+    "p90_pct": 125.81859745005394,
+    "p90_price": 238.50960882904
   },
-  "qualified_episodes": 6,
+  "qualified_episodes": 7,
   "small_sample": true,
   "status": "AVAILABLE"
 }
