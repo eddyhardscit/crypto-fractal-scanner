@@ -5,8 +5,8 @@
     "then": 10.0,
     "within_days": 30
   },
-  "current_price": 105.97000122070312,
-  "distinct_assets": 8,
+  "current_price": 105.19000244140625,
+  "distinct_assets": 11,
   "episodes": [
     {
       "asset": "MKR-USD",
@@ -15,7 +15,7 @@
       "minus5_hit_date": "2021-03-14",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2021-04-02",
-      "similarity": 91.1144042082901
+      "similarity": 90.7480016039549
     },
     {
       "asset": "ZEC-USD",
@@ -24,16 +24,7 @@
       "minus5_hit_date": "2024-09-30",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2024-10-10",
-      "similarity": 90.53103252737657
-    },
-    {
-      "asset": "ENJ-USD",
-      "episode_end_date": "2023-03-16",
-      "episode_start_date": "2022-12-07",
-      "minus5_hit_date": "2023-03-27",
-      "path_class_60d": "FAILURE",
-      "plus10_anchor_date": "2023-04-07",
-      "similarity": 89.94180543027255
+      "similarity": 90.5517196251824
     },
     {
       "asset": "MKR-USD",
@@ -42,25 +33,16 @@
       "minus5_hit_date": "2019-04-24",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2019-05-15",
-      "similarity": 89.30746236086833
+      "similarity": 89.72710083463633
     },
     {
-      "asset": "HBAR-USD",
-      "episode_end_date": "2023-03-13",
-      "episode_start_date": "2022-12-04",
-      "minus5_hit_date": "2023-03-15",
+      "asset": "ENJ-USD",
+      "episode_end_date": "2023-03-16",
+      "episode_start_date": "2022-12-07",
+      "minus5_hit_date": "2023-03-27",
       "path_class_60d": "FAILURE",
-      "plus10_anchor_date": "2023-03-31",
-      "similarity": 88.53345249175865
-    },
-    {
-      "asset": "RUNE-USD",
-      "episode_end_date": "2023-10-13",
-      "episode_start_date": "2023-07-06",
-      "minus5_hit_date": "2023-10-17",
-      "path_class_60d": "DIRECT_CONTINUATION",
-      "plus10_anchor_date": "2023-10-22",
-      "similarity": 88.37829165457222
+      "plus10_anchor_date": "2023-04-07",
+      "similarity": 88.97629287452672
     },
     {
       "asset": "DOGE-USD",
@@ -69,7 +51,7 @@
       "minus5_hit_date": "2024-04-30",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2024-05-04",
-      "similarity": 87.6824249886689
+      "similarity": 88.82593059265726
     },
     {
       "asset": "TRX-USD",
@@ -78,7 +60,16 @@
       "minus5_hit_date": "2021-10-27",
       "path_class_60d": "DIRECT_CONTINUATION",
       "plus10_anchor_date": "2021-11-02",
-      "similarity": 87.4836299513881
+      "similarity": 88.3243540383868
+    },
+    {
+      "asset": "HBAR-USD",
+      "episode_end_date": "2023-03-18",
+      "episode_start_date": "2022-12-09",
+      "minus5_hit_date": "2023-03-27",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2023-03-29",
+      "similarity": 87.93627195182786
     },
     {
       "asset": "DASH-USD",
@@ -87,34 +78,70 @@
       "minus5_hit_date": "2020-03-12",
       "path_class_60d": "FAILURE",
       "plus10_anchor_date": "2020-04-09",
-      "similarity": 86.72536144167549
+      "similarity": 87.61883383340998
+    },
+    {
+      "asset": "ICP-USD",
+      "episode_end_date": "2023-03-19",
+      "episode_start_date": "2022-12-10",
+      "minus5_hit_date": "2023-03-20",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2023-04-16",
+      "similarity": 87.39105431463715
+    },
+    {
+      "asset": "RUNE-USD",
+      "episode_end_date": "2023-10-13",
+      "episode_start_date": "2023-07-06",
+      "minus5_hit_date": "2023-10-17",
+      "path_class_60d": "DIRECT_CONTINUATION",
+      "plus10_anchor_date": "2023-10-22",
+      "similarity": 86.84590298681016
+    },
+    {
+      "asset": "1INCH-USD",
+      "episode_end_date": "2023-03-18",
+      "episode_start_date": "2022-12-09",
+      "minus5_hit_date": "2023-03-27",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2023-04-16",
+      "similarity": 86.80437839396336
+    },
+    {
+      "asset": "FIL-USD",
+      "episode_end_date": "2023-03-20",
+      "episode_start_date": "2022-12-11",
+      "minus5_hit_date": "2023-03-25",
+      "path_class_60d": "FAILURE",
+      "plus10_anchor_date": "2023-04-15",
+      "similarity": 86.71565416970579
     }
   ],
-  "forecast_date": "2026-10-21",
+  "forecast_date": "2026-10-22",
   "path_classes_60d": {
     "DIRECT_CONTINUATION": {
-      "count": 3,
+      "count": 4,
       "pct": 33.333333333333336
     },
     "FAILURE": {
-      "count": 6,
+      "count": 8,
       "pct": 66.66666666666667
     }
   },
   "q30": {
-    "count": 9,
-    "p10_pct": -14.975850026428793,
-    "p10_price": 90.10009276488586,
-    "p25_pct": -9.292798068142405,
-    "p25_price": 96.12242299445514,
-    "p50_pct": -1.1707251445251865,
-    "p50_price": 104.7293837707587,
-    "p75_pct": 36.185807129270685,
-    "p75_price": 144.31610147731254,
-    "p90_pct": 111.61250366854267,
-    "p90_price": 224.24577272071508
+    "count": 12,
+    "p10_pct": -27.1922958426711,
+    "p10_price": 76.58642578062612,
+    "p25_pct": -16.08352295414196,
+    "p25_price": 88.27174425328019,
+    "p50_pct": -6.483511308660367,
+    "p50_price": 98.36999673753756,
+    "p75_pct": 10.567978399738,
+    "p75_price": 116.30645917809794,
+    "p90_pct": 91.28434961125535,
+    "p90_price": 201.21201202610757
   },
-  "qualified_episodes": 9,
-  "small_sample": true,
+  "qualified_episodes": 12,
+  "small_sample": false,
   "status": "AVAILABLE"
 }
