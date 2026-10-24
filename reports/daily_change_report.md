@@ -1,7 +1,7 @@
 # Mini report cambiamenti giornalieri
 
-Generato: **2026-10-23 07:32:43 CEST**  
-UTC: **2026-10-23 05:32:43 UTC**
+Generato: **2026-10-24 07:32:41 CEST**  
+UTC: **2026-10-24 05:32:41 UTC**
 
 Questo report confronta l'ultima previsione salvata con quella precedente, asset per asset.
 
@@ -9,9 +9,9 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 
 | Asset | Cambio | Tono | Verdetto oggi | Casi positivi oggi | Δ casi positivi | Δ return P50 | Δ drawdown P25 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | NESSUN CAMBIAMENTO FORTE | miglioramento | RIALZISTA | +67.50% | +5.00 punti | +1.81 punti | 0.00 punti |
-| SOL | CAMBIAMENTO MEDIO | peggioramento | RIALZISTA | +65.00% | -7.50 punti | -2.49 punti | -3.72 punti |
-| DOGE | CAMBIAMENTO MEDIO | peggioramento | RIALZISTA | +67.50% | -12.50 punti | -1.11 punti | 0.00 punti |
+| BTC | CAMBIAMENTO MEDIO | peggioramento | RIALZISTA | +62.50% | -5.00 punti | -3.59 punti | +0.46 punti |
+| SOL | CAMBIAMENTO FORTE | peggioramento | NEUTRALE / INCERTO | +57.50% | -7.50 punti | -1.01 punti | +6.07 punti |
+| DOGE | NESSUN CAMBIAMENTO FORTE | peggioramento | RIALZISTA | +67.50% | 0.00 punti | -1.17 punti | +0.90 punti |
 
 ## Come leggerlo
 
@@ -28,23 +28,24 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 
 ### Sintesi
 
-**BTC: nessun cambiamento forte rispetto a ieri.**
+**BTC: cambiamento importante in peggioramento rispetto a ieri.**
 
 ### Confronto
 
 | Dato | Ieri | Oggi | Differenza |
 | --- | --- | --- | --- |
-| Data previsione | 2026-10-22 | 2026-10-23 | - |
+| Data previsione | 2026-10-23 | 2026-10-24 | - |
 | Verdetto | RIALZISTA | RIALZISTA | uguale |
-| Prezzo attuale | $82,837 | $81,511 | -1.60% |
-| Casi positivi 30d | +62.50% | +67.50% | +5.00 punti |
-| Return 30d centrale P50 | +5.13% | +6.94% | +1.81 punti |
-| Drawdown brutto P25 | -18.22% | -18.22% | 0.00 punti |
-| Max gain buono P75 | +22.49% | +25.34% | +2.85 punti |
+| Prezzo attuale | $81,511 | $80,661 | -1.04% |
+| Casi positivi 30d | +67.50% | +62.50% | -5.00 punti |
+| Return 30d centrale P50 | +6.94% | +3.35% | -3.59 punti |
+| Drawdown brutto P25 | -18.22% | -17.76% | +0.46 punti |
+| Max gain buono P75 | +25.34% | +25.34% | 0.00 punti |
 
 ### Perché
 
-- Casi positivi cambiati: +5.00 punti
+- Casi positivi cambiati: -5.00 punti
+- Scenario centrale 30 giorni cambiato: -3.59 punti
 
 ---
 
@@ -59,19 +60,19 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 
 | Dato | Ieri | Oggi | Differenza |
 | --- | --- | --- | --- |
-| Data previsione | 2026-10-22 | 2026-10-23 | - |
-| Verdetto | RIALZISTA | RIALZISTA | uguale |
-| Prezzo attuale | $105.19 | $104.09 | -1.05% |
-| Casi positivi 30d | +72.50% | +65.00% | -7.50 punti |
-| Return 30d centrale P50 | +6.00% | +3.52% | -2.49 punti |
-| Drawdown brutto P25 | -19.28% | -23.00% | -3.72 punti |
-| Max gain buono P75 | +22.17% | +21.45% | -0.72 punti |
+| Data previsione | 2026-10-23 | 2026-10-24 | - |
+| Verdetto | RIALZISTA | NEUTRALE / INCERTO | cambio verdetto |
+| Prezzo attuale | $104.09 | $102.17 | -1.84% |
+| Casi positivi 30d | +65.00% | +57.50% | -7.50 punti |
+| Return 30d centrale P50 | +3.52% | +2.50% | -1.01 punti |
+| Drawdown brutto P25 | -23.00% | -16.92% | +6.07 punti |
+| Max gain buono P75 | +21.45% | +20.81% | -0.64 punti |
 
 ### Perché
 
+- Verdetto cambiato: RIALZISTA → NEUTRALE / INCERTO
 - Casi positivi cambiati: -7.50 punti
-- Scenario centrale 30 giorni cambiato: -2.49 punti
-- Drawdown peggiorato leggermente: -3.72 punti
+- Drawdown brutto migliorato: +6.07 punti
 
 ---
 
@@ -80,22 +81,22 @@ Questo report confronta l'ultima previsione salvata con quella precedente, asset
 
 ### Sintesi
 
-**DOGE: cambiamento importante in peggioramento rispetto a ieri.**
+**DOGE: nessun cambiamento forte rispetto a ieri.**
 
 ### Confronto
 
 | Dato | Ieri | Oggi | Differenza |
 | --- | --- | --- | --- |
-| Data previsione | 2026-10-22 | 2026-10-23 | - |
+| Data previsione | 2026-10-23 | 2026-10-24 | - |
 | Verdetto | RIALZISTA | RIALZISTA | uguale |
-| Prezzo attuale | $0.08008 | $0.07959 | -0.61% |
-| Casi positivi 30d | +80.00% | +67.50% | -12.50 punti |
-| Return 30d centrale P50 | +9.60% | +8.49% | -1.11 punti |
-| Drawdown brutto P25 | -13.15% | -13.15% | 0.00 punti |
-| Max gain buono P75 | +23.31% | +26.32% | +3.00 punti |
+| Prezzo attuale | $0.07959 | $0.07829 | -1.63% |
+| Casi positivi 30d | +67.50% | +67.50% | 0.00 punti |
+| Return 30d centrale P50 | +8.49% | +7.32% | -1.17 punti |
+| Drawdown brutto P25 | -13.15% | -12.25% | +0.90 punti |
+| Max gain buono P75 | +26.32% | +26.22% | -0.09 punti |
 
 ### Perché
 
-- Casi positivi cambiati molto: -12.50 punti
+- Nessuna variazione importante rispetto alla previsione precedente.
 
 ---

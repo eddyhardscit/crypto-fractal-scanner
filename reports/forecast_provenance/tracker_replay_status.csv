@@ -1,2 +1,2 @@
 generated_at_utc,mode,status,legacy_baseline_used,legacy_rows_without_snapshot,certified_replay_requested,evaluated_frozen_rows
-2026-10-23 05:33:01,NORMAL_DAILY,NORMAL_DAILY,YES,4743,NO,552
+2026-10-24 05:32:57,NORMAL_DAILY,NORMAL_DAILY,YES,4743,NO,564
