@@ -1,6 +1,6 @@
 {
   "policy": "2026-10-13-v1",
-  "generated_at_utc": "2026-10-24T05:35:31.913521+00:00",
+  "generated_at_utc": "2026-10-25T06:35:31.727529+00:00",
   "risk": "QUARANTINED",
   "paused_modules": [
     "btc_2022_vs_sol_2026_report",
