@@ -1,6 +1,6 @@
 # Accuratezza dati exchange e microstruttura
 
-Generato: 2026-10-25 06:33 UTC
+Generato: 2026-10-26 06:33 UTC
 
 Questo tracker verifica se il segnale candidato exchange ±1 anticipa correttamente la direzione del prezzo a 1/3/7/14/30 giorni.
 Il peso Global resta 0 finché l'orizzonte 7g non ha almeno 30 controlli, accuratezza almeno 55% e return corretto direzione positivo. L'overlay a 30g ha un gate separato.
@@ -11,21 +11,21 @@ Controlli maturati completati in questa esecuzione: **15**.
 
 | Data | Asset | Prezzo | Versione | Calibrazione | Candidato | Peso Global | Score raw | Confidenza | Taker 4h | OI 24h | Book 0,5% |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-10-26 | BTC | 80.106,50 | V2.1.3 | OK | 0 | 0 | 2,50 | MEDIA | 3,36 | +2,58% | -2,52% |
+| 2026-10-26 | DOGE | 0.07702 | V2.1.3 | OK | 0 | 0 | 2,25 | MEDIA | 1,65 | +0,46% | +1,82% |
+| 2026-10-26 | SOL | 101,14 | V2.1.3 | OK | 1 | 0 | 2,50 | MEDIA | 1,16 | +0,30% | +6,04% |
 | 2026-10-25 | BTC | 80.554,50 | V2.1.3 | OK | 1 | 0 | 2,50 | MEDIA | 2,78 | +0,80% | -3,82% |
 | 2026-10-25 | DOGE | 0.07694 | V2.1.3 | OK | 0 | 0 | -0,25 | BASSA | 0,72 | -2,69% | -3,48% |
 | 2026-10-25 | SOL | 101,76 | V2.1.3 | OK | 0 | 0 | 2,00 | BASSA | 1,87 | +0,19% | +1,05% |
 | 2026-10-24 | BTC | 80.803,09 | V2.1.3 | OK | 0 | 0 | -0,25 | BASSA | 0,89 | -1,46% | +5,56% |
 | 2026-10-24 | DOGE | 0.07859 | V2.1.3 | OK | 0 | 0 | 1,75 | BASSA | 1,19 | -3,56% | +2,38% |
 | 2026-10-24 | SOL | 102,45 | V2.1.3 | OK | 0 | 0 | 0,75 | BASSA | 1,05 | -1,66% | -5,17% |
-| 2026-10-23 | BTC | 81.699,50 | V2.1.3 | OK | 0 | 0 | 0,38 | MEDIA | 3,22 | +2,20% | -0,97% |
-| 2026-10-23 | DOGE | 0.07955 | V2.1.3 | OK | 0 | 0 | 1,75 | BASSA | 1,14 | +0,85% | -3,30% |
-| 2026-10-23 | SOL | 104,14 | V2.1.3 | OK | 0 | 0 | 0,38 | MEDIA | 1,86 | +2,40% | +1,99% |
 
 ## Accuratezza direzionale
 
 | Asset | Orizzonte | Controlli | Accuratezza | Return corretto direzione | Drawdown medio | Max gain medio | Stato |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| BTC | 1g | 10 | +40,00% | -0,44% | -1,18% | +0,59% | FEEDBACK RAPIDO |
+| BTC | 1g | 11 | +36,36% | -0,47% | -1,21% | +0,49% | FEEDBACK RAPIDO |
 | BTC | 3g | 10 | +40,00% | -0,44% | -2,45% | +1,64% | FEEDBACK RAPIDO |
 | BTC | 7g | 10 | +30,00% | -1,89% | -3,68% | +1,86% | FEEDBACK RAPIDO |
 | BTC | 14g | 10 | +30,00% | -1,16% | -4,52% | +2,54% | FEEDBACK RAPIDO |

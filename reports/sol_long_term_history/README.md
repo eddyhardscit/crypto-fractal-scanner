@@ -1,8 +1,8 @@
 # SOL Long-Term Cone History
 
-Ultimo aggiornamento: **2026-10-18T06:10:04.129924Z**  
-SOL spot: **$103.53**  
-Cohort: **40** analoghi / **30.0** distinct assets  
+Ultimo aggiornamento: **2026-10-25T07:10:07.174263Z**  
+SOL spot: **$101.48**  
+Cohort: **40** analoghi / **29.0** distinct assets  
 **LOG_ROBUST_TAIL · DIAGNOSTIC ONLY**
 
 ## Current cone
@@ -26,10 +26,10 @@ Asse X = date future reali. Le linee mostrano esplicitamente p10, p25, p50, p75 
 
 | Horizon | Target date | p10 | p25 | p50 | p75 | p90 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| 3M | 2027-01-16 | $64.34 | $66.07 | $75.31 | $108.21 | $147.67 |
-| 6M | 2027-04-16 | $53.06 | $59.20 | $77.08 | $103.47 | $165.26 |
-| 1Y | 2027-10-18 | $60.21 | $92.37 | $149.46 | $199.86 | $321.17 |
-| 2Y | 2028-10-17 | $34.02 | $47.25 | $84.79 | $164.18 | $369.89 |
+| 3M | 2027-01-23 | $60.42 | $65.18 | $79.97 | $113.13 | $140.51 |
+| 6M | 2027-04-23 | $55.39 | $60.06 | $73.48 | $103.50 | $158.22 |
+| 1Y | 2027-10-25 | $56.83 | $86.66 | $141.85 | $215.45 | $290.96 |
+| 2Y | 2028-10-24 | $41.56 | $54.65 | $89.43 | $216.51 | $391.87 |
 
 ## Forward vintages
 
@@ -60,9 +60,9 @@ Le percentuali rappresentano la frequenza empirica degli analoghi che terminano 
 
 | Horizon | p50 | p75 | p90 | P≥300 | P≥500 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 6M | $77.08 | $103.47 | $165.26 | 3.33% | 0.00% |
-| 1Y | $149.46 | $199.86 | $321.17 | 16.67% | 0.00% |
-| 2Y | $84.79 | $164.18 | $369.89 | 17.86% | 7.14% |
+| 6M | $73.48 | $103.50 | $158.22 | 3.45% | 0.00% |
+| 1Y | $141.85 | $215.45 | $290.96 | 10.34% | 3.45% |
+| 2Y | $89.43 | $216.51 | $391.87 | 21.43% | 7.14% |
 
 ## Recent drift
 
@@ -70,27 +70,27 @@ Ultime 7 daily observations reali (non necessariamente consecutive).
 
 | Date | Spot | 6M p50 | 1Y p50 | 2Y p50 | 2Y P≥300 | 2Y P≥500 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| 2026-10-08 | $114.94 | $79.39 | $117.32 | $60.83 | 10.71% | 3.57% |
 | 2026-10-09 | $110.26 | $74.24 | $100.10 | $66.03 | 18.52% | 3.70% |
 | 2026-10-10 | $109.93 | $80.22 | $127.67 | $65.83 | 17.24% | 3.45% |
 | 2026-10-11 | $109.32 | $78.67 | $126.96 | $60.23 | 16.13% | 3.23% |
 | 2026-10-12 | $112.71 | $89.78 | $113.48 | $62.61 | 21.43% | 3.57% |
 | 2026-10-13 | $108.24 | $87.38 | $148.95 | $78.71 | 17.86% | 3.57% |
 | 2026-10-18 | $103.53 | $77.08 | $149.46 | $84.79 | 17.86% | 7.14% |
+| 2026-10-25 | $101.48 | $73.48 | $141.85 | $89.43 | 21.43% | 7.14% |
 
 ## 30-day stability
 
-Finestra: 23 osservazioni reali disponibili negli ultimi 30 giorni di calendario; i giorni mancanti non vengono interpolati.
+Finestra: 20 osservazioni reali disponibili negli ultimi 30 giorni di calendario; i giorni mancanti non vengono interpolati.
 
 **storico <30 giorni**: statistiche sullo storico disponibile. Campione insufficiente per interpretare lo status come prova di stabilità duratura.
 
 | Metric | Median | Min | Max | range_pct | Range (pp) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 6M p50 | $98.97 | $74.24 | $134.72 | 61.11% | — |
-| 1Y p50 | $148.95 | $100.10 | $205.66 | 70.87% | — |
-| 2Y p50 | $69.13 | $53.69 | $85.36 | 45.81% | — |
-| 2Y P≥300 | 16.67% | 10.34% | 23.33% | — | 12.99 |
-| 2Y P≥500 | 3.70% | 0.00% | 10.00% | — | 10.00 |
+| 6M p50 | $89.73 | $73.48 | $118.50 | 50.16% | — |
+| 1Y p50 | $142.93 | $100.10 | $161.36 | 42.86% | — |
+| 2Y p50 | $67.58 | $54.57 | $89.43 | 51.59% | — |
+| 2Y P≥300 | 16.67% | 10.34% | 21.43% | — | 11.08 |
+| 2Y P≥500 | 3.64% | 3.23% | 10.00% | — | 6.77 |
 
 **FORECAST_DRIFT_STATUS=VOLATILE**
 
@@ -116,8 +116,8 @@ Indicatore diagnostico; non va usato per decisioni operative. Una sola osservazi
 
 FIRST_REAL_SNAPSHOT=2026-09-03T17:03:34.597672Z  
 FIRST_AVAILABLE_LONG_TERM_SNAPSHOT=2026-09-03T17:03:34.597672Z  
-LATEST_SNAPSHOT=2026-10-18T06:10:04.129924Z  
-DAILY_ROWS=38
+LATEST_SNAPSHOT=2026-10-25T07:10:07.174263Z  
+DAILY_ROWS=39
 
 Fonti autoritative: `sol_long_term_probability_cone.json`, `sol_long_term_probability_cone_history.jsonl` e snapshot immutabili in `sol_long_term_probability_cone_history/` nel publisher canonico.
 
