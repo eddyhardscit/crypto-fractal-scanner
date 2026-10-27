@@ -1,6 +1,6 @@
 {
   "policy": "2026-10-13-v1",
-  "generated_at_utc": "2026-10-26T06:35:35.323095+00:00",
+  "generated_at_utc": "2026-10-27T06:35:36.226532+00:00",
   "risk": "QUARANTINED",
   "paused_modules": [
     "btc_2022_vs_sol_2026_report",
@@ -26,7 +26,7 @@
     "review_date": "2026-11-13",
     "primary_horizon_days": 7,
     "baseline": "UNCHANGED_ANCHOR_PRICE",
-    "eligible_observations": 150,
+    "eligible_observations": 200,
     "complete_week_buckets": [],
     "mae_improvement_pct": null,
     "status": "COLLECTING_FIXED_VALIDATION",

@@ -1,6 +1,6 @@
 # Diagnostica fonti exchange
 
-Generato: 2026-10-26 06:33 UTC
+Generato: 2026-10-27 06:33 UTC
 
 - Stato generale: **OK**
 - Modalità collector: **github-hosted-kraken-bitget-kucoin**
